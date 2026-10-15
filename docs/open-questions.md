@@ -6,12 +6,12 @@
 
 ## Сводная таблица вопросов
 
-| ID | Вопрос | Область | Варианты решений | Приоритет |
+| ID | Вопрос | Область | Статус в RFC-05 | Приоритет |
 |---|---|---|---|---|
-| [OQ-01](#oq-01-evidence-schema) | Формат и структура `evidence.json` | Explainability / Visualizer | 1. Dict по `edge_id`<br>2. Плоский массив `EvidenceRecord`<br>3. Встраивание в `submission.json` | Высокий |
-| [OQ-02](#oq-02-skeleton-dataset) | Формат `skeleton.json` и интеграция со срезанными ребрами Train Ticket | Dataset / Pipeline | 1. Canonical Graph + Adapters<br>2. Прямой парсинг формата организаторов | Критический (к 16.10) |
-| [OQ-03](#oq-03-reachability-failures) | Обработка разрывов в Call Graph при Reachability Analysis | Java AST / Dead Code | 1. Строгий отсев (`is_reachable=false`)<br>2. Передача в ML (`UNRESOLVED_CALL_GRAPH`)<br>3. Эвристический резолвинг | Средний |
-| [OQ-04](#oq-04-transitive-closure-rules) | Правила и ограничения транзитивного замыкания ($A \to B \to C$) | Graph Engine / IoU | 1. Полный транзитивный DFS/BFS<br>2. Ограничение глубины (hop count $\le 3$)<br>3. Изоляция узлов БД от транзитивности | Высокий |
+| [OQ-01](#oq-01-evidence-schema) | Формат и структура `evidence.json` | Explainability / Visualizer | Согласовано (RFC-03 / RFC-05) | Высокий |
+| [OQ-02](#oq-02-skeleton-dataset) | Формат `skeleton.json` и интеграция со срезанными ребрами Train Ticket | Dataset / Pipeline | Согласовано (Адаптеры + CanonicalGraph) | Критический (к 16.10) |
+| [OQ-03](#oq-03-reachability-failures) | Обработка разрывов в Call Graph при Reachability Analysis | Java AST / Dead Code | Согласовано (Reachability + unresolved_calls) | Средний |
+| [OQ-04](#oq-04-transitive-closure-rules) | Правила и ограничения транзитивного замыкания ($A \to B \to C$) | Graph Engine / IoU | Согласовано (Изоляция БД + Green zone) | Высокий |
 
 ---
 
@@ -86,6 +86,8 @@
 *Плюсы:* Единственный источник правды (`Single Source of Truth`).  
 *Минусы:* Риск не пройти строгую валидацию NSUTS, если схема организаторов запрещает дополнительные поля (`additionalProperties: false`).
 
+> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md) и [RFC-03](rfc/rfc-03_data_contracts_and_system_architecture.md)):** Принят Вариант 1 (словарь по `edge_id` с полями `primary_evidence` и полным трейсом). Обеспечивает $O(1)$ доступ при визуализации и полностью покрывает требования трассировки.
+
 ---
 
 ### <a id="oq-02-skeleton-dataset"></a> OQ-02: Формат `skeleton.json` и интеграция со срезанными ребрами Train Ticket
@@ -103,6 +105,8 @@
 2. **Гранулярность узлов в скелете:**
    - Содержит ли скелет только узлы сервисов или также узлы баз данных (таблицы MySQL, коллекции Mongo) и очереди (RabbitMQ)?
    - Требуется сопоставить ID узлов в `skeleton.json` с именами папок сервисов в Train Ticket (например, `ts-travel-service` vs `ts-travel-plan-service`).
+
+> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md)):** Принят Вариант 1 (Canonical Graph + Adapters). Внутреннее представление строится на Pydantic + NetworkX, а чтение `skeleton.json` и генерация `submission.json` изолированы в отдельных адаптерах.
 
 ---
 
@@ -126,6 +130,8 @@
 3. **Эвристический поиск публичных маршрутов (Fallback Heuristics):**
    - Если класс аннотирован `@Service` и внедрен через `@Autowired` в активный контроллер, все его `public` методы условно считаются достижимыми, даже если прямой вызов в AST не найден.
 
+> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md)):** Двухступенчатая схема: детерминированный анализ достижимости (Reachability в NetworkX от корней Controller/MessageListener/ScheduledTask) отсекает мертвый код. Вызовы, достижимые, но с динамическим таргетом, передаются в список `unresolved_calls` для ML-ранжирования и трёхзонного арбитража.
+
 ---
 
 ### <a id="oq-04-transitive-closure-rules"></a> OQ-04: Правила и ограничения транзитивного замыкания ($A \to B \to C$)
@@ -141,3 +147,7 @@
    - Ограничить цепочку косвенных вызовов $k$ шагами (например, $k \le 3$), если в архитектуре Train Ticket не встречаются сквозные синхронные цепочки большей длины.
 3. **Разделение типов связей в схеме:**
    - Если целевая схема организаторов требует отличать `DIRECT_HTTP` от `TRANSITIVE_DEPENDENCY`, адаптер обязан выставлять соответствующий тип ребра.
+
+> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md)):**
+> 1. Узлы БД строго изолированы от транзитивности: обращения к таблицам — только прямые независимые рёбра.
+> 2. Транзитивное замыкание строится исключительно по рёбрам зелёной зоны ($P \ge 0.85$ или детерминированные факты AST), исключая каскадное накопление False Positives.
