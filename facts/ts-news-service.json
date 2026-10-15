@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "service_name": "ts-news-service",
+  "language": "go",
+  "framework": "webgo",
+  "port": 12862,
+  "repo_path": "data/train-ticket/ts-news-service",
+  "service_metadata": {
+    "server_port": 12862,
+    "context_path": "/api/v1/newsservice",
+    "env_vars": {
+      "PORT": "12862"
+    }
+  },
+  "inbound_endpoints": [
+    {
+      "id": "ts-news-service:GET:/api/v1/newsservice/news",
+      "path": "/api/v1/newsservice/news",
+      "http_method": "GET",
+      "handler_class": "main",
+      "handler_method": "getNewsHandler",
+      "file_path": "main.go",
+      "line_number": 28,
+      "request_dto": null,
+      "response_dto": {
+        "class_name": "NewsResponse",
+        "fields": [
+          {"name": "status", "type": "int"},
+          {"name": "msg", "type": "string"},
+          {"name": "data", "type": "[]NewsItem"}
+        ]
+      }
+    }
+  ],
+  "outbound_calls": [],
+  "db_access": [],
+  "messaging": [],
+  "internal_call_graph": [
+    {
+      "caller": "main.getNewsHandler",
+      "callee": "main.fetchStaticNews",
+      "caller_class": "main",
+      "caller_method": "getNewsHandler",
+      "callee_class": "main",
+      "callee_method": "fetchStaticNews",
+      "file_path": "main.go",
+      "line_number": 32
+    }
+  ]
+}

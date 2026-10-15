@@ -78,6 +78,8 @@ models/
 
 /data/*
 !/data/demo_graph.json
+!/data/llm_judge_dossiers_and_traps.json
+!/data/runtime_and_topology_rules.json
 datasets/
 raw_data/
 processed_data/
