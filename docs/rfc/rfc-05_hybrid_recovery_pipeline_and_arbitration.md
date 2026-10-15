@@ -6,7 +6,7 @@
 * **Связанные документы:** 
   * Заменяет/объединяет: [RFC-01](rfc-01_graph_recovery_pipeline_architecture.md), [RFC-04](rfc-04_dual_parse_pipeline_architecture.md)
   * Контракты данных: [RFC-03](rfc-03_data_contracts_and_system_architecture.md)
-  * AI-модели и признаки: [RFC-02](rfc-02_multimodal_ai_architecture.md)
+  * AI-модели и признаки: [ADR-003](../adr/adr-003_multimodal_ai_architecture.md) (ранее [RFC-02](rfc-02_multimodal_ai_architecture.md))
 
 ---
 
