@@ -1,0 +1,1387 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "metadata": {
+    "artifact_name": "facts/configs_topology.json",
+    "description": "Реестр инфраструктурной топологии, шлюзов, баз данных и очередей сообщений бенчмарка FudanSELab/train-ticket",
+    "version": "1.0.0",
+    "benchmark": "FudanSELab/train-ticket v1.0.0",
+    "generated_by": "Archonity System Analyst (Agent 1 of 6)",
+    "standards": [
+      "ADR-001: Data Contracts and System Architecture",
+      "ADR-003: Multimodal AI Architecture (Dead Code Elimination, DB Isolation)",
+      "ADR-004: Hybrid Recovery Pipeline and Arbitration",
+      "RFC-05: Hybrid Recovery Pipeline and Arbitration"
+    ],
+    "edge_evidence_defaults": {
+      "source_type": "CONFIG",
+      "confidence": 1.0
+    }
+  },
+  "services_network": {
+    "ts-ui-dashboard": {
+      "server_port": 8080,
+      "context_path": "/",
+      "is_external_entrypoint": true,
+      "k8s_node_port": 32677,
+      "language": "JavaScript/HTML",
+      "framework": "Nginx Web Server",
+      "description": "Единая внешняя точка входа системы: Nginx веб-сервер и SPA-клиент"
+    },
+    "ts-gateway-service": {
+      "server_port": 18888,
+      "context_path": "/",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Cloud Gateway (Netty)",
+      "description": "Центральный межсервисный API Gateway маршрутизации внешних запросов"
+    },
+    "ts-auth-service": {
+      "server_port": 12340,
+      "context_path": "/api/v1/authservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис аутентификации и выдачи JWT-токенов безопасности"
+    },
+    "ts-user-service": {
+      "server_port": 12342,
+      "context_path": "/api/v1/userservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис профилей и учетных записей пользователей"
+    },
+    "ts-contacts-service": {
+      "server_port": 12347,
+      "context_path": "/api/v1/contactservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Управление записной книжкой контактов пассажиров"
+    },
+    "ts-station-service": {
+      "server_port": 12345,
+      "context_path": "/api/v1/stationservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Справочник железнодорожных станций"
+    },
+    "ts-train-service": {
+      "server_port": 14567,
+      "context_path": "/api/v1/trainservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Справочник конфигураций и моделей поездов"
+    },
+    "ts-travel-service": {
+      "server_port": 12346,
+      "context_path": "/api/v1/travelservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Маршруты, расписания и сегменты поездок на скоростные поезда (G/D)"
+    },
+    "ts-travel2-service": {
+      "server_port": 16346,
+      "context_path": "/api/v1/travel2service",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Канареечный сателлит ts-travel-service (дубликат для A/B тестирования)"
+    },
+    "ts-order-service": {
+      "server_port": 12031,
+      "context_path": "/api/v1/orderservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Процессинг основных заказов на скоростные поезда"
+    },
+    "ts-order-other-service": {
+      "server_port": 12032,
+      "context_path": "/api/v1/orderOtherService",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Процессинг заказов на обычные (медленные) поезда"
+    },
+    "ts-seat-service": {
+      "server_port": 18898,
+      "context_path": "/api/v1/seatservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Алгоритмы распределения и проверки доступности мест в вагонах"
+    },
+    "ts-inside-payment-service": {
+      "server_port": 18673,
+      "context_path": "/api/v1/inside_pay_service",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Внутренний баланс пользователя, списание средств и возврат"
+    },
+    "ts-payment-service": {
+      "server_port": 19001,
+      "context_path": "/api/v1/paymentservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Внешний платежный шлюз обработки банковских транзакций"
+    },
+    "ts-security-service": {
+      "server_port": 11188,
+      "context_path": "/api/v1/securityservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Контроль лимитов заказов, блокировок и безопасности"
+    },
+    "ts-ticket-office-service": {
+      "server_port": 16108,
+      "context_path": "/api/v1/officeservice",
+      "is_external_entrypoint": false,
+      "language": "Node.js",
+      "framework": "Express.js",
+      "description": "Полиглотный сервис билетных касс на Node.js с нативным MongoDB драйвером"
+    },
+    "ts-news-service": {
+      "server_port": 12862,
+      "context_path": "/api/v1/newsservice",
+      "is_external_entrypoint": false,
+      "language": "Go",
+      "framework": "Webgo",
+      "description": "Полиглотный сервис новостной ленты на Golang с in-memory хранилищем"
+    },
+    "ts-avatar-service": {
+      "server_port": 17001,
+      "context_path": "/api/v1/avatar",
+      "is_external_entrypoint": false,
+      "language": "Python",
+      "framework": "Flask",
+      "description": "Полиглотный сервис хранения аватаров пользователей на файловом томе"
+    },
+    "ts-voucher-service": {
+      "server_port": 16101,
+      "context_path": "/api/v1/voucherservice",
+      "is_external_entrypoint": false,
+      "language": "Python",
+      "framework": "Django REST Framework",
+      "description": "Полиглотный сервис электронных ваучеров и чеков на Django ORM с MySQL"
+    },
+    "ts-route-service": {
+      "server_port": 11178,
+      "context_path": "/api/v1/routeservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис топологии железнодорожных маршрутов и списков станций"
+    },
+    "ts-price-service": {
+      "server_port": 16579,
+      "context_path": "/api/v1/priceservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис тарифов и расчета стоимости поездки по маршрутам"
+    },
+    "ts-config-service": {
+      "server_port": 15679,
+      "context_path": "/api/v1/configservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис системных настроек и конфигураций бизнес-логики"
+    },
+    "ts-consign-price-service": {
+      "server_port": 16110,
+      "context_path": "/api/v1/consignpriceservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Тарифные планы на перевозку и доставку багажа (консигнация)"
+    },
+    "ts-consign-service": {
+      "server_port": 16111,
+      "context_path": "/api/v1/consignservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис оформления и сопровождения багажа пассажиров"
+    },
+    "ts-food-service": {
+      "server_port": 18856,
+      "context_path": "/api/v1/foodservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис меню питания в поездках и агрегатор заказов еды"
+    },
+    "ts-station-food-service": {
+      "server_port": 18855,
+      "context_path": "/api/v1/stationfoodservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Справочник ресторанов и магазинов питания на вокзалах и станциях"
+    },
+    "ts-train-food-service": {
+      "server_port": 19999,
+      "context_path": "/api/v1/trainfoodservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Справочник бортового питания в вагонах конкретных поездов"
+    },
+    "ts-food-delivery-service": {
+      "server_port": 18857,
+      "context_path": "/api/v1/fooddeliveryservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис доставки еды к местам посадки пассажиров"
+    },
+    "ts-assurance-service": {
+      "server_port": 18885,
+      "context_path": "/api/v1/assuranceservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис оформления туристических и транспортных страховок"
+    },
+    "ts-ticketinfo-service": {
+      "server_port": 15681,
+      "context_path": "/api/v1/ticketinfoservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Агрегатор детальной информации о билетах, ценах и маршрутах"
+    },
+    "ts-basic-info-service": {
+      "server_port": 15680,
+      "context_path": "/api/v1/basicservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "aliases": [
+        "ts-basic-service"
+      ],
+      "description": "Фасадный сервис нормализации базовых справочников (станции, поезда, цены)"
+    },
+    "ts-basic-service": {
+      "server_port": 15680,
+      "context_path": "/api/v1/basicservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "canonical_name": "ts-basic-info-service",
+      "description": "Фасадный сервис нормализации базовых справочников (синоним ts-basic-info-service)"
+    },
+    "ts-preserve-service": {
+      "server_port": 14568,
+      "context_path": "/api/v1/preserveservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Оркестратор сценария бронирования билетов на скоростные поезда"
+    },
+    "ts-preserve-other-service": {
+      "server_port": 14569,
+      "context_path": "/api/v1/preserveotherservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Оркестратор сценария бронирования билетов на медленные поезда"
+    },
+    "ts-route-plan-service": {
+      "server_port": 14578,
+      "context_path": "/api/v1/routeplanservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Оркестратор алгоритмов планирования оптимальных маршрутов (быстрый, дешевый)"
+    },
+    "ts-cancel-service": {
+      "server_port": 18886,
+      "context_path": "/api/v1/cancelservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Оркестратор процесса отмены билета, расчета штрафа и возврата средств"
+    },
+    "ts-rebook-service": {
+      "server_port": 18887,
+      "context_path": "/api/v1/rebookservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис перебронирования билетов на другие даты или рейсы"
+    },
+    "ts-execute-service": {
+      "server_port": 12386,
+      "context_path": "/api/v1/executeservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис подтверждения фактической посадки пассажира и исполнения билета"
+    },
+    "ts-verification-code-service": {
+      "server_port": 15678,
+      "context_path": "/api/v1/verifycode",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис генерации и валидации кодов капчи и верификации"
+    },
+    "ts-notification-service": {
+      "server_port": 17853,
+      "context_path": "/api/v1/notifservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис генерации и отправки email-уведомлений по событиям из RabbitMQ"
+    },
+    "ts-wait-order-service": {
+      "server_port": 18889,
+      "context_path": "/api/v1/waitorderservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Сервис обработки очереди ожидания билетов (лист ожидания)"
+    },
+    "ts-admin-basic-info-service": {
+      "server_port": 18767,
+      "context_path": "/api/v1/adminbasicservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Административный сервис управления базовыми сущностями (Dead Code в пользовательских сценариях)"
+    },
+    "ts-admin-order-service": {
+      "server_port": 16112,
+      "context_path": "/api/v1/adminorderservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Административный сервис прямого доступа к таблицам заказов (Shared Persistency)"
+    },
+    "ts-admin-route-service": {
+      "server_port": 16113,
+      "context_path": "/api/v1/adminrouteservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Административный сервис модификации маршрутов"
+    },
+    "ts-admin-travel-service": {
+      "server_port": 16114,
+      "context_path": "/api/v1/admintravelservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Административный сервис управления рейсами"
+    },
+    "ts-admin-user-service": {
+      "server_port": 16115,
+      "context_path": "/api/v1/adminuserservice",
+      "is_external_entrypoint": false,
+      "language": "Java",
+      "framework": "Spring Boot",
+      "description": "Административный сервис прямого доступа к таблицам пользователей (Shared Persistency)"
+    },
+    "ts-server-mysql": {
+      "server_port": 3306,
+      "context_path": null,
+      "is_external_entrypoint": false,
+      "language": "SQL",
+      "framework": "MySQL Server 8.0",
+      "description": "Централизованный кластер реляционной СУБД MySQL"
+    },
+    "ts-server-mongo": {
+      "server_port": 27017,
+      "context_path": null,
+      "is_external_entrypoint": false,
+      "language": "NoSQL / BSON",
+      "framework": "MongoDB Server",
+      "description": "Централизованный кластер документоориентированной СУБД MongoDB"
+    },
+    "rabbitmq": {
+      "server_port": 5672,
+      "management_port": 15672,
+      "context_path": null,
+      "is_external_entrypoint": false,
+      "language": "Erlang",
+      "framework": "RabbitMQ AMQP Broker",
+      "description": "Центральный брокер сообщений AMQP с Management UI на порту 15672"
+    }
+  },
+  "gateway_routes": {
+    "nginx_frontend_proxy": {
+      "service_name": "ts-ui-dashboard",
+      "listen_port": 8080,
+      "k8s_node_port": 32677,
+      "config_source": "nginx.conf",
+      "routes": [
+        {
+          "id": "nginx-api-v1-proxy",
+          "location": "/api/v1/",
+          "proxy_pass": "http://ts-gateway-service:18888",
+          "proxy_headers": {
+            "Host": "$host",
+            "X-Real-IP": "$remote_addr",
+            "X-Forwarded-For": "$proxy_add_x_forwarded_for"
+          },
+          "timeouts": {
+            "proxy_connect_timeout": "60s",
+            "proxy_read_timeout": "60s"
+          },
+          "description": "Проксирование всех входящих вызовов REST API на центральный межсервисный Spring Cloud Gateway"
+        },
+        {
+          "id": "nginx-spa-static",
+          "location": "/",
+          "proxy_pass": null,
+          "root": "/usr/share/nginx/html",
+          "try_files": "$uri $uri/ /index.html",
+          "description": "Раздача статических HTML/CSS/JS файлов клиентского SPA-интерфейса"
+        }
+      ]
+    },
+    "spring_cloud_gateway": {
+      "service_name": "ts-gateway-service",
+      "server_port": 18888,
+      "config_source": "ts-gateway-service/src/main/resources/application.yml",
+      "routes": [
+        {
+          "id": "ts-order-service",
+          "uri": "http://ts-order-service:12031",
+          "predicates": [
+            "Path=/api/v1/orderservice/**"
+          ]
+        },
+        {
+          "id": "ts-order-other-service",
+          "uri": "http://ts-order-other-service:12032",
+          "predicates": [
+            "Path=/api/v1/orderOtherService/**"
+          ]
+        },
+        {
+          "id": "ts-travel-service",
+          "uri": "http://ts-travel-service:12346",
+          "predicates": [
+            "Path=/api/v1/travelservice/**"
+          ]
+        },
+        {
+          "id": "ts-travel2-service",
+          "uri": "http://ts-travel2-service:16346",
+          "predicates": [
+            "Path=/api/v1/travel2service/**"
+          ]
+        },
+        {
+          "id": "ts-seat-service",
+          "uri": "http://ts-seat-service:18898",
+          "predicates": [
+            "Path=/api/v1/seatservice/**"
+          ]
+        },
+        {
+          "id": "ts-auth-service",
+          "uri": "http://ts-auth-service:12340",
+          "predicates": [
+            "Path=/api/v1/authservice/**, /api/v1/users/login"
+          ]
+        },
+        {
+          "id": "ts-user-service",
+          "uri": "http://ts-user-service:12342",
+          "predicates": [
+            "Path=/api/v1/userservice/**"
+          ]
+        },
+        {
+          "id": "ts-contacts-service",
+          "uri": "http://ts-contacts-service:12347",
+          "predicates": [
+            "Path=/api/v1/contactservice/**"
+          ]
+        },
+        {
+          "id": "ts-station-service",
+          "uri": "http://ts-station-service:12345",
+          "predicates": [
+            "Path=/api/v1/stationservice/**"
+          ]
+        },
+        {
+          "id": "ts-train-service",
+          "uri": "http://ts-train-service:14567",
+          "predicates": [
+            "Path=/api/v1/trainservice/**"
+          ]
+        },
+        {
+          "id": "ts-route-service",
+          "uri": "http://ts-route-service:11178",
+          "predicates": [
+            "Path=/api/v1/routeservice/**"
+          ]
+        },
+        {
+          "id": "ts-price-service",
+          "uri": "http://ts-price-service:16579",
+          "predicates": [
+            "Path=/api/v1/priceservice/**"
+          ]
+        },
+        {
+          "id": "ts-basic-info-service",
+          "uri": "http://ts-basic-info-service:15680",
+          "aliases": [
+            "ts-basic-service"
+          ],
+          "predicates": [
+            "Path=/api/v1/basicservice/**"
+          ]
+        },
+        {
+          "id": "ts-ticketinfo-service",
+          "uri": "http://ts-ticketinfo-service:15681",
+          "predicates": [
+            "Path=/api/v1/ticketinfoservice/**"
+          ]
+        },
+        {
+          "id": "ts-preserve-service",
+          "uri": "http://ts-preserve-service:14568",
+          "predicates": [
+            "Path=/api/v1/preserveservice/**"
+          ]
+        },
+        {
+          "id": "ts-preserve-other-service",
+          "uri": "http://ts-preserve-other-service:14569",
+          "predicates": [
+            "Path=/api/v1/preserveotherservice/**"
+          ]
+        },
+        {
+          "id": "ts-inside-payment-service",
+          "uri": "http://ts-inside-payment-service:18673",
+          "predicates": [
+            "Path=/api/v1/inside_pay_service/**"
+          ]
+        },
+        {
+          "id": "ts-payment-service",
+          "uri": "http://ts-payment-service:19001",
+          "predicates": [
+            "Path=/api/v1/paymentservice/**"
+          ]
+        },
+        {
+          "id": "ts-security-service",
+          "uri": "http://ts-security-service:11188",
+          "predicates": [
+            "Path=/api/v1/securityservice/**"
+          ]
+        },
+        {
+          "id": "ts-config-service",
+          "uri": "http://ts-config-service:15679",
+          "predicates": [
+            "Path=/api/v1/configservice/**"
+          ]
+        },
+        {
+          "id": "ts-consign-price-service",
+          "uri": "http://ts-consign-price-service:16110",
+          "predicates": [
+            "Path=/api/v1/consignpriceservice/**"
+          ]
+        },
+        {
+          "id": "ts-consign-service",
+          "uri": "http://ts-consign-service:16111",
+          "predicates": [
+            "Path=/api/v1/consignservice/**"
+          ]
+        },
+        {
+          "id": "ts-food-service",
+          "uri": "http://ts-food-service:18856",
+          "predicates": [
+            "Path=/api/v1/foodservice/**"
+          ]
+        },
+        {
+          "id": "ts-station-food-service",
+          "uri": "http://ts-station-food-service:18855",
+          "predicates": [
+            "Path=/api/v1/stationfoodservice/**"
+          ]
+        },
+        {
+          "id": "ts-train-food-service",
+          "uri": "http://ts-train-food-service:19999",
+          "predicates": [
+            "Path=/api/v1/trainfoodservice/**"
+          ]
+        },
+        {
+          "id": "ts-food-delivery-service",
+          "uri": "http://ts-food-delivery-service:18857",
+          "predicates": [
+            "Path=/api/v1/fooddeliveryservice/**"
+          ]
+        },
+        {
+          "id": "ts-assurance-service",
+          "uri": "http://ts-assurance-service:18885",
+          "predicates": [
+            "Path=/api/v1/assuranceservice/**"
+          ]
+        },
+        {
+          "id": "ts-route-plan-service",
+          "uri": "http://ts-route-plan-service:14578",
+          "predicates": [
+            "Path=/api/v1/routeplanservice/**"
+          ]
+        },
+        {
+          "id": "ts-cancel-service",
+          "uri": "http://ts-cancel-service:18886",
+          "predicates": [
+            "Path=/api/v1/cancelservice/**"
+          ]
+        },
+        {
+          "id": "ts-rebook-service",
+          "uri": "http://ts-rebook-service:18887",
+          "predicates": [
+            "Path=/api/v1/rebookservice/**"
+          ]
+        },
+        {
+          "id": "ts-execute-service",
+          "uri": "http://ts-execute-service:12386",
+          "predicates": [
+            "Path=/api/v1/executeservice/**"
+          ]
+        },
+        {
+          "id": "ts-verification-code-service",
+          "uri": "http://ts-verification-code-service:15678",
+          "predicates": [
+            "Path=/api/v1/verifycode/**"
+          ]
+        },
+        {
+          "id": "ts-notification-service",
+          "uri": "http://ts-notification-service:17853",
+          "predicates": [
+            "Path=/api/v1/notifservice/**"
+          ]
+        },
+        {
+          "id": "ts-wait-order-service",
+          "uri": "http://ts-wait-order-service:18889",
+          "predicates": [
+            "Path=/api/v1/waitorderservice/**"
+          ]
+        },
+        {
+          "id": "ts-ticket-office-service",
+          "uri": "http://ts-ticket-office-service:16108",
+          "predicates": [
+            "Path=/api/v1/officeservice/**"
+          ]
+        },
+        {
+          "id": "ts-voucher-service",
+          "uri": "http://ts-voucher-service:16101",
+          "predicates": [
+            "Path=/api/v1/voucherservice/**"
+          ]
+        },
+        {
+          "id": "ts-news-service",
+          "uri": "http://ts-news-service:12862",
+          "predicates": [
+            "Path=/api/v1/newsservice/**"
+          ]
+        },
+        {
+          "id": "ts-avatar-service",
+          "uri": "http://ts-avatar-service:17001",
+          "predicates": [
+            "Path=/api/v1/avatar/**"
+          ]
+        },
+        {
+          "id": "ts-admin-basic-info-service",
+          "uri": "http://ts-admin-basic-info-service:18767",
+          "predicates": [
+            "Path=/api/v1/adminbasicservice/**"
+          ]
+        },
+        {
+          "id": "ts-admin-order-service",
+          "uri": "http://ts-admin-order-service:16112",
+          "predicates": [
+            "Path=/api/v1/adminorderservice/**"
+          ]
+        },
+        {
+          "id": "ts-admin-route-service",
+          "uri": "http://ts-admin-route-service:16113",
+          "predicates": [
+            "Path=/api/v1/adminrouteservice/**"
+          ]
+        },
+        {
+          "id": "ts-admin-travel-service",
+          "uri": "http://ts-admin-travel-service:16114",
+          "predicates": [
+            "Path=/api/v1/admintravelservice/**"
+          ]
+        },
+        {
+          "id": "ts-admin-user-service",
+          "uri": "http://ts-admin-user-service:16115",
+          "predicates": [
+            "Path=/api/v1/adminuserservice/**"
+          ]
+        }
+      ]
+    }
+  },
+  "database_topology": {
+    "databases": {
+      "ts-server-mysql": {
+        "host": "ts-server-mysql:3306",
+        "db_type": "MYSQL",
+        "default_schema": "ts",
+        "default_credentials": "root:root",
+        "is_terminal_sink": true
+      },
+      "ts-server-mongo": {
+        "host": "ts-server-mongo:27017",
+        "db_type": "MONGODB",
+        "default_cluster": "ts",
+        "storage_mode": "Shared Volume / Shared Network Domain",
+        "is_terminal_sink": true
+      }
+    },
+    "tables_and_collections": [
+      {
+        "table_name": "orders",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "description": "Таблица заказов скоростных поездов"
+      },
+      {
+        "table_name": "orders_other",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "description": "Таблица заказов поездов обычной категории (медленные поезда)"
+      },
+      {
+        "table_name": "user",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "description": "Таблица профилей зарегистрированных пользователей"
+      },
+      {
+        "table_name": "auth_user",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "description": "Таблица учетных записей безопасности и хэшей паролей авторизации"
+      },
+      {
+        "table_name": "inside_payment",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "description": "Таблица балансов и внутренних платежных транзакций"
+      },
+      {
+        "table_name": "payment",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "description": "Таблица записей внешних платежей"
+      },
+      {
+        "table_name": "security_config",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "description": "Таблица правил безопасности и лимитов проверок заказов"
+      },
+      {
+        "table_name": "verification_code",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "description": "Таблица одноразовых проверочных кодов капчи"
+      },
+      {
+        "table_name": "voucher",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "description": "Таблица ваучеров и чеков на Django ORM"
+      },
+      {
+        "table_name": "station",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "station",
+        "is_terminal_sink": true,
+        "description": "Коллекция станций железной дороги"
+      },
+      {
+        "table_name": "train_type",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "train_type",
+        "is_terminal_sink": true,
+        "description": "Коллекция моделей и категорий поездов"
+      },
+      {
+        "table_name": "route",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "route",
+        "is_terminal_sink": true,
+        "description": "Коллекция маршрутов и последовательностей станций"
+      },
+      {
+        "table_name": "price_config",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "price_config",
+        "is_terminal_sink": true,
+        "description": "Коллекция тарифов и базовых коэффициентов цен"
+      },
+      {
+        "table_name": "config",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "config",
+        "is_terminal_sink": true,
+        "description": "Коллекция настроек и системных параметров бизнес-правил"
+      },
+      {
+        "table_name": "contacts",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "contacts",
+        "is_terminal_sink": true,
+        "description": "Коллекция контактных данных пассажиров"
+      },
+      {
+        "table_name": "trip",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "trip",
+        "is_terminal_sink": true,
+        "description": "Коллекция рейсов скоростных поездов"
+      },
+      {
+        "table_name": "trip2",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "trip2",
+        "is_terminal_sink": true,
+        "description": "Коллекция рейсов канареечного сервиса travel2"
+      },
+      {
+        "table_name": "food",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "food",
+        "is_terminal_sink": true,
+        "description": "Коллекция заказов бортового питания"
+      },
+      {
+        "table_name": "station_food",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "station_food",
+        "is_terminal_sink": true,
+        "description": "Коллекция ресторанов и точек питания на железнодорожных вокзалах"
+      },
+      {
+        "table_name": "train_food",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "train_food",
+        "is_terminal_sink": true,
+        "description": "Коллекция ассортимента питания в составах конкретных поездов"
+      },
+      {
+        "table_name": "consign_price",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "consign_price",
+        "is_terminal_sink": true,
+        "description": "Коллекция тарифов на доставку и перевозку багажа"
+      },
+      {
+        "table_name": "consign",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "consign",
+        "is_terminal_sink": true,
+        "description": "Коллекция багажных квитанций и накладных консигнации"
+      },
+      {
+        "table_name": "assurance",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "assurance",
+        "is_terminal_sink": true,
+        "description": "Коллекция страховых полисов пассажиров"
+      },
+      {
+        "table_name": "seat",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "seat",
+        "is_terminal_sink": true,
+        "description": "Коллекция состояния бронирования и распределения мест"
+      },
+      {
+        "table_name": "office",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "collection": "office",
+        "is_terminal_sink": true,
+        "description": "Коллекция билетных касс и географических филиалов"
+      }
+    ],
+    "service_mappings": [
+      {
+        "service_name": "ts-order-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "order.entity.Order",
+        "table_name": "orders",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-order-other-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "other.entity.Order",
+        "table_name": "orders_other",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-user-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "user.entity.User",
+        "table_name": "user",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-auth-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "auth.entity.AuthUser",
+        "table_name": "auth_user",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-admin-user-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "adminuser.entity.User",
+        "table_name": "user",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true,
+        "additional_tables": ["auth_user"]
+      },
+      {
+        "service_name": "ts-admin-order-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "adminorder.entity.Order",
+        "table_name": "orders",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true,
+        "additional_tables": ["orders_other"]
+      },
+      {
+        "service_name": "ts-inside-payment-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "inside_payment.entity.Payment",
+        "table_name": "inside_payment",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-payment-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "payment.entity.PaymentRecord",
+        "table_name": "payment",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-security-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "security.entity.SecurityConfig",
+        "table_name": "security_config",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-verification-code-service",
+        "framework": "Spring Data JPA",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "verifycode.entity.VerificationCode",
+        "table_name": "verification_code",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-station-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "station.entity.Station",
+        "table_name": "station",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-train-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "train.entity.TrainType",
+        "table_name": "train_type",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-route-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "route.entity.Route",
+        "table_name": "route",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-price-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "price.entity.PriceConfig",
+        "table_name": "price_config",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-config-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "config.entity.Config",
+        "table_name": "config",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-contacts-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "contacts.entity.Contacts",
+        "table_name": "contacts",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-travel-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "travel.entity.Trip",
+        "table_name": "trip",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-travel2-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "travel2.entity.Trip",
+        "table_name": "trip2",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-food-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "food.entity.Food",
+        "table_name": "food",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-station-food-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "food.entity.StationFood",
+        "table_name": "station_food",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-train-food-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "food.entity.TrainFood",
+        "table_name": "train_food",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-consign-price-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "consignprice.entity.ConsignPrice",
+        "table_name": "consign_price",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-consign-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "consign.entity.Consign",
+        "table_name": "consign",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-assurance-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "assurance.entity.Assurance",
+        "table_name": "assurance",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-seat-service",
+        "framework": "Spring Data MongoDB",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "seat.entity.Seat",
+        "table_name": "seat",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-ticket-office-service",
+        "framework": "Native MongoDB Driver",
+        "db_type": "MONGODB",
+        "host": "ts-server-mongo:27017",
+        "entity_class": "Office",
+        "table_name": "office",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      },
+      {
+        "service_name": "ts-voucher-service",
+        "framework": "Django ORM",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "entity_class": "voucher.models.Voucher",
+        "table_name": "voucher",
+        "operation": "READ_WRITE",
+        "is_terminal_sink": true
+      }
+    ],
+    "shared_persistency": {
+      "orders_shared_table": {
+        "description": "Разделяемая реляционная таблица 'orders' между ts-order-service и ts-admin-order-service",
+        "table_name": "orders",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "participating_services": [
+          "ts-order-service",
+          "ts-admin-order-service"
+        ],
+        "architectural_smell": "Shared Persistency (Database-level coupling)",
+        "adr_graph_rule": "Согласно ADR-001, в графе формируются независимые типизированные рёбра: (ts-order-service -> orders) и (ts-admin-order-service -> orders). Транзитивный проход через orders запрещен (is_terminal_sink: true)."
+      },
+      "orders_other_shared_table": {
+        "description": "Разделяемая реляционная таблица 'orders_other' между ts-order-other-service и ts-admin-order-service",
+        "table_name": "orders_other",
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "participating_services": [
+          "ts-order-other-service",
+          "ts-admin-order-service"
+        ],
+        "architectural_smell": "Shared Persistency",
+        "adr_graph_rule": "Независимые рёбра к узлу orders_other от каждого сервиса."
+      },
+      "users_auth_shared_schema": {
+        "description": "Общая схема 'ts' и таблицы пользователей 'user' и 'auth_user' в СУБД MySQL, разделяемые ts-user-service, ts-auth-service и ts-admin-user-service",
+        "tables": [
+          "user",
+          "auth_user"
+        ],
+        "db_type": "MYSQL",
+        "host": "ts-server-mysql:3306",
+        "schema": "ts",
+        "is_terminal_sink": true,
+        "participating_services": [
+          "ts-user-service",
+          "ts-auth-service",
+          "ts-admin-user-service"
+        ],
+        "architectural_smell": "Shared Database / Shared Persistency",
+        "adr_graph_rule": "Каждый микросервис связывается отдельным ребром READS_DB/WRITES_DB со своей целевой таблицей в схеме ts."
+      },
+      "mongo_shared_contour": {
+        "description": "Единый сетевой контур и общее файловое дисковое хранилище СУБД ts-server-mongo:27017 для всех 16 MongoDB-микросервисов",
+        "host": "ts-server-mongo:27017",
+        "db_type": "MONGODB",
+        "is_terminal_sink": true,
+        "participating_services": [
+          "ts-station-service",
+          "ts-train-service",
+          "ts-route-service",
+          "ts-price-service",
+          "ts-config-service",
+          "ts-contacts-service",
+          "ts-travel-service",
+          "ts-travel2-service",
+          "ts-food-service",
+          "ts-station-food-service",
+          "ts-train-food-service",
+          "ts-consign-price-service",
+          "ts-consign-service",
+          "ts-assurance-service",
+          "ts-seat-service",
+          "ts-ticket-office-service"
+        ],
+        "architectural_smell": "Shared Infrastructure Domain / Shared Volume",
+        "adr_graph_rule": "Каждый MongoDB-микросервис инцидентен только своему узлу коллекции. Все узлы коллекций имеют флаг is_terminal_sink: true для предотвращения ложного склеивания сервисов при транзитивном замыкании."
+      }
+    }
+  },
+  "messaging_topology": {
+    "broker": {
+      "type": "RABBITMQ",
+      "host": "rabbitmq",
+      "port": 5672,
+      "amqp_port": 5672,
+      "management_port": 15672,
+      "ports": [
+        5672,
+        15672
+      ],
+      "client_library": "spring-boot-starter-amqp"
+    },
+    "queues": [
+      {
+        "name": "email",
+        "exchange": "email-exchange",
+        "default_exchange": "",
+        "routing_key": "email",
+        "payload_class": "edu.fudan.common.util.Notification",
+        "description": "Очередь email для асинхронной рассылки почтовых уведомлений о создании и оплате билетов",
+        "producers": [
+          {
+            "service_name": "ts-order-service",
+            "role": "PRODUCER",
+            "relation_type": "PRODUCES_MESSAGE",
+            "call_expression": "rabbitTemplate.convertAndSend(\"email\", notification)",
+            "source_method": "order.service.OrderServiceImpl.createOrder / initNotification",
+            "trigger": "Создание нового заказа (Ticket Preservation)",
+            "payload_class": "edu.fudan.common.util.Notification"
+          },
+          {
+            "service_name": "ts-inside-payment-service",
+            "role": "PRODUCER",
+            "relation_type": "PRODUCES_MESSAGE",
+            "call_expression": "rabbitTemplate.convertAndSend(\"email\", notification)",
+            "source_method": "inside_payment.service.InsidePaymentServiceImpl.pay",
+            "trigger": "Подтверждение успешного платежа и списания средств (Inside Payment)",
+            "payload_class": "edu.fudan.common.util.Notification"
+          }
+        ],
+        "consumers": [
+          {
+            "service_name": "ts-notification-service",
+            "role": "CONSUMER",
+            "relation_type": "CONSUMES_MESSAGE",
+            "handler_class": "notification.mq.RabbitReceive",
+            "handler_method": "process",
+            "annotation": "@RabbitListener(queues = \"email\")",
+            "payload_class": "edu.fudan.common.util.Notification"
+          }
+        ]
+      }
+    ]
+  }
+}
