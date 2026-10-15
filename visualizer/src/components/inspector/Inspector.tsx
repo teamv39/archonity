@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   X,
   FileCode,
@@ -19,6 +19,7 @@ import type {
   BlastRadiusResult,
   CanonicalGraph,
 } from '../../types/graph';
+import { EdgeRegistryTable } from './EdgeRegistryTable';
 import './inspector.css';
 
 interface InspectorProps {
@@ -29,6 +30,8 @@ interface InspectorProps {
   onClearBlastRadius: () => void;
   onClose: () => void;
   graph: CanonicalGraph;
+  filteredEdges: CanonicalEdge[];
+  onSelectEdge: (edgeId: string) => void;
 }
 
 export const Inspector: React.FC<InspectorProps> = ({
@@ -39,8 +42,10 @@ export const Inspector: React.FC<InspectorProps> = ({
   onClearBlastRadius,
   onClose,
   graph,
+  filteredEdges,
+  onSelectEdge,
 }) => {
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -48,383 +53,432 @@ export const Inspector: React.FC<InspectorProps> = ({
     setTimeout(() => setCopied(false), 1500);
   };
 
-  // 1. Отображение информации о выбранном ребре (Evidence Log)
-  if (selectedEdge) {
-    const evi = selectedEdge.evidenceDetails;
-    const isLLM = selectedEdge.sourceType === 'LLM_JUDGE_VERIFIED';
-    const isML = selectedEdge.sourceType === 'ML_PREDICTED';
-    const percent = Math.round(selectedEdge.confidence * 100);
+  return (
+    <aside className="inspector-sidebar" aria-label="Инспектор архитектурных доказательств">
+      {/* Верхняя прокручиваемая область инспектора (Паспорт / Evidence / Blast Radius) */}
+      <div className="inspector-scroll-area">
+        {/* 1. Выбрано ребро: Evidence Log View */}
+        {selectedEdge && (
+          <div className="inspector-pane">
+            <div className="inspector-pane-header">
+              <div className="pane-title-group">
+                <ShieldCheck size={14} style={{ color: 'var(--edge-ast)' }} />
+                <span className="pane-title">ПАСПОРТ РЕБРА &bull; EVIDENCE LOG</span>
+              </div>
+              <button
+                type="button"
+                className="inspector-close-btn"
+                onClick={onClose}
+                title="Закрыть выбор"
+              >
+                <X size={13} />
+              </button>
+            </div>
 
-    return (
-      <div className="inspector-sidebar">
-        <div className="inspector-header">
-          <div className="inspector-title-group">
-            <ShieldCheck size={16} style={{ color: '#38bdf8' }} />
-            <span className="inspector-title">Evidence Log Inspector</span>
+            <div className="inspector-pane-body">
+              {/* Блок 1: Паспорт выбранного элемента */}
+              <div className="cad-card">
+                <div className="card-section-title">СВЯЗЬ</div>
+                <div className="edge-route-display">
+                  <span className="mono-node-id">{selectedEdge.source}</span>
+                  <ArrowRight size={12} className="route-arrow" />
+                  <span className="mono-node-id">{selectedEdge.target}</span>
+                </div>
+
+                <div className="cad-grid-row">
+                  <div className="cad-field">
+                    <span className="cad-field-label">ПРОТОКОЛ</span>
+                    <span className="cad-field-value mono-val">{selectedEdge.relationType}</span>
+                  </div>
+                  <div className="cad-field">
+                    <span className="cad-field-label">СЛОЙ ИСТОЧНИКА</span>
+                    <span className="cad-field-value mono-val" style={{ fontWeight: 600 }}>
+                      {selectedEdge.sourceType}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="cad-field">
+                  <div className="confidence-label-row">
+                    <span className="cad-field-label">УВЕРЕННОСТЬ (CONFIDENCE)</span>
+                    <span className="cad-field-value mono-val score-highlight">
+                      {selectedEdge.confidence.toFixed(2)} ({Math.round(selectedEdge.confidence * 100)}%)
+                    </span>
+                  </div>
+                  <div className="cad-meter-bar">
+                    <div
+                      className="cad-meter-fill"
+                      style={{
+                        width: `${Math.round(selectedEdge.confidence * 100)}%`,
+                        backgroundColor:
+                          selectedEdge.confidence >= 0.85
+                            ? 'var(--edge-ast)'
+                            : selectedEdge.confidence >= 0.5
+                            ? 'var(--edge-ml)'
+                            : 'var(--alert-blast)',
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Блок 2: Доказательство (Evidence Details) */}
+              {selectedEdge.evidenceDetails && (
+                <div className="cad-card">
+                  <div className="card-section-title">
+                    <FileCode size={12} />
+                    <span>ДОКАЗАТЕЛЬНАЯ БАЗА (EVIDENCE.JSON)</span>
+                  </div>
+
+                  {selectedEdge.evidenceDetails.filePath && (
+                    <div className="cad-field">
+                      <span className="cad-field-label">ФАЙЛ И СТРОКА</span>
+                      <div className="code-location-row">
+                        <span className="mono-val location-path">
+                          {selectedEdge.evidenceDetails.filePath}:{selectedEdge.evidenceDetails.lineNumber}
+                        </span>
+                        <button
+                          type="button"
+                          className="copy-btn"
+                          onClick={() =>
+                            handleCopy(
+                              `${selectedEdge.evidenceDetails?.filePath}:${selectedEdge.evidenceDetails?.lineNumber}`
+                            )
+                          }
+                          title="Скопировать путь к файлу"
+                        >
+                          {copied ? (
+                            <Check size={12} style={{ color: 'var(--edge-ast)' }} />
+                          ) : (
+                            <Copy size={12} />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedEdge.evidenceDetails.caller && (
+                    <div className="cad-field">
+                      <span className="cad-field-label">МЕТОД ВЫЗОВА (CALLER)</span>
+                      <span className="cad-field-value mono-val">
+                        {selectedEdge.evidenceDetails.caller}
+                      </span>
+                    </div>
+                  )}
+
+                  {selectedEdge.evidenceDetails.matchedEndpoint && (
+                    <div className="cad-field">
+                      <span className="cad-field-label">ЦЕЛЕВОЙ ЭНДПОИНТ / ШАБЛОН</span>
+                      <span className="cad-field-value mono-val" style={{ color: 'var(--edge-ast)' }}>
+                        {selectedEdge.evidenceDetails.matchedEndpoint}
+                      </span>
+                    </div>
+                  )}
+
+                  {selectedEdge.evidenceDetails.callChain &&
+                    selectedEdge.evidenceDetails.callChain.length > 0 && (
+                      <div className="cad-field">
+                        <span className="cad-field-label">ЦЕПОЧКА ВЫЗОВОВ (CALL CHAIN)</span>
+                        <div className="call-chain-cad">
+                          {selectedEdge.evidenceDetails.callChain.map((step, idx) => (
+                            <div key={step} className="call-chain-node">
+                              <span className="step-num">[{idx + 1}]</span>
+                              <span className="step-text">{step}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                  {selectedEdge.evidenceDetails.codeSnippet && (
+                    <div className="cad-field">
+                      <span className="cad-field-label">ФРАГМЕНТ КОДА</span>
+                      <pre className="cad-code-snippet">
+                        {selectedEdge.evidenceDetails.codeSnippet}
+                      </pre>
+                    </div>
+                  )}
+
+                  {/* Признаки ML-модели */}
+                  {selectedEdge.sourceType === 'ML_PREDICTED' &&
+                    selectedEdge.evidenceDetails.topFeatures && (
+                      <div className="cad-field" style={{ marginTop: 4 }}>
+                        <span className="cad-field-label">ML ПРИЗНАКИ (CATBOOST FEATURES)</span>
+                        <div className="features-cad-grid">
+                          {selectedEdge.evidenceDetails.topFeatures.jinaCodeSimilarity !== undefined && (
+                            <div className="feature-cell">
+                              <span className="feature-key">UniXcoder Sim</span>
+                              <span className="feature-val">
+                                {selectedEdge.evidenceDetails.topFeatures.jinaCodeSimilarity.toFixed(3)}
+                              </span>
+                            </div>
+                          )}
+                          {selectedEdge.evidenceDetails.topFeatures.dtoOverlapJaccard !== undefined && (
+                            <div className="feature-cell">
+                              <span className="feature-key">DTO Jaccard</span>
+                              <span className="feature-val">
+                                {selectedEdge.evidenceDetails.topFeatures.dtoOverlapJaccard.toFixed(3)}
+                              </span>
+                            </div>
+                          )}
+                          {selectedEdge.evidenceDetails.topFeatures.bm25TokenSimilarity !== undefined && (
+                            <div className="feature-cell">
+                              <span className="feature-key">BM25 Tokens</span>
+                              <span className="feature-val">
+                                {selectedEdge.evidenceDetails.topFeatures.bm25TokenSimilarity.toFixed(3)}
+                              </span>
+                            </div>
+                          )}
+                          {selectedEdge.evidenceDetails.topFeatures.adamicAdarIndex !== undefined && (
+                            <div className="feature-cell">
+                              <span className="feature-key">Adamic-Adar</span>
+                              <span className="feature-val">
+                                {selectedEdge.evidenceDetails.topFeatures.adamicAdarIndex.toFixed(3)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                  {/* Вердикт LLM-Judge */}
+                  {selectedEdge.sourceType === 'LLM_JUDGE_VERIFIED' &&
+                    selectedEdge.evidenceDetails.llmVerdict && (
+                      <div className="llm-cad-verdict">
+                        <div className="verdict-header">
+                          <span className="verdict-tag">
+                            {selectedEdge.evidenceDetails.llmVerdict.verdict}
+                          </span>
+                          <span className="mono-val" style={{ fontSize: 10, color: '#047857' }}>
+                            Score: {Math.round(selectedEdge.evidenceDetails.llmVerdict.confidence * 100)}%
+                          </span>
+                        </div>
+                        <div className="verdict-reasoning">
+                          {selectedEdge.evidenceDetails.llmVerdict.reasoning}
+                        </div>
+                      </div>
+                    )}
+                </div>
+              )}
+            </div>
           </div>
-          <button type="button" className="inspector-close-btn" onClick={onClose}>
-            <X size={16} />
-          </button>
-        </div>
+        )}
 
-        <div className="inspector-content">
-          {/* Сводка связи */}
-          <div className="inspector-card">
-            <div className="card-title">Связь</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13, fontWeight: 600 }}>
-              <span className="mono-val" style={{ color: '#38bdf8' }}>{selectedEdge.source}</span>
-              <ArrowRight size={14} style={{ color: '#64748b' }} />
-              <span className="mono-val" style={{ color: '#a855f7' }}>{selectedEdge.target}</span>
+        {/* 2. Выбран узел: Blast Radius & Node Inspector */}
+        {!selectedEdge && selectedNode && (
+          <div className="inspector-pane">
+            <div className="inspector-pane-header">
+              <div className="pane-title-group">
+                <AlertTriangle size={14} style={{ color: 'var(--alert-blast)' }} />
+                <span className="pane-title">ПАСПОРТ УЗЛА &bull; BLAST RADIUS</span>
+              </div>
+              <button
+                type="button"
+                className="inspector-close-btn"
+                onClick={onClose}
+                title="Сбросить выбор"
+              >
+                <X size={13} />
+              </button>
             </div>
 
-            <div className="meta-field" style={{ marginTop: 6 }}>
-              <span className="meta-field-label">Тип протокола / Отношение</span>
-              <span className="meta-field-value mono-val">{selectedEdge.relationType}</span>
-            </div>
+            <div className="inspector-pane-body">
+              {/* Паспорт узла */}
+              <div className="cad-card">
+                <div className="card-section-title">
+                  {selectedNode.type === 'SERVICE' ? (
+                    <Server size={12} />
+                  ) : selectedNode.type === 'DATABASE' ? (
+                    <Database size={12} />
+                  ) : (
+                    <Radio size={12} />
+                  )}
+                  <span>ТИП: {selectedNode.type}</span>
+                </div>
 
-            <div className="meta-field">
-              <span className="meta-field-label">Источник доказательства</span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
-                <span className="mono-val" style={{ fontWeight: 600 }}>{selectedEdge.sourceType}</span>
-              </div>
-            </div>
+                <div className="mono-node-name">{selectedNode.name}</div>
 
-            <div className="meta-field">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span className="meta-field-label">Уверенность (Confidence)</span>
-                <span className="mono-val" style={{ fontSize: 11, fontWeight: 700, color: '#10b981' }}>
-                  {percent}%
-                </span>
-              </div>
-              <div className="confidence-bar-bg">
-                <div
-                  className="confidence-bar-fill"
-                  style={{
-                    width: `${percent}%`,
-                    backgroundColor: percent >= 85 ? '#10b981' : percent >= 50 ? '#f59e0b' : '#ef4444',
-                  }}
-                />
-              </div>
-            </div>
-          </div>
+                {selectedNode.description && (
+                  <div className="node-description-text">{selectedNode.description}</div>
+                )}
 
-          {/* Источник в коде */}
-          {evi?.filePath && (
-            <div className="inspector-card">
-              <div className="card-title">
-                <FileCode size={13} />
-                <span>Локация в исходном коде</span>
+                <div className="cad-grid-row">
+                  {selectedNode.serverPort && (
+                    <div className="cad-field">
+                      <span className="cad-field-label">ПОРТ СЕРВЕРА</span>
+                      <span className="cad-field-value mono-val">{selectedNode.serverPort}</span>
+                    </div>
+                  )}
+                  {selectedNode.framework && (
+                    <div className="cad-field">
+                      <span className="cad-field-label">СТЕК / ФРЕЙМВОРК</span>
+                      <span className="cad-field-value mono-val">{selectedNode.framework}</span>
+                    </div>
+                  )}
+                </div>
+
+                {selectedNode.contextPath && (
+                  <div className="cad-field">
+                    <span className="cad-field-label">КОНТЕКСТНЫЙ ПУТЬ API</span>
+                    <span className="cad-field-value mono-val">{selectedNode.contextPath}</span>
+                  </div>
+                )}
               </div>
 
-              <div className="meta-field">
-                <span className="meta-field-label">Файл и строка</span>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
-                  <span className="meta-field-value mono-val" style={{ fontSize: 11 }}>
-                    {evi.filePath}:{evi.lineNumber}
-                  </span>
+              {/* Анализатор Blast Radius */}
+              <div className="cad-card">
+                <div className="card-section-title">
+                  <Zap size={12} style={{ color: 'var(--alert-blast)' }} />
+                  <span>АНАЛИЗАТОР BLAST RADIUS (РАДИУС ПОРАЖЕНИЯ)</span>
+                </div>
+
+                {blastRadius?.rootNodeId === selectedNode.id ? (
                   <button
                     type="button"
-                    onClick={() => handleCopy(`${evi.filePath}:${evi.lineNumber}`)}
-                    style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
-                    title="Скопировать путь"
+                    className="cad-action-btn blast-reset"
+                    onClick={onClearBlastRadius}
                   >
-                    {copied ? <Check size={14} style={{ color: '#10b981' }} /> : <Copy size={14} />}
+                    СБРОСИТЬ ПОДСВЕТКУ ГРАФА
                   </button>
-                </div>
-              </div>
+                ) : (
+                  <button
+                    type="button"
+                    className="cad-action-btn blast-trigger"
+                    onClick={() => onActivateBlastRadius(selectedNode.id)}
+                  >
+                    РАССЧИТАТЬ BLAST RADIUS
+                  </button>
+                )}
 
-              {evi.caller && (
-                <div className="meta-field">
-                  <span className="meta-field-label">Метод вызова</span>
-                  <span className="meta-field-value mono-val">{evi.caller}</span>
-                </div>
-              )}
-
-              {evi.matchedEndpoint && (
-                <div className="meta-field">
-                  <span className="meta-field-label">Целевой эндпоинт</span>
-                  <span className="meta-field-value mono-val" style={{ color: '#10b981' }}>
-                    {evi.matchedEndpoint}
-                  </span>
-                </div>
-              )}
-
-              {evi.callChain && evi.callChain.length > 0 && (
-                <div className="meta-field">
-                  <span className="meta-field-label">Цепочка вызовов (Call Chain)</span>
-                  <div className="call-chain-list" style={{ marginTop: 4 }}>
-                    {evi.callChain.map((step) => (
-                      <div key={step} className="call-chain-item">
-                        {step}
+                {blastRadius && blastRadius.rootNodeId === selectedNode.id && (
+                  <div className="blast-report-section">
+                    <div className="cad-grid-row">
+                      <div className="metric-box-cad">
+                        <span className="metric-val">
+                          {blastRadius.allAffectedNodeIds.size - 1}
+                        </span>
+                        <span className="metric-lbl">ЗАВИСИМЫХ УЗЛОВ</span>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {evi.codeSnippet && (
-                <div className="meta-field">
-                  <span className="meta-field-label">Сниппет кода</span>
-                  <pre className="code-box">{evi.codeSnippet}</pre>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* LLM-as-a-Judge Арбитраж */}
-          {isLLM && evi?.llmVerdict && (
-            <div className="inspector-card">
-              <div className="card-title">
-                <Zap size={13} style={{ color: '#10b981' }} />
-                <span>Арбитраж LLM-as-a-Judge</span>
-              </div>
-
-              <div className="llm-verdict-box">
-                <div className="llm-verdict-header">
-                  <span className="llm-badge">{evi.llmVerdict.verdict}</span>
-                  <span className="mono-val" style={{ fontSize: 10, color: '#10b981' }}>
-                    Score: {Math.round(evi.llmVerdict.confidence * 100)}%
-                  </span>
-                </div>
-                <div className="llm-reasoning">{evi.llmVerdict.reasoning}</div>
-              </div>
-            </div>
-          )}
-
-          {/* Признаки ML-модели */}
-          {isML && evi?.topFeatures && (
-            <div className="inspector-card">
-              <div className="card-title">
-                <Zap size={13} style={{ color: '#ec4899' }} />
-                <span>Признаки ML (CatBoost Features)</span>
-              </div>
-
-              <div className="features-grid">
-                {evi.topFeatures.jinaCodeSimilarity !== undefined && (
-                  <div className="feature-item">
-                    <span className="feature-label">UniXcoder Sim</span>
-                    <span className="feature-value">{evi.topFeatures.jinaCodeSimilarity.toFixed(3)}</span>
-                  </div>
-                )}
-                {evi.topFeatures.dtoOverlapJaccard !== undefined && (
-                  <div className="feature-item">
-                    <span className="feature-label">DTO Jaccard</span>
-                    <span className="feature-value">{evi.topFeatures.dtoOverlapJaccard.toFixed(3)}</span>
-                  </div>
-                )}
-                {evi.topFeatures.bm25TokenSimilarity !== undefined && (
-                  <div className="feature-item">
-                    <span className="feature-label">BM25 Tokens</span>
-                    <span className="feature-value">{evi.topFeatures.bm25TokenSimilarity.toFixed(3)}</span>
-                  </div>
-                )}
-                {evi.topFeatures.adamicAdarIndex !== undefined && (
-                  <div className="feature-item">
-                    <span className="feature-label">Adamic-Adar</span>
-                    <span className="feature-value">{evi.topFeatures.adamicAdarIndex.toFixed(3)}</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // 2. Отображение информации об узле и Blast Radius
-  if (selectedNode) {
-    const isRootInBlast = blastRadius?.rootNodeId === selectedNode.id;
-
-    return (
-      <div className="inspector-sidebar">
-        <div className="inspector-header">
-          <div className="inspector-title-group">
-            <AlertTriangle size={16} style={{ color: '#f59e0b' }} />
-            <span className="inspector-title">Node & Blast Radius</span>
-          </div>
-          <button type="button" className="inspector-close-btn" onClick={onClose}>
-            <X size={16} />
-          </button>
-        </div>
-
-        <div className="inspector-content">
-          {/* Инфо об узле */}
-          <div className="inspector-card">
-            <div className="card-title">
-              {selectedNode.type === 'SERVICE' ? (
-                <Server size={14} style={{ color: '#38bdf8' }} />
-              ) : selectedNode.type === 'DATABASE' ? (
-                <Database size={14} style={{ color: '#f59e0b' }} />
-              ) : (
-                <Radio size={14} style={{ color: '#a855f7' }} />
-              )}
-              <span>{selectedNode.type}</span>
-            </div>
-
-            <div style={{ fontSize: 14, fontWeight: 700, color: '#f8fafc' }}>
-              {selectedNode.name}
-            </div>
-
-            {selectedNode.description && (
-              <div style={{ fontSize: 11, color: '#94a3b8', lineHeight: 1.4 }}>
-                {selectedNode.description}
-              </div>
-            )}
-
-            {selectedNode.serverPort && (
-              <div className="meta-field">
-                <span className="meta-field-label">Порт</span>
-                <span className="meta-value">{selectedNode.serverPort}</span>
-              </div>
-            )}
-
-            {selectedNode.contextPath && (
-              <div className="meta-field">
-                <span className="meta-field-label">Базовый путь API</span>
-                <span className="meta-value">{selectedNode.contextPath}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Интерактивный расчет Blast Radius */}
-          <div className="inspector-card">
-            <div className="card-title">
-              <Zap size={14} style={{ color: '#ef4444' }} />
-              <span>Анализ Blast Radius</span>
-            </div>
-
-            {isRootInBlast ? (
-              <button
-                type="button"
-                className="blast-btn blast-btn-reset"
-                onClick={onClearBlastRadius}
-              >
-                Сбросить подсветку графа
-              </button>
-            ) : (
-              <button
-                type="button"
-                className="blast-btn blast-btn-activate"
-                onClick={() => onActivateBlastRadius(selectedNode.id)}
-              >
-                Рассчитать Blast Radius
-              </button>
-            )}
-
-            {blastRadius && blastRadius.rootNodeId === selectedNode.id && (
-              <>
-                <div className="blast-metrics">
-                  <div className="metric-box">
-                    <div className="metric-val">{blastRadius.allAffectedNodeIds.size - 1}</div>
-                    <div className="metric-name">Зависимых узлов</div>
-                  </div>
-                  <div className="metric-box">
-                    <div className="metric-val">{blastRadius.depth}</div>
-                    <div className="metric-name">Глубина влияния</div>
-                  </div>
-                </div>
-
-                {blastRadius.upstreamNodeIds.size > 0 && (
-                  <div className="meta-field">
-                    <span className="meta-field-label">
-                      Upstream (Вызывающие сервисы: {blastRadius.upstreamNodeIds.size})
-                    </span>
-                    <div className="affected-list">
-                      {Array.from(blastRadius.upstreamNodeIds).map((id) => (
-                        <div key={id} className="affected-item">
-                          {id}
-                        </div>
-                      ))}
+                      <div className="metric-box-cad">
+                        <span className="metric-val">{blastRadius.depth}</span>
+                        <span className="metric-lbl">ГЛУБИНА ЦЕПОЧКИ</span>
+                      </div>
                     </div>
-                  </div>
-                )}
 
-                {blastRadius.downstreamNodeIds.size > 0 && (
-                  <div className="meta-field">
-                    <span className="meta-field-label">
-                      Downstream (Прямые вызовы: {blastRadius.downstreamNodeIds.size})
-                    </span>
-                    <div className="affected-list">
-                      {Array.from(blastRadius.downstreamNodeIds).map((id) => (
-                        <div key={id} className="affected-item downstream">
-                          {id}
+                    {blastRadius.upstreamNodeIds.size > 0 && (
+                      <div className="cad-field">
+                        <span className="cad-field-label">
+                          UPSTREAM (КЛИЕНТЫ: {blastRadius.upstreamNodeIds.size})
+                        </span>
+                        <div className="affected-list-cad">
+                          {Array.from(blastRadius.upstreamNodeIds).map((id) => (
+                            <div key={id} className="affected-row upstream">
+                              &larr; {id}
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                      </div>
+                    )}
 
-                {blastRadius.transitiveNodeIds.size > 0 && (
-                  <div className="meta-field">
-                    <span className="meta-field-label">
-                      Транзитивные сервисы ({blastRadius.transitiveNodeIds.size})
-                    </span>
-                    <div className="affected-list">
-                      {Array.from(blastRadius.transitiveNodeIds).map((id) => (
-                        <div key={id} className="affected-item transitive">
-                          {id}
+                    {blastRadius.downstreamNodeIds.size > 0 && (
+                      <div className="cad-field">
+                        <span className="cad-field-label">
+                          DOWNSTREAM (ПРЯМЫЕ ВЫЗОВЫ: {blastRadius.downstreamNodeIds.size})
+                        </span>
+                        <div className="affected-list-cad">
+                          {Array.from(blastRadius.downstreamNodeIds).map((id) => (
+                            <div key={id} className="affected-row downstream">
+                              &rarr; {id}
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+
+                    {blastRadius.transitiveNodeIds.size > 0 && (
+                      <div className="cad-field">
+                        <span className="cad-field-label">
+                          ТРАНЗИТИВНЫЕ ЗАВИСИМОСТИ ({blastRadius.transitiveNodeIds.size})
+                        </span>
+                        <div className="affected-list-cad">
+                          {Array.from(blastRadius.transitiveNodeIds).map((id) => (
+                            <div key={id} className="affected-row transitive">
+                              &hellip; {id}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
-              </>
-            )}
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {/* 3. Ничего не выбрано: Общая сводка архитектурного графа */}
+        {!selectedEdge && !selectedNode && (
+          <div className="inspector-pane">
+            <div className="inspector-pane-header">
+              <div className="pane-title-group">
+                <Info size={14} style={{ color: 'var(--text-muted)' }} />
+                <span className="pane-title">СВОДКА ТОПОЛОГИИ ГРАФА</span>
+              </div>
+            </div>
+
+            <div className="inspector-pane-body">
+              <div className="cad-card">
+                <div className="card-section-title">СТАТИСТИКА АРХИТЕКТУРЫ</div>
+                <div className="cad-grid-row">
+                  <div className="metric-box-cad">
+                    <span className="metric-val">
+                      {graph.nodes.filter((n) => n.type === 'SERVICE').length}
+                    </span>
+                    <span className="metric-lbl">СЕРВИСОВ</span>
+                  </div>
+                  <div className="metric-box-cad">
+                    <span className="metric-val">{graph.edges.length}</span>
+                    <span className="metric-lbl">ВСЕГО РЁБЕР</span>
+                  </div>
+                </div>
+
+                <div className="cad-grid-row" style={{ marginTop: 6 }}>
+                  <div className="metric-box-cad">
+                    <span className="metric-val" style={{ color: 'var(--edge-config)' }}>
+                      {graph.nodes.filter((n) => n.type === 'DATABASE').length}
+                    </span>
+                    <span className="metric-lbl">БАЗ ДАННЫХ</span>
+                  </div>
+                  <div className="metric-box-cad">
+                    <span className="metric-val" style={{ color: 'var(--border-strong)' }}>
+                      {graph.nodes.filter((n) => n.type === 'MESSAGE_QUEUE').length}
+                    </span>
+                    <span className="metric-lbl">ОЧЕРЕДЕЙ MQ</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="cad-card intro-hint">
+                <div className="hint-title">ИНЖЕНЕРНАЯ ОТЛАДКА</div>
+                <div className="hint-text">
+                  &bull; Кликните на любое <strong>ребро</strong> на графе или строчку в таблице ниже для просмотра записи <code>evidence.json</code> (файл, строка, сниппет вызова).
+                  <br /><br />
+                  &bull; Выберите <strong>узел сервиса</strong> для активации режима симуляции отказа и подсветки <strong>Blast Radius</strong>.
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-    );
-  }
 
-  // 3. Пустое состояние (общая сводка графа)
-  const serviceCount = graph.nodes.filter((n) => n.type === 'SERVICE').length;
-  const dbCount = graph.nodes.filter((n) => n.type === 'DATABASE').length;
-  const queueCount = graph.nodes.filter((n) => n.type === 'MESSAGE_QUEUE').length;
-
-  return (
-    <div className="inspector-sidebar">
-      <div className="inspector-header">
-        <div className="inspector-title-group">
-          <Info size={16} style={{ color: '#94a3b8' }} />
-          <span className="inspector-title">Сводка архитектурного графа</span>
-        </div>
+      {/* Нижняя область инспектора: Табличный реестр рёбер (Блок 3 DESIGN.md) */}
+      <div className="inspector-registry-pane">
+        <EdgeRegistryTable
+          edges={filteredEdges}
+          selectedEdgeId={selectedEdge?.id || null}
+          onSelectEdge={onSelectEdge}
+        />
       </div>
-
-      <div className="inspector-content">
-        <div className="inspector-card">
-          <div className="card-title">Топология</div>
-          <div className="blast-metrics">
-            <div className="metric-box">
-              <div className="metric-val">{serviceCount}</div>
-              <div className="metric-name">Микросервисов</div>
-            </div>
-            <div className="metric-box">
-              <div className="metric-val">{graph.edges.length}</div>
-              <div className="metric-name">Всего связей</div>
-            </div>
-          </div>
-          <div className="blast-metrics">
-            <div className="metric-box">
-              <div className="metric-val" style={{ color: '#f59e0b' }}>{dbCount}</div>
-              <div className="metric-name">Баз данных</div>
-            </div>
-            <div className="metric-box">
-              <div className="metric-val" style={{ color: '#a855f7' }}>{queueCount}</div>
-              <div className="metric-name">Очередей MQ</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="empty-state">
-          <Info size={32} className="empty-icon" />
-          <div className="empty-text">
-            Кликните на любое <strong>ребро</strong> на холсте, чтобы увидеть запись из <strong>Evidence Log</strong> (файл, строка, сниппет кода, вердикт арбитра).
-            <br /><br />
-            Или выберите <strong>узел сервиса</strong> для расчета и интерактивной подсветки <strong>Blast Radius</strong>.
-          </div>
-        </div>
-      </div>
-    </div>
+    </aside>
   );
 };

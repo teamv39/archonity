@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
-import { Radio, Layers } from 'lucide-react';
+import { Layers } from 'lucide-react';
 import type { NodeProps } from '@xyflow/react';
 import type { NodeData } from '../../adapters/graphAdapter';
 import './nodes.css';
@@ -27,9 +27,7 @@ export const QueueNode: React.FC<NodeProps> = memo((props) => {
 
       <div className="node-header">
         <div className="node-title-group">
-          <div className="node-icon">
-            <Radio size={16} />
-          </div>
+          <span className="node-type-prefix">[MQ]</span>
           <span className="node-title" title={node.name}>
             {node.name}
           </span>

@@ -8,19 +8,20 @@ import type { EdgeData } from '../../adapters/graphAdapter';
 import type { SourceType, RelationType } from '../../types/graph';
 import './edges.css';
 
+// Цветовые токены строго по разделу 3 и 6.2 DESIGN.md
 const SOURCE_COLORS: Record<SourceType, string> = {
-  AST_EXACT: '#38bdf8',
-  CONFIG: '#f59e0b',
-  ML_PREDICTED: '#ec4899',
-  LLM_JUDGE_VERIFIED: '#10b981',
-  TRANSITIVE: '#94a3b8',
+  AST_EXACT: '#15803D',
+  CONFIG: '#0369A1',
+  ML_PREDICTED: '#B45309',
+  LLM_JUDGE_VERIFIED: '#047857',
+  TRANSITIVE: '#71717A',
 };
 
 const PROTOCOL_COLORS: Record<RelationType, string> = {
-  REST_HTTP: '#38bdf8',
-  DATABASE: '#f59e0b',
-  MESSAGE_QUEUE: '#a855f7',
-  TRANSITIVE: '#94a3b8',
+  REST_HTTP: '#15803D',
+  DATABASE: '#0369A1',
+  MESSAGE_QUEUE: '#18181B',
+  TRANSITIVE: '#71717A',
 };
 
 export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
@@ -65,46 +66,53 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
     return <path id={id} className="react-flow__edge-path" d={edgePath} />;
   }
 
-  // Определение цвета ребра в зависимости от выбранного режима
-  const color =
+  // Определение цвета ребра: по протоколу или по слою происхождения
+  let color =
     edgeData.colorMode === 'by_protocol'
-      ? PROTOCOL_COLORS[rawEdge.relationType] || '#94a3b8'
-      : SOURCE_COLORS[rawEdge.sourceType] || '#94a3b8';
+      ? PROTOCOL_COLORS[rawEdge.relationType] || '#71717A'
+      : SOURCE_COLORS[rawEdge.sourceType] || '#71717A';
 
-  // Стиль линии
+  // Стиль линии и толщина по DESIGN.md
   let strokeDasharray = 'none';
-  if (rawEdge.sourceType === 'CONFIG') {
-    strokeDasharray = '6 4';
-  } else if (rawEdge.sourceType === 'ML_PREDICTED') {
-    strokeDasharray = '4 3';
+  let strokeWidth = 1.5;
+
+  if (rawEdge.sourceType === 'ML_PREDICTED') {
+    strokeDasharray = '4 2';
+    strokeWidth = 1.5;
   } else if (rawEdge.sourceType === 'TRANSITIVE') {
     strokeDasharray = '2 3';
+    strokeWidth = 1.0;
+  } else {
+    // AST_EXACT и CONFIG - сплошная 1.5px
+    strokeDasharray = 'none';
+    strokeWidth = 1.5;
   }
 
-  // Blast radius классы
+  // Состояния Blast Radius
   let blastClass = '';
   if (edgeData.blastState === 'affected') {
     blastClass = 'edge-blast-affected';
+    color = '#B91C1C';
+    strokeWidth = 2.0;
   } else if (edgeData.blastState === 'dimmed') {
     blastClass = 'edge-blast-dimmed';
   }
 
-  const strokeWidth = selected ? 3.5 : 1.8;
+  if (selected) {
+    strokeWidth = 2.5;
+    if (edgeData.blastState !== 'affected') {
+      color = '#18181B';
+    }
+  }
 
-  let labelBadgeClass = 'label-source-ast';
-  if (rawEdge.sourceType === 'CONFIG') labelBadgeClass = 'label-source-config';
-  else if (rawEdge.sourceType === 'ML_PREDICTED') labelBadgeClass = 'label-source-ml';
-  else if (rawEdge.sourceType === 'LLM_JUDGE_VERIFIED') labelBadgeClass = 'label-source-llm';
-  else if (rawEdge.sourceType === 'TRANSITIVE') labelBadgeClass = 'label-source-transitive';
-
-  const showLabel =
-    rawEdge.sourceType === 'ML_PREDICTED' ||
-    rawEdge.sourceType === 'LLM_JUDGE_VERIFIED' ||
-    selected;
+  // Отображение бейджа с вероятностью на изломе для ML / LLM или при выборе
+  const isMlOrLlm =
+    rawEdge.sourceType === 'ML_PREDICTED' || rawEdge.sourceType === 'LLM_JUDGE_VERIFIED';
+  const showLabel = isMlOrLlm || selected;
 
   return (
     <>
-      {/* Прозрачный толстый путь для легкого клика мышью */}
+      {/* Прозрачный путь для удобного клика мышью */}
       <path
         d={edgePath}
         className="custom-edge-interaction"
@@ -113,7 +121,7 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
       <path
         id={id}
         d={edgePath}
-        className={`react-flow__edge-path custom-edge-path ${blastClass}`}
+        className={`react-flow__edge-path custom-edge-path ${blastClass} ${selected ? 'edge-selected' : ''}`}
         stroke={color}
         strokeWidth={strokeWidth}
         strokeDasharray={strokeDasharray}
@@ -127,16 +135,10 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
               position: 'absolute',
               transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
             }}
-            className={`edge-label-container ${labelBadgeClass}`}
-            title={`Источник: ${rawEdge.sourceType}, уверенность: ${(rawEdge.confidence * 100).toFixed(0)}%`}
+            className={`edge-cad-badge ${rawEdge.sourceType.toLowerCase()}`}
+            title={`Источник: ${rawEdge.sourceType}, уверенность: ${rawEdge.confidence.toFixed(2)}`}
           >
-            {rawEdge.sourceType === 'LLM_JUDGE_VERIFIED' ? (
-              <span>LLM {(rawEdge.confidence * 100).toFixed(0)}%</span>
-            ) : rawEdge.sourceType === 'ML_PREDICTED' ? (
-              <span>ML {(rawEdge.confidence * 100).toFixed(0)}%</span>
-            ) : (
-              <span>{(rawEdge.confidence * 100).toFixed(0)}%</span>
-            )}
+            {rawEdge.confidence.toFixed(2)}
           </div>
         </EdgeLabelRenderer>
       )}

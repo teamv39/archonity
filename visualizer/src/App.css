@@ -1,104 +1,115 @@
-/* App.css - Главные стили приложения визуализатора */
-
-html, body, #root {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background-color: #0b0f19;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  color: #f8fafc;
-  -webkit-font-smoothing: antialiased;
-}
+/* App.css - Главные стили приложения визуализатора по DESIGN.md */
 
 .visualizer-container {
   width: 100vw;
   height: 100vh;
-  position: relative;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  background: #0b0f19;
+  background: var(--bg-canvas);
+}
+
+.visualizer-body {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: calc(100vh - 40px);
+  overflow: hidden;
 }
 
 .canvas-wrapper {
-  width: calc(100vw - 390px);
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
+  height: 100%;
+  position: relative;
   overflow: hidden;
+  background: var(--bg-canvas);
+  flex-shrink: 0;
 }
 
-/* React Flow кастомизация темной темы */
+/* Разделитель изменения ширины сайдбара */
+.resize-handle {
+  width: 5px;
+  height: 100%;
+  background: transparent;
+  border-left: 1px solid var(--border-hairline);
+  cursor: col-resize;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 15;
+  transition: background-color 0.15s ease;
+  margin-left: -1px;
+}
+
+.resize-handle:hover,
+.resize-handle.dragging {
+  background: var(--border-strong);
+}
+
+/* React Flow кастомизация светлой CAD-темы */
 .react-flow__background {
-  background-color: #0b0f19;
+  background-color: var(--bg-canvas);
 }
 
 .react-flow__controls {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  border: 1px solid #334155;
-  border-radius: 8px;
+  box-shadow: none !important;
+  border: 1px solid var(--border-hairline) !important;
+  border-radius: 0 !important;
   overflow: hidden;
-  background: #1e293b;
-  bottom: 24px !important;
-  left: 24px !important;
+  background: var(--bg-panel) !important;
+  bottom: 16px !important;
+  left: 16px !important;
 }
 
 .react-flow__controls-button {
-  background: #1e293b;
-  border-bottom: 1px solid #334155;
-  fill: #94a3b8;
-  color: #94a3b8;
+  background: var(--bg-panel) !important;
+  border-bottom: 1px solid var(--border-hairline) !important;
+  border-radius: 0 !important;
+  fill: var(--text-secondary) !important;
+  color: var(--text-secondary) !important;
+  width: 26px !important;
+  height: 26px !important;
 }
 
 .react-flow__controls-button:hover {
-  background: #334155;
-  fill: #f8fafc;
+  background: var(--bg-subtle) !important;
+  fill: var(--text-primary) !important;
 }
 
 .react-flow__minimap {
-  background-color: #0f172a !important;
-  border: 1px solid #334155 !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
-  bottom: 24px !important;
-  right: 24px !important;
+  background-color: var(--bg-panel) !important;
+  border: 1px solid var(--border-hairline) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  bottom: 16px !important;
+  right: 16px !important;
 }
 
-/* Оверлей загрузки раскладки */
+/* Индикатор загрузки раскладки ELK */
 .layout-loading-indicator {
   position: absolute;
-  bottom: 24px;
-  left: 80px;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(8px);
-  border: 1px solid #334155;
-  border-radius: 20px;
-  padding: 6px 14px;
+  bottom: 16px;
+  left: 54px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  padding: 4px 10px;
+  font-family: var(--font-mono);
   font-size: 11px;
-  color: #38bdf8;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 8px;
   z-index: 10;
   pointer-events: none;
-  animation: fadeIn 0.2s ease;
 }
 
 .spinner {
-  width: 12px;
-  height: 12px;
-  border: 2px solid rgba(56, 189, 248, 0.2);
-  border-top-color: #38bdf8;
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--border-hairline);
+  border-top-color: var(--border-strong);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
 }

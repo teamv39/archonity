@@ -1,75 +1,77 @@
-/* edges.css - Стилизация кастомных ребер графа */
+/* edges.css - Стилизация кастомных рёбер по DESIGN.md */
 
 .custom-edge-path {
   fill: none;
-  transition: stroke 0.2s ease, stroke-width 0.2s ease, opacity 0.2s ease;
+  transition: stroke 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease;
 }
 
 .custom-edge-interaction {
   fill: none;
   stroke: transparent;
-  stroke-width: 20px;
+  stroke-width: 14px;
   cursor: pointer;
 }
 
 .custom-edge-interaction:hover + .custom-edge-path {
-  stroke-width: 3.5px !important;
-  filter: drop-shadow(0 0 6px currentColor);
+  stroke-width: 2.5px !important;
 }
 
-.edge-label-container {
+/* Компактный прямоугольный бейдж вероятности на изломе */
+.edge-cad-badge {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  border-radius: 10px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 10px;
+  justify-content: center;
+  padding: 1px 3px;
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 9px;
   font-weight: 600;
-  background: #0f172a;
-  border: 1px solid #334155;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-primary);
+  box-shadow: none;
   cursor: pointer;
   pointer-events: all;
-  transition: transform 0.15s ease;
+  user-select: none;
 }
 
-.edge-label-container:hover {
-  transform: scale(1.1);
+.edge-cad-badge.ml_predicted {
+  border-color: var(--edge-ml);
+  color: var(--edge-ml);
 }
 
-.label-source-ast {
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.4);
+.edge-cad-badge.llm_judge_verified {
+  border-color: #047857;
+  color: #047857;
 }
 
-.label-source-config {
-  color: #f59e0b;
-  border-color: rgba(245, 158, 11, 0.4);
+.edge-cad-badge.ast_exact {
+  border-color: var(--edge-ast);
+  color: var(--edge-ast);
 }
 
-.label-source-ml {
-  color: #ec4899;
-  border-color: rgba(236, 72, 153, 0.4);
+.edge-cad-badge.config {
+  border-color: var(--edge-config);
+  color: var(--edge-config);
 }
 
-.label-source-llm {
-  color: #10b981;
-  border-color: rgba(16, 185, 129, 0.4);
+.edge-cad-badge.transitive {
+  border-color: var(--edge-transitive);
+  color: var(--edge-transitive);
 }
 
-.label-source-transitive {
-  color: #94a3b8;
-  border-color: rgba(148, 163, 184, 0.4);
-}
-
-/* Состояния Blast Radius для ребер */
+/* Состояния Blast Radius для рёбер */
 .edge-blast-affected {
-  stroke-width: 3px !important;
-  filter: drop-shadow(0 0 8px currentColor) !important;
+  stroke: var(--alert-blast) !important;
+  stroke-width: 2px !important;
   opacity: 1 !important;
 }
 
 .edge-blast-dimmed {
-  opacity: 0.12 !important;
+  opacity: 0.15 !important;
+}
+
+.edge-selected {
+  stroke: var(--border-strong) !important;
+  stroke-width: 2.5px !important;
 }

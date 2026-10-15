@@ -1,12 +1,11 @@
 import React from 'react';
 import {
   Search,
-  Maximize2,
+  RotateCcw,
   Palette,
   ArrowRight,
   ArrowDown,
   X,
-  Sliders,
 } from 'lucide-react';
 import type { SourceType, ColorMode, DagDirection } from '../../types/graph';
 import './toolbar.css';
@@ -22,9 +21,11 @@ interface ToolbarProps {
   onToggleDirection: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
-  onFitView: () => void;
+  onResetAll: () => void;
   totalEdgesCount: number;
   visibleEdgesCount: number;
+  nodesCount: number;
+  transitiveEdgesCount: number;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -38,94 +39,129 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onToggleDirection,
   searchQuery,
   onSearchChange,
-  onFitView,
+  onResetAll,
   totalEdgesCount,
   visibleEdgesCount,
+  nodesCount,
+  transitiveEdgesCount,
 }) => {
+  const filteredCount = totalEdgesCount - visibleEdgesCount;
+
   return (
-    <div className="floating-toolbar">
-      <div className="toolbar-brand">
-        <span className="brand-title">Archonity Visualizer</span>
-        <span className="brand-badge">Train Ticket</span>
+    <header className="control-bar" role="toolbar" aria-label="Панель управления графом">
+      {/* 1. Бренд */}
+      <div className="bar-section brand-section">
+        <span className="brand-logo">[ARCHONITY]</span>
+        <span className="brand-sub">WORKBENCH</span>
       </div>
 
-      <div className="toolbar-controls">
-        {/* ML Confidence Threshold Slider */}
-        <div className="slider-group" title="Порог уверенности для отсечения слабых гипотез ML">
-          <Sliders size={14} style={{ color: '#ec4899' }} />
-          <span className="slider-label">ML Threshold:</span>
-          <span className="slider-val">p ≥ {confidenceThreshold.toFixed(2)}</span>
-          <input
-            id="confidence-threshold"
-            name="confidence-threshold"
-            aria-label="Порог уверенности ML"
-            type="range"
-            min="0.0"
-            max="1.0"
-            step="0.05"
-            value={confidenceThreshold}
-            onChange={(e) => onThresholdChange(parseFloat(e.target.value))}
-            onInput={(e) => onThresholdChange(parseFloat((e.target as HTMLInputElement).value))}
-            className="confidence-slider"
-          />
-          <span style={{ fontSize: 10, color: '#64748b' }}>
-            ({visibleEdgesCount}/{totalEdgesCount})
-          </span>
-        </div>
+      <div className="section-divider" />
 
-        {/* Source Filter Pills */}
-        <div className="filter-pills">
-          <button
-            type="button"
-            className={`filter-pill-btn ${activeSources.AST_EXACT ? 'active' : ''}`}
-            onClick={() => onToggleSource('AST_EXACT')}
-            title="Детерминированные вызовы из статического анализа Java/AST"
-          >
-            AST
-          </button>
-          <button
-            type="button"
-            className={`filter-pill-btn ${activeSources.CONFIG ? 'active' : ''}`}
-            onClick={() => onToggleSource('CONFIG')}
-            title="Связи из конфигураций application.yml / docker-compose"
-          >
-            Config
-          </button>
-          <button
-            type="button"
-            className={`filter-pill-btn pill-ml ${activeSources.ML_PREDICTED ? 'active' : ''}`}
-            onClick={() => onToggleSource('ML_PREDICTED')}
-            title="Связи, предсказанные моделью CatBoost"
-          >
-            ML
-          </button>
-          <button
-            type="button"
-            className={`filter-pill-btn pill-llm ${activeSources.LLM_JUDGE_VERIFIED ? 'active' : ''}`}
-            onClick={() => onToggleSource('LLM_JUDGE_VERIFIED')}
-            title="Спорные связи, подтвержденные кодовым арбитром Qwen"
-          >
-            LLM Judge
-          </button>
-          <button
-            type="button"
-            className={`filter-pill-btn ${activeSources.TRANSITIVE ? 'active' : ''}`}
-            onClick={() => onToggleSource('TRANSITIVE')}
-            title="Показать косвенные транзитивные зависимости"
-          >
-            Transitive
-          </button>
-        </div>
+      {/* 2. Переключатели слоев */}
+      <div className="bar-section layers-section">
+        <span className="section-caption">СЛОИ:</span>
+        <div className="layer-checkbox-group">
+          <label className={`layer-toggle ${activeSources.AST_EXACT ? 'active ast' : ''}`}>
+            <input
+              type="checkbox"
+              checked={activeSources.AST_EXACT}
+              onChange={() => onToggleSource('AST_EXACT')}
+            />
+            <span>AST</span>
+          </label>
 
-        {/* Search */}
-        <div className="search-box">
-          <Search size={14} style={{ color: '#64748b' }} />
+          <label className={`layer-toggle ${activeSources.CONFIG ? 'active cfg' : ''}`}>
+            <input
+              type="checkbox"
+              checked={activeSources.CONFIG}
+              onChange={() => onToggleSource('CONFIG')}
+            />
+            <span>CFG</span>
+          </label>
+
+          <label className={`layer-toggle ${activeSources.ML_PREDICTED ? 'active ml' : ''}`}>
+            <input
+              type="checkbox"
+              checked={activeSources.ML_PREDICTED}
+              onChange={() => onToggleSource('ML_PREDICTED')}
+            />
+            <span>ML</span>
+          </label>
+
+          <label className={`layer-toggle ${activeSources.LLM_JUDGE_VERIFIED ? 'active llm' : ''}`}>
+            <input
+              type="checkbox"
+              checked={activeSources.LLM_JUDGE_VERIFIED}
+              onChange={() => onToggleSource('LLM_JUDGE_VERIFIED')}
+            />
+            <span>LLM</span>
+          </label>
+
+          <label className={`layer-toggle ${activeSources.TRANSITIVE ? 'active trans' : ''}`}>
+            <input
+              type="checkbox"
+              checked={activeSources.TRANSITIVE}
+              onChange={() => onToggleSource('TRANSITIVE')}
+            />
+            <span>TRANS</span>
+          </label>
+        </div>
+      </div>
+
+      <div className="section-divider" />
+
+      {/* 3. Порог ML */}
+      <div className="bar-section threshold-section">
+        <span className="section-caption">ПОРОГ ML:</span>
+        <span className="mono-badge">p &ge; {confidenceThreshold.toFixed(2)}</span>
+        <input
+          id="confidence-threshold"
+          name="confidence-threshold"
+          aria-label="Порог вероятности ML"
+          type="range"
+          min="0.0"
+          max="1.0"
+          step="0.05"
+          value={confidenceThreshold}
+          onChange={(e) => onThresholdChange(parseFloat(e.target.value))}
+          className="threshold-slider"
+        />
+      </div>
+
+      <div className="section-divider" />
+
+      {/* 4. Счётчики графа */}
+      <div className="bar-section counters-section">
+        <div className="counter-item" title="Всего узлов на графе">
+          <span className="counter-label">NODES</span>
+          <span className="counter-value">{nodesCount}</span>
+        </div>
+        <div className="counter-item" title="Активные прямые рёбра">
+          <span className="counter-label">EDGES</span>
+          <span className="counter-value">{visibleEdgesCount}</span>
+        </div>
+        <div className="counter-item" title="Транзитивные рёбра">
+          <span className="counter-label">TRANS</span>
+          <span className="counter-value">{transitiveEdgesCount}</span>
+        </div>
+        <div className="counter-item" title="Отсечено фильтрами / Dead Code">
+          <span className="counter-label">FILTERED</span>
+          <span className="counter-value">{filteredCount}</span>
+        </div>
+      </div>
+
+      <div className="section-divider" />
+
+      {/* 5. Поиск */}
+      <div className="bar-section search-section">
+        <div className="search-wrapper">
+          <Search size={12} className="search-icon" />
           <input
             id="graph-search-input"
             name="graphSearch"
-            aria-label="Поиск узла или эндпоинта"
+            aria-label="Поиск по node_id или URL-шаблону"
             type="text"
-            placeholder="Поиск узла / API..."
+            placeholder="node_id / URL..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             className="search-input"
@@ -134,46 +170,47 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <button
               type="button"
               onClick={() => onSearchChange('')}
-              style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', padding: 0 }}
+              className="search-clear-btn"
+              title="Очистить поиск"
             >
-              <X size={12} />
+              <X size={11} />
             </button>
           )}
         </div>
-
-        {/* Actions */}
-        <div className="toolbar-actions">
-          <button
-            type="button"
-            className={`action-btn ${colorMode === 'by_protocol' ? 'active' : ''}`}
-            onClick={onToggleColorMode}
-            title={colorMode === 'by_protocol' ? 'Цвет: по протоколам' : 'Цвет: по источникам'}
-          >
-            <Palette size={13} />
-            <span>{colorMode === 'by_protocol' ? 'Протокол' : 'Источник'}</span>
-          </button>
-
-          <button
-            type="button"
-            className="action-btn"
-            onClick={onToggleDirection}
-            title={direction === 'RIGHT' ? 'Раскладка: слева направо' : 'Раскладка: сверху вниз'}
-          >
-            {direction === 'RIGHT' ? <ArrowRight size={13} /> : <ArrowDown size={13} />}
-            <span>{direction === 'RIGHT' ? 'LR' : 'TB'}</span>
-          </button>
-
-          <button
-            type="button"
-            className="action-btn"
-            onClick={onFitView}
-            title="Масштабировать по экрану"
-          >
-            <Maximize2 size={13} />
-            <span>Fit</span>
-          </button>
-        </div>
       </div>
-    </div>
+
+      {/* 6. Кнопки управления CAD */}
+      <div className="bar-section actions-section">
+        <button
+          type="button"
+          className={`cad-btn ${colorMode === 'by_protocol' ? 'active' : ''}`}
+          onClick={onToggleColorMode}
+          title={colorMode === 'by_protocol' ? 'Раскраска: по протоколам связи' : 'Раскраска: по слоям источников'}
+        >
+          <Palette size={12} />
+          <span>{colorMode === 'by_protocol' ? 'ПРОТОКОЛ' : 'ИСТОЧНИК'}</span>
+        </button>
+
+        <button
+          type="button"
+          className="cad-btn"
+          onClick={onToggleDirection}
+          title={direction === 'RIGHT' ? 'Ориентация DAG: слева направо (LR)' : 'Ориентация DAG: сверху вниз (TB)'}
+        >
+          {direction === 'RIGHT' ? <ArrowRight size={12} /> : <ArrowDown size={12} />}
+          <span>{direction === 'RIGHT' ? 'LR' : 'TB'}</span>
+        </button>
+
+        <button
+          type="button"
+          className="cad-btn reset-btn"
+          onClick={onResetAll}
+          title="Сбросить карту, зум, фильтры, слои, поиск и выделение"
+        >
+          <RotateCcw size={12} />
+          <span>СБРОС</span>
+        </button>
+      </div>
+    </header>
   );
 };

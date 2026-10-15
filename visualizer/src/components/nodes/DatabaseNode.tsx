@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Handle, Position } from '@xyflow/react';
-import { Database, Table } from 'lucide-react';
+import { Table } from 'lucide-react';
 import type { NodeProps } from '@xyflow/react';
 import type { NodeData } from '../../adapters/graphAdapter';
 import './nodes.css';
@@ -27,9 +27,7 @@ export const DatabaseNode: React.FC<NodeProps> = memo((props) => {
 
       <div className="node-header">
         <div className="node-title-group">
-          <div className="node-icon">
-            <Database size={16} />
-          </div>
+          <span className="node-type-prefix">[DB]</span>
           <span className="node-title" title={node.name}>
             {node.name}
           </span>

@@ -35,7 +35,7 @@ export const ServiceNode: React.FC<NodeProps> = memo((props) => {
           </span>
         </div>
         <span className="node-badge badge-service">
-          {node.language || 'Java'}
+          {(node.language || 'Java').replace(/ .*/, '').toUpperCase()}
         </span>
       </div>
 
