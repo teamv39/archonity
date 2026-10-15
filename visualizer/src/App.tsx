@@ -58,6 +58,7 @@ import { CustomEdge } from './components/edges/CustomEdge';
 import { Toolbar } from './components/toolbar/Toolbar';
 import { Inspector } from './components/inspector/Inspector';
 import { DataLoaderModal } from './components/modals/DataLoaderModal';
+import { FloatingTraceBadge } from './components/trace/FloatingTraceBadge';
 
 import './App.css';
 
@@ -511,6 +512,23 @@ const VisualizerCanvas: React.FC = () => {
     setDirection('RIGHT');
   }, [fitView]);
 
+  // Сброс трейса или выделения по Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (callTrace) {
+          handleClearCallTrace();
+        } else if (selectedEdgeId || selectedNodeId) {
+          setSelectedEdgeId(null);
+          setSelectedNodeId(null);
+          setBlastRadius(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [callTrace, selectedEdgeId, selectedNodeId, handleClearCallTrace]);
+
   return (
     <div className="visualizer-container">
       <Toolbar
@@ -541,8 +559,6 @@ const VisualizerCanvas: React.FC = () => {
         deadCodeDisplay={deadCodeDisplay}
         onToggleDeadCodeDisplay={handleToggleDeadCodeDisplay}
         unreachableEdgesCount={unreachableEdgesCount}
-        callTrace={callTrace}
-        onClearCallTrace={handleClearCallTrace}
       />
 
       <div className="visualizer-body" style={{ userSelect: isDragging ? 'none' : 'auto' }}>
@@ -553,6 +569,12 @@ const VisualizerCanvas: React.FC = () => {
           onDragLeave={handleCanvasDragLeave}
           onDrop={handleCanvasDrop}
         >
+          {/* Плавающий CAD-бейдж активного сквозного трейса над холстом */}
+          <FloatingTraceBadge
+            callTrace={callTrace}
+            onClearCallTrace={handleClearCallTrace}
+          />
+
           <ReactFlow
             nodes={nodes}
             edges={edges}

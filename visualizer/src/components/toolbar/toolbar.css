@@ -7,7 +7,7 @@
   border-bottom: 1px solid var(--border-hairline);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 0 8px;
   font-family: var(--font-sans);
   font-size: 11px;
@@ -16,52 +16,73 @@
   user-select: none;
   z-index: 100;
   overflow: visible;
+  gap: 2px;
 }
 
 .bar-section {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   flex-shrink: 0;
 }
 
 .section-divider {
   width: 1px;
-  height: 20px;
+  height: 18px;
   background: var(--border-hairline);
-  margin: 0 4px;
+  margin: 0 3px;
+  flex-shrink: 0;
 }
 
 /* 1. Бренд */
 .brand-section {
-  gap: 6px;
+  gap: 5px;
 }
 
 .brand-logo {
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 0.04em;
   color: var(--border-strong);
 }
 
 .brand-sub {
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 600;
   letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
-/* Заголовки секций */
-.section-caption {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-secondary);
+/* 2. Датасет */
+.dataset-section {
+  gap: 4px;
 }
 
-/* 2. Чекбоксы слоев */
+.dataset-btn {
+  max-width: 130px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 6px;
+}
+
+.dataset-btn.custom {
+  background: #E8F0FE;
+  border-color: #0969DA;
+  color: #0969DA;
+  font-weight: 600;
+}
+
+.dataset-label {
+  max-width: 95px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 3. Чекбоксы слоев */
 .layer-checkbox-group {
   display: flex;
   align-items: center;
@@ -71,8 +92,8 @@
 .layer-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
+  gap: 3px;
+  padding: 2px 5px;
   height: 24px;
   border: 1px solid var(--border-hairline);
   background: var(--bg-panel);
@@ -87,8 +108,8 @@
 
 .layer-toggle input {
   margin: 0;
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
   accent-color: var(--border-strong);
   cursor: pointer;
 }
@@ -125,55 +146,109 @@
   border-bottom: 2px solid var(--edge-transitive);
 }
 
-/* 3. Порог ML */
+/* 4. Порог ML */
 .threshold-section {
-  gap: 6px;
+  gap: 4px;
 }
 
 .mono-badge {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   padding: 2px 4px;
   background: var(--bg-subtle);
   border: 1px solid var(--border-hairline);
   color: var(--edge-ml);
+  white-space: nowrap;
 }
 
 .threshold-slider {
-  width: 55px;
-  height: 14px;
+  width: 48px;
+  height: 12px;
   cursor: pointer;
   accent-color: var(--edge-ml);
   margin: 0;
 }
 
-/* 4. Счётчики графа */
+/* 5. Единый HUD-чип счетчиков */
 .counters-section {
-  gap: 8px;
+  gap: 4px;
 }
 
-.counter-item {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
+.cad-hud-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+  padding: 0 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
   font-family: var(--font-mono);
   font-size: 11px;
+  cursor: default;
+  white-space: nowrap;
 }
 
-.counter-label {
-  font-size: 9px;
-  color: var(--text-muted);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-}
-
-.counter-value {
+.hud-metric {
+  display: inline-flex;
+  align-items: baseline;
   font-weight: 600;
   color: var(--text-primary);
 }
 
-/* 5. Поиск */
+.hud-sub {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-left: 1px;
+}
+
+.hud-dot {
+  color: #A1A1AA;
+  font-size: 10px;
+  margin: 0 1px;
+}
+
+.hud-metric.hud-dead {
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.08);
+  padding: 0 2px;
+}
+
+.hud-metric.hud-dead .hud-sub {
+  color: #DC2626;
+}
+
+/* 6. Секция Reachability & Dead Code */
+.reachability-section {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.reachability-btn.active {
+  background: #18181B;
+  color: #FFFFFF;
+  border-color: #18181B;
+}
+
+.sub-toggle-btn {
+  padding: 0 5px;
+  background: var(--bg-subtle);
+  border-color: var(--border-hairline);
+  color: var(--text-secondary);
+}
+
+.sub-toggle-btn:hover {
+  background: #E4E4E7;
+  color: var(--text-primary);
+}
+
+/* 7. Поиск */
+.search-section {
+  gap: 4px;
+}
+
 .search-wrapper {
   display: flex;
   align-items: center;
@@ -186,6 +261,7 @@
 
 .search-icon {
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 .search-input {
@@ -193,10 +269,15 @@
   outline: none;
   background: transparent;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 10px;
   color: var(--text-primary);
-  width: 85px;
+  width: 75px;
   padding: 0;
+  transition: width 0.15s ease;
+}
+
+.search-input:focus {
+  width: 105px;
 }
 
 .search-input::placeholder {
@@ -217,7 +298,7 @@
   color: var(--text-primary);
 }
 
-/* 6. Кнопки действий */
+/* 8. Кнопки действий */
 .actions-section {
   margin-left: auto;
   gap: 4px;
@@ -229,7 +310,7 @@
   align-items: center;
   gap: 4px;
   height: 24px;
-  padding: 0 8px;
+  padding: 0 7px;
   border: 1px solid var(--border-hairline);
   background: var(--bg-panel);
   font-family: var(--font-mono);
@@ -239,7 +320,8 @@
   cursor: pointer;
   border-radius: 0;
   box-shadow: none;
-  transition: background-color 0.1s ease;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+  white-space: nowrap;
 }
 
 .cad-btn:hover {
@@ -258,31 +340,6 @@
   background: #FEF2F2;
   border-color: var(--alert-blast);
   color: var(--alert-blast);
-}
-
-/* Датасет */
-.dataset-section {
-  gap: 6px;
-}
-
-.dataset-btn {
-  max-width: 130px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dataset-btn.custom {
-  background: #E8F0FE;
-  border-color: #0969DA;
-  color: #0969DA;
-  font-weight: 600;
-}
-
-.dataset-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* Экспорт */
@@ -336,100 +393,52 @@
   color: #0969DA;
 }
 
-/* Мертвый код в счетчиках */
-.counter-item.highlight-dead .counter-value {
-  color: #DC2626;
-  font-weight: 700;
-}
-
-/* Секция Reachability & Dead Code */
-.reachability-section {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
-
-.reachability-btn.active {
-  background: #18181B;
-  color: #FFFFFF;
-  border-color: #18181B;
-}
-
-.sub-toggle-btn {
-  padding: 0 5px;
-  background: var(--bg-subtle);
-  border-color: var(--border-hairline);
-  color: var(--text-secondary);
-}
-
-.sub-toggle-btn:hover {
-  background: #E4E4E7;
-  color: var(--text-primary);
-}
-
-/* Индикатор активного трейса вызова */
-.trace-banner-section {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.trace-banner-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 24px;
-  padding: 0 6px;
-  background-color: #EFF6FF;
-  border: 1px solid #93C5FD;
-  color: #1D4ED8;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  white-space: nowrap;
-}
-
-.trace-method-badge {
-  font-weight: 700;
-  padding: 1px 3px;
-  background-color: #DBEAFE;
-  color: #1E40AF;
-  border: 1px solid #BFDBFE;
-}
-
-.trace-path-label {
-  font-weight: 500;
-  max-width: 140px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.trace-clear-btn {
-  background-color: #FEF2F2;
-  border-color: #FECACA;
-  color: #DC2626;
-}
-
-.trace-clear-btn:hover {
-  background-color: #FEE2E2;
-  color: #B91C1C;
-}
-
-@media (max-width: 1350px) {
-  .counter-item.optional {
+/* Адаптивные медиа-запросы */
+@media (max-width: 1400px) {
+  .actions-section .btn-text {
     display: none;
   }
-  .section-caption {
+  .brand-sub {
     display: none;
+  }
+  .actions-section .cad-btn {
+    padding: 0 6px;
+  }
+  .reachability-section .sub-toggle-btn .btn-text {
+    display: none;
+  }
+}
+
+@media (max-width: 1200px) {
+  .dataset-label {
+    max-width: 70px;
   }
   .search-input {
     width: 60px;
   }
+  .search-input:focus {
+    width: 85px;
+  }
   .threshold-slider {
-    width: 45px;
+    width: 40px;
+  }
+  .control-bar {
+    padding: 0 4px;
+    gap: 1px;
   }
   .section-divider {
     margin: 0 2px;
   }
 }
 
-
+@media (max-width: 1050px) {
+  .reachability-section .reachability-btn .btn-text {
+    display: none;
+  }
+  .dataset-label {
+    display: none;
+  }
+  .cad-hud-chip {
+    padding: 0 4px;
+  }
+}

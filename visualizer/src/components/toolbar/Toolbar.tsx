@@ -15,7 +15,6 @@ import {
   Activity,
   Eye,
   EyeOff,
-  Route,
 } from 'lucide-react';
 import type {
   SourceType,
@@ -23,7 +22,6 @@ import type {
   DagDirection,
   ReachabilityMode,
   DeadCodeDisplay,
-  CallTraceResult,
 } from '../../types/graph';
 import './toolbar.css';
 
@@ -61,10 +59,6 @@ interface ToolbarProps {
   deadCodeDisplay: DeadCodeDisplay;
   onToggleDeadCodeDisplay: () => void;
   unreachableEdgesCount: number;
-
-  // Call Path Tracing
-  callTrace: CallTraceResult | null;
-  onClearCallTrace: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -95,8 +89,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   deadCodeDisplay,
   onToggleDeadCodeDisplay,
   unreachableEdgesCount,
-  callTrace,
-  onClearCallTrace,
 }) => {
   const filteredCount = totalEdgesCount - visibleEdgesCount;
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
@@ -126,12 +118,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       {/* 2. Датасет */}
       <div className="bar-section dataset-section">
-        <span className="section-caption">ДАТАСЕТ:</span>
         <button
           type="button"
           className={`cad-btn dataset-btn ${isCustomDataset ? 'custom' : ''}`}
           onClick={onOpenDataLoader}
-          title="Загрузить файлы пайплайна (Drag & Drop, confirmed_edges.json, evidence.json)"
+          title={`Датасет: ${datasetName} (клик для загрузки файлов pipeline)`}
         >
           <Upload size={11} />
           <span className="dataset-label">{datasetName}</span>
@@ -143,9 +134,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       {/* 3. Переключатели слоев */}
       <div className="bar-section layers-section">
-        <span className="section-caption">СЛОИ:</span>
         <div className="layer-checkbox-group">
-          <label className={`layer-toggle ${activeSources.AST_EXACT ? 'active ast' : ''}`}>
+          <label
+            className={`layer-toggle ${activeSources.AST_EXACT ? 'active ast' : ''}`}
+            title="Слой AST_EXACT (синтаксический анализ)"
+          >
             <input
               type="checkbox"
               checked={activeSources.AST_EXACT}
@@ -154,7 +147,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <span>AST</span>
           </label>
 
-          <label className={`layer-toggle ${activeSources.CONFIG ? 'active cfg' : ''}`}>
+          <label
+            className={`layer-toggle ${activeSources.CONFIG ? 'active cfg' : ''}`}
+            title="Слой CONFIG (конфигурации application.yml)"
+          >
             <input
               type="checkbox"
               checked={activeSources.CONFIG}
@@ -163,7 +159,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <span>CFG</span>
           </label>
 
-          <label className={`layer-toggle ${activeSources.ML_PREDICTED ? 'active ml' : ''}`}>
+          <label
+            className={`layer-toggle ${activeSources.ML_PREDICTED ? 'active ml' : ''}`}
+            title="Слой ML_PREDICTED (гипотезы CatBoost/CodeBERT)"
+          >
             <input
               type="checkbox"
               checked={activeSources.ML_PREDICTED}
@@ -172,7 +171,10 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <span>ML</span>
           </label>
 
-          <label className={`layer-toggle ${activeSources.LLM_JUDGE_VERIFIED ? 'active llm' : ''}`}>
+          <label
+            className={`layer-toggle ${activeSources.LLM_JUDGE_VERIFIED ? 'active llm' : ''}`}
+            title="Слой LLM_JUDGE_VERIFIED (арбитраж вердиктов)"
+          >
             <input
               type="checkbox"
               checked={activeSources.LLM_JUDGE_VERIFIED}
@@ -181,13 +183,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             <span>LLM</span>
           </label>
 
-          <label className={`layer-toggle ${activeSources.TRANSITIVE ? 'active trans' : ''}`}>
+          <label
+            className={`layer-toggle ${activeSources.TRANSITIVE ? 'active trans' : ''}`}
+            title="Слой TRANSITIVE (транзитивное замыкание)"
+          >
             <input
               type="checkbox"
               checked={activeSources.TRANSITIVE}
               onChange={() => onToggleSource('TRANSITIVE')}
             />
-            <span>TRANS</span>
+            <span>TR</span>
           </label>
         </div>
       </div>
@@ -196,8 +201,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       {/* 4. Порог ML */}
       <div className="bar-section threshold-section">
-        <span className="section-caption">ПОРОГ ML:</span>
-        <span className="mono-badge">p &ge; {confidenceThreshold.toFixed(2)}</span>
+        <span className="mono-badge" title={`Порог ML: p >= ${confidenceThreshold.toFixed(2)}`}>
+          p &ge; {confidenceThreshold.toFixed(2)}
+        </span>
         <input
           id="confidence-threshold"
           name="confidence-threshold"
@@ -209,41 +215,59 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           value={confidenceThreshold}
           onChange={(e) => onThresholdChange(parseFloat(e.target.value))}
           className="threshold-slider"
+          title={`Порог ML: ${confidenceThreshold.toFixed(2)}`}
         />
       </div>
 
       <div className="section-divider" />
 
-      {/* 5. Счётчики графа */}
+      {/* 5. Компактный HUD-чип счетчиков графа */}
       <div className="bar-section counters-section">
-        <div className="counter-item" title="Всего узлов на графе">
-          <span className="counter-label">NODES</span>
-          <span className="counter-value">{nodesCount}</span>
-        </div>
-        <div className="counter-item" title="Активные прямые рёбра">
-          <span className="counter-label">EDGES</span>
-          <span className="counter-value">{visibleEdgesCount}</span>
-        </div>
-        <div className="counter-item optional" title="Транзитивные рёбра">
-          <span className="counter-label">TRANS</span>
-          <span className="counter-value">{transitiveEdgesCount}</span>
-        </div>
         <div
-          className={`counter-item optional ${unreachableEdgesCount > 0 ? 'highlight-dead' : ''}`}
-          title="Недостижимые рёбра / мертвый код"
+          className="cad-hud-chip"
+          title={`Сводка графа:\n• Узлов (Nodes): ${nodesCount}\n• Активных рёбер (Edges): ${visibleEdgesCount}\n• Транзитивных: ${transitiveEdgesCount}\n• Мертвый код (Dead): ${unreachableEdgesCount}\n• Отсечено фильтрами: ${filteredCount}`}
         >
-          <span className="counter-label">DEAD</span>
-          <span className="counter-value">{unreachableEdgesCount}</span>
-        </div>
-        <div className="counter-item optional" title="Отсечено фильтрами">
-          <span className="counter-label">FILTERED</span>
-          <span className="counter-value">{filteredCount}</span>
+          <span className="hud-metric" title="Узлы (Nodes)">
+            {nodesCount}
+            <span className="hud-sub">N</span>
+          </span>
+          <span className="hud-dot">·</span>
+          <span className="hud-metric" title="Активные прямые рёбра (Edges)">
+            {visibleEdgesCount}
+            <span className="hud-sub">E</span>
+          </span>
+          {transitiveEdgesCount > 0 && (
+            <>
+              <span className="hud-dot">·</span>
+              <span className="hud-metric" title="Транзитивные рёбра">
+                {transitiveEdgesCount}
+                <span className="hud-sub">T</span>
+              </span>
+            </>
+          )}
+          <span className="hud-dot">·</span>
+          <span
+            className={`hud-metric ${unreachableEdgesCount > 0 ? 'hud-dead' : ''}`}
+            title="Мертвый код / Недостижимые рёбра"
+          >
+            {unreachableEdgesCount}
+            <span className="hud-sub">D</span>
+          </span>
+          {filteredCount > 0 && (
+            <>
+              <span className="hud-dot">·</span>
+              <span className="hud-metric" title="Отсечено фильтрами">
+                {filteredCount}
+                <span className="hud-sub">F</span>
+              </span>
+            </>
+          )}
         </div>
       </div>
 
       <div className="section-divider" />
 
-      {/* 5.5. Reachability & Dead Code Visualizer */}
+      {/* 6. Reachability & Dead Code Visualizer */}
       <div className="bar-section reachability-section">
         <button
           type="button"
@@ -256,7 +280,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           }
         >
           <Activity size={11} />
-          <span>{reachabilityMode === 'RUNTIME_ONLY' ? 'РАНТАЙМ' : 'ВЕСЬ КОД'}</span>
+          <span className="btn-text">{reachabilityMode === 'RUNTIME_ONLY' ? 'РАНТАЙМ' : 'ВЕСЬ КОД'}</span>
         </button>
 
         {reachabilityMode === 'RUNTIME_ONLY' && (
@@ -271,37 +295,16 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             }
           >
             {deadCodeDisplay === 'DIM' ? <EyeOff size={11} /> : <Eye size={11} />}
-            <span style={{ fontSize: 9 }}>{deadCodeDisplay === 'DIM' ? 'ЗАТУХАНИЕ' : 'СКРЫТО'}</span>
+            <span className="btn-text" style={{ fontSize: 9 }}>
+              {deadCodeDisplay === 'DIM' ? 'ЗАТУХАНИЕ' : 'СКРЫТО'}
+            </span>
           </button>
         )}
       </div>
 
-      {/* 5.6. Индикатор активного сквозного трейса */}
-      {callTrace && (
-        <>
-          <div className="section-divider" />
-          <div className="bar-section trace-banner-section">
-            <div className="trace-banner-tag" title={callTrace.rootHandler || callTrace.rootEndpointPath}>
-              <Route size={11} />
-              <span className="trace-method-badge">{callTrace.rootHttpMethod}</span>
-              <span className="trace-path-label">{callTrace.rootEndpointPath}</span>
-            </div>
-            <button
-              type="button"
-              className="cad-btn trace-clear-btn"
-              onClick={onClearCallTrace}
-              title="Сбросить трассировку"
-            >
-              <X size={10} />
-              <span>СБРОС ТРЕЙСА</span>
-            </button>
-          </div>
-        </>
-      )}
-
       <div className="section-divider" />
 
-      {/* 6. Поиск */}
+      {/* 7. Поиск */}
       <div className="bar-section search-section">
         <div className="search-wrapper">
           <Search size={12} className="search-icon" />
@@ -328,7 +331,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </div>
       </div>
 
-      {/* 7. Кнопки управления CAD */}
+      {/* 8. Кнопки управления CAD */}
       <div className="bar-section actions-section">
         <button
           type="button"
@@ -337,7 +340,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           title={colorMode === 'by_protocol' ? 'Раскраска: по протоколам связи' : 'Раскраска: по слоям источников'}
         >
           <Palette size={12} />
-          <span>{colorMode === 'by_protocol' ? 'ПРОТОКОЛ' : 'ИСТОЧНИК'}</span>
+          <span className="btn-text">{colorMode === 'by_protocol' ? 'ПРОТОКОЛ' : 'ИСТОЧНИК'}</span>
         </button>
 
         <button
@@ -347,7 +350,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           title={direction === 'RIGHT' ? 'Ориентация DAG: слева направо (LR)' : 'Ориентация DAG: сверху вниз (TB)'}
         >
           {direction === 'RIGHT' ? <ArrowRight size={12} /> : <ArrowDown size={12} />}
-          <span>{direction === 'RIGHT' ? 'LR' : 'TB'}</span>
+          <span className="btn-text">{direction === 'RIGHT' ? 'LR' : 'TB'}</span>
         </button>
 
         {/* Экспорт */}
@@ -360,7 +363,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
             title="Экспорт графа в PNG (2x Retina), SVG или JSON"
           >
             <Download size={11} />
-            <span>{isExporting ? 'ЭКСПОРТ...' : 'ЭКСПОРТ'}</span>
+            <span className="btn-text">{isExporting ? 'ЭКСПОРТ...' : 'ЭКСПОРТ'}</span>
             <ChevronDown size={10} />
           </button>
 
@@ -410,7 +413,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           title="Сбросить карту, зум, фильтры, слои, поиск и выделение"
         >
           <RotateCcw size={12} />
-          <span>СБРОС</span>
+          <span className="btn-text">СБРОС</span>
         </button>
       </div>
     </header>
