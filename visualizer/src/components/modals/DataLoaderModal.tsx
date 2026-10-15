@@ -69,6 +69,38 @@ export const DataLoaderModal: React.FC<DataLoaderModalProps> = ({
     onClose();
   };
 
+  const handleLoadDemoSlice = async () => {
+    setErrorMessage(null);
+    try {
+      const [subResp, eviResp, factsResp] = await Promise.all([
+        fetch('/data/demo_submission.json'),
+        fetch('/data/demo_evidence.json'),
+        fetch('/data/demo_facts.json'),
+      ]);
+      if (!subResp.ok || !eviResp.ok || !factsResp.ok) {
+        throw new Error('Файлы demo slice не найдены на сервере');
+      }
+      const [subJson, eviJson, factsJson] = await Promise.all([
+        subResp.json(),
+        eviResp.json(),
+        factsResp.json(),
+      ]);
+      const res = mergePipelineFiles([
+        { name: 'demo_submission.json', content: subJson },
+        { name: 'demo_evidence.json', content: eviJson },
+        { name: 'demo_facts.json', content: factsJson },
+      ]);
+      onLoadGraph(
+        res.graph,
+        `${res.graph.nodes.length} узлов, ${res.graph.edges.length} рёбер (Train Ticket Slice)`,
+        'demo_submission.json + evidence + facts'
+      );
+      onClose();
+    } catch (err: any) {
+      setErrorMessage(`Ошибка загрузки демо-среза: ${err.message}`);
+    }
+  };
+
   const handleLoadArchparseOutput = async () => {
     setErrorMessage(null);
     try {
@@ -153,6 +185,20 @@ export const DataLoaderModal: React.FC<DataLoaderModalProps> = ({
           <div className="modal-presets-section">
             <span className="section-label">ГОТОВЫЕ НАБОРЫ ДАННЫХ:</span>
             <div className="preset-buttons">
+              <button
+                type="button"
+                className="preset-btn"
+                onClick={handleLoadDemoSlice}
+              >
+                <div className="preset-name">
+                  <Database size={12} style={{ display: 'inline', marginRight: 4 }} />
+                  demo_submission.json
+                </div>
+                <div className="preset-desc">
+                  Срез бронирования и оплаты: 19 узлов, 27 рёбер, evidence & facts
+                </div>
+              </button>
+
               <button
                 type="button"
                 className="preset-btn"

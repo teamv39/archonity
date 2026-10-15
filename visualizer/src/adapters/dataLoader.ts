@@ -75,6 +75,12 @@ function normalizeEvidenceDetails(raw: any): EvidenceDetails | undefined {
       confidence: Number(llmRaw.confidence ?? 1.0),
       reasoning: String(llmRaw.reasoning ?? ''),
     };
+  } else if (raw.verdict && raw.reasoning) {
+    llmVerdict = {
+      verdict: raw.verdict === 'REJECT' ? 'REJECT' : 'ACCEPT',
+      confidence: Number(raw.confidence ?? 1.0),
+      reasoning: String(raw.reasoning ?? ''),
+    };
   }
 
   return {
@@ -516,7 +522,13 @@ export function mergePipelineFiles(
     }
 
     // Проверяем: facts.json
-    if (content.service_name || content.serviceName || (content.services && typeof content.services === 'object')) {
+    if (
+      content.service_name ||
+      content.serviceName ||
+      (content.services && typeof content.services === 'object') ||
+      (Array.isArray(content) && content.length > 0 && (content[0]?.service_name || content[0]?.serviceName || content[0]?.inbound_endpoints)) ||
+      name.toLowerCase().includes('fact')
+    ) {
       const g = parseFactsJson(content);
       if (!baseGraph) {
         baseGraph = g;
@@ -530,6 +542,7 @@ export function mergePipelineFiles(
             const existing = nodeMap.get(n.id)!;
             existing.endpoints = [...(existing.endpoints || []), ...(n.endpoints || [])];
             existing.tables = [...(existing.tables || []), ...(n.tables || [])];
+            existing.destinations = [...(existing.destinations || []), ...(n.destinations || [])];
           }
         }
         baseGraph.nodes = Array.from(nodeMap.values());
@@ -603,10 +616,10 @@ export function mergePipelineFiles(
     }
   }
 
-  // Удаление дубликатов ребер по (source, target, relationType)
+  // Удаление дубликатов ребер по (id или source, target, relationType)
   const edgeKeyMap = new Map<string, CanonicalEdge>();
   for (const e of baseGraph.edges) {
-    const key = `${e.source}__${e.target}__${e.relationType}`;
+    const key = e.id || `${e.source}__${e.target}__${e.relationType}`;
     if (!edgeKeyMap.has(key)) {
       edgeKeyMap.set(key, e);
     } else {

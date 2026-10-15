@@ -1,0 +1,1135 @@
+[
+  {
+    "service_name": "ts-gateway-service",
+    "language": "java",
+    "framework": "spring-cloud-gateway",
+    "repo_path": "data/train-ticket/ts-gateway-service",
+    "service_metadata": {
+      "server_port": 18888,
+      "context_path": "/api/v1",
+      "env_vars": {
+        "PRESERVE_SERVICE_URL": "http://ts-preserve-service:14568",
+        "ORDER_SERVICE_URL": "http://ts-order-service:12031",
+        "INSIDE_PAYMENT_SERVICE_URL": "http://ts-inside-payment-service:18673"
+      }
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-gateway-service:GET:/api/v1/gateway/routes",
+        "path": "/api/v1/gateway/routes",
+        "http_method": "GET",
+        "handler_class": "gateway.controller.GatewayRouteController",
+        "handler_method": "getActiveRoutes",
+        "file_path": "src/main/java/gateway/controller/GatewayRouteController.java",
+        "line_number": 32,
+        "response_dto": {
+          "class_name": "gateway.entity.RouteSummary",
+          "fields": [
+            { "name": "routes", "type": "List<String>" },
+            { "name": "status", "type": "String" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [
+      {
+        "id": "ts-gateway-service->ts-preserve-service:CALLS_HTTP",
+        "client_type": "CONFIG_ROUTE",
+        "target_service_hint": "ts-preserve-service",
+        "target_url_template": "http://ts-preserve-service:14568/api/v1/preserveservice/**",
+        "raw_expression": "Path=/api/v1/preserveservice/**",
+        "http_method": "POST",
+        "caller_class": "org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator",
+        "caller_method": "getRoutes",
+        "file_path": "src/main/resources/application.yml",
+        "line_number": 42,
+        "is_reachable": true,
+        "call_chain": [
+          "org.springframework.cloud.gateway.filter.NettyRoutingFilter.filter"
+        ],
+        "code_snippet": "- id: ts-preserve-service\n  uri: http://ts-preserve-service:14568\n  predicates:\n    - Path=/api/v1/preserveservice/**"
+      },
+      {
+        "id": "ts-gateway-service->ts-order-service:CALLS_HTTP",
+        "client_type": "CONFIG_ROUTE",
+        "target_service_hint": "ts-order-service",
+        "target_url_template": "http://ts-order-service:12031/api/v1/orderservice/**",
+        "raw_expression": "Path=/api/v1/orderservice/**",
+        "http_method": "POST",
+        "caller_class": "org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator",
+        "caller_method": "getRoutes",
+        "file_path": "src/main/resources/application.yml",
+        "line_number": 28,
+        "is_reachable": true,
+        "call_chain": [
+          "org.springframework.cloud.gateway.filter.NettyRoutingFilter.filter"
+        ],
+        "code_snippet": "- id: ts-order-service\n  uri: http://ts-order-service:12031\n  predicates:\n    - Path=/api/v1/orderservice/**"
+      },
+      {
+        "id": "ts-gateway-service->ts-inside-payment-service:CALLS_HTTP",
+        "client_type": "CONFIG_ROUTE",
+        "target_service_hint": "ts-inside-payment-service",
+        "target_url_template": "http://ts-inside-payment-service:18673/api/v1/inside_pay_service/**",
+        "raw_expression": "Path=/api/v1/inside_pay_service/**",
+        "http_method": "POST",
+        "caller_class": "org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator",
+        "caller_method": "getRoutes",
+        "file_path": "src/main/resources/application.yml",
+        "line_number": 55,
+        "is_reachable": true,
+        "call_chain": [
+          "org.springframework.cloud.gateway.filter.NettyRoutingFilter.filter"
+        ],
+        "code_snippet": "- id: ts-inside-payment-service\n  uri: http://ts-inside-payment-service:18673\n  predicates:\n    - Path=/api/v1/inside_pay_service/**"
+      }
+    ],
+    "db_access": [],
+    "messaging": []
+  },
+  {
+    "service_name": "ts-preserve-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-preserve-service",
+    "service_metadata": {
+      "server_port": 14568,
+      "context_path": "/api/v1/preserveservice",
+      "env_vars": {
+        "SECURITY_SERVICE_URL": "ts-security-service",
+        "TRAVEL_SERVICE_URL": "ts-travel-service",
+        "SEAT_SERVICE_URL": "ts-seat-service",
+        "ORDER_SERVICE_URL": "ts-order-service",
+        "USER_SERVICE_URL": "ts-user-service"
+      }
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-preserve-service:POST:/api/v1/preserveservice/preserve",
+        "path": "/api/v1/preserveservice/preserve",
+        "http_method": "POST",
+        "handler_class": "preserve.controller.PreserveController",
+        "handler_method": "preserve",
+        "file_path": "src/main/java/preserve/controller/PreserveController.java",
+        "line_number": 38,
+        "request_dto": {
+          "class_name": "preserve.entity.OrderTicketsInfo",
+          "fields": [
+            { "name": "accountId", "type": "String" },
+            { "name": "contactsId", "type": "String" },
+            { "name": "tripId", "type": "String" },
+            { "name": "seatType", "type": "int" },
+            { "name": "date", "type": "Date" },
+            { "name": "from", "type": "String" },
+            { "name": "to", "type": "String" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "edu.fudan.common.util.Response",
+          "fields": [
+            { "name": "status", "type": "int" },
+            { "name": "msg", "type": "String" },
+            { "name": "data", "type": "Object" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [
+      {
+        "id": "ts-preserve-service->ts-security-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-security-service",
+        "target_url_template": "http://ts-security-service:11188/api/v1/securityservice/securityCheck",
+        "raw_expression": "getServiceUrl(\"ts-security-service\") + \"/api/v1/securityservice/securityCheck\"",
+        "http_method": "POST",
+        "caller_class": "preserve.service.PreserveServiceImpl",
+        "caller_method": "checkSecurity",
+        "file_path": "src/main/java/preserve/service/PreserveServiceImpl.java",
+        "line_number": 76,
+        "is_reachable": true,
+        "call_chain": [
+          "preserve.controller.PreserveController.preserve",
+          "preserve.service.PreserveServiceImpl.preserve",
+          "preserve.service.PreserveServiceImpl.checkSecurity"
+        ],
+        "request_dto": {
+          "class_name": "security.entity.SecurityCheckInfo",
+          "fields": [
+            { "name": "accountId", "type": "String" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "security.entity.SecurityCheckResult",
+          "fields": [
+            { "name": "status", "type": "boolean" },
+            { "name": "passed", "type": "boolean" }
+          ]
+        },
+        "code_snippet": "Response checkResult = restTemplate.postForObject(getServiceUrl(\"ts-security-service\") + \"/api/v1/securityservice/securityCheck\", info, Response.class);"
+      },
+      {
+        "id": "ts-preserve-service->ts-travel-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-travel-service",
+        "target_url_template": "http://ts-travel-service:12346/api/v1/travelservice/trips/left",
+        "raw_expression": "getServiceUrl(\"ts-travel-service\") + \"/api/v1/travelservice/trips/left\"",
+        "http_method": "POST",
+        "caller_class": "preserve.service.PreserveServiceImpl",
+        "caller_method": "queryTripInfo",
+        "file_path": "src/main/java/preserve/service/PreserveServiceImpl.java",
+        "line_number": 92,
+        "is_reachable": true,
+        "call_chain": [
+          "preserve.controller.PreserveController.preserve",
+          "preserve.service.PreserveServiceImpl.preserve",
+          "preserve.service.PreserveServiceImpl.queryTripInfo"
+        ],
+        "request_dto": {
+          "class_name": "travel.entity.TripInfo",
+          "fields": [
+            { "name": "tripId", "type": "String" },
+            { "name": "departureTime", "type": "Date" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "travel.entity.TripResponse",
+          "fields": [
+            { "name": "status", "type": "boolean" },
+            { "name": "routes", "type": "List<Route>" }
+          ]
+        },
+        "code_snippet": "Response tripResult = restTemplate.postForObject(getServiceUrl(\"ts-travel-service\") + \"/api/v1/travelservice/trips/left\", tripInfo, Response.class);"
+      },
+      {
+        "id": "ts-preserve-service->ts-seat-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-seat-service",
+        "target_url_template": "http://ts-seat-service:18898/api/v1/seatservice/seats",
+        "raw_expression": "getServiceUrl(\"ts-seat-service\") + \"/api/v1/seatservice/seats\"",
+        "http_method": "POST",
+        "caller_class": "preserve.service.PreserveServiceImpl",
+        "caller_method": "dispatchSeat",
+        "file_path": "src/main/java/preserve/service/PreserveServiceImpl.java",
+        "line_number": 115,
+        "is_reachable": true,
+        "call_chain": [
+          "preserve.controller.PreserveController.preserve",
+          "preserve.service.PreserveServiceImpl.preserve",
+          "preserve.service.PreserveServiceImpl.dispatchSeat"
+        ],
+        "request_dto": {
+          "class_name": "seat.entity.Seat",
+          "fields": [
+            { "name": "travelDate", "type": "Date" },
+            { "name": "trainNumber", "type": "String" },
+            { "name": "seatType", "type": "int" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "seat.entity.Ticket",
+          "fields": [
+            { "name": "seatNo", "type": "int" },
+            { "name": "status", "type": "boolean" }
+          ]
+        },
+        "code_snippet": "HttpEntity<Seat> requestEntity = new HttpEntity<>(seat, httpHeaders);\nResponseEntity<Response<Ticket>> re = restTemplate.exchange(\n    getServiceUrl(\"ts-seat-service\") + \"/api/v1/seatservice/seats\",\n    HttpMethod.POST,\n    requestEntity,\n    new ParameterizedTypeReference<Response<Ticket>>() {}\n);\nResponse<Ticket> result = re.getBody();"
+      },
+      {
+        "id": "ts-preserve-service->ts-user-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-user-service",
+        "target_url_template": "http://ts-user-service:12342/api/v1/userservice/users/id/{userId}",
+        "raw_expression": "getServiceUrl(\"ts-user-service\") + \"/api/v1/userservice/users/id/\" + accountId",
+        "http_method": "GET",
+        "caller_class": "preserve.service.PreserveServiceImpl",
+        "caller_method": "getUserProfile",
+        "file_path": "src/main/java/preserve/service/PreserveServiceImpl.java",
+        "line_number": 138,
+        "is_reachable": true,
+        "call_chain": [
+          "preserve.controller.PreserveController.preserve",
+          "preserve.service.PreserveServiceImpl.preserve",
+          "preserve.service.PreserveServiceImpl.getUserProfile"
+        ],
+        "response_dto": {
+          "class_name": "user.entity.User",
+          "fields": [
+            { "name": "userId", "type": "String" },
+            { "name": "userName", "type": "String" },
+            { "name": "documentNum", "type": "String" }
+          ]
+        },
+        "code_snippet": "String url = getServiceUrl(\"ts-user-service\") + \"/api/v1/userservice/users/id/\" + accountId;\nResponseEntity<Response<User>> re = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<Response<User>>() {});"
+      },
+      {
+        "id": "ts-preserve-service->ts-order-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-order-service",
+        "target_url_template": "http://ts-order-service:12031/api/v1/orderservice/order",
+        "raw_expression": "getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order\"",
+        "http_method": "POST",
+        "caller_class": "preserve.service.PreserveServiceImpl",
+        "caller_method": "createOrder",
+        "file_path": "src/main/java/preserve/service/PreserveServiceImpl.java",
+        "line_number": 160,
+        "is_reachable": true,
+        "call_chain": [
+          "preserve.controller.PreserveController.preserve",
+          "preserve.service.PreserveServiceImpl.preserve",
+          "preserve.service.PreserveServiceImpl.createOrder"
+        ],
+        "request_dto": {
+          "class_name": "order.entity.OrderInfo",
+          "fields": [
+            { "name": "accountId", "type": "String" },
+            { "name": "contactsId", "type": "String" },
+            { "name": "tripId", "type": "String" },
+            { "name": "seatType", "type": "int" },
+            { "name": "price", "type": "double" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "order.entity.OrderResult",
+          "fields": [
+            { "name": "status", "type": "boolean" },
+            { "name": "orderId", "type": "String" }
+          ]
+        },
+        "code_snippet": "Response<Order> createOrderResult = restTemplate.postForObject(getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order\", orderInfo, Response.class);"
+      }
+    ],
+    "db_access": [],
+    "messaging": []
+  },
+  {
+    "service_name": "ts-travel-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-travel-service",
+    "service_metadata": {
+      "server_port": 12346,
+      "context_path": "/api/v1/travelservice",
+      "env_vars": {
+        "SEAT_SERVICE_URL": "ts-seat-service"
+      }
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-travel-service:GET:/api/v1/travelservice/routes",
+        "path": "/api/v1/travelservice/routes",
+        "http_method": "GET",
+        "handler_class": "travel.controller.TravelController",
+        "handler_method": "getRoutes",
+        "file_path": "src/main/java/travel/controller/TravelController.java",
+        "line_number": 42,
+        "request_dto": {
+          "class_name": "travel.entity.TripInfo",
+          "fields": [
+            { "name": "startPlace", "type": "String" },
+            { "name": "endPlace", "type": "String" },
+            { "name": "departureTime", "type": "Date" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "travel.entity.TravelResult",
+          "fields": [
+            { "name": "status", "type": "boolean" },
+            { "name": "message", "type": "String" },
+            { "name": "routes", "type": "List<Route>" }
+          ]
+        }
+      },
+      {
+        "id": "ts-travel-service:POST:/api/v1/travelservice/trips/left",
+        "path": "/api/v1/travelservice/trips/left",
+        "http_method": "POST",
+        "handler_class": "travel.controller.TravelController",
+        "handler_method": "queryInfo",
+        "file_path": "src/main/java/travel/controller/TravelController.java",
+        "line_number": 65,
+        "request_dto": {
+          "class_name": "travel.entity.TripInfo",
+          "fields": [
+            { "name": "tripId", "type": "String" },
+            { "name": "departureTime", "type": "Date" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "travel.entity.TripResponse",
+          "fields": [
+            { "name": "status", "type": "boolean" },
+            { "name": "routes", "type": "List<Route>" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [
+      {
+        "id": "ts-travel-service->ts-seat-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-seat-service",
+        "target_url_template": "http://ts-seat-service:18898/api/v1/seatservice/seat",
+        "raw_expression": "getServiceUrl(\"ts-seat-service\") + \"/api/v1/seatservice/seat\"",
+        "http_method": "POST",
+        "caller_class": "travel.service.TravelServiceImpl",
+        "caller_method": "querySeat",
+        "file_path": "src/main/java/travel/service/TravelServiceImpl.java",
+        "line_number": 115,
+        "is_reachable": true,
+        "call_chain": [
+          "travel.controller.TravelController.queryInfo",
+          "travel.service.TravelServiceImpl.queryInfo",
+          "travel.service.TravelServiceImpl.querySeat"
+        ],
+        "request_dto": {
+          "class_name": "travel.entity.SeatQuery",
+          "fields": [
+            { "name": "tripId", "type": "String" },
+            { "name": "seatType", "type": "int" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "travel.entity.SeatResult",
+          "fields": [
+            { "name": "available", "type": "boolean" }
+          ]
+        },
+        "code_snippet": "restTemplate.postForObject(seatServiceUrl + \"/seat\", query, SeatResult.class);"
+      }
+    ],
+    "db_access": [
+      {
+        "id": "ts-travel-service->db-trip:READS_DB",
+        "table_name": "trip",
+        "db_type": "MONGODB",
+        "operation": "READ_WRITE",
+        "entity_class": "travel.entity.Trip",
+        "caller_class": "travel.repository.TripRepository",
+        "caller_method": "findByTripId",
+        "file_path": "src/main/java/travel/repository/TripRepository.java",
+        "line_number": 28,
+        "is_reachable": true,
+        "call_chain": [
+          "travel.controller.TravelController.getRoutes",
+          "travel.service.TravelServiceImpl.getRoutes",
+          "travel.repository.TripRepository.findByTripId"
+        ]
+      }
+    ],
+    "messaging": []
+  },
+  {
+    "service_name": "ts-seat-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-seat-service",
+    "service_metadata": {
+      "server_port": 18898,
+      "context_path": "/api/v1/seatservice",
+      "env_vars": {}
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-seat-service:POST:/api/v1/seatservice/seats",
+        "path": "/api/v1/seatservice/seats",
+        "http_method": "POST",
+        "handler_class": "seat.controller.SeatController",
+        "handler_method": "create",
+        "file_path": "src/main/java/seat/controller/SeatController.java",
+        "line_number": 36,
+        "request_dto": {
+          "class_name": "seat.entity.Seat",
+          "fields": [
+            { "name": "travelDate", "type": "Date" },
+            { "name": "trainNumber", "type": "String" },
+            { "name": "seatType", "type": "int" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "seat.entity.Ticket",
+          "fields": [
+            { "name": "seatNo", "type": "int" },
+            { "name": "status", "type": "boolean" }
+          ]
+        }
+      },
+      {
+        "id": "ts-seat-service:POST:/api/v1/seatservice/seat",
+        "path": "/api/v1/seatservice/seat",
+        "http_method": "POST",
+        "handler_class": "seat.controller.SeatController",
+        "handler_method": "querySeat",
+        "file_path": "src/main/java/seat/controller/SeatController.java",
+        "line_number": 58,
+        "request_dto": {
+          "class_name": "seat.entity.SeatQuery",
+          "fields": [
+            { "name": "tripId", "type": "String" },
+            { "name": "seatType", "type": "int" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "seat.entity.SeatResult",
+          "fields": [
+            { "name": "available", "type": "boolean" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [],
+    "db_access": [
+      {
+        "id": "ts-seat-service->db-seat:READS_DB",
+        "table_name": "seat",
+        "db_type": "MONGODB",
+        "operation": "READ_WRITE",
+        "entity_class": "seat.entity.Seat",
+        "caller_class": "seat.repository.SeatRepository",
+        "caller_method": "findByTripIdAndSeatType",
+        "file_path": "src/main/java/seat/repository/SeatRepository.java",
+        "line_number": 32,
+        "is_reachable": true,
+        "call_chain": [
+          "seat.controller.SeatController.create",
+          "seat.service.SeatServiceImpl.distributeSeat",
+          "seat.repository.SeatRepository.findByTripIdAndSeatType"
+        ]
+      }
+    ],
+    "messaging": []
+  },
+  {
+    "service_name": "ts-order-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-order-service",
+    "service_metadata": {
+      "server_port": 12031,
+      "context_path": "/api/v1/orderservice",
+      "env_vars": {
+        "STATION_SERVICE_URL": "ts-station-service"
+      }
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-order-service:POST:/api/v1/orderservice/order",
+        "path": "/api/v1/orderservice/order",
+        "http_method": "POST",
+        "handler_class": "order.controller.OrderController",
+        "handler_method": "createNewOrder",
+        "file_path": "src/main/java/order/controller/OrderController.java",
+        "line_number": 45,
+        "request_dto": {
+          "class_name": "order.entity.OrderInfo",
+          "fields": [
+            { "name": "accountId", "type": "String" },
+            { "name": "contactsId", "type": "String" },
+            { "name": "tripId", "type": "String" },
+            { "name": "seatType", "type": "int" },
+            { "name": "price", "type": "double" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "order.entity.OrderResult",
+          "fields": [
+            { "name": "status", "type": "boolean" },
+            { "name": "orderId", "type": "String" }
+          ]
+        }
+      },
+      {
+        "id": "ts-order-service:GET:/api/v1/orderservice/order/{orderId}",
+        "path": "/api/v1/orderservice/order/{orderId}",
+        "http_method": "GET",
+        "handler_class": "order.controller.OrderController",
+        "handler_method": "getOrderByOrderId",
+        "file_path": "src/main/java/order/controller/OrderController.java",
+        "line_number": 78,
+        "response_dto": {
+          "class_name": "order.entity.Order",
+          "fields": [
+            { "name": "id", "type": "String" },
+            { "name": "accountId", "type": "String" },
+            { "name": "price", "type": "double" },
+            { "name": "status", "type": "int" }
+          ]
+        }
+      },
+      {
+        "id": "ts-order-service:POST:/api/v1/orderservice/order/status",
+        "path": "/api/v1/orderservice/order/status",
+        "http_method": "POST",
+        "handler_class": "order.controller.OrderController",
+        "handler_method": "modifyOrderStatus",
+        "file_path": "src/main/java/order/controller/OrderController.java",
+        "line_number": 102,
+        "request_dto": {
+          "class_name": "order.entity.OrderStatusInfo",
+          "fields": [
+            { "name": "orderId", "type": "String" },
+            { "name": "status", "type": "int" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "order.entity.Order",
+          "fields": [
+            { "name": "id", "type": "String" },
+            { "name": "status", "type": "int" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [
+      {
+        "id": "ts-order-service->ts-station-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-station-service",
+        "target_url_template": "http://ts-station-service:12345/api/v1/stationservice/stations/idlist",
+        "raw_expression": "getServiceUrl(\"ts-station-service\") + \"/api/v1/stationservice/stations/idlist\"",
+        "http_method": "POST",
+        "caller_class": "order.service.OrderServiceImpl",
+        "caller_method": "queryStationIds",
+        "file_path": "src/main/java/order/service/OrderServiceImpl.java",
+        "line_number": 59,
+        "is_reachable": true,
+        "call_chain": [
+          "order.controller.OrderController.createNewOrder",
+          "order.service.OrderServiceImpl.create",
+          "order.service.OrderServiceImpl.queryStationIds"
+        ],
+        "request_dto": {
+          "class_name": "station.entity.StationIdListRequest",
+          "fields": [
+            { "name": "stationNames", "type": "List<String>" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "station.entity.StationIdListResponse",
+          "fields": [
+            { "name": "stationIds", "type": "List<String>" }
+          ]
+        },
+        "code_snippet": "Response result = restTemplate.postForObject(\n    getServiceUrl(\"ts-station-service\") + \"/api/v1/stationservice/stations/idlist\",\n    stationIdList,\n    Response.class\n);"
+      }
+    ],
+    "db_access": [
+      {
+        "id": "ts-order-service->db-orders:WRITES_DB",
+        "table_name": "orders",
+        "db_type": "MYSQL",
+        "operation": "WRITE",
+        "entity_class": "order.entity.Order",
+        "caller_class": "order.repository.OrderRepository",
+        "caller_method": "save",
+        "file_path": "src/main/java/order/repository/OrderRepository.java",
+        "line_number": 42,
+        "is_reachable": true,
+        "call_chain": [
+          "order.controller.OrderController.createNewOrder",
+          "order.service.OrderServiceImpl.create",
+          "order.repository.OrderRepository.save"
+        ]
+      },
+      {
+        "id": "ts-order-service->db-orders:READS_DB",
+        "table_name": "orders",
+        "db_type": "MYSQL",
+        "operation": "READ",
+        "entity_class": "order.entity.Order",
+        "caller_class": "order.repository.OrderRepository",
+        "caller_method": "findById",
+        "file_path": "src/main/java/order/repository/OrderRepository.java",
+        "line_number": 50,
+        "is_reachable": true,
+        "call_chain": [
+          "order.controller.OrderController.getOrderByOrderId",
+          "order.service.OrderServiceImpl.getById",
+          "order.repository.OrderRepository.findById"
+        ]
+      }
+    ],
+    "messaging": [
+      {
+        "id": "ts-order-service->mq-email:PRODUCES_MESSAGE",
+        "broker": "RABBITMQ",
+        "role": "PRODUCER",
+        "destination": "email",
+        "routing_key": "email",
+        "caller_class": "order.service.OrderServiceImpl",
+        "caller_method": "notifyOrder",
+        "file_path": "src/main/java/order/service/OrderServiceImpl.java",
+        "line_number": 154,
+        "is_reachable": true,
+        "call_chain": [
+          "order.controller.OrderController.createNewOrder",
+          "order.service.OrderServiceImpl.create",
+          "order.service.OrderServiceImpl.notifyOrder"
+        ]
+      }
+    ]
+  },
+  {
+    "service_name": "ts-user-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-user-service",
+    "service_metadata": {
+      "server_port": 12342,
+      "context_path": "/api/v1/userservice",
+      "env_vars": {
+        "AUTH_SERVICE_URL": "ts-auth-service"
+      }
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-user-service:GET:/api/v1/userservice/users/id/{userId}",
+        "path": "/api/v1/userservice/users/id/{userId}",
+        "http_method": "GET",
+        "handler_class": "user.controller.UserController",
+        "handler_method": "getUserById",
+        "file_path": "src/main/java/user/controller/UserController.java",
+        "line_number": 52,
+        "response_dto": {
+          "class_name": "user.entity.User",
+          "fields": [
+            { "name": "userId", "type": "String" },
+            { "name": "userName", "type": "String" },
+            { "name": "documentNum", "type": "String" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [
+      {
+        "id": "ts-user-service->ts-auth-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-auth-service",
+        "target_url_template": "http://ts-auth-service:12340/api/v1/auth/verify",
+        "raw_expression": "getServiceUrl(\"ts-auth-service\") + \"/api/v1/auth/verify\"",
+        "http_method": "POST",
+        "caller_class": "user.service.UserServiceImpl",
+        "caller_method": "verifyToken",
+        "file_path": "src/main/java/user/service/UserServiceImpl.java",
+        "line_number": 88,
+        "is_reachable": true,
+        "call_chain": [
+          "user.controller.UserController.getUserById",
+          "user.service.UserServiceImpl.getUserById",
+          "user.service.UserServiceImpl.verifyToken"
+        ],
+        "request_dto": {
+          "class_name": "auth.entity.TokenVerifyRequest",
+          "fields": [
+            { "name": "token", "type": "String" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "auth.entity.TokenVerifyResponse",
+          "fields": [
+            { "name": "isValid", "type": "boolean" },
+            { "name": "userId", "type": "String" }
+          ]
+        },
+        "code_snippet": "Response res = restTemplate.postForObject(getServiceUrl(\"ts-auth-service\") + \"/api/v1/auth/verify\", tokenDto, Response.class);"
+      }
+    ],
+    "db_access": [
+      {
+        "id": "ts-user-service->db-user:WRITES_DB",
+        "table_name": "user",
+        "db_type": "MYSQL",
+        "operation": "READ_WRITE",
+        "entity_class": "user.entity.User",
+        "caller_class": "user.repository.UserRepository",
+        "caller_method": "save",
+        "file_path": "src/main/java/user/repository/UserRepository.java",
+        "line_number": 35,
+        "is_reachable": true,
+        "call_chain": [
+          "user.controller.UserController.saveUser",
+          "user.service.UserServiceImpl.save",
+          "user.repository.UserRepository.save"
+        ]
+      }
+    ],
+    "messaging": []
+  },
+  {
+    "service_name": "ts-security-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-security-service",
+    "service_metadata": {
+      "server_port": 11188,
+      "context_path": "/api/v1/securityservice",
+      "env_vars": {
+        "ORDER_SERVICE_URL": "ts-order-service"
+      }
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-security-service:POST:/api/v1/securityservice/securityCheck",
+        "path": "/api/v1/securityservice/securityCheck",
+        "http_method": "POST",
+        "handler_class": "security.controller.SecurityController",
+        "handler_method": "check",
+        "file_path": "src/main/java/security/controller/SecurityController.java",
+        "line_number": 34,
+        "request_dto": {
+          "class_name": "security.entity.SecurityCheckInfo",
+          "fields": [
+            { "name": "accountId", "type": "String" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "security.entity.SecurityCheckResult",
+          "fields": [
+            { "name": "status", "type": "boolean" },
+            { "name": "passed", "type": "boolean" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [
+      {
+        "id": "ts-security-service->ts-order-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-order-service",
+        "target_url_template": "http://ts-order-service:12031/api/v1/orderservice/order/{orderId}",
+        "raw_expression": "getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order/\" + orderId",
+        "http_method": "GET",
+        "caller_class": "security.service.SecurityServiceImpl",
+        "caller_method": "checkOrderCount",
+        "file_path": "src/main/java/security/service/SecurityServiceImpl.java",
+        "line_number": 81,
+        "is_reachable": true,
+        "call_chain": [
+          "security.controller.SecurityController.check",
+          "security.service.SecurityServiceImpl.check",
+          "security.service.SecurityServiceImpl.checkOrderCount"
+        ],
+        "response_dto": {
+          "class_name": "order.entity.Order",
+          "fields": [
+            { "name": "id", "type": "String" },
+            { "name": "accountId", "type": "String" },
+            { "name": "status", "type": "int" }
+          ]
+        },
+        "code_snippet": "ResponseEntity<Response<Order>> response = restTemplate.getForEntity(\n    getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order/\" + orderId,\n    (Class<Response<Order>>) (Class<?>) Response.class\n);"
+      }
+    ],
+    "db_access": [],
+    "messaging": []
+  },
+  {
+    "service_name": "ts-auth-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-auth-service",
+    "service_metadata": {
+      "server_port": 12340,
+      "context_path": "/api/v1/auth",
+      "env_vars": {}
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-auth-service:POST:/api/v1/auth/verify",
+        "path": "/api/v1/auth/verify",
+        "http_method": "POST",
+        "handler_class": "auth.controller.AuthController",
+        "handler_method": "verifyToken",
+        "file_path": "src/main/java/auth/controller/AuthController.java",
+        "line_number": 48,
+        "request_dto": {
+          "class_name": "auth.entity.TokenVerifyRequest",
+          "fields": [
+            { "name": "token", "type": "String" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "auth.entity.TokenVerifyResponse",
+          "fields": [
+            { "name": "isValid", "type": "boolean" },
+            { "name": "userId", "type": "String" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [],
+    "db_access": [],
+    "messaging": []
+  },
+  {
+    "service_name": "ts-inside-payment-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-inside-payment-service",
+    "service_metadata": {
+      "server_port": 18673,
+      "context_path": "/api/v1/inside_pay_service",
+      "env_vars": {
+        "PAYMENT_SERVICE_URL": "ts-payment-service",
+        "ORDER_SERVICE_URL": "ts-order-service"
+      }
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-inside-payment-service:POST:/api/v1/inside_pay_service/inside_payment",
+        "path": "/api/v1/inside_pay_service/inside_payment",
+        "http_method": "POST",
+        "handler_class": "inside_payment.controller.InsidePaymentController",
+        "handler_method": "pay",
+        "file_path": "src/main/java/inside_payment/controller/InsidePaymentController.java",
+        "line_number": 45,
+        "request_dto": {
+          "class_name": "inside_payment.entity.PaymentInfo",
+          "fields": [
+            { "name": "orderId", "type": "String" },
+            { "name": "tripId", "type": "String" },
+            { "name": "userId", "type": "String" },
+            { "name": "price", "type": "double" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "inside_payment.entity.PaymentResult",
+          "fields": [
+            { "name": "status", "type": "boolean" },
+            { "name": "message", "type": "String" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [
+      {
+        "id": "ts-inside-payment-service->ts-payment-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-payment-service",
+        "target_url_template": "http://ts-payment-service:19001/api/v1/paymentservice/payment",
+        "raw_expression": "getServiceUrl(\"ts-payment-service\") + \"/api/v1/paymentservice/payment\"",
+        "http_method": "POST",
+        "caller_class": "inside_payment.service.InsidePaymentServiceImpl",
+        "caller_method": "pay",
+        "file_path": "src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+        "line_number": 104,
+        "is_reachable": true,
+        "call_chain": [
+          "inside_payment.controller.InsidePaymentController.pay",
+          "inside_payment.service.InsidePaymentServiceImpl.pay"
+        ],
+        "request_dto": {
+          "class_name": "payment.entity.Payment",
+          "fields": [
+            { "name": "orderId", "type": "String" },
+            { "name": "price", "type": "double" },
+            { "name": "userId", "type": "String" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "payment.entity.PaymentResult",
+          "fields": [
+            { "name": "status", "type": "boolean" }
+          ]
+        },
+        "code_snippet": "Response result = restTemplate.postForObject(getServiceUrl(\"ts-payment-service\") + \"/api/v1/paymentservice/payment\", paymentInfo, Response.class);"
+      },
+      {
+        "id": "ts-inside-payment-service->ts-order-service:CALLS_HTTP",
+        "client_type": "REST_TEMPLATE",
+        "target_service_hint": "ts-order-service",
+        "target_url_template": "http://ts-order-service:12031/api/v1/orderservice/order/status",
+        "raw_expression": "getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order/status\"",
+        "http_method": "POST",
+        "caller_class": "inside_payment.service.InsidePaymentServiceImpl",
+        "caller_method": "modifyOrderStatus",
+        "file_path": "src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+        "line_number": 122,
+        "is_reachable": true,
+        "call_chain": [
+          "inside_payment.controller.InsidePaymentController.pay",
+          "inside_payment.service.InsidePaymentServiceImpl.pay",
+          "inside_payment.service.InsidePaymentServiceImpl.modifyOrderStatus"
+        ],
+        "request_dto": {
+          "class_name": "order.entity.OrderStatusInfo",
+          "fields": [
+            { "name": "orderId", "type": "String" },
+            { "name": "status", "type": "int" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "order.entity.Order",
+          "fields": [
+            { "name": "id", "type": "String" },
+            { "name": "status", "type": "int" }
+          ]
+        },
+        "code_snippet": "restTemplate.postForObject(getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order/status\", orderStatusInfo, Response.class);"
+      }
+    ],
+    "db_access": [
+      {
+        "id": "ts-inside-payment-service->db-inside_payment:WRITES_DB",
+        "table_name": "inside_payment",
+        "db_type": "MYSQL",
+        "operation": "READ_WRITE",
+        "entity_class": "inside_payment.entity.Payment",
+        "caller_class": "inside_payment.repository.PaymentRepository",
+        "caller_method": "save",
+        "file_path": "src/main/java/inside_payment/repository/PaymentRepository.java",
+        "line_number": 56,
+        "is_reachable": true,
+        "call_chain": [
+          "inside_payment.controller.InsidePaymentController.pay",
+          "inside_payment.service.InsidePaymentServiceImpl.pay",
+          "inside_payment.repository.PaymentRepository.save"
+        ]
+      }
+    ],
+    "messaging": [
+      {
+        "id": "ts-inside-payment-service->mq-email:PRODUCES_MESSAGE",
+        "broker": "RABBITMQ",
+        "role": "PRODUCER",
+        "destination": "email",
+        "routing_key": "email",
+        "caller_class": "inside_payment.service.InsidePaymentServiceImpl",
+        "caller_method": "notifyPayment",
+        "file_path": "src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+        "line_number": 140,
+        "is_reachable": true,
+        "call_chain": [
+          "inside_payment.controller.InsidePaymentController.pay",
+          "inside_payment.service.InsidePaymentServiceImpl.pay",
+          "inside_payment.service.InsidePaymentServiceImpl.notifyPayment"
+        ]
+      }
+    ]
+  },
+  {
+    "service_name": "ts-payment-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-payment-service",
+    "service_metadata": {
+      "server_port": 19001,
+      "context_path": "/api/v1/paymentservice",
+      "env_vars": {}
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-payment-service:POST:/api/v1/paymentservice/payment",
+        "path": "/api/v1/paymentservice/payment",
+        "http_method": "POST",
+        "handler_class": "payment.controller.PaymentController",
+        "handler_method": "pay",
+        "file_path": "src/main/java/payment/controller/PaymentController.java",
+        "line_number": 42,
+        "request_dto": {
+          "class_name": "payment.entity.Payment",
+          "fields": [
+            { "name": "orderId", "type": "String" },
+            { "name": "price", "type": "double" },
+            { "name": "userId", "type": "String" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "payment.entity.PaymentResult",
+          "fields": [
+            { "name": "status", "type": "boolean" },
+            { "name": "message", "type": "String" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [],
+    "db_access": [
+      {
+        "id": "ts-payment-service->db-payment:WRITES_DB",
+        "table_name": "payment",
+        "db_type": "MYSQL",
+        "operation": "READ_WRITE",
+        "entity_class": "payment.entity.PaymentRecord",
+        "caller_class": "payment.repository.PaymentRepository",
+        "caller_method": "save",
+        "file_path": "src/main/java/payment/repository/PaymentRepository.java",
+        "line_number": 38,
+        "is_reachable": true,
+        "call_chain": [
+          "payment.controller.PaymentController.pay",
+          "payment.service.PaymentServiceImpl.pay",
+          "payment.repository.PaymentRepository.save"
+        ]
+      }
+    ],
+    "messaging": []
+  },
+  {
+    "service_name": "ts-notification-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-notification-service",
+    "service_metadata": {
+      "server_port": 17853,
+      "context_path": "/api/v1/notifservice",
+      "env_vars": {}
+    },
+    "inbound_endpoints": [],
+    "outbound_calls": [],
+    "db_access": [],
+    "messaging": [
+      {
+        "id": "mq-email->ts-notification-service:CONSUMES_MESSAGE",
+        "broker": "RABBITMQ",
+        "role": "CONSUMER",
+        "destination": "email",
+        "routing_key": "email",
+        "caller_class": "notification.mq.RabbitReceive",
+        "caller_method": "process",
+        "file_path": "src/main/java/notification/mq/RabbitReceive.java",
+        "line_number": 18,
+        "is_reachable": true,
+        "call_chain": [
+          "notification.mq.RabbitReceive.process"
+        ]
+      }
+    ]
+  },
+  {
+    "service_name": "ts-station-service",
+    "language": "java",
+    "framework": "spring-boot",
+    "repo_path": "data/train-ticket/ts-station-service",
+    "service_metadata": {
+      "server_port": 12345,
+      "context_path": "/api/v1/stationservice",
+      "env_vars": {}
+    },
+    "inbound_endpoints": [
+      {
+        "id": "ts-station-service:POST:/api/v1/stationservice/stations/idlist",
+        "path": "/api/v1/stationservice/stations/idlist",
+        "http_method": "POST",
+        "handler_class": "station.controller.StationController",
+        "handler_method": "queryForIdBatch",
+        "file_path": "src/main/java/station/controller/StationController.java",
+        "line_number": 62,
+        "request_dto": {
+          "class_name": "station.entity.StationIdListRequest",
+          "fields": [
+            { "name": "stationNames", "type": "List<String>" }
+          ]
+        },
+        "response_dto": {
+          "class_name": "station.entity.StationIdListResponse",
+          "fields": [
+            { "name": "stationIds", "type": "List<String>" }
+          ]
+        }
+      }
+    ],
+    "outbound_calls": [],
+    "db_access": [],
+    "messaging": []
+  }
+]

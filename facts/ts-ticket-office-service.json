@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "service_name": "ts-ticket-office-service",
+  "language": "javascript",
+  "framework": "express",
+  "port": 16108,
+  "repo_path": "data/train-ticket/ts-ticket-office-service",
+  "service_metadata": {
+    "server_port": 16108,
+    "context_path": "/api/v1/officeservice",
+    "env_vars": {
+      "PORT": "16108",
+      "MONGO_HOST": "ts-server-mongo",
+      "MONGO_PORT": "27017"
+    }
+  },
+  "inbound_endpoints": [
+    {
+      "id": "ts-ticket-office-service:GET:/api/v1/officeservice/offices",
+      "path": "/api/v1/officeservice/offices",
+      "http_method": "GET",
+      "handler_class": "officeController",
+      "handler_method": "getAllOffices",
+      "file_path": "routes/office.js",
+      "line_number": 24,
+      "request_dto": null,
+      "response_dto": {
+        "class_name": "OfficeListResponse",
+        "fields": [
+          {"name": "status", "type": "int"},
+          {"name": "msg", "type": "string"},
+          {"name": "data", "type": "Array<Office>"}
+        ]
+      }
+    },
+    {
+      "id": "ts-ticket-office-service:POST:/api/v1/officeservice/offices",
+      "path": "/api/v1/officeservice/offices",
+      "http_method": "POST",
+      "handler_class": "officeController",
+      "handler_method": "addOffice",
+      "file_path": "routes/office.js",
+      "line_number": 35,
+      "request_dto": {
+        "class_name": "OfficeRequest",
+        "fields": [
+          {"name": "city", "type": "string"},
+          {"name": "province", "type": "string"},
+          {"name": "region", "type": "string"},
+          {"name": "address", "type": "string"},
+          {"name": "workTime", "type": "string"},
+          {"name": "windowNum", "type": "int"}
+        ]
+      },
+      "response_dto": {
+        "class_name": "OfficeResponse",
+        "fields": [
+          {"name": "status", "type": "int"},
+          {"name": "msg", "type": "string"},
+          {"name": "data", "type": "Office"}
+        ]
+      }
+    },
+    {
+      "id": "ts-ticket-office-service:GET:/api/v1/officeservice/offices/{region}",
+      "path": "/api/v1/officeservice/offices/{region}",
+      "http_method": "GET",
+      "handler_class": "officeController",
+      "handler_method": "getOfficesByRegion",
+      "file_path": "routes/office.js",
+      "line_number": 48,
+      "request_dto": null,
+      "response_dto": {
+        "class_name": "OfficeListResponse",
+        "fields": [
+          {"name": "status", "type": "int"},
+          {"name": "msg", "type": "string"},
+          {"name": "data", "type": "Array<Office>"}
+        ]
+      }
+    }
+  ],
+  "outbound_calls": [],
+  "db_access": [
+    {
+      "id": "ts-ticket-office-service:DB:office",
+      "table_name": "office",
+      "db_type": "MONGODB",
+      "operation": "READ_WRITE",
+      "entity_class": "Office",
+      "caller_class": "officeService",
+      "caller_method": "findOffices",
+      "file_path": "services/officeService.js",
+      "line_number": 42,
+      "is_reachable": true,
+      "call_chain": [
+        "officeController.getAllOffices",
+        "officeService.findOffices",
+        "db.collection('office').find"
+      ]
+    }
+  ],
+  "messaging": [],
+  "internal_call_graph": [
+    {
+      "caller": "officeController.getAllOffices",
+      "callee": "officeService.findOffices",
+      "caller_class": "officeController",
+      "caller_method": "getAllOffices",
+      "callee_class": "officeService",
+      "callee_method": "findOffices",
+      "file_path": "routes/office.js",
+      "line_number": 26
+    },
+    {
+      "caller": "officeController.addOffice",
+      "callee": "officeService.saveOffice",
+      "caller_class": "officeController",
+      "caller_method": "addOffice",
+      "callee_class": "officeService",
+      "callee_method": "saveOffice",
+      "file_path": "routes/office.js",
+      "line_number": 37
+    },
+    {
+      "caller": "officeController.getOfficesByRegion",
+      "callee": "officeService.findOfficesByRegion",
+      "caller_class": "officeController",
+      "caller_method": "getOfficesByRegion",
+      "callee_class": "officeService",
+      "callee_method": "findOfficesByRegion",
+      "file_path": "routes/office.js",
+      "line_number": 50
+    }
+  ]
+}
