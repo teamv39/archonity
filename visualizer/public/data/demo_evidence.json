@@ -1,0 +1,603 @@
+{
+  "ts-gateway-service->ts-preserve-service:CALLS_HTTP": {
+    "edge_id": "ts-gateway-service->ts-preserve-service:CALLS_HTTP",
+    "source": "ts-gateway-service",
+    "target": "ts-preserve-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "CONFIG",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-gateway-service/src/main/resources/application.yml",
+      "line_number": 42,
+      "caller": "org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator",
+      "matched_endpoint": "POST /api/v1/preserveservice/preserve",
+      "code_snippet": "- id: ts-preserve-service\n  uri: http://ts-preserve-service:14568\n  predicates:\n    - Path=/api/v1/preserveservice/**",
+      "config_key": "spring.cloud.gateway.routes[ts-preserve-service]",
+      "is_reachable": true
+    }
+  },
+  "ts-gateway-service->ts-order-service:CALLS_HTTP": {
+    "edge_id": "ts-gateway-service->ts-order-service:CALLS_HTTP",
+    "source": "ts-gateway-service",
+    "target": "ts-order-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "CONFIG",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-gateway-service/src/main/resources/application.yml",
+      "line_number": 28,
+      "caller": "org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator",
+      "matched_endpoint": "POST /api/v1/orderservice/order",
+      "code_snippet": "- id: ts-order-service\n  uri: http://ts-order-service:12031\n  predicates:\n    - Path=/api/v1/orderservice/**",
+      "config_key": "spring.cloud.gateway.routes[ts-order-service]",
+      "is_reachable": true
+    }
+  },
+  "ts-gateway-service->ts-inside-payment-service:CALLS_HTTP": {
+    "edge_id": "ts-gateway-service->ts-inside-payment-service:CALLS_HTTP",
+    "source": "ts-gateway-service",
+    "target": "ts-inside-payment-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "CONFIG",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-gateway-service/src/main/resources/application.yml",
+      "line_number": 55,
+      "caller": "org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator",
+      "matched_endpoint": "POST /api/v1/inside_pay_service/inside_payment",
+      "code_snippet": "- id: ts-inside-payment-service\n  uri: http://ts-inside-payment-service:18673\n  predicates:\n    - Path=/api/v1/inside_pay_service/**",
+      "config_key": "spring.cloud.gateway.routes[ts-inside-payment-service]",
+      "is_reachable": true
+    }
+  },
+  "ts-preserve-service->ts-security-service:CALLS_HTTP": {
+    "edge_id": "ts-preserve-service->ts-security-service:CALLS_HTTP",
+    "source": "ts-preserve-service",
+    "target": "ts-security-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-preserve-service/src/main/java/preserve/service/PreserveServiceImpl.java",
+      "line_number": 76,
+      "caller": "preserve.service.PreserveServiceImpl.checkSecurity",
+      "matched_endpoint": "POST /api/v1/securityservice/securityCheck",
+      "call_chain": [
+        "preserve.controller.PreserveController.preserve",
+        "preserve.service.PreserveServiceImpl.preserve",
+        "preserve.service.PreserveServiceImpl.checkSecurity"
+      ],
+      "code_snippet": "Response checkResult = restTemplate.postForObject(getServiceUrl(\"ts-security-service\") + \"/api/v1/securityservice/securityCheck\", info, Response.class);",
+      "is_reachable": true
+    }
+  },
+  "ts-preserve-service->ts-travel-service:CALLS_HTTP": {
+    "edge_id": "ts-preserve-service->ts-travel-service:CALLS_HTTP",
+    "source": "ts-preserve-service",
+    "target": "ts-travel-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-preserve-service/src/main/java/preserve/service/PreserveServiceImpl.java",
+      "line_number": 92,
+      "caller": "preserve.service.PreserveServiceImpl.queryTripInfo",
+      "matched_endpoint": "POST /api/v1/travelservice/trips/left",
+      "call_chain": [
+        "preserve.controller.PreserveController.preserve",
+        "preserve.service.PreserveServiceImpl.preserve",
+        "preserve.service.PreserveServiceImpl.queryTripInfo"
+      ],
+      "code_snippet": "Response tripResult = restTemplate.postForObject(getServiceUrl(\"ts-travel-service\") + \"/api/v1/travelservice/trips/left\", tripInfo, Response.class);",
+      "is_reachable": true
+    }
+  },
+  "ts-preserve-service->ts-seat-service:CALLS_HTTP": {
+    "edge_id": "ts-preserve-service->ts-seat-service:CALLS_HTTP",
+    "source": "ts-preserve-service",
+    "target": "ts-seat-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-preserve-service/src/main/java/preserve/service/PreserveServiceImpl.java",
+      "line_number": 115,
+      "caller": "preserve.service.PreserveServiceImpl.dispatchSeat",
+      "matched_endpoint": "POST /api/v1/seatservice/seats",
+      "call_chain": [
+        "preserve.controller.PreserveController.preserve",
+        "preserve.service.PreserveServiceImpl.preserve",
+        "preserve.service.PreserveServiceImpl.dispatchSeat"
+      ],
+      "code_snippet": "HttpEntity<Seat> requestEntity = new HttpEntity<>(seat, httpHeaders);\nResponseEntity<Response<Ticket>> re = restTemplate.exchange(\n    getServiceUrl(\"ts-seat-service\") + \"/api/v1/seatservice/seats\",\n    HttpMethod.POST,\n    requestEntity,\n    new ParameterizedTypeReference<Response<Ticket>>() {}\n);\nResponse<Ticket> result = re.getBody();",
+      "is_reachable": true
+    }
+  },
+  "ts-preserve-service->ts-user-service:CALLS_HTTP": {
+    "edge_id": "ts-preserve-service->ts-user-service:CALLS_HTTP",
+    "source": "ts-preserve-service",
+    "target": "ts-user-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "ML_HIGH_CONFIDENCE",
+    "confidence": 0.89,
+    "evidence_details": {
+      "file_path": "ts-preserve-service/src/main/java/preserve/service/PreserveServiceImpl.java",
+      "line_number": 138,
+      "caller": "preserve.service.PreserveServiceImpl.getUserProfile",
+      "matched_endpoint": "GET /api/v1/userservice/users/id/{userId}",
+      "call_chain": [
+        "preserve.controller.PreserveController.preserve",
+        "preserve.service.PreserveServiceImpl.preserve",
+        "preserve.service.PreserveServiceImpl.getUserProfile"
+      ],
+      "code_snippet": "String url = getServiceUrl(\"ts-user-service\") + \"/api/v1/userservice/users/id/\" + accountId;\nResponseEntity<Response<User>> re = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<Response<User>>() {});",
+      "model_name": "CatBoost_LinkPredictor_v1",
+      "threshold": 0.85,
+      "top_features": {
+        "jina_code_similarity": 0.875,
+        "dto_overlap_jaccard": 0.78,
+        "bm25_token_similarity": 0.835,
+        "hits_product": 0.68,
+        "adamic_adar_index": 1.85
+      },
+      "is_reachable": true
+    }
+  },
+  "ts-preserve-service->ts-order-service:CALLS_HTTP": {
+    "edge_id": "ts-preserve-service->ts-order-service:CALLS_HTTP",
+    "source": "ts-preserve-service",
+    "target": "ts-order-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-preserve-service/src/main/java/preserve/service/PreserveServiceImpl.java",
+      "line_number": 160,
+      "caller": "preserve.service.PreserveServiceImpl.createOrder",
+      "matched_endpoint": "POST /api/v1/orderservice/order",
+      "call_chain": [
+        "preserve.controller.PreserveController.preserve",
+        "preserve.service.PreserveServiceImpl.preserve",
+        "preserve.service.PreserveServiceImpl.createOrder"
+      ],
+      "code_snippet": "Response<Order> createOrderResult = restTemplate.postForObject(getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order\", orderInfo, Response.class);",
+      "is_reachable": true
+    }
+  },
+  "ts-travel-service->ts-seat-service:CALLS_HTTP": {
+    "edge_id": "ts-travel-service->ts-seat-service:CALLS_HTTP",
+    "source": "ts-travel-service",
+    "target": "ts-seat-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+      "line_number": 115,
+      "caller": "travel.service.TravelServiceImpl.querySeat",
+      "matched_endpoint": "POST /api/v1/seatservice/seat",
+      "call_chain": [
+        "travel.controller.TravelController.queryInfo",
+        "travel.service.TravelServiceImpl.queryInfo",
+        "travel.service.TravelServiceImpl.querySeat"
+      ],
+      "code_snippet": "restTemplate.postForObject(seatServiceUrl + \"/seat\", query, SeatResult.class);",
+      "is_reachable": true
+    }
+  },
+  "ts-security-service->ts-order-service:CALLS_HTTP": {
+    "edge_id": "ts-security-service->ts-order-service:CALLS_HTTP",
+    "source": "ts-security-service",
+    "target": "ts-order-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "LLM_JUDGE_VERIFIED",
+    "confidence": 0.78,
+    "evidence_details": {
+      "file_path": "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+      "line_number": 81,
+      "caller": "security.service.SecurityServiceImpl.checkOrderCount",
+      "matched_endpoint": "GET /api/v1/orderservice/order/{orderId}",
+      "call_chain": [
+        "security.controller.SecurityController.check",
+        "security.service.SecurityServiceImpl.check",
+        "security.service.SecurityServiceImpl.checkOrderCount"
+      ],
+      "code_snippet": "ResponseEntity<Response<Order>> response = restTemplate.getForEntity(\n    getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order/\" + orderId,\n    (Class<Response<Order>>) (Class<?>) Response.class\n);",
+      "model_name": "Qwen2.5-Coder-7B-Instruct (Q4_K_M)",
+      "threshold": 0.73,
+      "verdict": "CONFIRMED_DIRECT_CALL",
+      "reasoning": "Метод checkOrderCount выполняет динамический HTTP GET-запрос getForEntity с конкатенацией идентификатора заказа getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order/\" + orderId. Поля возвращаемого DTO Order совпадают с контрактом OrderController в ts-order-service. Несмотря на пограничный скор CatBoost (0.78 из-за динамической сборки пути), прямое сетевое обращение подтверждено в исходном коде.",
+      "http_call_line_in_source": "restTemplate.getForEntity(getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order/\" + orderId, (Class<Response<Order>>) (Class<?>) Response.class)",
+      "matching_dto_fields": [
+        "id",
+        "accountId",
+        "boughtDate",
+        "travelDate",
+        "travelTime",
+        "price",
+        "status"
+      ],
+      "llm_verdict": {
+        "verdict": "ACCEPT",
+        "confidence": 0.95,
+        "reasoning": "Метод checkOrderCount выполняет прямой HTTP GET запрос к ts-order-service для валидации лимитов пользователя."
+      },
+      "top_features": {
+        "jina_code_similarity": 0.812,
+        "dto_overlap_jaccard": 0.714,
+        "bm25_token_similarity": 0.765,
+        "hits_product": 0.54,
+        "adamic_adar_index": 1.42
+      },
+      "is_reachable": true
+    }
+  },
+  "ts-user-service->ts-auth-service:CALLS_HTTP": {
+    "edge_id": "ts-user-service->ts-auth-service:CALLS_HTTP",
+    "source": "ts-user-service",
+    "target": "ts-auth-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-user-service/src/main/java/user/service/UserServiceImpl.java",
+      "line_number": 88,
+      "caller": "user.service.UserServiceImpl.verifyToken",
+      "matched_endpoint": "POST /api/v1/auth/verify",
+      "call_chain": [
+        "user.controller.UserController.getUserById",
+        "user.service.UserServiceImpl.getUserById",
+        "user.service.UserServiceImpl.verifyToken"
+      ],
+      "code_snippet": "Response res = restTemplate.postForObject(getServiceUrl(\"ts-auth-service\") + \"/api/v1/auth/verify\", tokenDto, Response.class);",
+      "is_reachable": true
+    }
+  },
+  "ts-order-service->ts-station-service:CALLS_HTTP": {
+    "edge_id": "ts-order-service->ts-station-service:CALLS_HTTP",
+    "source": "ts-order-service",
+    "target": "ts-station-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "ML_HIGH_CONFIDENCE",
+    "confidence": 0.92,
+    "evidence_details": {
+      "file_path": "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+      "line_number": 59,
+      "caller": "order.service.OrderServiceImpl.queryStationIds",
+      "matched_endpoint": "POST /api/v1/stationservice/stations/idlist",
+      "call_chain": [
+        "order.controller.OrderController.createNewOrder",
+        "order.service.OrderServiceImpl.create",
+        "order.service.OrderServiceImpl.queryStationIds"
+      ],
+      "code_snippet": "Response result = restTemplate.postForObject(\n    getServiceUrl(\"ts-station-service\") + \"/api/v1/stationservice/stations/idlist\",\n    stationIdList,\n    Response.class\n);",
+      "model_name": "CatBoost_LinkPredictor_v1",
+      "threshold": 0.85,
+      "top_features": {
+        "jina_code_similarity": 0.912,
+        "dto_overlap_jaccard": 0.857,
+        "bm25_token_similarity": 0.894,
+        "hits_product": 0.742,
+        "adamic_adar_index": 2.15
+      },
+      "is_reachable": true
+    }
+  },
+  "ts-inside-payment-service->ts-payment-service:CALLS_HTTP": {
+    "edge_id": "ts-inside-payment-service->ts-payment-service:CALLS_HTTP",
+    "source": "ts-inside-payment-service",
+    "target": "ts-payment-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+      "line_number": 104,
+      "caller": "inside_payment.service.InsidePaymentServiceImpl.pay",
+      "matched_endpoint": "POST /api/v1/paymentservice/payment",
+      "call_chain": [
+        "inside_payment.controller.InsidePaymentController.pay",
+        "inside_payment.service.InsidePaymentServiceImpl.pay"
+      ],
+      "code_snippet": "Response result = restTemplate.postForObject(getServiceUrl(\"ts-payment-service\") + \"/api/v1/paymentservice/payment\", paymentInfo, Response.class);",
+      "is_reachable": true
+    }
+  },
+  "ts-inside-payment-service->ts-order-service:CALLS_HTTP": {
+    "edge_id": "ts-inside-payment-service->ts-order-service:CALLS_HTTP",
+    "source": "ts-inside-payment-service",
+    "target": "ts-order-service",
+    "relation_type": "CALLS_HTTP",
+    "source_type": "LLM_JUDGE_VERIFIED",
+    "confidence": 0.81,
+    "evidence_details": {
+      "file_path": "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+      "line_number": 122,
+      "caller": "inside_payment.service.InsidePaymentServiceImpl.modifyOrderStatus",
+      "matched_endpoint": "POST /api/v1/orderservice/order/status",
+      "call_chain": [
+        "inside_payment.controller.InsidePaymentController.pay",
+        "inside_payment.service.InsidePaymentServiceImpl.pay",
+        "inside_payment.service.InsidePaymentServiceImpl.modifyOrderStatus"
+      ],
+      "code_snippet": "restTemplate.postForObject(getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order/status\", orderStatusInfo, Response.class);",
+      "model_name": "Qwen2.5-Coder-7B-Instruct (Q4_K_M)",
+      "threshold": 0.73,
+      "verdict": "CONFIRMED_DIRECT_CALL",
+      "reasoning": "Метод modifyOrderStatus обновляет статус оплаченного заказа через POST-запрос. Имя хоста ts-order-service разрешается через getServiceUrl(\"ts-order-service\"), поля DTO OrderStatusInfo согласованы.",
+      "http_call_line_in_source": "restTemplate.postForObject(getServiceUrl(\"ts-order-service\") + \"/api/v1/orderservice/order/status\", orderStatusInfo, Response.class)",
+      "matching_dto_fields": [
+        "orderId",
+        "status"
+      ],
+      "llm_verdict": {
+        "verdict": "ACCEPT",
+        "confidence": 0.96,
+        "reasoning": "Подтвержден прямой HTTP вызов для синхронизации статуса заказа после успешного проведения платежа."
+      },
+      "top_features": {
+        "jina_code_similarity": 0.834,
+        "dto_overlap_jaccard": 0.75,
+        "bm25_token_similarity": 0.792,
+        "hits_product": 0.61,
+        "adamic_adar_index": 1.6
+      },
+      "is_reachable": true
+    }
+  },
+  "ts-order-service->mq-email:PRODUCES_MESSAGE": {
+    "edge_id": "ts-order-service->mq-email:PRODUCES_MESSAGE",
+    "source": "ts-order-service",
+    "target": "mq-email",
+    "relation_type": "PRODUCES_MESSAGE",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+      "line_number": 154,
+      "caller": "order.service.OrderServiceImpl.notifyOrder",
+      "matched_endpoint": "RABBITMQ: email (order.create)",
+      "call_chain": [
+        "order.controller.OrderController.createNewOrder",
+        "order.service.OrderServiceImpl.create",
+        "order.service.OrderServiceImpl.notifyOrder"
+      ],
+      "code_snippet": "rabbitTemplate.convertAndSend(\"email\", notification);",
+      "is_reachable": true
+    }
+  },
+  "ts-inside-payment-service->mq-email:PRODUCES_MESSAGE": {
+    "edge_id": "ts-inside-payment-service->mq-email:PRODUCES_MESSAGE",
+    "source": "ts-inside-payment-service",
+    "target": "mq-email",
+    "relation_type": "PRODUCES_MESSAGE",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+      "line_number": 140,
+      "caller": "inside_payment.service.InsidePaymentServiceImpl.notifyPayment",
+      "matched_endpoint": "RABBITMQ: email (payment.success)",
+      "call_chain": [
+        "inside_payment.controller.InsidePaymentController.pay",
+        "inside_payment.service.InsidePaymentServiceImpl.pay",
+        "inside_payment.service.InsidePaymentServiceImpl.notifyPayment"
+      ],
+      "code_snippet": "rabbitTemplate.convertAndSend(\"email\", paymentNotification);",
+      "is_reachable": true
+    }
+  },
+  "mq-email->ts-notification-service:CONSUMES_MESSAGE": {
+    "edge_id": "mq-email->ts-notification-service:CONSUMES_MESSAGE",
+    "source": "mq-email",
+    "target": "ts-notification-service",
+    "relation_type": "CONSUMES_MESSAGE",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-notification-service/src/main/java/notification/mq/RabbitReceive.java",
+      "line_number": 18,
+      "caller": "notification.mq.RabbitReceive.process",
+      "matched_endpoint": "@RabbitListener(queues = \"email\")",
+      "call_chain": [
+        "notification.mq.RabbitReceive.process"
+      ],
+      "code_snippet": "@RabbitListener(queues = \"email\")\npublic void process(Notification notification) {\n    mailService.sendEmail(notification);\n}",
+      "is_reachable": true
+    }
+  },
+  "ts-order-service->db-orders:WRITES_DB": {
+    "edge_id": "ts-order-service->db-orders:WRITES_DB",
+    "source": "ts-order-service",
+    "target": "db-orders",
+    "relation_type": "WRITES_DB",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-order-service/src/main/java/order/repository/OrderRepository.java",
+      "line_number": 42,
+      "caller": "order.repository.OrderRepository.save",
+      "call_chain": [
+        "order.controller.OrderController.createNewOrder",
+        "order.service.OrderServiceImpl.create",
+        "order.repository.OrderRepository.save"
+      ],
+      "code_snippet": "@Table(name = \"orders\")\npublic interface OrderRepository extends CrudRepository<Order, String> { ... }",
+      "is_reachable": true
+    }
+  },
+  "ts-order-service->db-orders:READS_DB": {
+    "edge_id": "ts-order-service->db-orders:READS_DB",
+    "source": "ts-order-service",
+    "target": "db-orders",
+    "relation_type": "READS_DB",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-order-service/src/main/java/order/repository/OrderRepository.java",
+      "line_number": 50,
+      "caller": "order.repository.OrderRepository.findById",
+      "call_chain": [
+        "order.controller.OrderController.getOrderByOrderId",
+        "order.service.OrderServiceImpl.getById",
+        "order.repository.OrderRepository.findById"
+      ],
+      "code_snippet": "Optional<Order> order = orderRepository.findById(orderId);",
+      "is_reachable": true
+    }
+  },
+  "ts-user-service->db-user:WRITES_DB": {
+    "edge_id": "ts-user-service->db-user:WRITES_DB",
+    "source": "ts-user-service",
+    "target": "db-user",
+    "relation_type": "WRITES_DB",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-user-service/src/main/java/user/repository/UserRepository.java",
+      "line_number": 35,
+      "caller": "user.repository.UserRepository.save",
+      "call_chain": [
+        "user.controller.UserController.saveUser",
+        "user.service.UserServiceImpl.save",
+        "user.repository.UserRepository.save"
+      ],
+      "code_snippet": "@Table(name = \"user\")\npublic interface UserRepository extends CrudRepository<User, String> { ... }",
+      "is_reachable": true
+    }
+  },
+  "ts-inside-payment-service->db-inside_payment:WRITES_DB": {
+    "edge_id": "ts-inside-payment-service->db-inside_payment:WRITES_DB",
+    "source": "ts-inside-payment-service",
+    "target": "db-inside_payment",
+    "relation_type": "WRITES_DB",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-inside-payment-service/src/main/java/inside_payment/repository/PaymentRepository.java",
+      "line_number": 56,
+      "caller": "inside_payment.repository.PaymentRepository.save",
+      "call_chain": [
+        "inside_payment.controller.InsidePaymentController.pay",
+        "inside_payment.service.InsidePaymentServiceImpl.pay",
+        "inside_payment.repository.PaymentRepository.save"
+      ],
+      "code_snippet": "@Table(name = \"inside_payment\")\npublic interface PaymentRepository extends CrudRepository<Payment, String> { ... }",
+      "is_reachable": true
+    }
+  },
+  "ts-payment-service->db-payment:WRITES_DB": {
+    "edge_id": "ts-payment-service->db-payment:WRITES_DB",
+    "source": "ts-payment-service",
+    "target": "db-payment",
+    "relation_type": "WRITES_DB",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-payment-service/src/main/java/payment/repository/PaymentRepository.java",
+      "line_number": 38,
+      "caller": "payment.repository.PaymentRepository.save",
+      "call_chain": [
+        "payment.controller.PaymentController.pay",
+        "payment.service.PaymentServiceImpl.pay",
+        "payment.repository.PaymentRepository.save"
+      ],
+      "code_snippet": "@Table(name = \"payment\")\npublic interface PaymentRepository extends CrudRepository<PaymentRecord, String> { ... }",
+      "is_reachable": true
+    }
+  },
+  "ts-travel-service->db-trip:READS_DB": {
+    "edge_id": "ts-travel-service->db-trip:READS_DB",
+    "source": "ts-travel-service",
+    "target": "db-trip",
+    "relation_type": "READS_DB",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-travel-service/src/main/java/travel/repository/TripRepository.java",
+      "line_number": 28,
+      "caller": "travel.repository.TripRepository.findByTripId",
+      "call_chain": [
+        "travel.controller.TravelController.getRoutes",
+        "travel.service.TravelServiceImpl.getRoutes",
+        "travel.repository.TripRepository.findByTripId"
+      ],
+      "code_snippet": "@Document(collection = \"trip\")\npublic interface TripRepository extends MongoRepository<Trip, String> { ... }",
+      "is_reachable": true
+    }
+  },
+  "ts-seat-service->db-seat:READS_DB": {
+    "edge_id": "ts-seat-service->db-seat:READS_DB",
+    "source": "ts-seat-service",
+    "target": "db-seat",
+    "relation_type": "READS_DB",
+    "source_type": "AST_EXACT",
+    "confidence": 1.0,
+    "evidence_details": {
+      "file_path": "ts-seat-service/src/main/java/seat/repository/SeatRepository.java",
+      "line_number": 32,
+      "caller": "seat.repository.SeatRepository.findByTripIdAndSeatType",
+      "call_chain": [
+        "seat.controller.SeatController.create",
+        "seat.service.SeatServiceImpl.distributeSeat",
+        "seat.repository.SeatRepository.findByTripIdAndSeatType"
+      ],
+      "code_snippet": "@Document(collection = \"seat\")\npublic interface SeatRepository extends MongoRepository<Seat, String> { ... }",
+      "is_reachable": true
+    }
+  },
+  "ts-preserve-service->ts-station-service:TRANSITIVE": {
+    "edge_id": "ts-preserve-service->ts-station-service:TRANSITIVE",
+    "source": "ts-preserve-service",
+    "target": "ts-station-service",
+    "relation_type": "TRANSITIVE",
+    "source_type": "TRANSITIVE",
+    "confidence": 0.92,
+    "evidence_details": {
+      "caller": "TransitiveClosureResolver.resolve",
+      "call_chain": [
+        "ts-preserve-service",
+        "ts-order-service",
+        "ts-station-service"
+      ],
+      "reasoning": "Косвенная зависимость, выведенная транзитивным замыканием (A -> B -> C): сервис бронирования ts-preserve-service вызывает ts-order-service, который обращается к справочнику ts-station-service для пакетного разрешения названий станций в ID.",
+      "is_reachable": true
+    }
+  },
+  "ts-gateway-service->ts-travel-service:TRANSITIVE": {
+    "edge_id": "ts-gateway-service->ts-travel-service:TRANSITIVE",
+    "source": "ts-gateway-service",
+    "target": "ts-travel-service",
+    "relation_type": "TRANSITIVE",
+    "source_type": "TRANSITIVE",
+    "confidence": 1.0,
+    "evidence_details": {
+      "caller": "TransitiveClosureResolver.resolve",
+      "call_chain": [
+        "ts-gateway-service",
+        "ts-preserve-service",
+        "ts-travel-service"
+      ],
+      "reasoning": "Косвенная зависимость сценария бронирования (A -> B -> C): внешний запрос на поиск и валидацию доступности рейса поступает через API Gateway в оркестратор ts-preserve-service, который каскадно обращается в сервис маршрутов ts-travel-service.",
+      "is_reachable": true
+    }
+  },
+  "ts-gateway-service->ts-payment-service:TRANSITIVE": {
+    "edge_id": "ts-gateway-service->ts-payment-service:TRANSITIVE",
+    "source": "ts-gateway-service",
+    "target": "ts-payment-service",
+    "relation_type": "TRANSITIVE",
+    "source_type": "TRANSITIVE",
+    "confidence": 1.0,
+    "evidence_details": {
+      "caller": "TransitiveClosureResolver.resolve",
+      "call_chain": [
+        "ts-gateway-service",
+        "ts-inside-payment-service",
+        "ts-payment-service"
+      ],
+      "reasoning": "Транзитивная зависимость сквозного сценария оплаты: внешний клиентский запрос через ts-gateway-service маршрутизируется в ts-inside-payment-service, который каскадно обращается к внешнему платежному адаптеру ts-payment-service.",
+      "is_reachable": true
+    }
+  }
+}

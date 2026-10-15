@@ -1,0 +1,482 @@
+{
+  "metadata": {
+    "generated_at": "2026-10-15T21:00:00Z",
+    "version": "1.0.0-demo-slice",
+    "benchmark": "FudanSELab/train-ticket",
+    "description": "Демо-срез восстановленного графа зависимостей сценариев бронирования (Ticket Preservation) и оплаты (Inside Payment)",
+    "total_nodes": 19,
+    "total_edges": 27
+  },
+  "nodes": [
+    {
+      "id": "ts-gateway-service",
+      "name": "ts-gateway-service",
+      "type": "SERVICE",
+      "framework": "Spring Cloud Gateway",
+      "language": "Java 17",
+      "server_port": 18888,
+      "context_path": "/api/v1",
+      "description": "Центральный API Gateway и маршрутизатор внешних запросов"
+    },
+    {
+      "id": "ts-preserve-service",
+      "name": "ts-preserve-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 14568,
+      "context_path": "/api/v1/preserveservice",
+      "description": "Оркестратор сценария бронирования билетов (Ticket Preservation)"
+    },
+    {
+      "id": "ts-travel-service",
+      "name": "ts-travel-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 12346,
+      "context_path": "/api/v1/travelservice",
+      "description": "Сервис поиска рейсов, расписаний и планирования маршрутов"
+    },
+    {
+      "id": "ts-seat-service",
+      "name": "ts-seat-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 18898,
+      "context_path": "/api/v1/seatservice",
+      "description": "Сервис распределения и проверки доступности мест в вагонах"
+    },
+    {
+      "id": "ts-order-service",
+      "name": "ts-order-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 12031,
+      "context_path": "/api/v1/orderservice",
+      "description": "Основной сервис создания, чтения и модификации заказов билетов"
+    },
+    {
+      "id": "ts-user-service",
+      "name": "ts-user-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 12342,
+      "context_path": "/api/v1/userservice",
+      "description": "Сервис профилей пассажиров и учетных записей"
+    },
+    {
+      "id": "ts-security-service",
+      "name": "ts-security-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 11188,
+      "context_path": "/api/v1/securityservice",
+      "description": "Сервис верификации лимитов заказов и проверок безопасности"
+    },
+    {
+      "id": "ts-auth-service",
+      "name": "ts-auth-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 12340,
+      "context_path": "/api/v1/auth",
+      "description": "Сервис аутентификации, авторизации и верификации JWT-токенов"
+    },
+    {
+      "id": "ts-inside-payment-service",
+      "name": "ts-inside-payment-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 18673,
+      "context_path": "/api/v1/inside_pay_service",
+      "description": "Шлюз внутреннего баланса и управления процессом оплаты заказов"
+    },
+    {
+      "id": "ts-payment-service",
+      "name": "ts-payment-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 19001,
+      "context_path": "/api/v1/paymentservice",
+      "description": "Внешний финансовый шлюз и фиксация транзакций списания"
+    },
+    {
+      "id": "ts-notification-service",
+      "name": "ts-notification-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 17853,
+      "context_path": "/api/v1/notifservice",
+      "description": "Асинхронный сервис генерации почтовых и SMS-уведомлений"
+    },
+    {
+      "id": "ts-station-service",
+      "name": "ts-station-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 2.7",
+      "language": "Java 17",
+      "server_port": 12345,
+      "context_path": "/api/v1/stationservice",
+      "description": "Справочник железнодорожных станций и разрешения названий в ID"
+    },
+    {
+      "id": "db-orders",
+      "name": "orders",
+      "type": "DATABASE",
+      "framework": "MySQL 8.0",
+      "description": "Таблица заказов orders (СУБД MySQL)",
+      "tables": [
+        {
+          "tableName": "orders",
+          "dbType": "MYSQL",
+          "operation": "READ_WRITE",
+          "entityClass": "order.entity.Order"
+        }
+      ]
+    },
+    {
+      "id": "db-user",
+      "name": "user",
+      "type": "DATABASE",
+      "framework": "MySQL 8.0",
+      "description": "Таблица учетных записей пользователей user (СУБД MySQL)",
+      "tables": [
+        {
+          "tableName": "user",
+          "dbType": "MYSQL",
+          "operation": "READ_WRITE",
+          "entityClass": "user.entity.User"
+        }
+      ]
+    },
+    {
+      "id": "db-inside_payment",
+      "name": "inside_payment",
+      "type": "DATABASE",
+      "framework": "MySQL 8.0",
+      "description": "Таблица балансов и оплат inside_payment (СУБД MySQL)",
+      "tables": [
+        {
+          "tableName": "inside_payment",
+          "dbType": "MYSQL",
+          "operation": "READ_WRITE",
+          "entityClass": "inside_payment.entity.Payment"
+        }
+      ]
+    },
+    {
+      "id": "db-payment",
+      "name": "payment",
+      "type": "DATABASE",
+      "framework": "MySQL 8.0",
+      "description": "Таблица финансовых транзакций payment (СУБД MySQL)",
+      "tables": [
+        {
+          "tableName": "payment",
+          "dbType": "MYSQL",
+          "operation": "READ_WRITE",
+          "entityClass": "payment.entity.PaymentRecord"
+        }
+      ]
+    },
+    {
+      "id": "db-trip",
+      "name": "trip",
+      "type": "DATABASE",
+      "framework": "MongoDB 6.0",
+      "description": "Коллекция маршрутов и рейсов trip (СУБД MongoDB)",
+      "tables": [
+        {
+          "tableName": "trip",
+          "dbType": "MONGODB",
+          "operation": "READ_WRITE",
+          "entityClass": "travel.entity.Trip"
+        }
+      ]
+    },
+    {
+      "id": "db-seat",
+      "name": "seat",
+      "type": "DATABASE",
+      "framework": "MongoDB 6.0",
+      "description": "Коллекция конфигураций мест seat (СУБД MongoDB)",
+      "tables": [
+        {
+          "tableName": "seat",
+          "dbType": "MONGODB",
+          "operation": "READ_WRITE",
+          "entityClass": "seat.entity.Seat"
+        }
+      ]
+    },
+    {
+      "id": "mq-email",
+      "name": "email",
+      "type": "MESSAGE_QUEUE",
+      "framework": "RabbitMQ",
+      "description": "Очередь сообщений email для отправки билетов и нотификаций",
+      "destinations": [
+        {
+          "broker": "RABBITMQ",
+          "destination": "email",
+          "role": "PRODUCER",
+          "routingKey": "email"
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "ts-gateway-service->ts-preserve-service:CALLS_HTTP",
+      "source": "ts-gateway-service",
+      "target": "ts-preserve-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "CONFIG",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-gateway-service->ts-order-service:CALLS_HTTP",
+      "source": "ts-gateway-service",
+      "target": "ts-order-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "CONFIG",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-gateway-service->ts-inside-payment-service:CALLS_HTTP",
+      "source": "ts-gateway-service",
+      "target": "ts-inside-payment-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "CONFIG",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-preserve-service->ts-security-service:CALLS_HTTP",
+      "source": "ts-preserve-service",
+      "target": "ts-security-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-preserve-service->ts-travel-service:CALLS_HTTP",
+      "source": "ts-preserve-service",
+      "target": "ts-travel-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-preserve-service->ts-seat-service:CALLS_HTTP",
+      "source": "ts-preserve-service",
+      "target": "ts-seat-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-preserve-service->ts-user-service:CALLS_HTTP",
+      "source": "ts-preserve-service",
+      "target": "ts-user-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "ML_HIGH_CONFIDENCE",
+      "confidence": 0.89,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-preserve-service->ts-order-service:CALLS_HTTP",
+      "source": "ts-preserve-service",
+      "target": "ts-order-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-travel-service->ts-seat-service:CALLS_HTTP",
+      "source": "ts-travel-service",
+      "target": "ts-seat-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-security-service->ts-order-service:CALLS_HTTP",
+      "source": "ts-security-service",
+      "target": "ts-order-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "LLM_JUDGE_VERIFIED",
+      "confidence": 0.78,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-user-service->ts-auth-service:CALLS_HTTP",
+      "source": "ts-user-service",
+      "target": "ts-auth-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-order-service->ts-station-service:CALLS_HTTP",
+      "source": "ts-order-service",
+      "target": "ts-station-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "ML_HIGH_CONFIDENCE",
+      "confidence": 0.92,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-inside-payment-service->ts-payment-service:CALLS_HTTP",
+      "source": "ts-inside-payment-service",
+      "target": "ts-payment-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-inside-payment-service->ts-order-service:CALLS_HTTP",
+      "source": "ts-inside-payment-service",
+      "target": "ts-order-service",
+      "relation_type": "CALLS_HTTP",
+      "source_type": "LLM_JUDGE_VERIFIED",
+      "confidence": 0.81,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-order-service->mq-email:PRODUCES_MESSAGE",
+      "source": "ts-order-service",
+      "target": "mq-email",
+      "relation_type": "PRODUCES_MESSAGE",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-inside-payment-service->mq-email:PRODUCES_MESSAGE",
+      "source": "ts-inside-payment-service",
+      "target": "mq-email",
+      "relation_type": "PRODUCES_MESSAGE",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "mq-email->ts-notification-service:CONSUMES_MESSAGE",
+      "source": "mq-email",
+      "target": "ts-notification-service",
+      "relation_type": "CONSUMES_MESSAGE",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-order-service->db-orders:WRITES_DB",
+      "source": "ts-order-service",
+      "target": "db-orders",
+      "relation_type": "WRITES_DB",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-order-service->db-orders:READS_DB",
+      "source": "ts-order-service",
+      "target": "db-orders",
+      "relation_type": "READS_DB",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-user-service->db-user:WRITES_DB",
+      "source": "ts-user-service",
+      "target": "db-user",
+      "relation_type": "WRITES_DB",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-inside-payment-service->db-inside_payment:WRITES_DB",
+      "source": "ts-inside-payment-service",
+      "target": "db-inside_payment",
+      "relation_type": "WRITES_DB",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-payment-service->db-payment:WRITES_DB",
+      "source": "ts-payment-service",
+      "target": "db-payment",
+      "relation_type": "WRITES_DB",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-travel-service->db-trip:READS_DB",
+      "source": "ts-travel-service",
+      "target": "db-trip",
+      "relation_type": "READS_DB",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-seat-service->db-seat:READS_DB",
+      "source": "ts-seat-service",
+      "target": "db-seat",
+      "relation_type": "READS_DB",
+      "source_type": "AST_EXACT",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-preserve-service->ts-station-service:TRANSITIVE",
+      "source": "ts-preserve-service",
+      "target": "ts-station-service",
+      "relation_type": "TRANSITIVE",
+      "source_type": "TRANSITIVE",
+      "confidence": 0.92,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-gateway-service->ts-travel-service:TRANSITIVE",
+      "source": "ts-gateway-service",
+      "target": "ts-travel-service",
+      "relation_type": "TRANSITIVE",
+      "source_type": "TRANSITIVE",
+      "confidence": 1.0,
+      "is_reachable": true
+    },
+    {
+      "id": "ts-gateway-service->ts-payment-service:TRANSITIVE",
+      "source": "ts-gateway-service",
+      "target": "ts-payment-service",
+      "relation_type": "TRANSITIVE",
+      "source_type": "TRANSITIVE",
+      "confidence": 1.0,
+      "is_reachable": true
+    }
+  ]
+}
