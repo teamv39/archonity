@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "service_name": "ts-avatar-service",
+  "language": "python",
+  "framework": "flask",
+  "port": 17001,
+  "repo_path": "data/train-ticket/ts-avatar-service",
+  "service_metadata": {
+    "server_port": 17001,
+    "context_path": "/api/v1/avatar",
+    "env_vars": {
+      "PORT": "17001"
+    }
+  },
+  "inbound_endpoints": [
+    {
+      "id": "ts-avatar-service:POST:/api/v1/avatar",
+      "path": "/api/v1/avatar",
+      "http_method": "POST",
+      "handler_class": "avatar_app",
+      "handler_method": "upload_avatar",
+      "file_path": "server.py",
+      "line_number": 25,
+      "request_dto": {
+        "class_name": "AvatarUploadRequest",
+        "fields": [
+          {"name": "userId", "type": "str"},
+          {"name": "file", "type": "file"}
+        ]
+      },
+      "response_dto": {
+        "class_name": "AvatarUploadResponse",
+        "fields": [
+          {"name": "status", "type": "int"},
+          {"name": "msg", "type": "str"},
+          {"name": "avatarUrl", "type": "str"}
+        ]
+      }
+    },
+    {
+      "id": "ts-avatar-service:GET:/api/v1/avatar/{userId}",
+      "path": "/api/v1/avatar/{userId}",
+      "http_method": "GET",
+      "handler_class": "avatar_app",
+      "handler_method": "get_avatar",
+      "file_path": "server.py",
+      "line_number": 40,
+      "request_dto": null,
+      "response_dto": {
+        "class_name": "AvatarFileResponse",
+        "fields": [
+          {"name": "contentType", "type": "str"},
+          {"name": "data", "type": "bytes"}
+        ]
+      }
+    }
+  ],
+  "outbound_calls": [],
+  "db_access": [],
+  "messaging": [],
+  "internal_call_graph": [
+    {
+      "caller": "avatar_app.upload_avatar",
+      "callee": "avatar_storage.save_to_disk",
+      "caller_class": "avatar_app",
+      "caller_method": "upload_avatar",
+      "callee_class": "avatar_storage",
+      "callee_method": "save_to_disk",
+      "file_path": "server.py",
+      "line_number": 30
+    },
+    {
+      "caller": "avatar_app.get_avatar",
+      "callee": "avatar_storage.load_from_disk",
+      "caller_class": "avatar_app",
+      "caller_method": "get_avatar",
+      "callee_class": "avatar_storage",
+      "callee_method": "load_from_disk",
+      "file_path": "server.py",
+      "line_number": 45
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "service_name": "ts-voucher-service",
+  "language": "python",
+  "framework": "django",
+  "port": 16101,
+  "repo_path": "data/train-ticket/ts-voucher-service",
+  "service_metadata": {
+    "server_port": 16101,
+    "context_path": "/api/v1/voucherservice",
+    "env_vars": {
+      "PORT": "16101",
+      "ORDER_SERVICE_HOST": "ts-order-service",
+      "ORDER_SERVICE_PORT": "12031",
+      "MYSQL_HOST": "ts-server-mysql",
+      "MYSQL_PORT": "3306"
+    }
+  },
+  "inbound_endpoints": [
+    {
+      "id": "ts-voucher-service:POST:/api/v1/voucherservice/vouchers",
+      "path": "/api/v1/voucherservice/vouchers",
+      "http_method": "POST",
+      "handler_class": "voucher.views.VoucherViewSet",
+      "handler_method": "create_voucher",
+      "file_path": "voucher/views.py",
+      "line_number": 28,
+      "request_dto": {
+        "class_name": "VoucherRequest",
+        "fields": [
+          {"name": "orderId", "type": "str"},
+          {"name": "travelDate", "type": "str"},
+          {"name": "contactName", "type": "str"}
+        ]
+      },
+      "response_dto": {
+        "class_name": "VoucherResponse",
+        "fields": [
+          {"name": "status", "type": "int"},
+          {"name": "msg", "type": "str"},
+          {"name": "data", "type": "Voucher"}
+        ]
+      }
+    },
+    {
+      "id": "ts-voucher-service:GET:/api/v1/voucherservice/vouchers/{orderId}",
+      "path": "/api/v1/voucherservice/vouchers/{orderId}",
+      "http_method": "GET",
+      "handler_class": "voucher.views.VoucherViewSet",
+      "handler_method": "get_voucher_by_order_id",
+      "file_path": "voucher/views.py",
+      "line_number": 45,
+      "request_dto": null,
+      "response_dto": {
+        "class_name": "VoucherResponse",
+        "fields": [
+          {"name": "status", "type": "int"},
+          {"name": "msg", "type": "str"},
+          {"name": "data", "type": "Voucher"}
+        ]
+      }
+    }
+  ],
+  "outbound_calls": [
+    {
+      "id": "ts-voucher-service:CALL:ts-order-service:get_order",
+      "client_type": "REQUESTS",
+      "target_service_hint": "ts-order-service",
+      "target_url_template": "http://ts-order-service:12031/api/v1/orderservice/order/{orderId}",
+      "raw_expression": "requests.get(f'http://ts-order-service:12031/api/v1/orderservice/order/{order_id}')",
+      "http_method": "GET",
+      "caller_class": "voucher.views.VoucherViewSet",
+      "caller_method": "query_order_info",
+      "file_path": "voucher/views.py",
+      "line_number": 58,
+      "is_reachable": true,
+      "call_chain": [
+        "voucher.views.VoucherViewSet.get_voucher_by_order_id",
+        "voucher.views.VoucherViewSet.query_order_info"
+      ],
+      "request_dto": null,
+      "response_dto": {
+        "class_name": "OrderResponse",
+        "fields": [
+          {"name": "status", "type": "int"},
+          {"name": "msg", "type": "str"},
+          {"name": "data", "type": "Order"}
+        ]
+      },
+      "code_snippet": "response = requests.get(f'http://ts-order-service:12031/api/v1/orderservice/order/{order_id}')"
+    }
+  ],
+  "db_access": [
+    {
+      "id": "ts-voucher-service:DB:voucher",
+      "table_name": "voucher",
+      "db_type": "MYSQL",
+      "operation": "READ_WRITE",
+      "entity_class": "voucher.models.Voucher",
+      "caller_class": "voucher.views.VoucherViewSet",
+      "caller_method": "save_voucher",
+      "file_path": "voucher/views.py",
+      "line_number": 36,
+      "is_reachable": true,
+      "call_chain": [
+        "voucher.views.VoucherViewSet.create_voucher",
+        "voucher.views.VoucherViewSet.save_voucher",
+        "voucher.models.Voucher.objects.create"
+      ]
+    }
+  ],
+  "messaging": [],
+  "internal_call_graph": [
+    {
+      "caller": "voucher.views.VoucherViewSet.create_voucher",
+      "callee": "voucher.views.VoucherViewSet.save_voucher",
+      "caller_class": "voucher.views.VoucherViewSet",
+      "caller_method": "create_voucher",
+      "callee_class": "voucher.views.VoucherViewSet",
+      "callee_method": "save_voucher",
+      "file_path": "voucher/views.py",
+      "line_number": 32
+    },
+    {
+      "caller": "voucher.views.VoucherViewSet.get_voucher_by_order_id",
+      "callee": "voucher.views.VoucherViewSet.query_order_info",
+      "caller_class": "voucher.views.VoucherViewSet",
+      "caller_method": "get_voucher_by_order_id",
+      "callee_class": "voucher.views.VoucherViewSet",
+      "callee_method": "query_order_info",
+      "file_path": "voucher/views.py",
+      "line_number": 52
+    }
+  ]
+}
