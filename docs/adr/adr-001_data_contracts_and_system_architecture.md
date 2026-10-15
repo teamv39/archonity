@@ -50,7 +50,7 @@ archonity/
 ├── visualizer/             # Автономный SPA-визуализатор (Vite, React Flow, TypeScript, elkjs)
 ├── docs/                   # Документация, RFC, ADR, паспорта задач
 │   ├── rfc/                # Проектные предложения
-│   ├── adr/                # Принятые архитектурные решения (ADR-001, ADR-002, ADR-003)
+│   ├── adr/                # Принятые архитектурные решения (ADR-001, ADR-002, ADR-003, ADR-004)
 │   └── open-questions.md   # Открытые вопросы и альтернативы
 └── data/                   # Данные и бенчмарк Train Ticket
 ```
