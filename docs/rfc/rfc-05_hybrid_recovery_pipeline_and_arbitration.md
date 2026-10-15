@@ -5,8 +5,8 @@
 * **Дата:** 15 октября 2026
 * **Связанные документы:** 
   * Заменяет/объединяет: [RFC-01](rfc-01_graph_recovery_pipeline_architecture.md), [RFC-04](rfc-04_dual_parse_pipeline_architecture.md)
-  * Контракты данных: [RFC-03](rfc-03_data_contracts_and_system_architecture.md)
-  * AI-модели и признаки: [RFC-02](rfc-02_multimodal_ai_architecture.md)
+  * Контракты данных: [ADR-001](../adr/adr-001_data_contracts_and_system_architecture.md) (ранее [RFC-03](rfc-03_data_contracts_and_system_architecture.md))
+  * AI-модели и признаки: [ADR-003](../adr/adr-003_multimodal_ai_architecture.md) (ранее [RFC-02](rfc-02_multimodal_ai_architecture.md))
 
 ---
 
@@ -131,7 +131,7 @@ flowchart TD
 * **Базы данных и брокеры (`db_access`, `broker_access`):** маппинг `@Entity`, `@Table`, `@Document`, `spring.datasource.url`, `@RabbitListener`, `@KafkaListener`.
 * **Внутрисервисный граф вызовов (`internal_call_graph`):** ребра между методами сервиса для последующей проверки достижимости.
 
-Все результаты сериализуются строго по схеме [RFC-03](rfc-03_data_contracts_and_system_architecture.md) в единый `facts.json`.
+Все результаты сериализуются строго по схеме [ADR-001](../adr/adr-001_data_contracts_and_system_architecture.md) в единый `facts.json`.
 
 ### Этап 2: Фильтрация мертвого кода (Reachability Analysis)
 В соответствии с требованиями [AGENTS.md](../../AGENTS.md), в итоговый граф попадают только связи, активные в рантайме.
@@ -171,26 +171,33 @@ flowchart TD
    * **Сигналы первого уровня:** оценка `CatBoost` ($P$), сходство по `UniXcoder`, лексический `BM25`, пересечение полей DTO (`Jaccard`).
    * **Топология скелета:** существование пути в `skeleton.json`.
 
-2. **Структурированный вердикт (Structured Verdict):**
-   Судья генерирует ответ в строгом JSON-формате по Pydantic-контракту:
+2. **Структурированный категориальный вердикт (Structured Verdict):**
+   Вместо ненадежного числового скора (`confidence`), судья генерирует типизированный ответ в строгом JSON-формате по Pydantic-контракту с использованием Grammar-Based Sampling (GBNF-грамматики или constrained JSON Schema в `llama-cpp-python` / `ollama`):
    ```json
    {
-     "verdict": "ACCEPT",
-     "confidence": 0.87,
-     "reasoning": "Метод preserveTicket передает параметры userId и tripId в теле POST, что совпадает с OrderDTO в ts-order-service. Динамический URL getServiceUrl('ts-order-service') однозначно указывает на целевой сервис.",
-     "contradictions_detected": []
+     "http_call_line_in_source": "restTemplate.exchange(url + \"/order\", HttpMethod.POST, ...)",
+     "matching_dto_fields": ["orderId", "accountId", "tripId"],
+     "reasoning": "Метод sendOrder делает POST-запрос с объектом OrderInfo, поля которого совпадают с входным @RequestBody целевого контроллера.",
+     "verdict": "CONFIRMED_DIRECT_CALL"
    }
    ```
 
+   **Категории вердикта (`verdict` Enum):**
+   * `CONFIRMED_DIRECT_CALL`: подтвержден явный сетевой HTTP/REST вызов в исходном коде, контракты DTO и эндпоинт согласованы $\implies$ **Зеленая зона** (включение в граф со статусом `LLM_JUDGE_VERIFIED`).
+   * `CONFIRMED_CONFIG_CALL`: зависимость подтверждена через параметры конфигурации, Feign-клиент или Service Discovery $\implies$ **Зеленая зона**.
+   * `SAME_DOMAIN_NO_CALL`: сервисы работают с похожими бизнес-сущностями и DTO (False Positive Trap), но реального вызова в активном коде нет $\implies$ **Красная зона** (отсев, критическая защита от штрафа FP в метрике IoU).
+   * `UNRELATED`: разные бизнес-домены, несопоставимые контракты данных $\implies$ **Красная зона**.
+
+   Порядок полей в JSON служит механизмом **Chain-of-Thought (Grounding)**: модель сначала цитирует фактическую строку вызова из AST и пересечение полей DTO, формулирует логическое обоснование (`reasoning`), и только затем выбирает категорию вердикта. Для защиты от галлюцинаций в системный промпт включаются few-shot контрпримеры семантически похожих сервисов без реального вызова (`SAME_DOMAIN_NO_CALL`).
+
 3. **Интеграция с Explainability (`evidence.json`):**
-   При принятии ребра поле `reasoning` напрямую ложится в `evidence.json` со статусом `LLM_JUDGE_VERIFIED`. Это делает обоснование полностью прозрачным для визуализатора ([ADR-002](../adr/adr-002_react_flow_visualizer.md)) и жюри.
+   При принятии ребра поля `reasoning` и `http_call_line_in_source` напрямую ложится в `evidence.json` со статусом `LLM_JUDGE_VERIFIED`. Это делает обоснование полностью прозрачным для визуализатора ([ADR-002](../adr/adr-002_react_flow_visualizer.md)) и жюри.
 
 4. **LLM-as-a-Judge для валидации обучающей выборки (Offline Dataset Judge):**
    При искусственном маскировании графа Train Ticket для обучения CatBoost и подбора порогов Optuna, LLM-as-a-Judge используется для автоматической валидации сложных синтетических негативных и позитивных примеров, исключая зашумление обучающего датасета.
 
-5. **Ограничения и защита от галлюцинаций (Local-First Guardrails):**
-   * **Строгий бюджет инференса:** не более 30 вызовов на весь прогон (строго по серой зоне). Время инференса на CPU/Metal $\approx 1.5$–2.5 сек на кейс, суммарно $< 1$ минуты на весь пайплайн.
-   * **Few-Shot антипаттерны:** системный промпт включает примеры ложных связей (например, совпадение глагола POST и фрагмента пути при несовместимых типах DTO).
+5. **Ограничения (Local-First Guardrails):**
+   * **Строгий бюджет инференса:** не более 30 вызовов на весь прогон (строго по серой зоне). Время инференса на CPU/GPU $\approx 1.5$–2.5 сек на кейс, суммарно $< 1$ минуты на весь пайплайн.
 
 ### Этап 5: Сборка графа и артефакты сабмита
 1. **Транзитивное замыкание:** генерация косвенных зависимостей $A \to B \to C \implies A \to C$ выполняется только по ребрам зеленой зоны (чтобы исключить каскадное распространение ошибок от $FP$). Узлы баз данных исключаются из транзитивного транзита.
@@ -203,7 +210,7 @@ flowchart TD
 
 | Критерий | RFC-01 (Базовый) | RFC-04 (Dual-Source) | **RFC-05 (Гибридный синтез)** |
 |:---|:---|:---|:---|
-| **Сбор фактов** | Единый `facts.json` | Раздельный дублирующий парсинг Java и Python | **Единый синтаксический контракт `facts.json` (RFC-03)** |
+| **Сбор фактов** | Единый `facts.json` | Раздельный дублирующий парсинг Java и Python | **Единый синтаксический контракт `facts.json` ([ADR-001](../adr/adr-001_data_contracts_and_system_architecture.md))** |
 | **Неразрешенные вызовы** | Концептуальное упоминание | Выделение `unresolved_calls` со сниппетами | **Структурированный экспорт `unresolved_calls` в ML** |
 | **Мертвый код** | Reachability через Call Graph | Не учитывался | **Детерминированный NetworkX reachability до передачи в ML** |
 | **Базы данных и очереди** | Детально специфицированы | Проигнорированы | **Полный учет БД и очередей (правило независимых ребер)** |

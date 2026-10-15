@@ -8,7 +8,7 @@
 
 | ID | Вопрос | Область | Статус в RFC-05 | Приоритет |
 |---|---|---|---|---|
-| [OQ-01](#oq-01-evidence-schema) | Формат и структура `evidence.json` | Explainability / Visualizer | Согласовано (RFC-03 / RFC-05) | Высокий |
+| [OQ-01](#oq-01-evidence-schema) | Формат и структура `evidence.json` | Explainability / Visualizer | Согласовано (ADR-001 / RFC-05) | Высокий |
 | [OQ-02](#oq-02-skeleton-dataset) | Формат `skeleton.json` и интеграция со срезанными ребрами Train Ticket | Dataset / Pipeline | Согласовано (Адаптеры + CanonicalGraph) | Критический (к 16.10) |
 | [OQ-03](#oq-03-reachability-failures) | Обработка разрывов в Call Graph при Reachability Analysis | Java AST / Dead Code | Согласовано (Reachability + unresolved_calls) | Средний |
 | [OQ-04](#oq-04-transitive-closure-rules) | Правила и ограничения транзитивного замыкания ($A \to B \to C$) | Graph Engine / IoU | Согласовано (Изоляция БД + Green zone) | Высокий |
@@ -86,7 +86,7 @@
 *Плюсы:* Единственный источник правды (`Single Source of Truth`).  
 *Минусы:* Риск не пройти строгую валидацию NSUTS, если схема организаторов запрещает дополнительные поля (`additionalProperties: false`).
 
-> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md) и [RFC-03](rfc/rfc-03_data_contracts_and_system_architecture.md)):** Принят Вариант 1 (словарь по `edge_id` с полями `primary_evidence` и полным трейсом). Обеспечивает $O(1)$ доступ при визуализации и полностью покрывает требования трассировки.
+> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md) и [ADR-001](adr/adr-001_data_contracts_and_system_architecture.md)):** Принят Вариант 1 (словарь по `edge_id` с полями `primary_evidence` и полным трейсом). Обеспечивает $O(1)$ доступ при визуализации и полностью покрывает требования трассировки.
 
 ---
 

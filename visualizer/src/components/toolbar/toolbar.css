@@ -8,19 +8,21 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 12px;
+  padding: 0 8px;
   font-family: var(--font-sans);
   font-size: 11px;
   color: var(--text-primary);
   box-sizing: border-box;
   user-select: none;
-  z-index: 20;
+  z-index: 100;
+  overflow: visible;
 }
 
 .bar-section {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .section-divider {
@@ -139,7 +141,7 @@
 }
 
 .threshold-slider {
-  width: 70px;
+  width: 55px;
   height: 14px;
   cursor: pointer;
   accent-color: var(--edge-ml);
@@ -148,7 +150,7 @@
 
 /* 4. Счётчики графа */
 .counters-section {
-  gap: 12px;
+  gap: 8px;
 }
 
 .counter-item {
@@ -193,7 +195,7 @@
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-primary);
-  width: 120px;
+  width: 85px;
   padding: 0;
 }
 
@@ -217,7 +219,9 @@
 
 /* 6. Кнопки действий */
 .actions-section {
+  margin-left: auto;
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .cad-btn {
@@ -254,5 +258,99 @@
   background: #FEF2F2;
   border-color: var(--alert-blast);
   color: var(--alert-blast);
+}
+
+/* Датасет */
+.dataset-section {
+  gap: 6px;
+}
+
+.dataset-btn {
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dataset-btn.custom {
+  background: #E8F0FE;
+  border-color: #0969DA;
+  color: #0969DA;
+  font-weight: 600;
+}
+
+.dataset-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Экспорт */
+.export-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.export-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-hairline);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  min-width: 165px;
+  border-radius: 0;
+}
+
+.export-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  text-align: left;
+  border-radius: 0;
+}
+
+.export-menu-item:last-child {
+  border-bottom: none;
+}
+
+.export-menu-item:hover {
+  background-color: var(--bg-subtle);
+  color: #0969DA;
+}
+
+@media (max-width: 1350px) {
+  .counter-item.optional {
+    display: none;
+  }
+  .section-caption {
+    display: none;
+  }
+  .search-input {
+    width: 60px;
+  }
+  .threshold-slider {
+    width: 45px;
+  }
+  .section-divider {
+    margin: 0 2px;
+  }
 }
 
