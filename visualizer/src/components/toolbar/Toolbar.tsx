@@ -12,8 +12,19 @@ import {
   Image,
   Code,
   FileCode,
+  Activity,
+  Eye,
+  EyeOff,
+  Route,
 } from 'lucide-react';
-import type { SourceType, ColorMode, DagDirection } from '../../types/graph';
+import type {
+  SourceType,
+  ColorMode,
+  DagDirection,
+  ReachabilityMode,
+  DeadCodeDisplay,
+  CallTraceResult,
+} from '../../types/graph';
 import './toolbar.css';
 
 interface ToolbarProps {
@@ -43,6 +54,17 @@ interface ToolbarProps {
   onExportSvg: () => void;
   onExportJson: () => void;
   isExporting: boolean;
+
+  // Reachability & Dead Code
+  reachabilityMode: ReachabilityMode;
+  onToggleReachabilityMode: () => void;
+  deadCodeDisplay: DeadCodeDisplay;
+  onToggleDeadCodeDisplay: () => void;
+  unreachableEdgesCount: number;
+
+  // Call Path Tracing
+  callTrace: CallTraceResult | null;
+  onClearCallTrace: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -68,6 +90,13 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onExportSvg,
   onExportJson,
   isExporting,
+  reachabilityMode,
+  onToggleReachabilityMode,
+  deadCodeDisplay,
+  onToggleDeadCodeDisplay,
+  unreachableEdgesCount,
+  callTrace,
+  onClearCallTrace,
 }) => {
   const filteredCount = totalEdgesCount - visibleEdgesCount;
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
@@ -199,11 +228,76 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <span className="counter-label">TRANS</span>
           <span className="counter-value">{transitiveEdgesCount}</span>
         </div>
-        <div className="counter-item optional" title="Отсечено фильтрами / Dead Code">
+        <div
+          className={`counter-item optional ${unreachableEdgesCount > 0 ? 'highlight-dead' : ''}`}
+          title="Недостижимые рёбра / мертвый код"
+        >
+          <span className="counter-label">DEAD</span>
+          <span className="counter-value">{unreachableEdgesCount}</span>
+        </div>
+        <div className="counter-item optional" title="Отсечено фильтрами">
           <span className="counter-label">FILTERED</span>
           <span className="counter-value">{filteredCount}</span>
         </div>
       </div>
+
+      <div className="section-divider" />
+
+      {/* 5.5. Reachability & Dead Code Visualizer */}
+      <div className="bar-section reachability-section">
+        <button
+          type="button"
+          className={`cad-btn reachability-btn ${reachabilityMode === 'RUNTIME_ONLY' ? 'active' : ''}`}
+          onClick={onToggleReachabilityMode}
+          title={
+            reachabilityMode === 'RUNTIME_ONLY'
+              ? 'Режим: Только рантайм (отсекать мертвый код)'
+              : 'Режим: Весь код (включая недостижимый)'
+          }
+        >
+          <Activity size={11} />
+          <span>{reachabilityMode === 'RUNTIME_ONLY' ? 'РАНТАЙМ' : 'ВЕСЬ КОД'}</span>
+        </button>
+
+        {reachabilityMode === 'RUNTIME_ONLY' && (
+          <button
+            type="button"
+            className="cad-btn sub-toggle-btn"
+            onClick={onToggleDeadCodeDisplay}
+            title={
+              deadCodeDisplay === 'DIM'
+                ? 'Мертвый код: затемнение (клик для полного скрытия)'
+                : 'Мертвый код: скрыто (клик для затемнения)'
+            }
+          >
+            {deadCodeDisplay === 'DIM' ? <EyeOff size={11} /> : <Eye size={11} />}
+            <span style={{ fontSize: 9 }}>{deadCodeDisplay === 'DIM' ? 'ЗАТУХАНИЕ' : 'СКРЫТО'}</span>
+          </button>
+        )}
+      </div>
+
+      {/* 5.6. Индикатор активного сквозного трейса */}
+      {callTrace && (
+        <>
+          <div className="section-divider" />
+          <div className="bar-section trace-banner-section">
+            <div className="trace-banner-tag" title={callTrace.rootHandler || callTrace.rootEndpointPath}>
+              <Route size={11} />
+              <span className="trace-method-badge">{callTrace.rootHttpMethod}</span>
+              <span className="trace-path-label">{callTrace.rootEndpointPath}</span>
+            </div>
+            <button
+              type="button"
+              className="cad-btn trace-clear-btn"
+              onClick={onClearCallTrace}
+              title="Сбросить трассировку"
+            >
+              <X size={10} />
+              <span>СБРОС ТРЕЙСА</span>
+            </button>
+          </div>
+        </>
+      )}
 
       <div className="section-divider" />
 

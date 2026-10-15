@@ -336,6 +336,84 @@
   color: #0969DA;
 }
 
+/* Мертвый код в счетчиках */
+.counter-item.highlight-dead .counter-value {
+  color: #DC2626;
+  font-weight: 700;
+}
+
+/* Секция Reachability & Dead Code */
+.reachability-section {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.reachability-btn.active {
+  background: #18181B;
+  color: #FFFFFF;
+  border-color: #18181B;
+}
+
+.sub-toggle-btn {
+  padding: 0 5px;
+  background: var(--bg-subtle);
+  border-color: var(--border-hairline);
+  color: var(--text-secondary);
+}
+
+.sub-toggle-btn:hover {
+  background: #E4E4E7;
+  color: var(--text-primary);
+}
+
+/* Индикатор активного трейса вызова */
+.trace-banner-section {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.trace-banner-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 6px;
+  background-color: #EFF6FF;
+  border: 1px solid #93C5FD;
+  color: #1D4ED8;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.trace-method-badge {
+  font-weight: 700;
+  padding: 1px 3px;
+  background-color: #DBEAFE;
+  color: #1E40AF;
+  border: 1px solid #BFDBFE;
+}
+
+.trace-path-label {
+  font-weight: 500;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trace-clear-btn {
+  background-color: #FEF2F2;
+  border-color: #FECACA;
+  color: #DC2626;
+}
+
+.trace-clear-btn:hover {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
 @media (max-width: 1350px) {
   .counter-item.optional {
     display: none;
@@ -353,4 +431,5 @@
     margin: 0 2px;
   }
 }
+
 

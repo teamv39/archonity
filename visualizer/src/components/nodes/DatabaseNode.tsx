@@ -15,6 +15,11 @@ export const DatabaseNode: React.FC<NodeProps> = memo((props) => {
   else if (data.blastState === 'downstream') blastClass = 'blast-downstream';
   else if (data.blastState === 'dimmed') blastClass = 'blast-dimmed';
 
+  let traceClass = '';
+  if (data.traceState === 'sink' || data.traceState === 'hop') traceClass = 'trace-sink';
+  else if (data.traceState === 'dimmed') traceClass = 'trace-dimmed';
+
+  const deadCodeClass = data.isDeadCode ? `node-dead-code ${data.deadCodeDisplay.toLowerCase()}` : '';
   const searchClass = data.isMatchedSearch ? 'search-matched' : '';
 
   const isDown = data.direction === 'DOWN';
@@ -22,7 +27,7 @@ export const DatabaseNode: React.FC<NodeProps> = memo((props) => {
   const sourcePos = isDown ? Position.Bottom : Position.Right;
 
   return (
-    <div className={`custom-node database-node ${blastClass} ${searchClass}`}>
+    <div className={`custom-node database-node ${blastClass} ${traceClass} ${deadCodeClass} ${searchClass}`}>
       <Handle type="target" position={targetPos} className="custom-handle" />
 
       <div className="node-header">
@@ -32,7 +37,17 @@ export const DatabaseNode: React.FC<NodeProps> = memo((props) => {
             {node.name}
           </span>
         </div>
-        <span className="node-badge badge-db">DB</span>
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+          {(data.traceState === 'sink' || data.traceState === 'hop') && (
+            <span className="node-badge badge-trace sink">[SINK/DB]</span>
+          )}
+          {data.isDeadCode && (
+            <span className="node-badge badge-dead-code" title="Таблица не используется в активных вызовах">
+              DEAD
+            </span>
+          )}
+          <span className="node-badge badge-db">DB</span>
+        </div>
       </div>
 
       <div className="node-body">

@@ -21,6 +21,7 @@ export interface EndpointInfo {
   handlerMethod?: string;
   requestDto?: string;
   responseDto?: string;
+  isReachable?: boolean;
 }
 
 export interface DbTableInfo {
@@ -58,6 +59,7 @@ export interface EvidenceDetails {
   matchedEndpoint?: string;
   callChain?: string[];
   codeSnippet?: string;
+  isReachable?: boolean;
   modelName?: string;
   threshold?: number;
   topFeatures?: {
@@ -81,6 +83,7 @@ export interface CanonicalEdge {
   relationType: RelationType;
   sourceType: SourceType;
   confidence: number;
+  isReachable?: boolean;
   evidenceDetails?: EvidenceDetails;
 }
 
@@ -103,4 +106,39 @@ export interface BlastRadiusResult {
   allAffectedNodeIds: Set<string>;
   affectedEdgeIds: Set<string>;
   depth: number;
+}
+
+export type ReachabilityMode = 'ALL' | 'RUNTIME_ONLY';
+export type DeadCodeDisplay = 'DIM' | 'HIDE';
+
+export interface CallTraceStep {
+  stepIndex: number;
+  serviceId: string;
+  serviceName: string;
+  endpoint?: string;
+  httpMethod?: string;
+  caller?: string;
+  targetServiceId?: string;
+  targetRelation?: RelationType;
+  targetEndpoint?: string;
+  targetTable?: string;
+  edgeId?: string;
+  codeSnippet?: string;
+  callChain?: string[];
+  isDbAccess?: boolean;
+  isMqPublish?: boolean;
+}
+
+export interface CallTraceResult {
+  rootServiceId: string;
+  rootEndpointId: string;
+  rootEndpointPath: string;
+  rootHttpMethod: string;
+  rootHandler?: string;
+  affectedNodeIds: Set<string>;
+  affectedEdgeIds: Set<string>;
+  nodeRoles: Map<string, 'start' | 'hop' | 'sink'>;
+  orderedSteps: CallTraceStep[];
+  targetDatabases: string[];
+  targetQueues: string[];
 }

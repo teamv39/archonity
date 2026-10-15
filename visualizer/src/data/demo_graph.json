@@ -33,6 +33,14 @@
           "handlerMethod": "queryInfo",
           "requestDto": "TripInfo",
           "responseDto": "TripResponse"
+        },
+        {
+          "id": "ep-travel-dead",
+          "path": "/api/v1/travelservice/internal/debug_cleanup",
+          "httpMethod": "DELETE",
+          "handlerClass": "travel.service.InternalCleanupService",
+          "handlerMethod": "purgeInternalCache",
+          "isReachable": false
         }
       ]
     },
@@ -273,6 +281,15 @@
           "routingKey": "order.create"
         }
       ]
+    },
+    {
+      "id": "ts-legacy-job-service",
+      "name": "ts-legacy-job-service",
+      "type": "SERVICE",
+      "framework": "Spring Boot 1.5",
+      "language": "Java 8",
+      "description": "Устаревший сервис фоновой очистки (Dead Code: отключен от внешних шлюзов)",
+      "endpoints": []
     }
   ],
   "edges": [
@@ -546,22 +563,43 @@
       "relationType": "DATABASE",
       "sourceType": "ML_PREDICTED",
       "confidence": 0.28,
+      "isReachable": false,
       "evidenceDetails": {
         "filePath": "src/main/java/station/service/StationServiceImpl.java",
         "lineNumber": 188,
         "caller": "station.service.StationServiceImpl.queryTripCache",
         "modelName": "CatBoost_LinkPredictor_v1",
         "threshold": 0.73,
+        "isReachable": false,
         "callChain": [
           "station.service.StationServiceImpl.queryTripCache"
         ],
-        "codeSnippet": "// Неуверенная гипотеза доступа к сторонней таблице",
+        "codeSnippet": "// Неуверенная гипотеза доступа к сторонней таблице без привязки к контроллеру",
         "topFeatures": {
           "jinaCodeSimilarity": 0.31,
           "dtoOverlapJaccard": 0.2,
           "bm25TokenSimilarity": 0.25,
           "adamicAdarIndex": 0.1
         }
+      }
+    },
+    {
+      "id": "edge-legacy-db-dead",
+      "source": "ts-legacy-job-service",
+      "target": "ts-travel-mysql",
+      "relationType": "DATABASE",
+      "sourceType": "AST_EXACT",
+      "confidence": 1.0,
+      "isReachable": false,
+      "evidenceDetails": {
+        "filePath": "src/main/java/legacy/LegacyBatchTask.java",
+        "lineNumber": 45,
+        "caller": "legacy.LegacyBatchTask.runNightlyPurge",
+        "callChain": [
+          "legacy.LegacyBatchTask.runNightlyPurge"
+        ],
+        "isReachable": false,
+        "codeSnippet": "// Dead code: фоновая задача удалена из cron"
       }
     }
   ]
