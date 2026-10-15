@@ -13,6 +13,7 @@ import {
   Database,
   Radio,
   Route,
+  Cpu,
 } from 'lucide-react';
 import type {
   CanonicalNode,
@@ -352,23 +353,73 @@ export const Inspector: React.FC<InspectorProps> = ({
                       </div>
                     )}
 
-                  {/* Вердикт LLM-Judge */}
-                  {selectedEdge.sourceType === 'LLM_JUDGE_VERIFIED' &&
-                    selectedEdge.evidenceDetails.llmVerdict && (
-                      <div className="llm-cad-verdict">
-                        <div className="verdict-header">
-                          <span className="verdict-tag">
-                            {selectedEdge.evidenceDetails.llmVerdict.verdict}
-                          </span>
-                          <span className="mono-val" style={{ fontSize: 10, color: '#047857' }}>
-                            Score: {Math.round(selectedEdge.evidenceDetails.llmVerdict.confidence * 100)}%
-                          </span>
-                        </div>
-                        <div className="verdict-reasoning">
-                          {selectedEdge.evidenceDetails.llmVerdict.reasoning}
-                        </div>
+                  {/* Вердикт LLM-Judge (RFC-05 Трехзонный арбитраж) */}
+                  {(selectedEdge.sourceType === 'LLM_JUDGE_VERIFIED' ||
+                    Boolean(selectedEdge.evidenceDetails.rfcVerdict) ||
+                    Boolean(selectedEdge.evidenceDetails.llmVerdict)) && (
+                    <div className="llm-cad-verdict">
+                      <div className="verdict-header">
+                        <span className="verdict-tag">
+                          {selectedEdge.evidenceDetails.rfcVerdict ||
+                            selectedEdge.evidenceDetails.llmVerdict?.verdict ||
+                            'CONFIRMED'}
+                        </span>
+                        <span className="mono-val" style={{ fontSize: 10, color: '#047857', fontWeight: 700 }}>
+                          {selectedEdge.evidenceDetails.llmVerdict?.confidence
+                            ? `Score: ${Math.round(selectedEdge.evidenceDetails.llmVerdict.confidence * 100)}%`
+                            : `Conf: ${selectedEdge.confidence.toFixed(2)}`}
+                        </span>
                       </div>
-                    )}
+
+                      <div className="verdict-model-badge">
+                        <Cpu size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />
+                        <span>{selectedEdge.evidenceDetails.modelName || 'Qwen2.5-Coder-7B-Instruct (GBNF Local)'}</span>
+                      </div>
+
+                      {(selectedEdge.evidenceDetails.reasoning ||
+                        selectedEdge.evidenceDetails.llmVerdict?.reasoning) && (
+                        <div className="verdict-reasoning">
+                          <strong>CoT Аргументация:</strong>{' '}
+                          {selectedEdge.evidenceDetails.reasoning ||
+                            selectedEdge.evidenceDetails.llmVerdict?.reasoning}
+                        </div>
+                      )}
+
+                      {selectedEdge.evidenceDetails.httpCallLineInSource && (
+                        <div style={{ marginTop: 4 }}>
+                          <span className="cad-field-label" style={{ fontSize: 8 }}>СТРОКА ВЫЗОВА В ИСХОДНОМ КОДЕ:</span>
+                          <pre className="cad-code-snippet" style={{ fontSize: 10, maxHeight: 60, marginTop: 2 }}>
+                            {selectedEdge.evidenceDetails.httpCallLineInSource}
+                          </pre>
+                        </div>
+                      )}
+
+                      {selectedEdge.evidenceDetails.matchingDtoFields &&
+                        selectedEdge.evidenceDetails.matchingDtoFields.length > 0 && (
+                          <div style={{ marginTop: 4 }}>
+                            <span className="cad-field-label" style={{ fontSize: 8 }}>
+                              СОВПАДАЮЩИЕ ПОЛЯ DTO ({selectedEdge.evidenceDetails.matchingDtoFields.length}):
+                            </span>
+                            <div className="node-tags" style={{ marginTop: 2 }}>
+                              {selectedEdge.evidenceDetails.matchingDtoFields.map((f) => (
+                                <span
+                                  key={f}
+                                  className="tag-pill"
+                                  style={{
+                                    background: '#DCFCE7',
+                                    borderColor: '#86EFAC',
+                                    color: '#166534',
+                                    fontSize: 9,
+                                  }}
+                                >
+                                  {f}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -518,6 +569,72 @@ export const Inspector: React.FC<InspectorProps> = ({
                   </div>
                 )}
               </div>
+
+              {/* Анализ Terminal Sink & Shared Persistence (ADR-001, ADR-003, RFC-05) */}
+              {selectedNode.type === 'DATABASE' && (
+                <div
+                  className="cad-card"
+                  style={{
+                    borderColor:
+                      selectedNode.sharedWith && selectedNode.sharedWith.length > 1
+                        ? '#F59E0B'
+                        : 'var(--border-hairline)',
+                  }}
+                >
+                  <div className="card-section-title">
+                    <Database size={12} style={{ color: '#0369A1' }} />
+                    <span>ТЕРМИНАЛЬНЫЙ СТОК (ADR-003 П. 7.3 & RFC-05)</span>
+                  </div>
+
+                  <div
+                    style={{
+                      fontSize: 10.5,
+                      color: 'var(--text-secondary)',
+                      lineHeight: 1.4,
+                      marginBottom: 6,
+                    }}
+                  >
+                    Таблицы и коллекции БД классифицируются как <strong>Terminal Sinks</strong> и
+                    исключены из транзитивного замыкания.
+                  </div>
+
+                  {selectedNode.sharedWith && selectedNode.sharedWith.length > 1 ? (
+                    <div
+                      className="dead-code-alert-banner"
+                      style={{
+                        backgroundColor: '#FFFBEB',
+                        borderColor: '#FDE68A',
+                        color: '#92400E',
+                      }}
+                    >
+                      <AlertTriangle size={13} color="#D97706" style={{ flexShrink: 0 }} />
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: 10 }}>
+                          АНТИПАТТЕРН: SHARED PERSISTENCE
+                        </div>
+                        <div style={{ fontSize: 9.5, marginTop: 2 }}>
+                          Таблица разделяется между <strong>{selectedNode.sharedWith.length}</strong>{' '}
+                          сервисами: {selectedNode.sharedWith.join(', ')}. Прямой доступ к общей БД
+                          создает скрытые связи в обход REST API.
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div
+                      style={{
+                        fontSize: 10,
+                        color: '#047857',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 4,
+                      }}
+                    >
+                      <Check size={11} />
+                      <span>Изолированное хранилище (Database-per-Service соблюден)</span>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Панель сквозной трассировки (если активна для этого или смежного узла) */}
               {callTrace && (

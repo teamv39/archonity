@@ -49,6 +49,8 @@ export interface CanonicalNode {
   endpoints?: EndpointInfo[];
   tables?: DbTableInfo[];
   destinations?: QueueDestinationInfo[];
+  isTerminalSink?: boolean;
+  sharedWith?: string[];
   description?: string;
 }
 
@@ -62,6 +64,10 @@ export interface EvidenceDetails {
   isReachable?: boolean;
   modelName?: string;
   threshold?: number;
+  rfcVerdict?: string;
+  reasoning?: string;
+  httpCallLineInSource?: string;
+  matchingDtoFields?: string[];
   topFeatures?: {
     jinaCodeSimilarity?: number;
     dtoOverlapJaccard?: number;
@@ -141,4 +147,38 @@ export interface CallTraceResult {
   orderedSteps: CallTraceStep[];
   targetDatabases: string[];
   targetQueues: string[];
+}
+
+export interface ScenarioStep {
+  step: number;
+  edgeId: string;
+  source: string;
+  target: string;
+  httpMethod?: string | null;
+  endpoint?: string | null;
+  relationType: RelationType | string;
+  action: string;
+  callerMethod?: string;
+  callChain?: string[];
+  codeSnippet?: string;
+}
+
+export interface RuntimeScenario {
+  id: string;
+  name: string;
+  description: string;
+  steps: ScenarioStep[];
+}
+
+export interface ScenarioPlaybackState {
+  scenarioId: string;
+  scenarioName: string;
+  description: string;
+  currentStepIndex: number;
+  totalSteps: number;
+  currentStep: ScenarioStep;
+  activeEdgeId: string;
+  sourceNodeId: string;
+  targetNodeId: string;
+  isPlaying?: boolean;
 }

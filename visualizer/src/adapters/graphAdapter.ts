@@ -13,7 +13,9 @@ import type {
   CallTraceResult,
   CallTraceStep,
   EndpointInfo,
+  ScenarioPlaybackState,
 } from '../types/graph';
+import { TOPOLOGY_HUB_EXCLUSIONS } from '../data/scenariosData';
 
 export interface FilterOptions {
   confidenceThreshold: number;
@@ -24,12 +26,14 @@ export interface FilterOptions {
   reachabilityMode: ReachabilityMode;
   deadCodeDisplay: DeadCodeDisplay;
   showTransitive?: boolean;
+  excludeHubs?: boolean;
 }
 
 export interface NodeData extends Record<string, unknown> {
   rawNode: CanonicalNode;
   blastState: 'normal' | 'root' | 'upstream' | 'downstream' | 'dimmed';
   traceState: 'none' | 'start' | 'hop' | 'sink' | 'dimmed';
+  scenarioState?: 'none' | 'source' | 'target' | 'dimmed';
   isDeadCode: boolean;
   deadCodeDisplay: DeadCodeDisplay;
   isMatchedSearch: boolean;
@@ -41,6 +45,7 @@ export interface EdgeData extends Record<string, unknown> {
   colorMode: ColorMode;
   blastState: 'normal' | 'affected' | 'dimmed';
   traceState: 'none' | 'active' | 'dimmed';
+  scenarioState?: 'none' | 'active' | 'dimmed';
   isDeadCode: boolean;
   deadCodeDisplay: DeadCodeDisplay;
 }
@@ -370,6 +375,13 @@ export function filterGraph(
       if (edge.confidence < filters.confidenceThreshold) return false;
     }
 
+    // Исключение инфраструктурных хабов (Eureka, Gateway, RabbitMQ и т.д. по ADR-003)
+    if (filters.excludeHubs) {
+      if (TOPOLOGY_HUB_EXCLUSIONS.has(edge.source) || TOPOLOGY_HUB_EXCLUSIONS.has(edge.target)) {
+        return false;
+      }
+    }
+
     const reachable = isEdgeReachable(edge);
     if (!reachable) {
       unreachableEdgesCount++;
@@ -386,10 +398,13 @@ export function filterGraph(
     graph.edges.filter((e) => isEdgeReachable(e)).map((e) => e.id)
   );
 
-  // Фильтрация узлов: при RUNTIME_ONLY + HIDE скрываем полностью недостижимые мертвые узлы
+  // Фильтрация узлов: исключение хабов и/или мертвых узлов
   let filteredNodes = graph.nodes;
+  if (filters.excludeHubs) {
+    filteredNodes = filteredNodes.filter((node) => !TOPOLOGY_HUB_EXCLUSIONS.has(node.id));
+  }
   if (filters.reachabilityMode === 'RUNTIME_ONLY' && filters.deadCodeDisplay === 'HIDE') {
-    filteredNodes = graph.nodes.filter((node) => isNodeReachable(node, graph.edges, reachableEdgeIds));
+    filteredNodes = filteredNodes.filter((node) => isNodeReachable(node, graph.edges, reachableEdgeIds));
   }
 
   return { filteredNodes, filteredEdges, unreachableEdgesCount };
@@ -409,7 +424,8 @@ export function buildReactFlowElements(
   reachabilityMode: ReachabilityMode,
   deadCodeDisplay: DeadCodeDisplay,
   direction: DagDirection = 'RIGHT',
-  fullGraph?: CanonicalGraph
+  fullGraph?: CanonicalGraph,
+  scenarioPlayback?: ScenarioPlaybackState | null
 ): { flowNodes: Node<NodeData>[]; flowEdges: Edge<EdgeData>[] } {
   const query = searchQuery.trim().toLowerCase();
 
@@ -422,6 +438,7 @@ export function buildReactFlowElements(
     const pos = positions.get(node.id) || { x: 0, y: 0 };
     let blastState: NodeData['blastState'] = 'normal';
     let traceState: NodeData['traceState'] = 'none';
+    let scenarioState: NodeData['scenarioState'] = 'none';
 
     // 1. Blast Radius состояние
     if (blastRadius) {
@@ -448,7 +465,18 @@ export function buildReactFlowElements(
       }
     }
 
-    // 3. Reachability / Dead Code
+    // 3. Scenario Playback состояние
+    if (scenarioPlayback) {
+      if (node.id === scenarioPlayback.sourceNodeId) {
+        scenarioState = 'source';
+      } else if (node.id === scenarioPlayback.targetNodeId) {
+        scenarioState = 'target';
+      } else {
+        scenarioState = 'dimmed';
+      }
+    }
+
+    // 4. Reachability / Dead Code
     const isReachable = isNodeReachable(node, referenceEdges, reachableEdgeIds);
     const isDeadCode = reachabilityMode === 'RUNTIME_ONLY' && !isReachable;
 
@@ -471,6 +499,7 @@ export function buildReactFlowElements(
         rawNode: node,
         blastState,
         traceState,
+        scenarioState,
         isDeadCode,
         deadCodeDisplay,
         isMatchedSearch,
@@ -482,6 +511,7 @@ export function buildReactFlowElements(
   const flowEdges: Edge<EdgeData>[] = edges.map((edge) => {
     let blastState: EdgeData['blastState'] = 'normal';
     let traceState: EdgeData['traceState'] = 'none';
+    let scenarioState: EdgeData['scenarioState'] = 'none';
 
     if (blastRadius) {
       blastState = blastRadius.affectedEdgeIds.has(edge.id) ? 'affected' : 'dimmed';
@@ -489,6 +519,13 @@ export function buildReactFlowElements(
 
     if (callTrace) {
       traceState = callTrace.affectedEdgeIds.has(edge.id) ? 'active' : 'dimmed';
+    }
+
+    if (scenarioPlayback) {
+      const isCurrentStepEdge =
+        edge.id === scenarioPlayback.activeEdgeId ||
+        (edge.source === scenarioPlayback.sourceNodeId && edge.target === scenarioPlayback.targetNodeId);
+      scenarioState = isCurrentStepEdge ? 'active' : 'dimmed';
     }
 
     const isDeadCode = reachabilityMode === 'RUNTIME_ONLY' && !isEdgeReachable(edge);
@@ -499,6 +536,7 @@ export function buildReactFlowElements(
       target: edge.target,
       type: 'custom',
       animated:
+        scenarioState === 'active' ||
         traceState === 'active' ||
         edge.relationType === 'MESSAGE_QUEUE' ||
         edge.sourceType === 'ML_PREDICTED',
@@ -507,6 +545,7 @@ export function buildReactFlowElements(
         colorMode,
         blastState,
         traceState,
+        scenarioState,
         isDeadCode,
         deadCodeDisplay,
       },

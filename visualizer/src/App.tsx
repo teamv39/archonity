@@ -33,8 +33,10 @@ import type {
   DeadCodeDisplay,
   CallTraceResult,
   EndpointInfo,
+  ScenarioPlaybackState,
 } from './types/graph';
-import { demoGraph } from './data/demoData';
+import { demoGraph, trainTicketBenchmarkGraph } from './data/demoData';
+import { BENCHMARK_SCENARIOS } from './data/scenariosData';
 import { computeLayout } from './layout/layoutEngine';
 import {
   filterGraph,
@@ -59,6 +61,7 @@ import { Toolbar } from './components/toolbar/Toolbar';
 import { Inspector } from './components/inspector/Inspector';
 import { DataLoaderModal } from './components/modals/DataLoaderModal';
 import { FloatingTraceBadge } from './components/trace/FloatingTraceBadge';
+import { ScenarioPlayer } from './components/scenario/ScenarioPlayer';
 
 import './App.css';
 
@@ -131,6 +134,14 @@ const VisualizerCanvas: React.FC = () => {
   // Cross-Service Call Path Tracing
   const [callTrace, setCallTrace] = useState<CallTraceResult | null>(null);
 
+  // Инфраструктурные хабы (ADR-003)
+  const [excludeHubs, setExcludeHubs] = useState<boolean>(false);
+
+  // Интерактивный сценарный плеер
+  const [activeScenarioId, setActiveScenarioId] = useState<string | null>(null);
+  const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
+  const [isScenarioPlaying, setIsScenarioPlaying] = useState<boolean>(false);
+
   // Базовая стабильная раскладка графа
   const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
   const [isLoadingLayout, setIsLoadingLayout] = useState<boolean>(false);
@@ -202,6 +213,26 @@ const VisualizerCanvas: React.FC = () => {
     };
   }, [graph, direction]);
 
+  // Вычисление активного состояния сценарного плеера
+  const playbackState = useMemo<ScenarioPlaybackState | null>(() => {
+    if (!activeScenarioId) return null;
+    const scenario = BENCHMARK_SCENARIOS.find((s) => s.id === activeScenarioId);
+    if (!scenario || scenario.steps.length === 0) return null;
+    const step = scenario.steps[currentStepIndex] || scenario.steps[0];
+    return {
+      scenarioId: scenario.id,
+      scenarioName: scenario.name,
+      description: scenario.description,
+      currentStepIndex,
+      totalSteps: scenario.steps.length,
+      currentStep: step,
+      activeEdgeId: step.edgeId,
+      sourceNodeId: step.source,
+      targetNodeId: step.target,
+      isPlaying: isScenarioPlaying,
+    };
+  }, [activeScenarioId, currentStepIndex, isScenarioPlaying]);
+
   // Фильтрация ребер (мгновенно и синхронно при изменении фильтров)
   const { filteredNodes, filteredEdges, unreachableEdgesCount } = useMemo(() => {
     return filterGraph(graph, {
@@ -212,6 +243,7 @@ const VisualizerCanvas: React.FC = () => {
       colorMode,
       reachabilityMode,
       deadCodeDisplay,
+      excludeHubs,
     });
   }, [
     graph,
@@ -222,6 +254,7 @@ const VisualizerCanvas: React.FC = () => {
     colorMode,
     reachabilityMode,
     deadCodeDisplay,
+    excludeHubs,
   ]);
 
   // Синхронизация элементов React Flow с сохранением стабильных позиций
@@ -239,7 +272,8 @@ const VisualizerCanvas: React.FC = () => {
       reachabilityMode,
       deadCodeDisplay,
       direction,
-      graph
+      graph,
+      playbackState
     );
 
     const isDirectionChanged = lastDirectionRef.current !== direction;
@@ -269,6 +303,7 @@ const VisualizerCanvas: React.FC = () => {
     deadCodeDisplay,
     direction,
     graph,
+    playbackState,
     setNodes,
     setEdges,
   ]);
@@ -470,6 +505,123 @@ const VisualizerCanvas: React.FC = () => {
     setSelectedEdgeId(null);
   }, []);
 
+  // Инфраструктурные хабы (ADR-003)
+  const handleToggleExcludeHubs = useCallback(() => {
+    setExcludeHubs((prev) => !prev);
+  }, []);
+
+  // Управление сценарным плеером (ADR-003, RFC-05)
+  const handleToggleScenarioPlayer = useCallback(() => {
+    if (activeScenarioId) {
+      setActiveScenarioId(null);
+      setIsScenarioPlaying(false);
+      setCurrentStepIndex(0);
+    } else {
+      setActiveScenarioId(BENCHMARK_SCENARIOS[0].id);
+      setCurrentStepIndex(0);
+      setIsScenarioPlaying(false);
+      setCallTrace(null);
+      setBlastRadius(null);
+    }
+  }, [activeScenarioId]);
+
+  const handleSelectScenario = useCallback((scenarioId: string) => {
+    setActiveScenarioId(scenarioId);
+    setCurrentStepIndex(0);
+    setIsScenarioPlaying(false);
+  }, []);
+
+  const handleNextScenarioStep = useCallback(() => {
+    if (!activeScenarioId) return;
+    const scenario = BENCHMARK_SCENARIOS.find((s) => s.id === activeScenarioId);
+    if (!scenario) return;
+    setCurrentStepIndex((prev) => Math.min(scenario.steps.length - 1, prev + 1));
+  }, [activeScenarioId]);
+
+  const handlePrevScenarioStep = useCallback(() => {
+    setCurrentStepIndex((prev) => Math.max(0, prev - 1));
+  }, []);
+
+  const handleToggleScenarioPlay = useCallback(() => {
+    setIsScenarioPlaying((prev) => !prev);
+  }, []);
+
+  const handleCloseScenario = useCallback(() => {
+    setActiveScenarioId(null);
+    setIsScenarioPlaying(false);
+    setCurrentStepIndex(0);
+  }, []);
+
+  // Автопроигрывание шагов сценария
+  useEffect(() => {
+    if (!isScenarioPlaying || !activeScenarioId) return;
+    const scenario = BENCHMARK_SCENARIOS.find((s) => s.id === activeScenarioId);
+    if (!scenario) return;
+
+    const interval = setInterval(() => {
+      setCurrentStepIndex((prev) => {
+        if (prev >= scenario.steps.length - 1) {
+          setIsScenarioPlaying(false);
+          return prev;
+        }
+        return prev + 1;
+      });
+    }, 2500);
+
+    return () => clearInterval(interval);
+  }, [isScenarioPlaying, activeScenarioId]);
+
+  // Фокусировка камеры на активном шаге сценария
+  useEffect(() => {
+    if (!playbackState) return;
+    const timer = setTimeout(() => {
+      const srcNode = nodes.find((n) => n.id === playbackState.sourceNodeId);
+      const dstNode = nodes.find((n) => n.id === playbackState.targetNodeId);
+      const targetNodes = [srcNode, dstNode].filter(Boolean) as Node[];
+      if (targetNodes.length > 0) {
+        fitView({
+          nodes: targetNodes,
+          padding: 0.6,
+          duration: 350,
+        });
+      }
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [playbackState, fitView, nodes]);
+
+  // Быстрое переключение пресетов датасета
+  const handleLoadBenchmarkSlice = useCallback(() => {
+    setIsLoadingLayout(true);
+    setGraph(trainTicketBenchmarkGraph);
+    setDatasetName('Train Ticket Benchmark (19N / 27E)');
+    setIsCustomDataset(true);
+    setSelectedNodeId(null);
+    setSelectedEdgeId(null);
+    setBlastRadius(null);
+    setCallTrace(null);
+    setActiveScenarioId(null);
+    setToast({
+      type: 'success',
+      message: 'Загружен эталонный Train Ticket Benchmark Slice (19 узлов, 27 рёбер, AST, CFG, ML, LLM-Judge)',
+    });
+  }, []);
+
+  const handleLoadStandardDemo = useCallback(() => {
+    setIsLoadingLayout(true);
+    setGraph(demoGraph);
+    setDatasetName('ДЕМО (Train Ticket — 9 сервисов)');
+    setIsCustomDataset(false);
+    setSelectedNodeId(null);
+    setSelectedEdgeId(null);
+    setBlastRadius(null);
+    setCallTrace(null);
+    setActiveScenarioId(null);
+    setToast({
+      type: 'info',
+      message: 'Переключено на базовый демо-срез Train Ticket',
+    });
+  }, []);
+
   // Поиск выбранных объектов для сайдбара
   const selectedNode = useMemo(
     () => graph.nodes.find((n) => n.id === selectedNodeId) || null,
@@ -501,6 +653,10 @@ const VisualizerCanvas: React.FC = () => {
     setDeadCodeDisplay('DIM');
     setSearchQuery('');
     setConfidenceThreshold(0.35);
+    setExcludeHubs(false);
+    setActiveScenarioId(null);
+    setIsScenarioPlaying(false);
+    setCurrentStepIndex(0);
     setActiveSources({
       AST_EXACT: true,
       CONFIG: true,
@@ -516,18 +672,35 @@ const VisualizerCanvas: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (callTrace) {
+        if (activeScenarioId) {
+          handleCloseScenario();
+        } else if (callTrace) {
           handleClearCallTrace();
         } else if (selectedEdgeId || selectedNodeId) {
           setSelectedEdgeId(null);
           setSelectedNodeId(null);
           setBlastRadius(null);
         }
+      } else if (activeScenarioId) {
+        if (e.key === 'ArrowRight') {
+          handleNextScenarioStep();
+        } else if (e.key === 'ArrowLeft') {
+          handlePrevScenarioStep();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [callTrace, selectedEdgeId, selectedNodeId, handleClearCallTrace]);
+  }, [
+    activeScenarioId,
+    callTrace,
+    selectedEdgeId,
+    selectedNodeId,
+    handleClearCallTrace,
+    handleCloseScenario,
+    handleNextScenarioStep,
+    handlePrevScenarioStep,
+  ]);
 
   return (
     <div className="visualizer-container">
@@ -550,6 +723,8 @@ const VisualizerCanvas: React.FC = () => {
         datasetName={datasetName}
         isCustomDataset={isCustomDataset}
         onOpenDataLoader={() => setIsDataLoaderOpen(true)}
+        onLoadBenchmarkSlice={handleLoadBenchmarkSlice}
+        onLoadStandardDemo={handleLoadStandardDemo}
         onExportPng={handleExportPng}
         onExportSvg={handleExportSvg}
         onExportJson={handleExportJson}
@@ -559,6 +734,10 @@ const VisualizerCanvas: React.FC = () => {
         deadCodeDisplay={deadCodeDisplay}
         onToggleDeadCodeDisplay={handleToggleDeadCodeDisplay}
         unreachableEdgesCount={unreachableEdgesCount}
+        excludeHubs={excludeHubs}
+        onToggleExcludeHubs={handleToggleExcludeHubs}
+        isScenarioActive={Boolean(activeScenarioId)}
+        onToggleScenarioPlayer={handleToggleScenarioPlayer}
       />
 
       <div className="visualizer-body" style={{ userSelect: isDragging ? 'none' : 'auto' }}>
@@ -573,6 +752,20 @@ const VisualizerCanvas: React.FC = () => {
           <FloatingTraceBadge
             callTrace={callTrace}
             onClearCallTrace={handleClearCallTrace}
+          />
+
+          {/* Интерактивный сценарный плеер эталонных цепочек вызовов */}
+          <ScenarioPlayer
+            scenarios={BENCHMARK_SCENARIOS}
+            activeScenarioId={activeScenarioId}
+            currentStepIndex={currentStepIndex}
+            isPlaying={isScenarioPlaying}
+            onSelectScenario={handleSelectScenario}
+            onNextStep={handleNextScenarioStep}
+            onPrevStep={handlePrevScenarioStep}
+            onTogglePlay={handleToggleScenarioPlay}
+            onClose={handleCloseScenario}
+            playbackState={playbackState}
           />
 
           <ReactFlow
