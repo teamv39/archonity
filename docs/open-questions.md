@@ -6,12 +6,12 @@
 
 ## Сводная таблица вопросов
 
-| ID | Вопрос | Область | Статус в RFC-05 | Приоритет |
+| ID | Вопрос | Область | Статус в ADR-004 | Приоритет |
 |---|---|---|---|---|
-| [OQ-01](#oq-01-evidence-schema) | Формат и структура `evidence.json` | Explainability / Visualizer | Согласовано (ADR-001 / RFC-05) | Высокий |
-| [OQ-02](#oq-02-skeleton-dataset) | Формат `skeleton.json` и интеграция со срезанными ребрами Train Ticket | Dataset / Pipeline | Согласовано (Адаптеры + CanonicalGraph) | Критический (к 16.10) |
-| [OQ-03](#oq-03-reachability-failures) | Обработка разрывов в Call Graph при Reachability Analysis | Java AST / Dead Code | Согласовано (Reachability + unresolved_calls) | Средний |
-| [OQ-04](#oq-04-transitive-closure-rules) | Правила и ограничения транзитивного замыкания ($A \to B \to C$) | Graph Engine / IoU | Согласовано (Изоляция БД + Green zone) | Высокий |
+| [OQ-01](#oq-01-evidence-schema) | Формат и структура `evidence.json` | Explainability / Visualizer | Согласовано (ADR-001 / ADR-004) | Высокий |
+| [OQ-02](#oq-02-skeleton-dataset) | Формат `skeleton.json` и интеграция со срезанными ребрами Train Ticket | Dataset / Pipeline | Согласовано (ADR-004: Адаптеры + CanonicalGraph) | Критический (к 16.10) |
+| [OQ-03](#oq-03-reachability-failures) | Обработка разрывов в Call Graph при Reachability Analysis | Java AST / Dead Code | Согласовано (ADR-004: Reachability + unresolved_calls) | Средний |
+| [OQ-04](#oq-04-transitive-closure-rules) | Правила и ограничения транзитивного замыкания ($A \to B \to C$) | Graph Engine / IoU | Согласовано (ADR-004: Изоляция БД + Green zone) | Высокий |
 
 ---
 
@@ -86,7 +86,7 @@
 *Плюсы:* Единственный источник правды (`Single Source of Truth`).  
 *Минусы:* Риск не пройти строгую валидацию NSUTS, если схема организаторов запрещает дополнительные поля (`additionalProperties: false`).
 
-> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md) и [ADR-001](adr/adr-001_data_contracts_and_system_architecture.md)):** Принят Вариант 1 (словарь по `edge_id` с полями `primary_evidence` и полным трейсом). Обеспечивает $O(1)$ доступ при визуализации и полностью покрывает требования трассировки.
+> **Решение (согласовано в [ADR-004](adr/adr-004_hybrid_recovery_pipeline_and_arbitration.md) и [ADR-001](adr/adr-001_data_contracts_and_system_architecture.md)):** Принят Вариант 1 (словарь по `edge_id` с полями `primary_evidence` и полным трейсом). Обеспечивает $O(1)$ доступ при визуализации и полностью покрывает требования трассировки.
 
 ---
 
@@ -106,7 +106,7 @@
    - Содержит ли скелет только узлы сервисов или также узлы баз данных (таблицы MySQL, коллекции Mongo) и очереди (RabbitMQ)?
    - Требуется сопоставить ID узлов в `skeleton.json` с именами папок сервисов в Train Ticket (например, `ts-travel-service` vs `ts-travel-plan-service`).
 
-> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md)):** Принят Вариант 1 (Canonical Graph + Adapters). Внутреннее представление строится на Pydantic + NetworkX, а чтение `skeleton.json` и генерация `submission.json` изолированы в отдельных адаптерах.
+> **Решение (согласовано в [ADR-004](adr/adr-004_hybrid_recovery_pipeline_and_arbitration.md)):** Принят Вариант 1 (Canonical Graph + Adapters). Внутреннее представление строится на Pydantic + NetworkX, а чтение `skeleton.json` и генерация `submission.json` изолированы в отдельных адаптерах.
 
 ---
 
@@ -130,7 +130,7 @@
 3. **Эвристический поиск публичных маршрутов (Fallback Heuristics):**
    - Если класс аннотирован `@Service` и внедрен через `@Autowired` в активный контроллер, все его `public` методы условно считаются достижимыми, даже если прямой вызов в AST не найден.
 
-> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md)):** Двухступенчатая схема: детерминированный анализ достижимости (Reachability в NetworkX от корней Controller/MessageListener/ScheduledTask) отсекает мертвый код. Вызовы, достижимые, но с динамическим таргетом, передаются в список `unresolved_calls` для ML-ранжирования и трёхзонного арбитража.
+> **Решение (согласовано в [ADR-004](adr/adr-004_hybrid_recovery_pipeline_and_arbitration.md)):** Двухступенчатая схема: детерминированный анализ достижимости (Reachability в NetworkX от корней Controller/MessageListener/ScheduledTask) отсекает мертвый код. Вызовы, достижимые, но с динамическим таргетом, передаются в список `unresolved_calls` для ML-ранжирования и трёхзонного арбитража.
 
 ---
 
@@ -148,6 +148,6 @@
 3. **Разделение типов связей в схеме:**
    - Если целевая схема организаторов требует отличать `DIRECT_HTTP` от `TRANSITIVE_DEPENDENCY`, адаптер обязан выставлять соответствующий тип ребра.
 
-> **Решение (согласовано в [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md)):**
+> **Решение (согласовано в [ADR-004](adr/adr-004_hybrid_recovery_pipeline_and_arbitration.md)):**
 > 1. Узлы БД строго изолированы от транзитивности: обращения к таблицам — только прямые независимые рёбра.
 > 2. Транзитивное замыкание строится исключительно по рёбрам зелёной зоны ($P \ge 0.85$ или детерминированные факты AST), исключая каскадное накопление False Positives.
