@@ -17,9 +17,13 @@ export const QueueNode: React.FC<NodeProps> = memo((props) => {
 
   const searchClass = data.isMatchedSearch ? 'search-matched' : '';
 
+  const isDown = data.direction === 'DOWN';
+  const targetPos = isDown ? Position.Top : Position.Left;
+  const sourcePos = isDown ? Position.Bottom : Position.Right;
+
   return (
     <div className={`custom-node queue-node ${blastClass} ${searchClass}`}>
-      <Handle type="target" position={Position.Left} className="custom-handle" />
+      <Handle type="target" position={targetPos} className="custom-handle" />
 
       <div className="node-header">
         <div className="node-title-group">
@@ -53,7 +57,7 @@ export const QueueNode: React.FC<NodeProps> = memo((props) => {
         )}
       </div>
 
-      <Handle type="source" position={Position.Right} className="custom-handle" />
+      <Handle type="source" position={sourcePos} className="custom-handle" />
     </div>
   );
 });

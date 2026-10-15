@@ -9,21 +9,21 @@ import type {
   BlastRadiusResult,
   DagDirection,
 } from '../types/graph';
-import type { LayoutWorkerRequest, LayoutWorkerResponse } from '../workers/layout.worker';
 
 export interface FilterOptions {
   confidenceThreshold: number;
-  allowedSources: Set<SourceType>;
+  activeSources: Record<SourceType, boolean>;
   allowedRelations: Set<RelationType>;
   searchQuery: string;
   colorMode: ColorMode;
-  showTransitive: boolean;
+  showTransitive?: boolean;
 }
 
 export interface NodeData extends Record<string, unknown> {
   rawNode: CanonicalNode;
   blastState: 'normal' | 'root' | 'upstream' | 'downstream' | 'dimmed';
   isMatchedSearch: boolean;
+  direction?: DagDirection;
 }
 
 export interface EdgeData extends Record<string, unknown> {
@@ -119,99 +119,31 @@ export function calculateBlastRadius(
 }
 
 /**
- * Фильтрация ребер и узлов графа по критериям
+ * Фильтрация ребер графа по критериям (источники, порог уверенности ML, протокол)
  */
 export function filterGraph(
   graph: CanonicalGraph,
   filters: FilterOptions
 ): { filteredNodes: CanonicalNode[]; filteredEdges: CanonicalEdge[] } {
-  // Фильтруем ребра
   const filteredEdges = graph.edges.filter((edge) => {
-    // Порог уверенности
-    if (edge.confidence < filters.confidenceThreshold) return false;
+    // Источник доказательства (AST_EXACT, CONFIG, ML_PREDICTED, LLM_JUDGE_VERIFIED, TRANSITIVE)
+    if (!filters.activeSources[edge.sourceType]) return false;
 
-    // Источник доказательства
-    if (!filters.allowedSources.has(edge.sourceType)) return false;
-
-    // Тип отношения
+    // Тип отношения / протокола (REST_HTTP, DATABASE, MESSAGE_QUEUE, TRANSITIVE)
     if (!filters.allowedRelations.has(edge.relationType)) return false;
 
-    // Транзитивные ребра
-    if (!filters.showTransitive && edge.relationType === 'TRANSITIVE') return false;
-
-    return true;
-  });
-
-  const activeNodeIds = new Set<string>();
-  filteredEdges.forEach((e) => {
-    activeNodeIds.add(e.source);
-    activeNodeIds.add(e.target);
-  });
-
-  // Узлы показываем, если они участвуют в активных ребрах, либо если нет фильтра по поиску
-  const query = filters.searchQuery.trim().toLowerCase();
-  const filteredNodes = graph.nodes.filter((node) => {
-    if (query) {
-      const matchName = node.name.toLowerCase().includes(query);
-      const matchEndpoints = node.endpoints?.some((ep) =>
-        ep.path.toLowerCase().includes(query) || ep.handlerMethod?.toLowerCase().includes(query)
-      );
-      const matchTables = node.tables?.some((t) => t.tableName.toLowerCase().includes(query));
-      if (!matchName && !matchEndpoints && !matchTables) return false;
+    // Порог уверенности: применяется к ML и LLM гипотезам
+    if (edge.sourceType === 'ML_PREDICTED' || edge.sourceType === 'LLM_JUDGE_VERIFIED') {
+      if (edge.confidence < filters.confidenceThreshold) return false;
     }
+
     return true;
   });
+
+  // Все узлы сохраняются для топологической стабильности, поисковые совпадения подсвечиваются
+  const filteredNodes = graph.nodes;
 
   return { filteredNodes, filteredEdges };
-}
-
-/**
- * Асинхронный расчет координат через ELK.js Web Worker
- */
-export async function computeElkLayout(
-  worker: Worker,
-  nodes: CanonicalNode[],
-  edges: CanonicalEdge[],
-  direction: DagDirection = 'RIGHT'
-): Promise<Map<string, { x: number; y: number }>> {
-  return new Promise((resolve, reject) => {
-    const requestId = `req_${Date.now()}_${Math.random()}`;
-
-    const handleMessage = (event: MessageEvent<LayoutWorkerResponse>) => {
-      if (event.data.requestId === requestId) {
-        worker.removeEventListener('message', handleMessage);
-        if (event.data.success && event.data.nodes) {
-          const positions = new Map<string, { x: number; y: number }>();
-          event.data.nodes.forEach((n) => positions.set(n.id, { x: n.x, y: n.y }));
-          resolve(positions);
-        } else {
-          reject(new Error(event.data.error || 'Layout computation failed'));
-        }
-      }
-    };
-
-    worker.addEventListener('message', handleMessage);
-
-    const children = nodes.map((n) => {
-      const dims = NODE_DIMENSIONS[n.type] || { width: 280, height: 120 };
-      return { id: n.id, width: dims.width, height: dims.height };
-    });
-
-    const elkEdges = edges.map((e) => ({
-      id: e.id,
-      sources: [e.source],
-      targets: [e.target],
-    }));
-
-    const req: LayoutWorkerRequest = {
-      requestId,
-      direction,
-      children,
-      edges: elkEdges,
-    };
-
-    worker.postMessage(req);
-  });
 }
 
 /**
@@ -223,7 +155,8 @@ export function buildReactFlowElements(
   positions: Map<string, { x: number; y: number }>,
   blastRadius: BlastRadiusResult | null,
   colorMode: ColorMode,
-  searchQuery: string
+  searchQuery: string,
+  direction: DagDirection = 'RIGHT'
 ): { flowNodes: Node<NodeData>[]; flowEdges: Edge<EdgeData>[] } {
   const query = searchQuery.trim().toLowerCase();
 
@@ -262,6 +195,7 @@ export function buildReactFlowElements(
         rawNode: node,
         blastState,
         isMatchedSearch,
+        direction,
       },
     };
   });

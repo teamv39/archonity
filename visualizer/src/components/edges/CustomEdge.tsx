@@ -39,6 +39,19 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
   const edgeData = data as unknown as EdgeData;
   const rawEdge = edgeData?.rawEdge;
 
+  if (
+    sourceX === undefined ||
+    sourceY === undefined ||
+    targetX === undefined ||
+    targetY === undefined ||
+    isNaN(sourceX) ||
+    isNaN(sourceY) ||
+    isNaN(targetX) ||
+    isNaN(targetY)
+  ) {
+    return null;
+  }
+
   const [edgePath, labelX, labelY] = getBezierPath({
     sourceX,
     sourceY,
@@ -100,7 +113,7 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
       <path
         id={id}
         d={edgePath}
-        className={`custom-edge-path ${blastClass}`}
+        className={`react-flow__edge-path custom-edge-path ${blastClass}`}
         stroke={color}
         strokeWidth={strokeWidth}
         strokeDasharray={strokeDasharray}

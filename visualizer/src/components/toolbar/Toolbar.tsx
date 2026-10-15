@@ -14,7 +14,7 @@ import './toolbar.css';
 interface ToolbarProps {
   confidenceThreshold: number;
   onThresholdChange: (val: number) => void;
-  allowedSources: Set<SourceType>;
+  activeSources: Record<SourceType, boolean>;
   onToggleSource: (src: SourceType) => void;
   colorMode: ColorMode;
   onToggleColorMode: () => void;
@@ -23,8 +23,6 @@ interface ToolbarProps {
   searchQuery: string;
   onSearchChange: (q: string) => void;
   onFitView: () => void;
-  showTransitive: boolean;
-  onToggleTransitive: () => void;
   totalEdgesCount: number;
   visibleEdgesCount: number;
 }
@@ -32,7 +30,7 @@ interface ToolbarProps {
 export const Toolbar: React.FC<ToolbarProps> = ({
   confidenceThreshold,
   onThresholdChange,
-  allowedSources,
+  activeSources,
   onToggleSource,
   colorMode,
   onToggleColorMode,
@@ -41,8 +39,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   searchQuery,
   onSearchChange,
   onFitView,
-  showTransitive,
-  onToggleTransitive,
   totalEdgesCount,
   visibleEdgesCount,
 }) => {
@@ -55,11 +51,14 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       <div className="toolbar-controls">
         {/* ML Confidence Threshold Slider */}
-        <div className="slider-group" title="Порог уверенности для отсечения слабых гипотез связей">
+        <div className="slider-group" title="Порог уверенности для отсечения слабых гипотез ML">
           <Sliders size={14} style={{ color: '#ec4899' }} />
           <span className="slider-label">ML Threshold:</span>
           <span className="slider-val">p ≥ {confidenceThreshold.toFixed(2)}</span>
           <input
+            id="confidence-threshold"
+            name="confidence-threshold"
+            aria-label="Порог уверенности ML"
             type="range"
             min="0.0"
             max="1.0"
@@ -78,7 +77,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <div className="filter-pills">
           <button
             type="button"
-            className={`filter-pill-btn ${allowedSources.has('AST_EXACT') ? 'active' : ''}`}
+            className={`filter-pill-btn ${activeSources.AST_EXACT ? 'active' : ''}`}
             onClick={() => onToggleSource('AST_EXACT')}
             title="Детерминированные вызовы из статического анализа Java/AST"
           >
@@ -86,7 +85,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           </button>
           <button
             type="button"
-            className={`filter-pill-btn ${allowedSources.has('CONFIG') ? 'active' : ''}`}
+            className={`filter-pill-btn ${activeSources.CONFIG ? 'active' : ''}`}
             onClick={() => onToggleSource('CONFIG')}
             title="Связи из конфигураций application.yml / docker-compose"
           >
@@ -94,7 +93,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           </button>
           <button
             type="button"
-            className={`filter-pill-btn pill-ml ${allowedSources.has('ML_PREDICTED') ? 'active' : ''}`}
+            className={`filter-pill-btn pill-ml ${activeSources.ML_PREDICTED ? 'active' : ''}`}
             onClick={() => onToggleSource('ML_PREDICTED')}
             title="Связи, предсказанные моделью CatBoost"
           >
@@ -102,7 +101,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           </button>
           <button
             type="button"
-            className={`filter-pill-btn pill-llm ${allowedSources.has('LLM_JUDGE_VERIFIED') ? 'active' : ''}`}
+            className={`filter-pill-btn pill-llm ${activeSources.LLM_JUDGE_VERIFIED ? 'active' : ''}`}
             onClick={() => onToggleSource('LLM_JUDGE_VERIFIED')}
             title="Спорные связи, подтвержденные кодовым арбитром Qwen"
           >
@@ -110,8 +109,8 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           </button>
           <button
             type="button"
-            className={`filter-pill-btn ${showTransitive ? 'active' : ''}`}
-            onClick={onToggleTransitive}
+            className={`filter-pill-btn ${activeSources.TRANSITIVE ? 'active' : ''}`}
+            onClick={() => onToggleSource('TRANSITIVE')}
             title="Показать косвенные транзитивные зависимости"
           >
             Transitive
@@ -122,6 +121,9 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <div className="search-box">
           <Search size={14} style={{ color: '#64748b' }} />
           <input
+            id="graph-search-input"
+            name="graphSearch"
+            aria-label="Поиск узла или эндпоинта"
             type="text"
             placeholder="Поиск узла / API..."
             value={searchQuery}

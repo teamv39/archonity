@@ -52,18 +52,21 @@ const edgeTypes = {
 const VisualizerCanvas: React.FC = () => {
   const { fitView } = useReactFlow();
 
-  // Исходный граф (по умолчанию демо-срез Train Ticket)
+  // Исходный граф (демо-срез Train Ticket)
   const [graph] = useState(demoGraph);
 
-  // Состояния фильтров
+  // Фильтры и параметры визуализации
   const [confidenceThreshold, setConfidenceThreshold] = useState<number>(0.35);
-  const [allowedSources, setAllowedSources] = useState<Set<SourceType>>(
-    new Set(['AST_EXACT', 'CONFIG', 'ML_PREDICTED', 'LLM_JUDGE_VERIFIED', 'TRANSITIVE'])
-  );
+  const [activeSources, setActiveSources] = useState<Record<SourceType, boolean>>({
+    AST_EXACT: true,
+    CONFIG: true,
+    ML_PREDICTED: true,
+    LLM_JUDGE_VERIFIED: true,
+    TRANSITIVE: true,
+  });
   const [allowedRelations] = useState<Set<RelationType>>(
     new Set(['REST_HTTP', 'DATABASE', 'MESSAGE_QUEUE', 'TRANSITIVE'])
   );
-  const [showTransitive, setShowTransitive] = useState<boolean>(true);
   const [colorMode, setColorMode] = useState<ColorMode>('by_source');
   const [direction, setDirection] = useState<DagDirection>('RIGHT');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -73,40 +76,21 @@ const VisualizerCanvas: React.FC = () => {
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [blastRadius, setBlastRadius] = useState<BlastRadiusResult | null>(null);
 
-  // ELK.js раскладка
+  // Базовая стабильная раскладка графа
   const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
   const [isLoadingLayout, setIsLoadingLayout] = useState<boolean>(true);
+  const lastDirectionRef = React.useRef(direction);
 
   // React Flow узлы и ребра
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<NodeData>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge<EdgeData>>([]);
 
-  // Фильтрация графа
-  const { filteredNodes, filteredEdges } = useMemo(() => {
-    return filterGraph(graph, {
-      confidenceThreshold,
-      allowedSources,
-      allowedRelations,
-      searchQuery,
-      colorMode,
-      showTransitive,
-    });
-  }, [
-    graph,
-    confidenceThreshold,
-    allowedSources,
-    allowedRelations,
-    searchQuery,
-    colorMode,
-    showTransitive,
-  ]);
-
-  // Запуск раскладки при изменении состава узлов или направления
+  // Стабильная топологическая раскладка: пересчитывается ТОЛЬКО при смене графа или направления (LR/TB)
   useEffect(() => {
     let isCancelled = false;
     setIsLoadingLayout(true);
 
-    computeLayout(filteredNodes, filteredEdges, direction)
+    computeLayout(graph.nodes, graph.edges, direction)
       .then((newPositions) => {
         if (!isCancelled) {
           setPositions(newPositions);
@@ -123,20 +107,54 @@ const VisualizerCanvas: React.FC = () => {
     return () => {
       isCancelled = true;
     };
-  }, [filteredNodes, filteredEdges, direction]);
+  }, [graph, direction]);
 
-  // Синхронизация с React Flow элементами
+  // Фильтрация ребер (мгновенно и синхронно при изменении фильтров)
+  const { filteredNodes, filteredEdges } = useMemo(() => {
+    return filterGraph(graph, {
+      confidenceThreshold,
+      activeSources,
+      allowedRelations,
+      searchQuery,
+      colorMode,
+    });
+  }, [
+    graph,
+    confidenceThreshold,
+    activeSources,
+    allowedRelations,
+    searchQuery,
+    colorMode,
+  ]);
+
+  // Синхронизация элементов React Flow с сохранением стабильных позиций
   useEffect(() => {
+    if (positions.size === 0) return;
+
     const { flowNodes, flowEdges } = buildReactFlowElements(
       filteredNodes,
       filteredEdges,
       positions,
       blastRadius,
       colorMode,
-      searchQuery
+      searchQuery,
+      direction
     );
 
-    setNodes(flowNodes);
+    const isDirectionChanged = lastDirectionRef.current !== direction;
+    lastDirectionRef.current = direction;
+
+    setNodes((currentNodes) => {
+      if (isDirectionChanged || currentNodes.length === 0) {
+        return flowNodes;
+      }
+      const currentPosMap = new Map(currentNodes.map((n) => [n.id, n.position]));
+      return flowNodes.map((n) => {
+        const existingPos = currentPosMap.get(n.id);
+        return existingPos ? { ...n, position: existingPos } : n;
+      });
+    });
+
     setEdges(flowEdges);
   }, [
     filteredNodes,
@@ -145,11 +163,12 @@ const VisualizerCanvas: React.FC = () => {
     blastRadius,
     colorMode,
     searchQuery,
+    direction,
     setNodes,
     setEdges,
   ]);
 
-  // Автоматический зум и центрирование при обновлении раскладки позиций
+  // Автоматический зум и центрирование при готовности позиций
   useEffect(() => {
     if (!isLoadingLayout && positions.size > 0) {
       const timer = setTimeout(() => {
@@ -157,7 +176,7 @@ const VisualizerCanvas: React.FC = () => {
       }, 50);
       return () => clearTimeout(timer);
     }
-  }, [isLoadingLayout, positions, fitView]);
+  }, [isLoadingLayout, positions, direction, fitView]);
 
   // Обработчики кликов
   const handleNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
@@ -176,15 +195,10 @@ const VisualizerCanvas: React.FC = () => {
   }, []);
 
   const handleToggleSource = useCallback((src: SourceType) => {
-    setAllowedSources((prev) => {
-      const next = new Set(prev);
-      if (next.has(src)) {
-        if (next.size > 1) next.delete(src);
-      } else {
-        next.add(src);
-      }
-      return next;
-    });
+    setActiveSources((prev) => ({
+      ...prev,
+      [src]: !prev[src],
+    }));
   }, []);
 
   const handleToggleColorMode = useCallback(() => {
@@ -193,10 +207,6 @@ const VisualizerCanvas: React.FC = () => {
 
   const handleToggleDirection = useCallback(() => {
     setDirection((prev) => (prev === 'RIGHT' ? 'DOWN' : 'RIGHT'));
-  }, []);
-
-  const handleToggleTransitive = useCallback(() => {
-    setShowTransitive((prev) => !prev);
   }, []);
 
   const handleActivateBlastRadius = useCallback(
@@ -217,7 +227,7 @@ const VisualizerCanvas: React.FC = () => {
   }, []);
 
   const handleFitView = useCallback(() => {
-    fitView({ padding: 0.2, duration: 300 });
+    fitView({ padding: 0.25, duration: 300 });
   }, [fitView]);
 
   // Поиск выбранных объектов для сайдбара
@@ -236,7 +246,7 @@ const VisualizerCanvas: React.FC = () => {
       <Toolbar
         confidenceThreshold={confidenceThreshold}
         onThresholdChange={setConfidenceThreshold}
-        allowedSources={allowedSources}
+        activeSources={activeSources}
         onToggleSource={handleToggleSource}
         colorMode={colorMode}
         onToggleColorMode={handleToggleColorMode}
@@ -245,8 +255,6 @@ const VisualizerCanvas: React.FC = () => {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onFitView={handleFitView}
-        showTransitive={showTransitive}
-        onToggleTransitive={handleToggleTransitive}
         totalEdgesCount={graph.edges.length}
         visibleEdgesCount={filteredEdges.length}
       />
