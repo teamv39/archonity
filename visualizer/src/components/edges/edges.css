@@ -1,0 +1,77 @@
+/* edges.css - Стилизация кастомных рёбер по DESIGN.md */
+
+.custom-edge-path {
+  fill: none;
+  transition: stroke 0.15s ease, stroke-width 0.15s ease, opacity 0.15s ease;
+}
+
+.custom-edge-interaction {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 14px;
+  cursor: pointer;
+}
+
+.custom-edge-interaction:hover + .custom-edge-path {
+  stroke-width: 2.5px !important;
+}
+
+/* Компактный прямоугольный бейдж вероятности на изломе */
+.edge-cad-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 3px;
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-primary);
+  box-shadow: none;
+  cursor: pointer;
+  pointer-events: all;
+  user-select: none;
+}
+
+.edge-cad-badge.ml_predicted {
+  border-color: var(--edge-ml);
+  color: var(--edge-ml);
+}
+
+.edge-cad-badge.llm_judge_verified {
+  border-color: #047857;
+  color: #047857;
+}
+
+.edge-cad-badge.ast_exact {
+  border-color: var(--edge-ast);
+  color: var(--edge-ast);
+}
+
+.edge-cad-badge.config {
+  border-color: var(--edge-config);
+  color: var(--edge-config);
+}
+
+.edge-cad-badge.transitive {
+  border-color: var(--edge-transitive);
+  color: var(--edge-transitive);
+}
+
+/* Состояния Blast Radius для рёбер */
+.edge-blast-affected {
+  stroke: var(--alert-blast) !important;
+  stroke-width: 2px !important;
+  opacity: 1 !important;
+}
+
+.edge-blast-dimmed {
+  opacity: 0.15 !important;
+}
+
+.edge-selected {
+  stroke: var(--border-strong) !important;
+  stroke-width: 2.5px !important;
+}
