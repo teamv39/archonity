@@ -1,0 +1,192 @@
+/* nodes.css - Стилизация кастомных узлов графа */
+
+.custom-node {
+  border-radius: 8px;
+  padding: 12px 14px;
+  background-color: #1a1e29;
+  border: 1px solid #2d3748;
+  color: #f1f5f9;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+}
+
+.custom-node:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+}
+
+/* Специфические цвета границ и акцентов для типов */
+.service-node {
+  border-left: 4px solid #38bdf8;
+  width: 300px;
+}
+
+.database-node {
+  border-left: 4px solid #f59e0b;
+  width: 250px;
+}
+
+.queue-node {
+  border-left: 4px solid #a855f7;
+  width: 250px;
+}
+
+/* Заголовок узла */
+.node-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.node-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.node-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.service-node .node-icon { color: #38bdf8; }
+.database-node .node-icon { color: #f59e0b; }
+.queue-node .node-icon { color: #a855f7; }
+
+.node-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+/* Бейджи */
+.node-badge {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.badge-service {
+  background-color: rgba(56, 189, 248, 0.15);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.badge-db {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.badge-queue {
+  background-color: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+/* Тело узла */
+.node-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.node-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.meta-label {
+  color: #64748b;
+}
+
+.meta-value {
+  color: #cbd5e1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.node-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.tag-pill {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background: #0f172a;
+  color: #94a3b8;
+  border: 1px solid #1e293b;
+}
+
+/* Состояния Blast Radius */
+.blast-root {
+  border: 2px solid #ef4444 !important;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.5) !important;
+  animation: pulse-root 1.8s infinite;
+}
+
+.blast-upstream {
+  border: 2px solid #38bdf8 !important;
+  box-shadow: 0 0 16px rgba(56, 189, 248, 0.4) !important;
+}
+
+.blast-downstream {
+  border: 2px solid #f97316 !important;
+  box-shadow: 0 0 16px rgba(249, 115, 22, 0.4) !important;
+}
+
+.blast-dimmed {
+  opacity: 0.22;
+  filter: grayscale(80%);
+}
+
+.search-matched {
+  outline: 3px solid #10b981;
+  outline-offset: 3px;
+}
+
+@keyframes pulse-root {
+  0% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 24px rgba(239, 68, 68, 0.8); }
+  100% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
+}
+
+/* React Flow Handles */
+.custom-handle {
+  width: 8px !important;
+  height: 8px !important;
+  background: #64748b !important;
+  border: 2px solid #0f172a !important;
+  transition: all 0.2s ease;
+}
+
+.custom-handle:hover {
+  background: #38bdf8 !important;
+  width: 10px !important;
+  height: 10px !important;
+}

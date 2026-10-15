@@ -1,0 +1,75 @@
+/* edges.css - Стилизация кастомных ребер графа */
+
+.custom-edge-path {
+  fill: none;
+  transition: stroke 0.2s ease, stroke-width 0.2s ease, opacity 0.2s ease;
+}
+
+.custom-edge-interaction {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 20px;
+  cursor: pointer;
+}
+
+.custom-edge-interaction:hover + .custom-edge-path {
+  stroke-width: 3.5px !important;
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+.edge-label-container {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  font-weight: 600;
+  background: #0f172a;
+  border: 1px solid #334155;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  pointer-events: all;
+  transition: transform 0.15s ease;
+}
+
+.edge-label-container:hover {
+  transform: scale(1.1);
+}
+
+.label-source-ast {
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.label-source-config {
+  color: #f59e0b;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+.label-source-ml {
+  color: #ec4899;
+  border-color: rgba(236, 72, 153, 0.4);
+}
+
+.label-source-llm {
+  color: #10b981;
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.label-source-transitive {
+  color: #94a3b8;
+  border-color: rgba(148, 163, 184, 0.4);
+}
+
+/* Состояния Blast Radius для ребер */
+.edge-blast-affected {
+  stroke-width: 3px !important;
+  filter: drop-shadow(0 0 8px currentColor) !important;
+  opacity: 1 !important;
+}
+
+.edge-blast-dimmed {
+  opacity: 0.12 !important;
+}
