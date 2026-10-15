@@ -98,9 +98,26 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
     blastClass = 'edge-blast-dimmed';
   }
 
+  // Состояния Call Path Trace
+  if (edgeData.traceState === 'active') {
+    blastClass += ' edge-trace-active';
+    color = '#0969DA';
+    strokeWidth = 2.5;
+  } else if (edgeData.traceState === 'dimmed') {
+    blastClass += ' edge-trace-dimmed';
+  }
+
+  // Состояния Dead Code
+  if (edgeData.isDeadCode) {
+    blastClass += ' edge-dead-code';
+    if (edgeData.deadCodeDisplay === 'DIM') {
+      strokeDasharray = '3 3';
+    }
+  }
+
   if (selected) {
     strokeWidth = 2.5;
-    if (edgeData.blastState !== 'affected') {
+    if (edgeData.blastState !== 'affected' && edgeData.traceState !== 'active') {
       color = '#18181B';
     }
   }

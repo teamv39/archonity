@@ -84,6 +84,7 @@ function normalizeEvidenceDetails(raw: any): EvidenceDetails | undefined {
     matchedEndpoint: raw.matched_endpoint ?? raw.matchedEndpoint,
     callChain: raw.call_chain ?? raw.callChain,
     codeSnippet: raw.code_snippet ?? raw.codeSnippet,
+    isReachable: raw.is_reachable ?? raw.isReachable,
     modelName: raw.model_name ?? raw.modelName,
     threshold: raw.threshold != null ? Number(raw.threshold) : undefined,
     topFeatures,
@@ -112,6 +113,7 @@ export function normalizeCanonicalGraph(raw: any): CanonicalGraph {
           handlerMethod: ep.handler_method || ep.handlerMethod,
           requestDto: typeof ep.request_dto === 'string' ? ep.request_dto : ep.request_dto?.class_name,
           responseDto: typeof ep.response_dto === 'string' ? ep.response_dto : ep.response_dto?.class_name,
+          isReachable: ep.is_reachable ?? ep.isReachable,
         }))
       : undefined;
 
@@ -156,6 +158,7 @@ export function normalizeCanonicalGraph(raw: any): CanonicalGraph {
     const sourceType = normalizeSourceType(e.source_type || e.sourceType);
     const confidence = typeof e.confidence === 'number' ? e.confidence : 1.0;
     const evidenceDetails = normalizeEvidenceDetails(e.evidence_details || e.evidenceDetails);
+    const isReachable = e.is_reachable ?? e.isReachable ?? evidenceDetails?.isReachable;
 
     return {
       id,
@@ -164,6 +167,7 @@ export function normalizeCanonicalGraph(raw: any): CanonicalGraph {
       relationType,
       sourceType,
       confidence,
+      isReachable,
       evidenceDetails,
     };
   });
@@ -380,6 +384,7 @@ export function parseFactsJson(raw: any): CanonicalGraph {
             relationType: 'REST_HTTP',
             sourceType: 'AST_EXACT',
             confidence: 1.0,
+            isReachable: call.is_reachable ?? true,
             evidenceDetails: {
               filePath: call.file_path,
               lineNumber: call.line_number,
@@ -387,6 +392,7 @@ export function parseFactsJson(raw: any): CanonicalGraph {
               matchedEndpoint: `${call.http_method || 'POST'} ${call.target_url_template || call.raw_expression || ''}`,
               callChain: call.call_chain,
               codeSnippet: call.code_snippet,
+              isReachable: call.is_reachable ?? true,
             },
           });
         }
@@ -421,11 +427,13 @@ export function parseFactsJson(raw: any): CanonicalGraph {
           relationType: 'DATABASE',
           sourceType: 'AST_EXACT',
           confidence: 1.0,
+          isReachable: db.is_reachable ?? true,
           evidenceDetails: {
             filePath: db.file_path,
             lineNumber: db.line_number,
             caller: `${db.caller_class || ''}.${db.caller_method || ''}`.replace(/^\./, ''),
             callChain: db.call_chain,
+            isReachable: db.is_reachable ?? true,
           },
         });
       }
@@ -460,12 +468,14 @@ export function parseFactsJson(raw: any): CanonicalGraph {
           relationType: 'MESSAGE_QUEUE',
           sourceType: 'AST_EXACT',
           confidence: 1.0,
+          isReachable: mq.is_reachable ?? true,
           evidenceDetails: {
             filePath: mq.file_path,
             lineNumber: mq.line_number,
             caller: `${mq.caller_class || ''}.${mq.caller_method || ''}`.replace(/^\./, ''),
             matchedEndpoint: `${mq.broker || 'RABBITMQ'}: ${qName} (${mq.routing_key || ''})`,
             callChain: mq.call_chain,
+            isReachable: mq.is_reachable ?? true,
           },
         });
       }

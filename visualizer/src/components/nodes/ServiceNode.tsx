@@ -15,6 +15,13 @@ export const ServiceNode: React.FC<NodeProps> = memo((props) => {
   else if (data.blastState === 'downstream') blastClass = 'blast-downstream';
   else if (data.blastState === 'dimmed') blastClass = 'blast-dimmed';
 
+  let traceClass = '';
+  if (data.traceState === 'start') traceClass = 'trace-start';
+  else if (data.traceState === 'hop') traceClass = 'trace-hop';
+  else if (data.traceState === 'sink') traceClass = 'trace-sink';
+  else if (data.traceState === 'dimmed') traceClass = 'trace-dimmed';
+
+  const deadCodeClass = data.isDeadCode ? `node-dead-code ${data.deadCodeDisplay.toLowerCase()}` : '';
   const searchClass = data.isMatchedSearch ? 'search-matched' : '';
 
   const isDown = data.direction === 'DOWN';
@@ -22,7 +29,7 @@ export const ServiceNode: React.FC<NodeProps> = memo((props) => {
   const sourcePos = isDown ? Position.Bottom : Position.Right;
 
   return (
-    <div className={`custom-node service-node ${blastClass} ${searchClass}`}>
+    <div className={`custom-node service-node ${blastClass} ${traceClass} ${deadCodeClass} ${searchClass}`}>
       <Handle type="target" position={targetPos} className="custom-handle" />
 
       <div className="node-header">
@@ -34,9 +41,15 @@ export const ServiceNode: React.FC<NodeProps> = memo((props) => {
             {node.name}
           </span>
         </div>
-        <span className="node-badge badge-service">
-          {(node.language || 'Java').replace(/ .*/, '').toUpperCase()}
-        </span>
+        <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+          {data.traceState === 'start' && <span className="node-badge badge-trace start">[1] START</span>}
+          {data.traceState === 'hop' && <span className="node-badge badge-trace hop">[HOP]</span>}
+          {data.traceState === 'sink' && <span className="node-badge badge-trace sink">[SINK]</span>}
+          {data.isDeadCode && <span className="node-badge badge-dead-code" title="Не достижим из публичных точек входа">DEAD</span>}
+          <span className="node-badge badge-service">
+            {(node.language || 'Java').replace(/ .*/, '').toUpperCase()}
+          </span>
+        </div>
       </div>
 
       <div className="node-body">

@@ -12,12 +12,15 @@ import {
   Server,
   Database,
   Radio,
+  Route,
 } from 'lucide-react';
 import type {
   CanonicalNode,
   CanonicalEdge,
   BlastRadiusResult,
   CanonicalGraph,
+  CallTraceResult,
+  EndpointInfo,
 } from '../../types/graph';
 import { EdgeRegistryTable } from './EdgeRegistryTable';
 import './inspector.css';
@@ -32,7 +35,105 @@ interface InspectorProps {
   graph: CanonicalGraph;
   filteredEdges: CanonicalEdge[];
   onSelectEdge: (edgeId: string) => void;
+
+  // Call Path Tracing
+  callTrace: CallTraceResult | null;
+  onActivateCallTrace: (serviceId: string, endpoint: EndpointInfo) => void;
+  onClearCallTrace: () => void;
 }
+
+export const CallTraceCard: React.FC<{
+  callTrace: CallTraceResult;
+  onClearCallTrace: () => void;
+}> = ({ callTrace, onClearCallTrace }) => {
+  return (
+    <div className="cad-card call-trace-card">
+      <div className="card-section-title">
+        <Route size={12} style={{ color: '#0969DA' }} />
+        <span>СКВОЗНАЯ ТРАССИРОВКА ВЫЗОВА (CALL CHAIN)</span>
+      </div>
+
+      <div className="trace-header-info">
+        <span className={`method-badge ${callTrace.rootHttpMethod.toLowerCase()}`}>
+          {callTrace.rootHttpMethod}
+        </span>
+        <span className="trace-root-path">{callTrace.rootEndpointPath}</span>
+      </div>
+
+      <div className="cad-grid-row" style={{ marginTop: 6, marginBottom: 8 }}>
+        <div className="metric-box-cad">
+          <span className="metric-val" style={{ color: '#0969DA' }}>
+            {callTrace.affectedNodeIds.size}
+          </span>
+          <span className="metric-lbl">УЗЛОВ В ЦЕПОЧКЕ</span>
+        </div>
+        <div className="metric-box-cad">
+          <span className="metric-val" style={{ color: '#0369A1' }}>
+            {callTrace.targetDatabases.length}
+          </span>
+          <span className="metric-lbl">ТАБЛИЦ БД</span>
+        </div>
+      </div>
+
+      {/* Пошаговое дерево шагов вызова */}
+      <div className="trace-steps-timeline">
+        {callTrace.orderedSteps.map((step) => (
+          <div
+            key={step.stepIndex}
+            className={`trace-step-item ${
+              step.isDbAccess
+                ? 'db-sink'
+                : step.isMqPublish
+                ? 'mq-sink'
+                : step.stepIndex === 1
+                ? 'controller-root'
+                : 'service-hop'
+            }`}
+          >
+            <div className="step-marker">
+              <span className="marker-number">[{step.stepIndex}]</span>
+            </div>
+            <div className="step-content">
+              <div className="step-title-row">
+                <span className="step-service-name">{step.serviceName}</span>
+                {step.targetRelation && (
+                  <span className="step-protocol-badge">{step.targetRelation}</span>
+                )}
+              </div>
+              {step.caller && (
+                <div className="step-caller-text">{step.caller}</div>
+              )}
+              {step.targetServiceId && (
+                <div className="step-target-row">
+                  <ArrowRight size={10} className="step-arrow" />
+                  <span className="step-target-name">{step.targetServiceId}</span>
+                  {step.targetTable && (
+                    <span className="step-table-badge">таблица: {step.targetTable}</span>
+                  )}
+                  {step.targetEndpoint && (
+                    <span className="step-ep-text">{step.targetEndpoint}</span>
+                  )}
+                </div>
+              )}
+              {step.codeSnippet && (
+                <pre className="trace-code-snippet">{step.codeSnippet}</pre>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button
+        type="button"
+        className="cad-action-btn blast-reset"
+        onClick={onClearCallTrace}
+        style={{ marginTop: 8 }}
+      >
+        СБРОСИТЬ ТРАССИРОВКУ ВЫЗОВА
+      </button>
+    </div>
+  );
+};
 
 export const Inspector: React.FC<InspectorProps> = ({
   selectedEdge,
@@ -44,6 +145,9 @@ export const Inspector: React.FC<InspectorProps> = ({
   graph,
   filteredEdges,
   onSelectEdge,
+  callTrace,
+  onActivateCallTrace,
+  onClearCallTrace,
 }) => {
   const [copied, setCopied] = useState(false);
 
@@ -84,6 +188,13 @@ export const Inspector: React.FC<InspectorProps> = ({
                   <ArrowRight size={12} className="route-arrow" />
                   <span className="mono-node-id">{selectedEdge.target}</span>
                 </div>
+
+                {(selectedEdge.isReachable === false || selectedEdge.evidenceDetails?.isReachable === false) && (
+                  <div className="dead-code-alert-banner">
+                    <AlertTriangle size={12} color="#DC2626" />
+                    <span>НЕДОСТИЖИМО ИЗ ТОЧЕК ВХОДА (DEAD CODE)</span>
+                  </div>
+                )}
 
                 <div className="cad-grid-row">
                   <div className="cad-field">
@@ -331,17 +442,44 @@ export const Inspector: React.FC<InspectorProps> = ({
                       ВХОДЯЩИЕ ЭНДПОИНТЫ ({selectedNode.endpoints.length})
                     </span>
                     <div className="endpoints-cad-list">
-                      {selectedNode.endpoints.map((ep) => (
-                        <div key={ep.id} className="endpoint-cad-item" title={ep.handlerClass ? `${ep.handlerClass}.${ep.handlerMethod}` : ep.path}>
-                          <span className={`method-badge ${ep.httpMethod.toLowerCase()}`}>
-                            {ep.httpMethod}
-                          </span>
-                          <span className="endpoint-path-text">{ep.path}</span>
-                          {ep.handlerMethod && (
-                            <span className="endpoint-handler-text">.{ep.handlerMethod}()</span>
-                          )}
-                        </div>
-                      ))}
+                      {selectedNode.endpoints.map((ep) => {
+                        const isDead = ep.isReachable === false;
+                        const isCurrentlyTraced = callTrace?.rootEndpointId === ep.id;
+                        return (
+                          <div
+                            key={ep.id}
+                            className={`endpoint-cad-item ${isDead ? 'dead-endpoint' : ''} ${isCurrentlyTraced ? 'traced-endpoint' : ''}`}
+                            title={ep.handlerClass ? `${ep.handlerClass}.${ep.handlerMethod}` : ep.path}
+                          >
+                            <span className={`method-badge ${ep.httpMethod.toLowerCase()}`}>
+                              {ep.httpMethod}
+                            </span>
+                            <span className="endpoint-path-text">{ep.path}</span>
+                            {ep.handlerMethod && (
+                              <span className="endpoint-handler-text">.{ep.handlerMethod}()</span>
+                            )}
+                            {isDead && (
+                              <span className="endpoint-dead-badge">DEAD</span>
+                            )}
+                            <button
+                              type="button"
+                              className={`endpoint-trace-btn ${isCurrentlyTraced ? 'active' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (isCurrentlyTraced) {
+                                  onClearCallTrace();
+                                } else {
+                                  onActivateCallTrace(selectedNode.id, ep);
+                                }
+                              }}
+                              title={isCurrentlyTraced ? 'Сбросить трассировку' : 'Трассировать сквозную цепочку вызовов'}
+                            >
+                              <Route size={10} />
+                              <span>{isCurrentlyTraced ? 'СБРОС' : 'ТРЕЙС'}</span>
+                            </button>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -380,6 +518,11 @@ export const Inspector: React.FC<InspectorProps> = ({
                   </div>
                 )}
               </div>
+
+              {/* Панель сквозной трассировки (если активна для этого или смежного узла) */}
+              {callTrace && (
+                <CallTraceCard callTrace={callTrace} onClearCallTrace={onClearCallTrace} />
+              )}
 
               {/* Анализатор Blast Radius */}
               <div className="cad-card">
@@ -472,19 +615,42 @@ export const Inspector: React.FC<InspectorProps> = ({
           </div>
         )}
 
-        {/* 3. Ничего не выбрано: Общая сводка архитектурного графа */}
+        {/* 3. Ничего не выбрано: Общая сводка архитектурного графа или активный Трейс */}
         {!selectedEdge && !selectedNode && (
           <div className="inspector-pane">
             <div className="inspector-pane-header">
               <div className="pane-title-group">
-                <Info size={14} style={{ color: 'var(--text-muted)' }} />
-                <span className="pane-title">СВОДКА ТОПОЛОГИИ ГРАФА</span>
+                {callTrace ? (
+                  <>
+                    <Route size={14} style={{ color: '#0969DA' }} />
+                    <span className="pane-title">СКВОЗНАЯ ТРАССИРОВКА ВЫЗОВА</span>
+                  </>
+                ) : (
+                  <>
+                    <Info size={14} style={{ color: 'var(--text-muted)' }} />
+                    <span className="pane-title">СВОДКА ТОПОЛОГИИ ГРАФА</span>
+                  </>
+                )}
               </div>
+              {callTrace && (
+                <button
+                  type="button"
+                  className="inspector-close-btn"
+                  onClick={onClearCallTrace}
+                  title="Сбросить трассировку"
+                >
+                  <X size={13} />
+                </button>
+              )}
             </div>
 
             <div className="inspector-pane-body">
-              <div className="cad-card">
-                <div className="card-section-title">СТАТИСТИКА АРХИТЕКТУРЫ</div>
+              {callTrace ? (
+                <CallTraceCard callTrace={callTrace} onClearCallTrace={onClearCallTrace} />
+              ) : (
+                <>
+                  <div className="cad-card">
+                    <div className="card-section-title">СТАТИСТИКА АРХИТЕКТУРЫ</div>
                 <div className="cad-grid-row">
                   <div className="metric-box-cad">
                     <span className="metric-val">
@@ -522,8 +688,10 @@ export const Inspector: React.FC<InspectorProps> = ({
                   &bull; Выберите <strong>узел сервиса</strong> для активации режима симуляции отказа и подсветки <strong>Blast Radius</strong>.
                 </div>
               </div>
-            </div>
-          </div>
+            </>
+          )}
+        </div>
+      </div>
         )}
       </div>
 

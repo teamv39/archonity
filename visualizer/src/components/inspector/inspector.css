@@ -676,3 +676,219 @@
   color: var(--text-muted);
   font-size: 11px;
 }
+
+/* Баннер мертвого кода */
+.dead-code-alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* Эндпоинты в инспекторе */
+.endpoint-cad-item.dead-endpoint {
+  opacity: 0.6;
+  background-color: #F4F4F5;
+  border-style: dashed;
+}
+
+.endpoint-cad-item.traced-endpoint {
+  background-color: #EFF6FF;
+  border-color: #93C5FD;
+}
+
+.endpoint-dead-badge {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 3px;
+  background-color: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.endpoint-trace-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 5px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin-left: auto;
+  border-radius: 0;
+  transition: all 0.1s ease;
+}
+
+.endpoint-trace-btn:hover {
+  background-color: #EFF6FF;
+  color: #0969DA;
+  border-color: #93C5FD;
+}
+
+.endpoint-trace-btn.active {
+  background-color: #0969DA;
+  color: #FFFFFF;
+  border-color: #0969DA;
+}
+
+/* Карточка сквозной трассировки (Call Path Trace) */
+.call-trace-card {
+  border-left: 3px solid #0969DA;
+}
+
+.trace-header-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  margin-top: 4px;
+}
+
+.trace-root-path {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+/* Таймлайн цепочки вызовов */
+.trace-steps-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+  margin-top: 6px;
+  padding-right: 2px;
+}
+
+.trace-step-item {
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.trace-step-item.controller-root {
+  border-left: 3px solid #0969DA;
+  background-color: #F8FAFC;
+}
+
+.trace-step-item.service-hop {
+  border-left: 3px solid #0284C7;
+}
+
+.trace-step-item.db-sink {
+  border-left: 3px solid #059669;
+  background-color: #F0FDF4;
+}
+
+.trace-step-item.mq-sink {
+  border-left: 3px solid #D97706;
+  background-color: #FFFBEB;
+}
+
+.step-marker {
+  flex-shrink: 0;
+}
+
+.marker-number {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex-grow: 1;
+}
+
+.step-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.step-service-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.step-protocol-badge {
+  font-size: 8px;
+  padding: 1px 3px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-muted);
+}
+
+.step-caller-text {
+  font-size: 9px;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.step-target-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  color: var(--text-primary);
+  flex-wrap: wrap;
+}
+
+.step-arrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.step-target-name {
+  font-weight: 600;
+  color: #0969DA;
+}
+
+.step-table-badge {
+  font-size: 9px;
+  padding: 1px 4px;
+  background-color: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+}
+
+.step-ep-text {
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+.trace-code-snippet {
+  margin: 4px 0 0 0;
+  padding: 4px 6px;
+  background: #18181B;
+  color: #F4F4F5;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1.3;
+  overflow-x: auto;
+  border-radius: 0;
+}
+

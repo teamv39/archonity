@@ -71,7 +71,26 @@
   opacity: 0.15 !important;
 }
 
+/* Состояния Call Path Tracing для рёбер */
+.edge-trace-active {
+  stroke: #0969DA !important;
+  stroke-width: 2.5px !important;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 2px rgba(9, 105, 218, 0.5));
+}
+
+.edge-trace-dimmed {
+  opacity: 0.12 !important;
+}
+
+/* Состояния Dead Code для рёбер */
+.edge-dead-code {
+  stroke: #9CA3AF !important;
+  opacity: 0.35 !important;
+}
+
 .edge-selected {
   stroke: var(--border-strong) !important;
   stroke-width: 2.5px !important;
 }
+

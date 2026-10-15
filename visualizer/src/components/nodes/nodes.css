@@ -177,6 +177,66 @@
   opacity: 0.2 !important;
 }
 
+/* Состояния Call Path Tracing */
+.trace-start {
+  border: 2px solid #0969DA !important;
+  background-color: #EFF6FF !important;
+}
+
+.trace-hop {
+  border: 2px solid #0284C7 !important;
+  background-color: #F0F9FF !important;
+}
+
+.trace-sink {
+  border: 2px solid #059669 !important;
+  background-color: #ECFDF5 !important;
+}
+
+.trace-dimmed {
+  opacity: 0.15 !important;
+}
+
+/* Состояния Dead Code / Unreachable */
+.node-dead-code {
+  border-style: dashed !important;
+  border-color: #9CA3AF !important;
+  background-color: #F4F4F5 !important;
+}
+
+.node-dead-code.dim {
+  opacity: 0.35 !important;
+}
+
+.badge-dead-code {
+  background-color: #FEE2E2 !important;
+  color: #B91C1C !important;
+  border-color: #FCA5A5 !important;
+  font-weight: 700 !important;
+}
+
+.badge-trace {
+  font-weight: 700 !important;
+}
+
+.badge-trace.start {
+  background-color: #DBEAFE !important;
+  color: #1D4ED8 !important;
+  border-color: #93C5FD !important;
+}
+
+.badge-trace.hop {
+  background-color: #E0F2FE !important;
+  color: #0369A1 !important;
+  border-color: #BAE6FD !important;
+}
+
+.badge-trace.sink {
+  background-color: #D1FAE5 !important;
+  color: #047857 !important;
+  border-color: #A7F3D0 !important;
+}
+
 .search-matched {
   outline: 2px solid var(--border-strong);
   outline-offset: 2px;

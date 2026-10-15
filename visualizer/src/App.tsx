@@ -29,6 +29,10 @@ import type {
   ColorMode,
   DagDirection,
   BlastRadiusResult,
+  ReachabilityMode,
+  DeadCodeDisplay,
+  CallTraceResult,
+  EndpointInfo,
 } from './types/graph';
 import { demoGraph } from './data/demoData';
 import { computeLayout } from './layout/layoutEngine';
@@ -36,6 +40,7 @@ import {
   filterGraph,
   buildReactFlowElements,
   calculateBlastRadius,
+  traceCallPath,
   type NodeData,
   type EdgeData,
 } from './adapters/graphAdapter';
@@ -53,6 +58,7 @@ import { CustomEdge } from './components/edges/CustomEdge';
 import { Toolbar } from './components/toolbar/Toolbar';
 import { Inspector } from './components/inspector/Inspector';
 import { DataLoaderModal } from './components/modals/DataLoaderModal';
+import { FloatingTraceBadge } from './components/trace/FloatingTraceBadge';
 
 import './App.css';
 
@@ -117,6 +123,13 @@ const VisualizerCanvas: React.FC = () => {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
   const [blastRadius, setBlastRadius] = useState<BlastRadiusResult | null>(null);
+
+  // Reachability & Dead Code
+  const [reachabilityMode, setReachabilityMode] = useState<ReachabilityMode>('RUNTIME_ONLY');
+  const [deadCodeDisplay, setDeadCodeDisplay] = useState<DeadCodeDisplay>('DIM');
+
+  // Cross-Service Call Path Tracing
+  const [callTrace, setCallTrace] = useState<CallTraceResult | null>(null);
 
   // Базовая стабильная раскладка графа
   const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
@@ -190,13 +203,15 @@ const VisualizerCanvas: React.FC = () => {
   }, [graph, direction]);
 
   // Фильтрация ребер (мгновенно и синхронно при изменении фильтров)
-  const { filteredNodes, filteredEdges } = useMemo(() => {
+  const { filteredNodes, filteredEdges, unreachableEdgesCount } = useMemo(() => {
     return filterGraph(graph, {
       confidenceThreshold,
       activeSources,
       allowedRelations,
       searchQuery,
       colorMode,
+      reachabilityMode,
+      deadCodeDisplay,
     });
   }, [
     graph,
@@ -205,6 +220,8 @@ const VisualizerCanvas: React.FC = () => {
     allowedRelations,
     searchQuery,
     colorMode,
+    reachabilityMode,
+    deadCodeDisplay,
   ]);
 
   // Синхронизация элементов React Flow с сохранением стабильных позиций
@@ -216,9 +233,13 @@ const VisualizerCanvas: React.FC = () => {
       filteredEdges,
       positions,
       blastRadius,
+      callTrace,
       colorMode,
       searchQuery,
-      direction
+      reachabilityMode,
+      deadCodeDisplay,
+      direction,
+      graph
     );
 
     const isDirectionChanged = lastDirectionRef.current !== direction;
@@ -241,9 +262,13 @@ const VisualizerCanvas: React.FC = () => {
     filteredEdges,
     positions,
     blastRadius,
+    callTrace,
     colorMode,
     searchQuery,
+    reachabilityMode,
+    deadCodeDisplay,
     direction,
+    graph,
     setNodes,
     setEdges,
   ]);
@@ -268,6 +293,7 @@ const VisualizerCanvas: React.FC = () => {
       setSelectedNodeId(null);
       setSelectedEdgeId(null);
       setBlastRadius(null);
+      setCallTrace(null);
       setToast({
         type: 'success',
         message: `Датасет "${sourceName}" загружен: ${summary}`,
@@ -409,12 +435,34 @@ const VisualizerCanvas: React.FC = () => {
     (nodeId: string) => {
       const res = calculateBlastRadius(graph, nodeId);
       setBlastRadius(res);
+      setCallTrace(null);
     },
     [graph]
   );
 
   const handleClearBlastRadius = useCallback(() => {
     setBlastRadius(null);
+  }, []);
+
+  const handleToggleReachabilityMode = useCallback(() => {
+    setReachabilityMode((prev) => (prev === 'RUNTIME_ONLY' ? 'ALL' : 'RUNTIME_ONLY'));
+  }, []);
+
+  const handleToggleDeadCodeDisplay = useCallback(() => {
+    setDeadCodeDisplay((prev) => (prev === 'DIM' ? 'HIDE' : 'DIM'));
+  }, []);
+
+  const handleActivateCallTrace = useCallback(
+    (serviceId: string, endpoint: EndpointInfo) => {
+      const res = traceCallPath(graph, serviceId, endpoint);
+      setCallTrace(res);
+      setBlastRadius(null);
+    },
+    [graph]
+  );
+
+  const handleClearCallTrace = useCallback(() => {
+    setCallTrace(null);
   }, []);
 
   const handleCloseInspector = useCallback(() => {
@@ -448,6 +496,9 @@ const VisualizerCanvas: React.FC = () => {
     setSelectedNodeId(null);
     setSelectedEdgeId(null);
     setBlastRadius(null);
+    setCallTrace(null);
+    setReachabilityMode('RUNTIME_ONLY');
+    setDeadCodeDisplay('DIM');
     setSearchQuery('');
     setConfidenceThreshold(0.35);
     setActiveSources({
@@ -460,6 +511,23 @@ const VisualizerCanvas: React.FC = () => {
     setColorMode('by_source');
     setDirection('RIGHT');
   }, [fitView]);
+
+  // Сброс трейса или выделения по Escape
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (callTrace) {
+          handleClearCallTrace();
+        } else if (selectedEdgeId || selectedNodeId) {
+          setSelectedEdgeId(null);
+          setSelectedNodeId(null);
+          setBlastRadius(null);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [callTrace, selectedEdgeId, selectedNodeId, handleClearCallTrace]);
 
   return (
     <div className="visualizer-container">
@@ -486,6 +554,11 @@ const VisualizerCanvas: React.FC = () => {
         onExportSvg={handleExportSvg}
         onExportJson={handleExportJson}
         isExporting={isExporting}
+        reachabilityMode={reachabilityMode}
+        onToggleReachabilityMode={handleToggleReachabilityMode}
+        deadCodeDisplay={deadCodeDisplay}
+        onToggleDeadCodeDisplay={handleToggleDeadCodeDisplay}
+        unreachableEdgesCount={unreachableEdgesCount}
       />
 
       <div className="visualizer-body" style={{ userSelect: isDragging ? 'none' : 'auto' }}>
@@ -496,6 +569,12 @@ const VisualizerCanvas: React.FC = () => {
           onDragLeave={handleCanvasDragLeave}
           onDrop={handleCanvasDrop}
         >
+          {/* Плавающий CAD-бейдж активного сквозного трейса над холстом */}
+          <FloatingTraceBadge
+            callTrace={callTrace}
+            onClearCallTrace={handleClearCallTrace}
+          />
+
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -560,6 +639,9 @@ const VisualizerCanvas: React.FC = () => {
             graph={graph}
             filteredEdges={filteredEdges}
             onSelectEdge={handleSelectEdgeFromTable}
+            callTrace={callTrace}
+            onActivateCallTrace={handleActivateCallTrace}
+            onClearCallTrace={handleClearCallTrace}
           />
         </div>
       </div>
