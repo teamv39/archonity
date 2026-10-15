@@ -1,10 +1,10 @@
 # RFC-004: Гибридный пайплайн реконструкции графа (Dual-Source Consensus)
 
-* **Статус:** superseded (заменен [RFC-05](rfc-05_hybrid_recovery_pipeline_and_arbitration.md))
+* **Статус:** superseded (заменен [ADR-004](../adr/adr-004_hybrid_recovery_pipeline_and_arbitration.md) / [RFC-05](rfc-05_hybrid_recovery_pipeline_and_arbitration.md))
 * **Автор:** Паша (@Pavelgrr7)
 * **Дата:** 15 октября 2026
 
-> **Примечание:** Данный документ признан устаревшим. Практические наработки (механизм трёхзонного арбитража вероятностей под IoU и контракт `unresolved_calls`) перенесены и объединены с системным каркасом в единый целевой документ: **[RFC-05: Гибридный пайплайн реконструкции графа и трехзонный арбитраж](rfc-05_hybrid_recovery_pipeline_and_arbitration.md)**.
+> **Примечание:** Данный документ признан устаревшим. Практические наработки (механизм трёхзонного арбитража вероятностей под IoU и контракт `unresolved_calls`) перенесены и утверждены в качестве архитектурного стандарта: **[ADR-004: Гибридный пайплайн реконструкции графа и трехзонный арбитраж](../adr/adr-004_hybrid_recovery_pipeline_and_arbitration.md)** (ранее [RFC-05](rfc-05_hybrid_recovery_pipeline_and_arbitration.md)).
 
 ---
 
