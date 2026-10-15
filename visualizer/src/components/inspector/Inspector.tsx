@@ -323,6 +323,62 @@ export const Inspector: React.FC<InspectorProps> = ({
                     <span className="cad-field-value mono-val">{selectedNode.contextPath}</span>
                   </div>
                 )}
+
+                {/* Входящие эндпоинты */}
+                {selectedNode.endpoints && selectedNode.endpoints.length > 0 && (
+                  <div className="cad-field" style={{ marginTop: 6 }}>
+                    <span className="cad-field-label">
+                      ВХОДЯЩИЕ ЭНДПОИНТЫ ({selectedNode.endpoints.length})
+                    </span>
+                    <div className="endpoints-cad-list">
+                      {selectedNode.endpoints.map((ep) => (
+                        <div key={ep.id} className="endpoint-cad-item" title={ep.handlerClass ? `${ep.handlerClass}.${ep.handlerMethod}` : ep.path}>
+                          <span className={`method-badge ${ep.httpMethod.toLowerCase()}`}>
+                            {ep.httpMethod}
+                          </span>
+                          <span className="endpoint-path-text">{ep.path}</span>
+                          {ep.handlerMethod && (
+                            <span className="endpoint-handler-text">.{ep.handlerMethod}()</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Таблицы базы данных */}
+                {selectedNode.tables && selectedNode.tables.length > 0 && (
+                  <div className="cad-field" style={{ marginTop: 6 }}>
+                    <span className="cad-field-label">
+                      ТАБЛИЦЫ БД ({selectedNode.tables.length})
+                    </span>
+                    <div className="endpoints-cad-list">
+                      {selectedNode.tables.map((t, idx) => (
+                        <div key={idx} className="endpoint-cad-item">
+                          <span className="method-badge db">{t.operation}</span>
+                          <span className="endpoint-path-text">{t.tableName}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Очереди сообщений */}
+                {selectedNode.destinations && selectedNode.destinations.length > 0 && (
+                  <div className="cad-field" style={{ marginTop: 6 }}>
+                    <span className="cad-field-label">
+                      ОЧЕРЕДИ / ТОПИКИ ({selectedNode.destinations.length})
+                    </span>
+                    <div className="endpoints-cad-list">
+                      {selectedNode.destinations.map((q, idx) => (
+                        <div key={idx} className="endpoint-cad-item">
+                          <span className="method-badge mq">{q.role}</span>
+                          <span className="endpoint-path-text">{q.destination}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Анализатор Blast Radius */}

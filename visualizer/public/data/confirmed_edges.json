@@ -1,0 +1,305 @@
+[ {
+  "service" : "AdminBasicInfoController",
+  "httpMethod" : "addContacts",
+  "path" : "@PostMapping(path = \"/adminbasic/contacts\")"
+}, {
+  "service" : "AdminBasicInfoController",
+  "httpMethod" : "addStation",
+  "path" : "@PostMapping(path = \"/adminbasic/stations\")"
+}, {
+  "service" : "AdminBasicInfoController",
+  "httpMethod" : "addTrain",
+  "path" : "@PostMapping(path = \"/adminbasic/trains\")"
+}, {
+  "service" : "AdminBasicInfoController",
+  "httpMethod" : "addConfig",
+  "path" : "@PostMapping(path = \"/adminbasic/configs\")"
+}, {
+  "service" : "AdminBasicInfoController",
+  "httpMethod" : "addPrice",
+  "path" : "@PostMapping(path = \"/adminbasic/prices\")"
+}, {
+  "service" : "AdminOrderController",
+  "httpMethod" : "addOrder",
+  "path" : "@PostMapping(value = \"/adminorder\")"
+}, {
+  "service" : "AdminRouteController",
+  "httpMethod" : "addRoute",
+  "path" : "@PostMapping(value = \"/adminroute\")"
+}, {
+  "service" : "AdminTravelController",
+  "httpMethod" : "addTravel",
+  "path" : "@PostMapping(value = \"/admintravel\")"
+}, {
+  "service" : "AdminUserController",
+  "httpMethod" : "addUser",
+  "path" : "@PostMapping"
+}, {
+  "service" : "AuthController",
+  "httpMethod" : "createDefaultUser",
+  "path" : "@PostMapping"
+}, {
+  "service" : "UserController",
+  "httpMethod" : "getToken",
+  "path" : "@PostMapping(\"/login\")"
+}, {
+  "service" : "BasicController",
+  "httpMethod" : "queryForTravel",
+  "path" : "@PostMapping(value = \"/basic/travel\")"
+}, {
+  "service" : "BasicController",
+  "httpMethod" : "queryForTravels",
+  "path" : "@PostMapping(value = \"/basic/travels\")"
+}, {
+  "service" : "ConfigController",
+  "httpMethod" : "createConfig",
+  "path" : "@PostMapping(value = \"/configs\")"
+}, {
+  "service" : "ConsignPriceController",
+  "httpMethod" : "modifyPriceConfig",
+  "path" : "@PostMapping(value = \"/consignprice\")"
+}, {
+  "service" : "ConsignController",
+  "httpMethod" : "insertConsign",
+  "path" : "@PostMapping(value = \"/consigns\")"
+}, {
+  "service" : "ContactsController",
+  "httpMethod" : "createNewContacts",
+  "path" : "@PostMapping(path = \"/contacts\")"
+}, {
+  "service" : "ContactsController",
+  "httpMethod" : "createNewContactsAdmin",
+  "path" : "@PostMapping(path = \"/contacts/admin\")"
+}, {
+  "service" : "FoodDeliveryController",
+  "httpMethod" : "createFoodDeliveryOrder",
+  "path" : "@PostMapping(\"/orders\")"
+}, {
+  "service" : "FoodController",
+  "httpMethod" : "createFoodOrder",
+  "path" : "@PostMapping(path = \"/orders\")"
+}, {
+  "service" : "FoodController",
+  "httpMethod" : "createFoodBatches",
+  "path" : "@PostMapping(path = \"/createOrderBatch\")"
+}, {
+  "service" : "AsyncTask",
+  "httpMethod" : "getForObject",
+  "path" : "\"http://rest-service-external:16100/greet\""
+}, {
+  "service" : "InsidePaymentController",
+  "httpMethod" : "pay",
+  "path" : "@PostMapping(value = \"/inside_payment\")"
+}, {
+  "service" : "InsidePaymentController",
+  "httpMethod" : "createAccount",
+  "path" : "@PostMapping(value = \"/inside_payment/account\")"
+}, {
+  "service" : "InsidePaymentController",
+  "httpMethod" : "payDifference",
+  "path" : "@PostMapping(value = \"/inside_payment/difference\")"
+}, {
+  "service" : "NotificationController",
+  "httpMethod" : "preserve_success",
+  "path" : "@PostMapping(value = \"/notification/preserve_success\")"
+}, {
+  "service" : "NotificationController",
+  "httpMethod" : "order_create_success",
+  "path" : "@PostMapping(value = \"/notification/order_create_success\")"
+}, {
+  "service" : "NotificationController",
+  "httpMethod" : "order_changed_success",
+  "path" : "@PostMapping(value = \"/notification/order_changed_success\")"
+}, {
+  "service" : "NotificationController",
+  "httpMethod" : "order_cancel_success",
+  "path" : "@PostMapping(value = \"/notification/order_cancel_success\")"
+}, {
+  "service" : "OrderOtherController",
+  "httpMethod" : "getTicketListByDateAndTripId",
+  "path" : "@PostMapping(value = \"/orderOther/tickets\")"
+}, {
+  "service" : "OrderOtherController",
+  "httpMethod" : "createNewOrder",
+  "path" : "@PostMapping(path = \"/orderOther\")"
+}, {
+  "service" : "OrderOtherController",
+  "httpMethod" : "addcreateNewOrder",
+  "path" : "@PostMapping(path = \"/orderOther/admin\")"
+}, {
+  "service" : "OrderOtherController",
+  "httpMethod" : "queryOrders",
+  "path" : "@PostMapping(path = \"/orderOther/query\")"
+}, {
+  "service" : "OrderOtherController",
+  "httpMethod" : "queryOrdersForRefresh",
+  "path" : "@PostMapping(path = \"/orderOther/refresh\")"
+}, {
+  "service" : "OrderController",
+  "httpMethod" : "getTicketListByDateAndTripId",
+  "path" : "@PostMapping(value = \"/order/tickets\")"
+}, {
+  "service" : "OrderController",
+  "httpMethod" : "createNewOrder",
+  "path" : "@PostMapping(path = \"/order\")"
+}, {
+  "service" : "OrderController",
+  "httpMethod" : "addcreateNewOrder",
+  "path" : "@PostMapping(path = \"/order/admin\")"
+}, {
+  "service" : "OrderController",
+  "httpMethod" : "queryOrders",
+  "path" : "@PostMapping(path = \"/order/query\")"
+}, {
+  "service" : "OrderController",
+  "httpMethod" : "queryOrdersForRefresh",
+  "path" : "@PostMapping(path = \"/order/refresh\")"
+}, {
+  "service" : "PaymentController",
+  "httpMethod" : "pay",
+  "path" : "@PostMapping(path = \"/payment\")"
+}, {
+  "service" : "PaymentController",
+  "httpMethod" : "addMoney",
+  "path" : "@PostMapping(path = \"/payment/money\")"
+}, {
+  "service" : "PreserveOtherController",
+  "httpMethod" : "preserve",
+  "path" : "@PostMapping(value = \"/preserveOther\")"
+}, {
+  "service" : "PreserveController",
+  "httpMethod" : "preserve",
+  "path" : "@PostMapping(value = \"/preserve\")"
+}, {
+  "service" : "PriceController",
+  "httpMethod" : "query",
+  "path" : "@PostMapping(value = \"/prices/byRouteIdsAndTrainTypes\")"
+}, {
+  "service" : "PriceController",
+  "httpMethod" : "create",
+  "path" : "@PostMapping(value = \"/prices\")"
+}, {
+  "service" : "RebookController",
+  "httpMethod" : "payDifference",
+  "path" : "@PostMapping(value = \"/rebook/difference\")"
+}, {
+  "service" : "RebookController",
+  "httpMethod" : "rebook",
+  "path" : "@PostMapping(value = \"/rebook\")"
+}, {
+  "service" : "RoutePlanController",
+  "httpMethod" : "getCheapestRoutes",
+  "path" : "@PostMapping(value = \"/routePlan/cheapestRoute\")"
+}, {
+  "service" : "RoutePlanController",
+  "httpMethod" : "getQuickestRoutes",
+  "path" : "@PostMapping(value = \"/routePlan/quickestRoute\")"
+}, {
+  "service" : "RoutePlanController",
+  "httpMethod" : "getMinStopStations",
+  "path" : "@PostMapping(value = \"/routePlan/minStopStations\")"
+}, {
+  "service" : "RouteController",
+  "httpMethod" : "createAndModifyRoute",
+  "path" : "@PostMapping(path = \"/routes\")"
+}, {
+  "service" : "RouteController",
+  "httpMethod" : "queryByIds",
+  "path" : "@PostMapping(path = \"/routes/byIds\")"
+}, {
+  "service" : "SeatController",
+  "httpMethod" : "create",
+  "path" : "@PostMapping(value = \"/seats\")"
+}, {
+  "service" : "SeatController",
+  "httpMethod" : "getLeftTicketOfInterval",
+  "path" : "@PostMapping(value = \"/seats/left_tickets\")"
+}, {
+  "service" : "SecurityController",
+  "httpMethod" : "create",
+  "path" : "@PostMapping(path = \"/securityConfigs\")"
+}, {
+  "service" : "StationFoodController",
+  "httpMethod" : "getFoodStoresByStationNames",
+  "path" : "@PostMapping(\"/stationfoodstores\")"
+}, {
+  "service" : "StationController",
+  "httpMethod" : "create",
+  "path" : "@PostMapping(value = \"/stations\")"
+}, {
+  "service" : "StationController",
+  "httpMethod" : "queryForIdBatch",
+  "path" : "@PostMapping(value = \"/stations/idlist\")"
+}, {
+  "service" : "StationController",
+  "httpMethod" : "queryForNameBatch",
+  "path" : "@PostMapping(value = \"/stations/namelist\")"
+}, {
+  "service" : "TrainController",
+  "httpMethod" : "create",
+  "path" : "@PostMapping(value = \"/trains\")"
+}, {
+  "service" : "TrainController",
+  "httpMethod" : "retrieveByName",
+  "path" : "@PostMapping(value = \"/trains/byNames\")"
+}, {
+  "service" : "TravelPlanController",
+  "httpMethod" : "getTransferResult",
+  "path" : "@PostMapping(value = \"/travelPlan/transferResult\")"
+}, {
+  "service" : "TravelPlanController",
+  "httpMethod" : "getByCheapest",
+  "path" : "@PostMapping(value = \"/travelPlan/cheapest\")"
+}, {
+  "service" : "TravelPlanController",
+  "httpMethod" : "getByQuickest",
+  "path" : "@PostMapping(value = \"/travelPlan/quickest\")"
+}, {
+  "service" : "TravelPlanController",
+  "httpMethod" : "getByMinStation",
+  "path" : "@PostMapping(value = \"/travelPlan/minStation\")"
+}, {
+  "service" : "TravelController",
+  "httpMethod" : "getTripsByRouteId",
+  "path" : "@PostMapping(value = \"/trips/routes\")"
+}, {
+  "service" : "TravelController",
+  "httpMethod" : "createTrip",
+  "path" : "@PostMapping(value = \"/trips\")"
+}, {
+  "service" : "TravelController",
+  "httpMethod" : "queryInfo",
+  "path" : "@PostMapping(value = \"/trips/left\")"
+}, {
+  "service" : "TravelController",
+  "httpMethod" : "queryInfoInparallel",
+  "path" : "@PostMapping(value = \"/trips/left_parallel\")"
+}, {
+  "service" : "TravelController",
+  "httpMethod" : "getTripAllDetailInfo",
+  "path" : "@PostMapping(value = \"/trip_detail\")"
+}, {
+  "service" : "Travel2Controller",
+  "httpMethod" : "getTripsByRouteId",
+  "path" : "@PostMapping(value = \"/trips/routes\")"
+}, {
+  "service" : "Travel2Controller",
+  "httpMethod" : "createTrip",
+  "path" : "@PostMapping(value = \"/trips\")"
+}, {
+  "service" : "Travel2Controller",
+  "httpMethod" : "queryInfo",
+  "path" : "@PostMapping(value = \"/trips/left\")"
+}, {
+  "service" : "Travel2Controller",
+  "httpMethod" : "getTripAllDetailInfo",
+  "path" : "@PostMapping(value = \"/trip_detail\")"
+}, {
+  "service" : "UserController",
+  "httpMethod" : "registerUser",
+  "path" : "@PostMapping(\"/register\")"
+}, {
+  "service" : "WaitListOrderController",
+  "httpMethod" : "createNewOrder",
+  "path" : "@PostMapping(path = \"/order\")"
+} ]

@@ -380,6 +380,59 @@
   justify-content: center;
 }
 
+/* Список эндпоинтов и сущностей узла */
+.endpoints-cad-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-canvas);
+  padding: 4px;
+}
+
+.endpoint-cad-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+}
+
+.endpoint-path-text {
+  color: var(--text-primary);
+  word-break: break-all;
+  font-weight: 500;
+}
+
+.endpoint-handler-text {
+  color: var(--text-muted);
+  font-size: 9px;
+  margin-left: auto;
+}
+
+.method-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 0;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.method-badge.get { background: #E0F2FE; color: #0369A1; }
+.method-badge.post { background: #DCFCE7; color: #15803D; }
+.method-badge.put { background: #FEF3C7; color: #B45309; }
+.method-badge.delete { background: #FEE2E2; color: #B91C1C; }
+.method-badge.patch { background: #F3E8FF; color: #7E22CE; }
+.method-badge.db { background: #E0E7FF; color: #4338CA; }
+.method-badge.mq { background: #FFEDD5; color: #C2410C; }
+
 .metric-box-cad .metric-val {
   font-family: var(--font-mono);
   font-size: 16px;

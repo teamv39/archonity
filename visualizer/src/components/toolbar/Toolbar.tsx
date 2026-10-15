@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Search,
   RotateCcw,
@@ -6,6 +6,12 @@ import {
   ArrowRight,
   ArrowDown,
   X,
+  Upload,
+  Download,
+  ChevronDown,
+  Image,
+  Code,
+  FileCode,
 } from 'lucide-react';
 import type { SourceType, ColorMode, DagDirection } from '../../types/graph';
 import './toolbar.css';
@@ -26,6 +32,17 @@ interface ToolbarProps {
   visibleEdgesCount: number;
   nodesCount: number;
   transitiveEdgesCount: number;
+
+  // Датасет и интеграция
+  datasetName: string;
+  isCustomDataset: boolean;
+  onOpenDataLoader: () => void;
+
+  // Экспорт
+  onExportPng: () => void;
+  onExportSvg: () => void;
+  onExportJson: () => void;
+  isExporting: boolean;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -44,8 +61,29 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   visibleEdgesCount,
   nodesCount,
   transitiveEdgesCount,
+  datasetName,
+  isCustomDataset,
+  onOpenDataLoader,
+  onExportPng,
+  onExportSvg,
+  onExportJson,
+  isExporting,
 }) => {
   const filteredCount = totalEdgesCount - visibleEdgesCount;
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  // Закрытие меню экспорта по клику вне
+  useEffect(() => {
+    if (!isExportMenuOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
+        setIsExportMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isExportMenuOpen]);
 
   return (
     <header className="control-bar" role="toolbar" aria-label="Панель управления графом">
@@ -57,7 +95,24 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       <div className="section-divider" />
 
-      {/* 2. Переключатели слоев */}
+      {/* 2. Датасет */}
+      <div className="bar-section dataset-section">
+        <span className="section-caption">ДАТАСЕТ:</span>
+        <button
+          type="button"
+          className={`cad-btn dataset-btn ${isCustomDataset ? 'custom' : ''}`}
+          onClick={onOpenDataLoader}
+          title="Загрузить файлы пайплайна (Drag & Drop, confirmed_edges.json, evidence.json)"
+        >
+          <Upload size={11} />
+          <span className="dataset-label">{datasetName}</span>
+          <ChevronDown size={10} style={{ opacity: 0.6 }} />
+        </button>
+      </div>
+
+      <div className="section-divider" />
+
+      {/* 3. Переключатели слоев */}
       <div className="bar-section layers-section">
         <span className="section-caption">СЛОИ:</span>
         <div className="layer-checkbox-group">
@@ -110,7 +165,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       <div className="section-divider" />
 
-      {/* 3. Порог ML */}
+      {/* 4. Порог ML */}
       <div className="bar-section threshold-section">
         <span className="section-caption">ПОРОГ ML:</span>
         <span className="mono-badge">p &ge; {confidenceThreshold.toFixed(2)}</span>
@@ -130,7 +185,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       <div className="section-divider" />
 
-      {/* 4. Счётчики графа */}
+      {/* 5. Счётчики графа */}
       <div className="bar-section counters-section">
         <div className="counter-item" title="Всего узлов на графе">
           <span className="counter-label">NODES</span>
@@ -140,11 +195,11 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <span className="counter-label">EDGES</span>
           <span className="counter-value">{visibleEdgesCount}</span>
         </div>
-        <div className="counter-item" title="Транзитивные рёбра">
+        <div className="counter-item optional" title="Транзитивные рёбра">
           <span className="counter-label">TRANS</span>
           <span className="counter-value">{transitiveEdgesCount}</span>
         </div>
-        <div className="counter-item" title="Отсечено фильтрами / Dead Code">
+        <div className="counter-item optional" title="Отсечено фильтрами / Dead Code">
           <span className="counter-label">FILTERED</span>
           <span className="counter-value">{filteredCount}</span>
         </div>
@@ -152,7 +207,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       <div className="section-divider" />
 
-      {/* 5. Поиск */}
+      {/* 6. Поиск */}
       <div className="bar-section search-section">
         <div className="search-wrapper">
           <Search size={12} className="search-icon" />
@@ -179,7 +234,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </div>
       </div>
 
-      {/* 6. Кнопки управления CAD */}
+      {/* 7. Кнопки управления CAD */}
       <div className="bar-section actions-section">
         <button
           type="button"
@@ -200,6 +255,59 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           {direction === 'RIGHT' ? <ArrowRight size={12} /> : <ArrowDown size={12} />}
           <span>{direction === 'RIGHT' ? 'LR' : 'TB'}</span>
         </button>
+
+        {/* Экспорт */}
+        <div className="export-dropdown-wrapper" ref={exportRef}>
+          <button
+            type="button"
+            className={`cad-btn export-btn ${isExportMenuOpen ? 'active' : ''}`}
+            onClick={() => setIsExportMenuOpen((prev) => !prev)}
+            disabled={isExporting}
+            title="Экспорт графа в PNG (2x Retina), SVG или JSON"
+          >
+            <Download size={11} />
+            <span>{isExporting ? 'ЭКСПОРТ...' : 'ЭКСПОРТ'}</span>
+            <ChevronDown size={10} />
+          </button>
+
+          {isExportMenuOpen && (
+            <div className="export-menu">
+              <button
+                type="button"
+                className="export-menu-item"
+                onClick={() => {
+                  setIsExportMenuOpen(false);
+                  onExportPng();
+                }}
+              >
+                <Image size={12} />
+                <span>PNG (2x Retina)</span>
+              </button>
+              <button
+                type="button"
+                className="export-menu-item"
+                onClick={() => {
+                  setIsExportMenuOpen(false);
+                  onExportSvg();
+                }}
+              >
+                <Code size={12} />
+                <span>SVG (Вектор)</span>
+              </button>
+              <button
+                type="button"
+                className="export-menu-item"
+                onClick={() => {
+                  setIsExportMenuOpen(false);
+                  onExportJson();
+                }}
+              >
+                <FileCode size={12} />
+                <span>JSON (Канонический)</span>
+              </button>
+            </div>
+          )}
+        </div>
 
         <button
           type="button"

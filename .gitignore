@@ -76,7 +76,8 @@ runs/
 checkpoints/
 models/
 
-data/
+/data/*
+!/data/demo_graph.json
 datasets/
 raw_data/
 processed_data/
