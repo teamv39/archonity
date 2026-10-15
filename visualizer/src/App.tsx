@@ -13,7 +13,17 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
+import {
+  CheckCircle2,
+  AlertCircle,
+  AlertTriangle,
+  Info,
+  X,
+  FileUp,
+} from 'lucide-react';
+
 import type {
+  CanonicalGraph,
   SourceType,
   RelationType,
   ColorMode,
@@ -29,6 +39,12 @@ import {
   type NodeData,
   type EdgeData,
 } from './adapters/graphAdapter';
+import { mergePipelineFiles } from './adapters/dataLoader';
+import {
+  exportGraphToPng,
+  exportGraphToSvg,
+  exportGraphToJson,
+} from './utils/exportGraph';
 
 import { ServiceNode } from './components/nodes/ServiceNode';
 import { DatabaseNode } from './components/nodes/DatabaseNode';
@@ -36,6 +52,7 @@ import { QueueNode } from './components/nodes/QueueNode';
 import { CustomEdge } from './components/edges/CustomEdge';
 import { Toolbar } from './components/toolbar/Toolbar';
 import { Inspector } from './components/inspector/Inspector';
+import { DataLoaderModal } from './components/modals/DataLoaderModal';
 
 import './App.css';
 
@@ -49,11 +66,36 @@ const edgeTypes = {
   custom: CustomEdge,
 };
 
+interface ToastState {
+  message: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+}
+
 const VisualizerCanvas: React.FC = () => {
   const { fitView } = useReactFlow();
 
-  // Исходный граф (демо-срез Train Ticket)
-  const [graph] = useState(demoGraph);
+  // Исходный граф (по умолчанию — эталонный демо-срез Train Ticket)
+  const [graph, setGraph] = useState<CanonicalGraph>(demoGraph);
+  const [datasetName, setDatasetName] = useState<string>('ДЕМО (Train Ticket)');
+  const [isCustomDataset, setIsCustomDataset] = useState<boolean>(false);
+  const [isDataLoaderOpen, setIsDataLoaderOpen] = useState<boolean>(false);
+
+  // Drag & drop состояние для холста
+  const [isDragOverCanvas, setIsDragOverCanvas] = useState<boolean>(false);
+
+  // Статус экспорта
+  const [isExporting, setIsExporting] = useState<boolean>(false);
+
+  // Всплывающие уведомления (Toast)
+  const [toast, setToast] = useState<ToastState | null>(null);
+
+  useEffect(() => {
+    if (!toast) return;
+    const timer = setTimeout(() => {
+      setToast(null);
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   // Фильтры и параметры визуализации
   const [confidenceThreshold, setConfidenceThreshold] = useState<number>(0.35);
@@ -78,7 +120,7 @@ const VisualizerCanvas: React.FC = () => {
 
   // Базовая стабильная раскладка графа
   const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
-  const [isLoadingLayout, setIsLoadingLayout] = useState<boolean>(true);
+  const [isLoadingLayout, setIsLoadingLayout] = useState<boolean>(false);
   const lastDirectionRef = React.useRef(direction);
 
   // Изменение ширины правого сайдбара (Splitter)
@@ -127,7 +169,6 @@ const VisualizerCanvas: React.FC = () => {
   // Стабильная топологическая раскладка: пересчитывается ТОЛЬКО при смене графа или направления (LR/TB)
   useEffect(() => {
     let isCancelled = false;
-    setIsLoadingLayout(true);
 
     computeLayout(graph.nodes, graph.edges, direction)
       .then((newPositions) => {
@@ -217,6 +258,121 @@ const VisualizerCanvas: React.FC = () => {
     }
   }, [isLoadingLayout, positions, direction, fitView]);
 
+  // Обработчик загрузки нового графа (из модалки или dropzone)
+  const handleLoadGraph = useCallback(
+    (newGraph: CanonicalGraph, summary: string, sourceName: string) => {
+      setIsLoadingLayout(true);
+      setGraph(newGraph);
+      setDatasetName(sourceName);
+      setIsCustomDataset(sourceName !== 'ДЕМО (Train Ticket)');
+      setSelectedNodeId(null);
+      setSelectedEdgeId(null);
+      setBlastRadius(null);
+      setToast({
+        type: 'success',
+        message: `Датасет "${sourceName}" загружен: ${summary}`,
+      });
+    },
+    []
+  );
+
+  // Drag & drop файлов на холст
+  const handleCanvasDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    if (!e.dataTransfer.types.includes('Files')) return;
+    setIsDragOverCanvas(true);
+  }, []);
+
+  const handleCanvasDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOverCanvas(false);
+  }, []);
+
+  const handleCanvasDrop = useCallback(
+    async (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragOverCanvas(false);
+
+      const files = e.dataTransfer.files;
+      if (!files || files.length === 0) return;
+
+      try {
+        const loadedFiles: { name: string; content: any }[] = [];
+        for (let i = 0; i < files.length; i++) {
+          const file = files[i];
+          const text = await file.text();
+          try {
+            const json = JSON.parse(text);
+            loadedFiles.push({ name: file.name, content: json });
+          } catch (jsonErr: any) {
+            throw new Error(`Файл ${file.name} не является корректным JSON (${jsonErr.message})`);
+          }
+        }
+
+        const res = mergePipelineFiles(loadedFiles);
+        handleLoadGraph(res.graph, res.summary, res.sourceFile);
+      } catch (err: any) {
+        setToast({
+          type: 'error',
+          message: err.message || 'Ошибка обработки перетащенных файлов',
+        });
+      }
+    },
+    [handleLoadGraph]
+  );
+
+  // Экспорт графа
+  const handleExportPng = useCallback(async () => {
+    setIsExporting(true);
+    try {
+      await exportGraphToPng(`archonity-${datasetName.replace(/[^a-z0-9_-]/gi, '_')}.png`);
+      setToast({
+        type: 'success',
+        message: 'Граф успешно экспортирован в PNG (2x Retina)',
+      });
+    } catch (err: any) {
+      setToast({
+        type: 'error',
+        message: `Ошибка экспорта в PNG: ${err.message}`,
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  }, [datasetName]);
+
+  const handleExportSvg = useCallback(async () => {
+    setIsExporting(true);
+    try {
+      await exportGraphToSvg(`archonity-${datasetName.replace(/[^a-z0-9_-]/gi, '_')}.svg`);
+      setToast({
+        type: 'success',
+        message: 'Граф успешно экспортирован в векторный SVG',
+      });
+    } catch (err: any) {
+      setToast({
+        type: 'error',
+        message: `Ошибка экспорта в SVG: ${err.message}`,
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  }, [datasetName]);
+
+  const handleExportJson = useCallback(() => {
+    try {
+      exportGraphToJson(graph, 'canonical_graph.json');
+      setToast({
+        type: 'success',
+        message: 'Канонический граф сохранен в canonical_graph.json',
+      });
+    } catch (err: any) {
+      setToast({
+        type: 'error',
+        message: `Ошибка сохранения JSON: ${err.message}`,
+      });
+    }
+  }, [graph]);
+
   // Обработчики кликов
   const handleNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
     setSelectedNodeId(node.id);
@@ -245,6 +401,7 @@ const VisualizerCanvas: React.FC = () => {
   }, []);
 
   const handleToggleDirection = useCallback(() => {
+    setIsLoadingLayout(true);
     setDirection((prev) => (prev === 'RIGHT' ? 'DOWN' : 'RIGHT'));
   }, []);
 
@@ -322,12 +479,22 @@ const VisualizerCanvas: React.FC = () => {
         visibleEdgesCount={filteredEdges.length}
         nodesCount={graph.nodes.length}
         transitiveEdgesCount={transitiveEdgesCount}
+        datasetName={datasetName}
+        isCustomDataset={isCustomDataset}
+        onOpenDataLoader={() => setIsDataLoaderOpen(true)}
+        onExportPng={handleExportPng}
+        onExportSvg={handleExportSvg}
+        onExportJson={handleExportJson}
+        isExporting={isExporting}
       />
 
       <div className="visualizer-body" style={{ userSelect: isDragging ? 'none' : 'auto' }}>
         <div
           className="canvas-wrapper"
           style={{ width: `calc(100vw - ${sidebarWidth}px - 5px)` }}
+          onDragOver={handleCanvasDragOver}
+          onDragLeave={handleCanvasDragLeave}
+          onDrop={handleCanvasDrop}
         >
           <ReactFlow
             nodes={nodes}
@@ -355,6 +522,17 @@ const VisualizerCanvas: React.FC = () => {
               maskColor="rgba(247, 246, 242, 0.75)"
             />
           </ReactFlow>
+
+          {/* Индикатор перетаскивания файлов */}
+          {isDragOverCanvas && (
+            <div className="canvas-drop-overlay">
+              <FileUp size={36} color="#0969DA" />
+              <div className="canvas-drop-title">БРОСЬТЕ JSON ФАЙЛЫ ДЛЯ АНАЛИЗА В ARCHONITY</div>
+              <div className="canvas-drop-subtitle">
+                canonical_graph.json, confirmed_edges.json, evidence.json, facts.json
+              </div>
+            </div>
+          )}
 
           {isLoadingLayout && (
             <div className="layout-loading-indicator">
@@ -385,6 +563,32 @@ const VisualizerCanvas: React.FC = () => {
           />
         </div>
       </div>
+
+      {/* Модальное окно загрузки данных */}
+      <DataLoaderModal
+        isOpen={isDataLoaderOpen}
+        onClose={() => setIsDataLoaderOpen(false)}
+        onLoadGraph={handleLoadGraph}
+      />
+
+      {/* Всплывающие уведомления (Toast) */}
+      {toast && (
+        <div className={`toast-banner ${toast.type}`}>
+          {toast.type === 'success' && <CheckCircle2 size={14} color="#10B981" />}
+          {toast.type === 'error' && <AlertCircle size={14} color="#EF4444" />}
+          {toast.type === 'warning' && <AlertTriangle size={14} color="#F59E0B" />}
+          {toast.type === 'info' && <Info size={14} color="#3B82F6" />}
+          <span>{toast.message}</span>
+          <button
+            type="button"
+            className="toast-close-btn"
+            onClick={() => setToast(null)}
+            title="Закрыть"
+          >
+            <X size={12} />
+          </button>
+        </div>
+      )}
     </div>
   );
 };
