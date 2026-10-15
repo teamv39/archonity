@@ -5,7 +5,7 @@
 * **Дата:** 15 октября 2026
 * **Связанные документы:** 
   * Заменяет/объединяет: [RFC-01](rfc-01_graph_recovery_pipeline_architecture.md), [RFC-04](rfc-04_dual_parse_pipeline_architecture.md)
-  * Контракты данных: [RFC-03](rfc-03_data_contracts_and_system_architecture.md)
+  * Контракты данных: [ADR-001](../adr/adr-001_data_contracts_and_system_architecture.md) (ранее [RFC-03](rfc-03_data_contracts_and_system_architecture.md))
   * AI-модели и признаки: [ADR-003](../adr/adr-003_multimodal_ai_architecture.md) (ранее [RFC-02](rfc-02_multimodal_ai_architecture.md))
 
 ---
@@ -131,7 +131,7 @@ flowchart TD
 * **Базы данных и брокеры (`db_access`, `broker_access`):** маппинг `@Entity`, `@Table`, `@Document`, `spring.datasource.url`, `@RabbitListener`, `@KafkaListener`.
 * **Внутрисервисный граф вызовов (`internal_call_graph`):** ребра между методами сервиса для последующей проверки достижимости.
 
-Все результаты сериализуются строго по схеме [RFC-03](rfc-03_data_contracts_and_system_architecture.md) в единый `facts.json`.
+Все результаты сериализуются строго по схеме [ADR-001](../adr/adr-001_data_contracts_and_system_architecture.md) в единый `facts.json`.
 
 ### Этап 2: Фильтрация мертвого кода (Reachability Analysis)
 В соответствии с требованиями [AGENTS.md](../../AGENTS.md), в итоговый граф попадают только связи, активные в рантайме.
@@ -203,7 +203,7 @@ flowchart TD
 
 | Критерий | RFC-01 (Базовый) | RFC-04 (Dual-Source) | **RFC-05 (Гибридный синтез)** |
 |:---|:---|:---|:---|
-| **Сбор фактов** | Единый `facts.json` | Раздельный дублирующий парсинг Java и Python | **Единый синтаксический контракт `facts.json` (RFC-03)** |
+| **Сбор фактов** | Единый `facts.json` | Раздельный дублирующий парсинг Java и Python | **Единый синтаксический контракт `facts.json` ([ADR-001](../adr/adr-001_data_contracts_and_system_architecture.md))** |
 | **Неразрешенные вызовы** | Концептуальное упоминание | Выделение `unresolved_calls` со сниппетами | **Структурированный экспорт `unresolved_calls` в ML** |
 | **Мертвый код** | Reachability через Call Graph | Не учитывался | **Детерминированный NetworkX reachability до передачи в ML** |
 | **Базы данных и очереди** | Детально специфицированы | Проигнорированы | **Полный учет БД и очередей (правило независимых ребер)** |
