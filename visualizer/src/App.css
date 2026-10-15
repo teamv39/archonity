@@ -1,0 +1,115 @@
+/* App.css - Главные стили приложения визуализатора по DESIGN.md */
+
+.visualizer-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg-canvas);
+}
+
+.visualizer-body {
+  display: flex;
+  flex-direction: row;
+  width: 100vw;
+  height: calc(100vh - 40px);
+  overflow: hidden;
+}
+
+.canvas-wrapper {
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-canvas);
+  flex-shrink: 0;
+}
+
+/* Разделитель изменения ширины сайдбара */
+.resize-handle {
+  width: 5px;
+  height: 100%;
+  background: transparent;
+  border-left: 1px solid var(--border-hairline);
+  cursor: col-resize;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 15;
+  transition: background-color 0.15s ease;
+  margin-left: -1px;
+}
+
+.resize-handle:hover,
+.resize-handle.dragging {
+  background: var(--border-strong);
+}
+
+/* React Flow кастомизация светлой CAD-темы */
+.react-flow__background {
+  background-color: var(--bg-canvas);
+}
+
+.react-flow__controls {
+  box-shadow: none !important;
+  border: 1px solid var(--border-hairline) !important;
+  border-radius: 0 !important;
+  overflow: hidden;
+  background: var(--bg-panel) !important;
+  bottom: 16px !important;
+  left: 16px !important;
+}
+
+.react-flow__controls-button {
+  background: var(--bg-panel) !important;
+  border-bottom: 1px solid var(--border-hairline) !important;
+  border-radius: 0 !important;
+  fill: var(--text-secondary) !important;
+  color: var(--text-secondary) !important;
+  width: 26px !important;
+  height: 26px !important;
+}
+
+.react-flow__controls-button:hover {
+  background: var(--bg-subtle) !important;
+  fill: var(--text-primary) !important;
+}
+
+.react-flow__minimap {
+  background-color: var(--bg-panel) !important;
+  border: 1px solid var(--border-hairline) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  bottom: 16px !important;
+  right: 16px !important;
+}
+
+/* Индикатор загрузки раскладки ELK */
+.layout-loading-indicator {
+  position: absolute;
+  bottom: 16px;
+  left: 54px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.spinner {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--border-hairline);
+  border-top-color: var(--border-strong);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

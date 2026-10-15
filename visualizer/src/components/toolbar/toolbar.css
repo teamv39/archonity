@@ -1,0 +1,258 @@
+/* toolbar.css - Верхняя панель управления (Control Bar, h: 40px) по DESIGN.md */
+
+.control-bar {
+  height: 40px;
+  width: 100vw;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-primary);
+  box-sizing: border-box;
+  user-select: none;
+  z-index: 20;
+}
+
+.bar-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.section-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-hairline);
+  margin: 0 4px;
+}
+
+/* 1. Бренд */
+.brand-section {
+  gap: 6px;
+}
+
+.brand-logo {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--border-strong);
+}
+
+.brand-sub {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* Заголовки секций */
+.section-caption {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+/* 2. Чекбоксы слоев */
+.layer-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.layer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  height: 24px;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 0;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+.layer-toggle input {
+  margin: 0;
+  width: 12px;
+  height: 12px;
+  accent-color: var(--border-strong);
+  cursor: pointer;
+}
+
+.layer-toggle:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.layer-toggle.active {
+  background: var(--bg-selected);
+  border-color: var(--border-hairline);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.layer-toggle.active.ast {
+  border-bottom: 2px solid var(--edge-ast);
+}
+
+.layer-toggle.active.cfg {
+  border-bottom: 2px solid var(--edge-config);
+}
+
+.layer-toggle.active.ml {
+  border-bottom: 2px solid var(--edge-ml);
+}
+
+.layer-toggle.active.llm {
+  border-bottom: 2px solid #047857;
+}
+
+.layer-toggle.active.trans {
+  border-bottom: 2px solid var(--edge-transitive);
+}
+
+/* 3. Порог ML */
+.threshold-section {
+  gap: 6px;
+}
+
+.mono-badge {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 4px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  color: var(--edge-ml);
+}
+
+.threshold-slider {
+  width: 70px;
+  height: 14px;
+  cursor: pointer;
+  accent-color: var(--edge-ml);
+  margin: 0;
+}
+
+/* 4. Счётчики графа */
+.counters-section {
+  gap: 12px;
+}
+
+.counter-item {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+
+.counter-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.counter-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* 5. Поиск */
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+  height: 24px;
+  padding: 0 6px;
+  gap: 4px;
+}
+
+.search-icon {
+  color: var(--text-muted);
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-primary);
+  width: 120px;
+  padding: 0;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-clear-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.search-clear-btn:hover {
+  color: var(--text-primary);
+}
+
+/* 6. Кнопки действий */
+.actions-section {
+  gap: 4px;
+}
+
+.cad-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 8px;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 0;
+  box-shadow: none;
+  transition: background-color 0.1s ease;
+}
+
+.cad-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.cad-btn.active {
+  background: var(--bg-selected);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.reset-btn:hover {
+  background: #FEF2F2;
+  border-color: var(--alert-blast);
+  color: var(--alert-blast);
+}
+
