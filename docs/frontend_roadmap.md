@@ -2,7 +2,7 @@
 
 Документ фиксирует этапы, архитектурные слои и критерии готовности фронтенд-приложения визуализации графа зависимостей Archonity.
 
-Основано на решениях [ADR-002](adr/adr-002_react_flow_visualizer.md), требованиях [case_description.md](case_description.md) и контрактах [RFC-03](rfc/rfc-03_data_contracts_and_system_architecture.md), [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md).
+Основано на решениях [ADR-001](adr/adr-001_data_contracts_and_system_architecture.md), [ADR-002](adr/adr-002_react_flow_visualizer.md), требованиях [case_description.md](case_description.md) и [RFC-05](rfc/rfc-05_hybrid_recovery_pipeline_and_arbitration.md).
 
 ---
 
@@ -59,7 +59,7 @@ flowchart TD
   1. Инициализация Vite + React + TypeScript приложения в директории `visualizer/`.
   2. Установка зависимостей: `@xyflow/react`, `elkjs`, `lucide-react`.
   3. Настройка `vite.config.ts` с поддержкой Web Worker и корректной сборкой локальных статических файлов.
-  4. Описание TypeScript-типов на основе схем RFC-03:
+  4. Описание TypeScript-типов на основе схем [ADR-001](adr/adr-001_data_contracts_and_system_architecture.md):
      - `CanonicalGraph`, `GraphNode`, `GraphEdge`.
      - `EvidenceRecord`, `EvidenceDetails`, `MLFeatures`.
      - `ServiceFacts`, `InboundEndpoint`, `OutboundCall`, `DbAccess`.
