@@ -2,7 +2,7 @@
 
 ## Статус документа
 Обновлено 16 октября 2026. Актуализировано по результатам сдачи решения на официальную платформу соревнований (NSUTS).
-* **Текущий скор на платформе (скрытые сценарии $S_1 \dots S_7$):** **0.83610** (ACCEPTED, вердикт A).
+* **Текущий скор на платформе (скрытые сценарии $S_1 \dots S_7$):** **0.85349** (ACCEPTED, вердикт A).
 * **Калибровка на $S_0$ (golden dataset):** **IoU = 1.0000** (executes 1.0, calls 1.0, remote 1.0, data 1.0).
 * **Набор автоматических тестов:** 49/49 успешно пройдены (`uv run --with pytest pytest`).
 
@@ -79,7 +79,7 @@ flowchart TD
     subgraph OUTPUT["Результаты"]
         SUB["submission.json"]
         EVID["evidence.json"]
-        ZIP["output/submission.zip (NSUTS Accepted: 0.83610)"]
+        ZIP["output/submission.zip (NSUTS Accepted: 0.85349)"]
     end
 
     SKEL --> GRAPH
@@ -153,6 +153,7 @@ flowchart TD
   - Восстановление `ts-travel-service` в $S_5$: разделен режим поиска (поиск по всей сети при `has_advanced_search`) и бронирования (`preserveOther`). Восстановлены 17 методов, 37 вызовов, 9 межсервисных вызовов и таблицы БД ($S_5$: 537 $\to$ 605 рёбер).
   - Разрешение зондирующего вызова `ts-cancel-service:getOrderByIdFromOrder` к `ts-order-service` и чтения таблицы `orders` в $S_2$ при блокировке мутации `modifyOrder` ($S_2$: 509 $\to$ 514 рёбер).
   - Добавлены тесты `test_advanced_search_travel_service_preservation` и `test_cancel_service_probing_order_service` (49/49 тестов зеленые).
+  - **Результат на платформе NSUTS: 0.85349** (ACCEPTED, вердикт A). Прирост: **+0.01739**!
 
 **Следующие задачи:**
 1. Анализ оставшихся скрытых сценариев и дальнейшая тонкая настройка фильтрации.
