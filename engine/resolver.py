@@ -428,9 +428,13 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             )
 
     # 13. Просмотр меню питания в поезде и точек питания на вокзале
-    if re.search(r"\b(?:food\s+menu|menu\s+offered|food\s+stores?|stores?\s+at.*?station)\b", t):
+    if re.search(r"\b(?:food\s+menu|menu\s+offered)\b", t):
         intent_eps.add(
             "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+    if re.search(r"\b(?:food\s+stores?|stores?\s+at.*?station)\b", t):
+        intent_eps.add(
+            "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
         )
 
     # 14. Запросы багажа и страховок к конкретным заказам

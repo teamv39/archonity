@@ -340,8 +340,8 @@ class TestRuntimeRules:
             has_food=True,
             train_mode="regular_only",
         )
-        # В regular_only зондирующий вызов ts-order-service реально исполняется в рантайме (не мертвый код)
-        assert not rules.is_dead_code_edge(
+        # В regular_only зондирующий вызов чужого ts-order-service отсекается как мертвый код (симметрично high_speed_only)
+        assert rules.is_dead_code_edge(
             "method:ts-cancel-service:cancel.service.CancelServiceImpl#getOrderByIdFromOrder(java.lang.String,org.springframework.http.HttpHeaders)",
             "remote",
             "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
