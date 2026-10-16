@@ -94,6 +94,16 @@ class TestGraphBuilder:
         assert any("SeatClass#getCode" in t for t in order_callees)
         assert any("StringUtils#Date2String" in t for t in order_callees)
 
+    def test_r7_order_status_enum_calls_in_cancel_and_rebook(self, skeleton_index: SkeletonIndex, rules: RuntimeRules) -> None:
+        builder = GraphBuilder(skeleton_index, rules)
+        order_status_code = "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
+        entry = [
+            "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+        ]
+        methods, calls, remote, data = builder.traverse(entry)
+        assert order_status_code in methods
+        assert any(tgt == order_status_code and "CancelServiceImpl#cancelFromOtherOrder" in src for src, tgt in calls)
+
 
 class TestScenarioGrounder:
     """Тестирование резолвинга шагов сценария в точки входа."""
