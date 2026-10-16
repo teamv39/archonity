@@ -27,7 +27,7 @@ class ScenarioProfile:
     has_external_payment: bool = False
     has_advanced_search: bool = False
     has_consign_weight_change: bool = False
-    has_registration: bool = False
+    is_new_user: bool = False
 
     @classmethod
     def from_scenario(cls, scenario_dict: dict[str, Any]) -> ScenarioProfile:
@@ -62,11 +62,6 @@ class ScenarioProfile:
         )
         has_consign = pos_con and not (
             neg_con and not bool(re.search(r"\b(?:\d+(?:\.\d+)?\s*kg|look\s*up[^\n.;,]{0,30}?(?:consign\w*|luggage\w*))\b", text))
-        )
-
-        # Регистрация нового пассажира (UserServiceImpl#saveUser: user1 == null)
-        has_registration = any(
-            re.match(r"\s*register\b", (st.get("action") or "").lower()) for st in scenario_dict.get("steps") or []
         )
 
         # Изменение веса багажа при модификации consignment (ConsignServiceImpl.java:97)
@@ -119,6 +114,9 @@ class ScenarioProfile:
             re.search(r"\b(?:advanced search|cheapest|quickest|fewest-stops|minstation|transfer)\b", text)
         )
 
+        # 9. Новый пользователь (регистрация аккаунта с нуля, пустая история заказов)
+        is_new_user = bool(re.search(r"\bregister(?:s|\s+a\s+new)\b", text))
+
         return cls(
             id=sid,
             is_admin=is_admin,
@@ -131,7 +129,7 @@ class ScenarioProfile:
             has_external_payment=has_external_payment,
             has_advanced_search=has_advanced_search,
             has_consign_weight_change=has_consign_weight_change,
-            has_registration=has_registration,
+            is_new_user=is_new_user,
         )
 
     def for_step(self, step_dict: dict[str, Any]) -> ScenarioProfile:
@@ -192,7 +190,7 @@ class ScenarioProfile:
             has_external_payment=self.has_external_payment,
             has_advanced_search=self.has_advanced_search,
             has_consign_weight_change=self.has_consign_weight_change,
-            has_registration=self.has_registration,
+            is_new_user=self.is_new_user,
         )
 
 
@@ -414,6 +412,12 @@ class RuntimeRules:
             # При отмене билета на обычный поезд (ts-order-other-service) уведомления на email (NotifyInfo) и поиск класса места не вызываются
             if profile.train_mode == "regular_only":
                 if "CancelServiceImpl" in source and any(b in target for b in ("NotifyInfo#<init>", "SeatClass#getNameByCode")):
+                    return True
+
+            # R17: Для нового пользователя (S4) в БД нет существующих заказов,
+            # поэтому цикл по заказам в checkSecurityAboutOrder не выполняется (0 итераций)
+            if profile.is_new_user:
+                if "checkSecurityAboutOrder" in source and "String2Date" in target:
                     return True
 
             # 2. Отказ в перебронировании (билет уже собран / использован)

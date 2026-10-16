@@ -11968,7 +11968,7 @@
   }, {
     "id" : "b138",
     "line" : 138,
-    "guard" : [ "b131:then" ],
+    "guard" : [ "b131:then", "f133:list" ],
     "kind" : "if",
     "condition_text" : "qi.isEnableStateQuery()",
     "refers_to" : [ "field:OrderInfo.enableStateQuery", "local:qi" ],
@@ -11981,7 +11981,7 @@
   }, {
     "id" : "b139",
     "line" : 139,
-    "guard" : [ "b131:then", "b138:then" ],
+    "guard" : [ "b131:then", "f133:list", "b138:then" ],
     "kind" : "if",
     "condition_text" : "tempOrder.getStatus() != qi.getState()",
     "refers_to" : [ "field:Order.status", "field:OrderInfo.state", "local:qi" ],
@@ -11994,7 +11994,7 @@
   }, {
     "id" : "b154",
     "line" : 154,
-    "guard" : [ "b131:then" ],
+    "guard" : [ "b131:then", "f133:list" ],
     "kind" : "if",
     "condition_text" : "qi.isEnableTravelDateQuery()",
     "refers_to" : [ "field:OrderInfo.enableTravelDateQuery", "local:qi" ],
@@ -12007,7 +12007,7 @@
   }, {
     "id" : "b155",
     "line" : 155,
-    "guard" : [ "b131:then", "b154:then" ],
+    "guard" : [ "b131:then", "f133:list", "b154:then" ],
     "kind" : "if",
     "condition_text" : "travelDate.before(travelDateEnd) && travelDate.after(boughtDateStart)",
     "refers_to" : [ "local:travelDate", "local:travelDateEnd", "local:boughtDateStart" ],
@@ -12020,7 +12020,7 @@
   }, {
     "id" : "b166",
     "line" : 166,
-    "guard" : [ "b131:then" ],
+    "guard" : [ "b131:then", "f133:list" ],
     "kind" : "if",
     "condition_text" : "qi.isEnableBoughtDateQuery()",
     "refers_to" : [ "field:OrderInfo.enableBoughtDateQuery", "local:qi" ],
@@ -12033,7 +12033,7 @@
   }, {
     "id" : "b167",
     "line" : 167,
-    "guard" : [ "b131:then", "b166:then" ],
+    "guard" : [ "b131:then", "f133:list", "b166:then" ],
     "kind" : "if",
     "condition_text" : "boughtDate.before(boughtDateEnd) && boughtDate.after(boughtDateStart)",
     "refers_to" : [ "local:boughtDate", "local:boughtDateEnd", "local:boughtDateStart" ],
@@ -12046,7 +12046,7 @@
   }, {
     "id" : "b178",
     "line" : 178,
-    "guard" : [ "b131:then" ],
+    "guard" : [ "b131:then", "f133:list" ],
     "kind" : "if",
     "condition_text" : "statePassFlag && boughtDatePassFlag && travelDatePassFlag",
     "refers_to" : [ "local:statePassFlag", "local:boughtDatePassFlag", "local:travelDatePassFlag" ],
@@ -12136,7 +12136,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12146,7 +12146,7 @@
     "receiver" : "tempOrder",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then", "b138:then" ]
+    "guard" : [ "b131:then", "f133:list", "b138:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12156,7 +12156,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then", "b138:then" ]
+    "guard" : [ "b131:then", "f133:list", "b138:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12166,7 +12166,7 @@
     "receiver" : "OrderServiceImpl.LOGGER",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12176,7 +12176,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12186,7 +12186,7 @@
     "receiver" : "tempOrder",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12196,7 +12196,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12206,7 +12206,7 @@
     "receiver" : "tempOrder",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12216,7 +12216,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12226,7 +12226,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12236,7 +12236,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12246,7 +12246,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12256,7 +12256,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12266,7 +12266,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12276,7 +12276,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12286,7 +12286,7 @@
     "receiver" : "travelDate",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then", "b154:then" ]
+    "guard" : [ "b131:then", "f133:list", "b154:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12296,7 +12296,7 @@
     "receiver" : "travelDate",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then", "b154:then" ]
+    "guard" : [ "b131:then", "f133:list", "b154:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12306,7 +12306,7 @@
     "receiver" : "OrderServiceImpl.LOGGER",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12316,7 +12316,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12326,7 +12326,7 @@
     "receiver" : "boughtDate",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then", "b166:then" ]
+    "guard" : [ "b131:then", "f133:list", "b166:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12336,7 +12336,7 @@
     "receiver" : "boughtDate",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then", "b166:then" ]
+    "guard" : [ "b131:then", "f133:list", "b166:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12346,7 +12346,7 @@
     "receiver" : "OrderServiceImpl.LOGGER",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12356,7 +12356,7 @@
     "receiver" : "finalList",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then", "b178:then" ]
+    "guard" : [ "b131:then", "f133:list", "b178:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12366,7 +12366,7 @@
     "receiver" : "OrderServiceImpl.LOGGER",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b131:then" ]
+    "guard" : [ "b131:then", "f133:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12428,7 +12428,7 @@
     "arg_count" : 3,
     "guard" : [ "b131:else" ]
   } ],
-  "unsupported" : [ "line 133: foreach loop not modeled (R17)" ]
+  "unsupported" : [ "line 133: foreach body guarded as f133:list (assumed non-empty unless state says otherwise)" ]
 }, {
   "method_id" : "method:ts-order-service:order.service.OrderServiceImpl#alterOrder(order.entity.OrderAlterInfo,org.springframework.http.HttpHeaders)",
   "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
@@ -12942,6 +12942,230 @@
   } ],
   "unsupported" : [ ]
 }, {
+  "method_id" : "method:ts-order-service:order.service.OrderServiceImpl#checkSecurityAboutOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+  "branches" : [ {
+    "id" : "b393",
+    "line" : 393,
+    "guard" : [ "f392:orders" ],
+    "kind" : "if",
+    "condition_text" : "order.getStatus() == OrderStatus.NOTPAID.getCode() || order.getStatus() == OrderStatus.PAID.getCode() || order.getStatus() == OrderStatus.COLLECTED.getCode()",
+    "refers_to" : [ "field:Order.status", "enum:OrderStatus.NOTPAID", "enum:OrderStatus.PAID", "enum:OrderStatus.COLLECTED" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b399",
+    "line" : 399,
+    "guard" : [ "f392:orders" ],
+    "kind" : "if",
+    "condition_text" : "boughtDate.after(dateFrom)",
+    "refers_to" : [ "local:boughtDate", "local:dateFrom" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 384,
+    "col" : 32,
+    "callee" : "<init>",
+    "receiver" : "OrderSecurity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 385,
+    "col" : 51,
+    "callee" : "findByAccountId",
+    "receiver" : "orderRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 388,
+    "col" : 32,
+    "callee" : "getInstance",
+    "receiver" : "Calendar",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 389,
+    "col" : 12,
+    "callee" : "setTime",
+    "receiver" : "ca",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 390,
+    "col" : 12,
+    "callee" : "add",
+    "receiver" : "ca",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 391,
+    "col" : 23,
+    "callee" : "getTime",
+    "receiver" : "ca",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 393,
+    "col" : 23,
+    "callee" : "getStatus",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f392:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 393,
+    "col" : 58,
+    "callee" : "getCode",
+    "receiver" : "OrderStatus.NOTPAID",
+    "kind" : "ENUM",
+    "arg_count" : 0,
+    "guard" : [ "f392:orders" ],
+    "enum_constant" : {
+      "type" : "edu.fudan.common.entity.OrderStatus",
+      "constant" : "NOTPAID"
+    }
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 394,
+    "col" : 27,
+    "callee" : "getStatus",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f392:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 394,
+    "col" : 59,
+    "callee" : "getCode",
+    "receiver" : "OrderStatus.PAID",
+    "kind" : "ENUM",
+    "arg_count" : 0,
+    "guard" : [ "f392:orders" ],
+    "enum_constant" : {
+      "type" : "edu.fudan.common.entity.OrderStatus",
+      "constant" : "PAID"
+    }
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 395,
+    "col" : 27,
+    "callee" : "getStatus",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f392:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 395,
+    "col" : 64,
+    "callee" : "getCode",
+    "receiver" : "OrderStatus.COLLECTED",
+    "kind" : "ENUM",
+    "arg_count" : 0,
+    "guard" : [ "f392:orders" ],
+    "enum_constant" : {
+      "type" : "edu.fudan.common.entity.OrderStatus",
+      "constant" : "COLLECTED"
+    }
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 398,
+    "col" : 43,
+    "callee" : "String2Date",
+    "receiver" : "StringUtils",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f392:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 398,
+    "col" : 61,
+    "callee" : "getBoughtDate",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f392:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 399,
+    "col" : 28,
+    "callee" : "after",
+    "receiver" : "boughtDate",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f392:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 403,
+    "col" : 16,
+    "callee" : "setOrderNumInLastOneHour",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 404,
+    "col" : 16,
+    "callee" : "setOrderNumOfValidOrder",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 405,
+    "col" : 16,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ "line 392: foreach body guarded as f392:orders (assumed non-empty unless state says otherwise)" ]
+}, {
   "method_id" : "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)",
   "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
   "branches" : [ {
@@ -12960,7 +13184,7 @@
   }, {
     "id" : "b155",
     "line" : 155,
-    "guard" : [ "b148:then" ],
+    "guard" : [ "b148:then", "f150:list" ],
     "kind" : "if",
     "condition_text" : "qi.isEnableStateQuery()",
     "refers_to" : [ "field:QueryInfo.enableStateQuery", "local:qi" ],
@@ -12973,7 +13197,7 @@
   }, {
     "id" : "b156",
     "line" : 156,
-    "guard" : [ "b148:then", "b155:then" ],
+    "guard" : [ "b148:then", "f150:list", "b155:then" ],
     "kind" : "if",
     "condition_text" : "tempOrder.getStatus() != qi.getState()",
     "refers_to" : [ "field:Order.status", "field:QueryInfo.state", "local:qi" ],
@@ -12986,7 +13210,7 @@
   }, {
     "id" : "b171",
     "line" : 171,
-    "guard" : [ "b148:then" ],
+    "guard" : [ "b148:then", "f150:list" ],
     "kind" : "if",
     "condition_text" : "qi.isEnableTravelDateQuery()",
     "refers_to" : [ "field:QueryInfo.enableTravelDateQuery", "local:qi" ],
@@ -12999,7 +13223,7 @@
   }, {
     "id" : "b172",
     "line" : 172,
-    "guard" : [ "b148:then", "b171:then" ],
+    "guard" : [ "b148:then", "f150:list", "b171:then" ],
     "kind" : "if",
     "condition_text" : "travelDate.before(travelDateEnd) && travelDate.after(boughtDateStart)",
     "refers_to" : [ "local:travelDate", "local:travelDateEnd", "local:boughtDateStart" ],
@@ -13012,7 +13236,7 @@
   }, {
     "id" : "b183",
     "line" : 183,
-    "guard" : [ "b148:then" ],
+    "guard" : [ "b148:then", "f150:list" ],
     "kind" : "if",
     "condition_text" : "qi.isEnableBoughtDateQuery()",
     "refers_to" : [ "field:QueryInfo.enableBoughtDateQuery", "local:qi" ],
@@ -13025,7 +13249,7 @@
   }, {
     "id" : "b184",
     "line" : 184,
-    "guard" : [ "b148:then", "b183:then" ],
+    "guard" : [ "b148:then", "f150:list", "b183:then" ],
     "kind" : "if",
     "condition_text" : "boughtDate.before(boughtDateEnd) && boughtDate.after(boughtDateStart)",
     "refers_to" : [ "local:boughtDate", "local:boughtDateEnd", "local:boughtDateStart" ],
@@ -13038,7 +13262,7 @@
   }, {
     "id" : "b195",
     "line" : 195,
-    "guard" : [ "b148:then" ],
+    "guard" : [ "b148:then", "f150:list" ],
     "kind" : "if",
     "condition_text" : "statePassFlag && boughtDatePassFlag && travelDatePassFlag",
     "refers_to" : [ "local:statePassFlag", "local:boughtDatePassFlag", "local:travelDatePassFlag" ],
@@ -13128,7 +13352,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13138,7 +13362,7 @@
     "receiver" : "tempOrder",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then", "b155:then" ]
+    "guard" : [ "b148:then", "f150:list", "b155:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13148,7 +13372,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then", "b155:then" ]
+    "guard" : [ "b148:then", "f150:list", "b155:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13158,7 +13382,7 @@
     "receiver" : "OrderOtherServiceImpl.LOGGER",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13168,7 +13392,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13178,7 +13402,7 @@
     "receiver" : "tempOrder",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13188,7 +13412,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13198,7 +13422,7 @@
     "receiver" : "tempOrder",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13208,7 +13432,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13218,7 +13442,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13228,7 +13452,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13238,7 +13462,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13248,7 +13472,7 @@
     "receiver" : "StringUtils",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13258,7 +13482,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13268,7 +13492,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13278,7 +13502,7 @@
     "receiver" : "travelDate",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then", "b171:then" ]
+    "guard" : [ "b148:then", "f150:list", "b171:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13288,7 +13512,7 @@
     "receiver" : "travelDate",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then", "b171:then" ]
+    "guard" : [ "b148:then", "f150:list", "b171:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13298,7 +13522,7 @@
     "receiver" : "OrderOtherServiceImpl.LOGGER",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13308,7 +13532,7 @@
     "receiver" : "qi",
     "kind" : "OTHER",
     "arg_count" : 0,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13318,7 +13542,7 @@
     "receiver" : "boughtDate",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then", "b183:then" ]
+    "guard" : [ "b148:then", "f150:list", "b183:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13328,7 +13552,7 @@
     "receiver" : "boughtDate",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then", "b183:then" ]
+    "guard" : [ "b148:then", "f150:list", "b183:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13338,7 +13562,7 @@
     "receiver" : "OrderOtherServiceImpl.LOGGER",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13348,7 +13572,7 @@
     "receiver" : "finalList",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then", "b195:then" ]
+    "guard" : [ "b148:then", "f150:list", "b195:then" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13358,7 +13582,7 @@
     "receiver" : "OrderOtherServiceImpl.LOGGER",
     "kind" : "OTHER",
     "arg_count" : 1,
-    "guard" : [ "b148:then" ]
+    "guard" : [ "b148:then", "f150:list" ]
   }, {
     "call_site_id_guess" : null,
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13420,7 +13644,7 @@
     "arg_count" : 3,
     "guard" : [ "b148:else" ]
   } ],
-  "unsupported" : [ "line 150: foreach loop not modeled (R17)" ]
+  "unsupported" : [ "line 150: foreach body guarded as f150:list (assumed non-empty unless state says otherwise)" ]
 }, {
   "method_id" : "method:ts-order-other-service:other.service.OrderOtherServiceImpl#alterOrder(other.entity.OrderAlterInfo,org.springframework.http.HttpHeaders)",
   "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
@@ -13953,6 +14177,230 @@
     "guard" : [ "b363:else" ]
   } ],
   "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-order-other-service:other.service.OrderOtherServiceImpl#checkSecurityAboutOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+  "branches" : [ {
+    "id" : "b400",
+    "line" : 400,
+    "guard" : [ "f399:orders" ],
+    "kind" : "if",
+    "condition_text" : "order.getStatus() == OrderStatus.NOTPAID.getCode() || order.getStatus() == OrderStatus.PAID.getCode() || order.getStatus() == OrderStatus.COLLECTED.getCode()",
+    "refers_to" : [ "field:Order.status", "enum:OrderStatus.NOTPAID", "enum:OrderStatus.PAID", "enum:OrderStatus.COLLECTED" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b406",
+    "line" : 406,
+    "guard" : [ "f399:orders" ],
+    "kind" : "if",
+    "condition_text" : "boughtDate.after(dateFrom)",
+    "refers_to" : [ "local:boughtDate", "local:dateFrom" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 391,
+    "col" : 32,
+    "callee" : "<init>",
+    "receiver" : "OrderSecurity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 392,
+    "col" : 56,
+    "callee" : "findByAccountId",
+    "receiver" : "orderOtherRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 395,
+    "col" : 32,
+    "callee" : "getInstance",
+    "receiver" : "Calendar",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 396,
+    "col" : 12,
+    "callee" : "setTime",
+    "receiver" : "ca",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 397,
+    "col" : 12,
+    "callee" : "add",
+    "receiver" : "ca",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 398,
+    "col" : 23,
+    "callee" : "getTime",
+    "receiver" : "ca",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 400,
+    "col" : 23,
+    "callee" : "getStatus",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f399:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 400,
+    "col" : 58,
+    "callee" : "getCode",
+    "receiver" : "OrderStatus.NOTPAID",
+    "kind" : "ENUM",
+    "arg_count" : 0,
+    "guard" : [ "f399:orders" ],
+    "enum_constant" : {
+      "type" : "edu.fudan.common.entity.OrderStatus",
+      "constant" : "NOTPAID"
+    }
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 401,
+    "col" : 27,
+    "callee" : "getStatus",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f399:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 401,
+    "col" : 59,
+    "callee" : "getCode",
+    "receiver" : "OrderStatus.PAID",
+    "kind" : "ENUM",
+    "arg_count" : 0,
+    "guard" : [ "f399:orders" ],
+    "enum_constant" : {
+      "type" : "edu.fudan.common.entity.OrderStatus",
+      "constant" : "PAID"
+    }
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 402,
+    "col" : 27,
+    "callee" : "getStatus",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f399:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 402,
+    "col" : 64,
+    "callee" : "getCode",
+    "receiver" : "OrderStatus.COLLECTED",
+    "kind" : "ENUM",
+    "arg_count" : 0,
+    "guard" : [ "f399:orders" ],
+    "enum_constant" : {
+      "type" : "edu.fudan.common.entity.OrderStatus",
+      "constant" : "COLLECTED"
+    }
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 405,
+    "col" : 43,
+    "callee" : "String2Date",
+    "receiver" : "StringUtils",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f399:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 405,
+    "col" : 61,
+    "callee" : "getBoughtDate",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f399:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 406,
+    "col" : 28,
+    "callee" : "after",
+    "receiver" : "boughtDate",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f399:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 410,
+    "col" : 16,
+    "callee" : "setOrderNumInLastOneHour",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 411,
+    "col" : 16,
+    "callee" : "setOrderNumOfValidOrder",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 412,
+    "col" : 16,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ "line 399: foreach body guarded as f399:orders (assumed non-empty unless state says otherwise)" ]
 }, {
   "method_id" : "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
   "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",

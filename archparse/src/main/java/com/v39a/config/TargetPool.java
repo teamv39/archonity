@@ -168,6 +168,14 @@ public class TargetPool {
                 "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
                 "setResponse", "Trip", "TravelResult", "String", "String", "String", "HttpHeaders"
         ));
+        list.add(new TargetMethod(
+                "method:ts-order-service:order.service.OrderServiceImpl#checkSecurityAboutOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)",
+                orderFile, "checkSecurityAboutOrder", "Date", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#checkSecurityAboutOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)",
+                orderOtherFile, "checkSecurityAboutOrder", "Date", "String", "HttpHeaders"
+        ));
         String planFile = "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java";
         for (String name : new String[]{"getCheapest", "getQuickest", "getMinStation"}) {
             list.add(new TargetMethod(

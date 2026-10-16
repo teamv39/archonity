@@ -25,6 +25,7 @@ LOGGER = logging.getLogger(__name__)
 ORDER_STATUS_GET_CODE = "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
 ORDER_STATUS_GET_NAME_BY_CODE = "method:ts-common:edu.fudan.common.entity.OrderStatus#getNameByCode(int)"
 SEAT_CLASS_GET_CODE = "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()"
+EMPTY_FOR_NEW_USER_COLLECTIONS = frozenset({"orders"})
 LAZY_LAMBDA_HOSTS = frozenset({"orElseThrow", "orElseGet"})
 SEAT_CLASS_GET_NAME_BY_CODE = "method:ts-common:edu.fudan.common.entity.SeatClass#getNameByCode(int)"
 
@@ -287,6 +288,13 @@ class MethodPoolIR:
                     return False
                 continue
 
+            # Цикл foreach исполняется, только если коллекция непуста (R17). Коллекция "orders" читается из БД
+            # по аккаунту: у нового зарегистрированного пользователя заказов нет (S4)
+            if bid[:1] == "f" and bid[1:].isdigit():
+                if arm in EMPTY_FOR_NEW_USER_COLLECTIONS and getattr(profile, "is_new_user", False):
+                    return False
+                continue
+
             branch = branches.get(bid)
             if not branch:
                 continue
@@ -392,7 +400,7 @@ class MethodPoolIR:
             # 11. UserServiceImpl#saveUser: новый пользователь vs уже существующий
             # user1 == null
             if 'user1 == null' in cond:
-                val = getattr(profile, "has_registration", False)
+                val = getattr(profile, "is_new_user", False)
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
 

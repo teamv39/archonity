@@ -26,7 +26,7 @@ def test_ensure_pool_ir_fallback():
 
 def test_method_pool_ir_load():
     pool = MethodPoolIR.load()
-    assert len(pool.methods) == 32
+    assert len(pool.methods) == 34
     # Check that cancelOrder is present
     cancel_mid = "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
     assert pool.has_method(cancel_mid)
@@ -250,6 +250,17 @@ def test_rebook_same_family_branch_is_active_for_regular_scenario():
     assert updates and all(pool.evaluate_guard(mid, c.guard, s2) for c in updates)
 
 
-def test_registration_flag_only_for_registering_scenario():
-    assert _profile_for("S4.json").has_registration is True
-    assert _profile_for("S1.json").has_registration is False
+def test_new_user_flag_only_for_registering_scenario():
+    assert _profile_for("S4.json").is_new_user is True
+    assert _profile_for("S1.json").is_new_user is False
+
+
+def test_foreach_over_orders_is_empty_for_new_user_only():
+    pool = MethodPoolIR.load()
+    mid = next(m for m in pool.methods if "OrderServiceImpl#checkSecurityAboutOrder" in m and "other" not in m)
+    loop_calls = [c for c in pool.methods[mid].calls if any(g.endswith(":orders") for g in c.guard)]
+    assert loop_calls
+    s4 = _profile_for("S4.json")
+    s1 = _profile_for("S1.json")
+    assert not any(pool.evaluate_guard(mid, c.guard, s4) for c in loop_calls)
+    assert all(pool.evaluate_guard(mid, c.guard, s1) for c in loop_calls)

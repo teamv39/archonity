@@ -298,4 +298,27 @@ public class ArchparseTest {
         assertEquals(28, ir.getCalls().get(0).getCol());
         java.nio.file.Files.deleteIfExists(file);
     }
+
+    @Test
+    public void testForEachBodyGuard() {
+        CompilationUnit cu = StaticJavaParser.parse("package test;\n" +
+                "import java.util.List;\n" +
+                "public class Dummy {\n" +
+                "    void f(List<String> orders) {\n" +
+                "        a();\n" +
+                "        for (String o : orders) {\n" +
+                "            b();\n" +
+                "        }\n" +
+                "    }\n" +
+                "    void a() {} void b() {}\n" +
+                "}");
+        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).get();
+        MethodDeclaration md = cid.getMethods().get(0);
+        TargetMethod target = new TargetMethod("method:dummy:Dummy#f(List)", "Dummy.java", "f", "List");
+        MethodIR ir = AstAnalyzer.analyze(target, md, cu, new TypeIndex(cu, cid));
+        java.util.Map<String, List<String>> guards = new java.util.HashMap<>();
+        for (var c : ir.getCalls()) guards.put(c.getCallee(), c.getGuard());
+        assertEquals(List.of(), guards.get("a"));
+        assertEquals(List.of("f6:orders"), guards.get("b"));
+    }
 }

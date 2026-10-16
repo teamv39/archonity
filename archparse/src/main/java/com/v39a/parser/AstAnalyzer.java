@@ -70,9 +70,9 @@ public class AstAnalyzer {
             } else if (node instanceof ForStmt) {
                 int line = node.getBegin().map(p -> p.line).orElse(0);
                 unsupported.add("line " + line + ": for loop not modeled (R17)");
-            } else if (node instanceof ForEachStmt) {
+            } else if (node instanceof ForEachStmt forEach) {
                 int line = node.getBegin().map(p -> p.line).orElse(0);
-                unsupported.add("line " + line + ": foreach loop not modeled (R17)");
+                unsupported.add("line " + line + ": foreach body guarded as " + loopId(forEach) + " (assumed non-empty unless state says otherwise)");
             } else if (node instanceof ConditionalExpr) {
                 int line = node.getBegin().map(p -> p.line).orElse(0);
                 unsupported.add("line " + line + ": ternary operator not modeled");
@@ -177,6 +177,15 @@ public class AstAnalyzer {
             return;
         }
 
+        // foreach: тело исполняется, только если коллекция непуста (R17)
+        if (node instanceof ForEachStmt forEach) {
+            extractCallsWithGuard(forEach.getIterable(), currentGuard, relFile, cu, typeIndex, classMethodNames, resultCalls);
+            List<String> loopGuard = new ArrayList<>(currentGuard);
+            loopGuard.add(loopId(forEach));
+            extractCallsWithGuard(forEach.getBody(), loopGuard, relFile, cu, typeIndex, classMethodNames, resultCalls);
+            return;
+        }
+
         // Лямбда: тело исполняется только если хост-метод её вызывает (R16)
         if (node instanceof LambdaExpr lambda) {
             List<String> lambdaGuard = new ArrayList<>(currentGuard);
@@ -248,6 +257,11 @@ public class AstAnalyzer {
         return "t" + tryStmt.getBegin().map(p -> p.line).orElse(0);
     }
 
+    /** Идентификатор цикла foreach: "f<строка>:<выражение коллекции>", например "f390:orders". */
+    static String loopId(ForEachStmt forEach) {
+        return "f" + forEach.getBegin().map(p -> p.line).orElse(0) + ":" + forEach.getIterable().toString();
+    }
+
     /** Идентификатор лямбды: "l<строка>:<имя метода, куда лямбда передана>", например "l91:orElseThrow". */
     static String lambdaId(LambdaExpr lambda) {
         String host = lambda.getParentNode()
@@ -267,6 +281,8 @@ public class AstAnalyzer {
                 guard.addFirst(tryId(ts) + ":catch");
             } else if (parent instanceof LambdaExpr lambda) {
                 guard.addFirst(lambdaId(lambda));
+            } else if (parent instanceof ForEachStmt forEach && forEach.getBody() == child) {
+                guard.addFirst(loopId(forEach));
             } else if (parent instanceof IfStmt is) {
                 if (is.getThenStmt() == child) {
                     guard.addFirst(branchId(is) + ":then");

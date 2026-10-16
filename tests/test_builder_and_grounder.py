@@ -182,3 +182,21 @@ class TestScenarioGrounder:
         assert any("InsidePaymentController#pay" in e for e in entries_s4)
         assert not any("com.trainticket.controller.PaymentController#pay" in e for e in entries_s4)
 
+    def test_r7_and_r17_check_security_order_status_and_string2date(self, skeleton_index: SkeletonIndex, rules: RuntimeRules) -> None:
+        builder = GraphBuilder(skeleton_index, rules)
+        # Для существующего пользователя (S1, S2, S3, S5, S7) checkSecurityAboutOrder вызывает OrderStatus#getCode()
+        prof_existing = ScenarioProfile.from_scenario({"id": "S1", "title": "S1", "description": "existing user"})
+        sec_m_order = "method:ts-order-service:order.service.OrderServiceImpl#checkSecurityAboutOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)"
+        m, c, r, d = builder.traverse({sec_m_order}, profile=prof_existing)
+        order_get_code = "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
+        string2date = "method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)"
+        assert (sec_m_order, order_get_code) in c
+        assert (sec_m_order, string2date) in c
+
+        # Для нового пользователя (S4) в базе нет заказов (R17): OrderStatus#getCode() и String2Date не вызываются
+        prof_new = ScenarioProfile.from_scenario({"id": "S4", "title": "S4", "description": "A new passenger registers a new account"})
+        m4, c4, r4, d4 = builder.traverse({sec_m_order}, profile=prof_new)
+        assert (sec_m_order, order_get_code) not in c4
+        assert (sec_m_order, string2date) not in c4
+
+
