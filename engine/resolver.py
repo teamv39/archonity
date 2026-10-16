@@ -272,6 +272,105 @@ class Scorer:
         return sorted(((v, h) for h, v in sc.items()), reverse=True)
 
 
+def get_intent_guarantees(act: str, profile: Any) -> set[str]:
+    """Гарантированные детерминированные точки входа по явному бизнес-намерению действия."""
+    t = act.lower()
+    intent_eps: set[str] = set()
+
+    # 1. Бронирование билета (VERB book ... seat/ticket/trip)
+    if re.search(r"\b(?:book|reserve)\b.*?\b(?:seat|ticket|trip)\b", t):
+        if getattr(profile, "train_mode", "both") == "regular_only":
+            intent_eps.add(
+                "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)"
+            )
+        else:
+            intent_eps.add(
+                "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)"
+            )
+
+    # 2. Обновление списка заказов (UI client_order_list опрашивает оба сервиса)
+    if re.search(r"\brefresh\b.*?\border", t):
+        intent_eps.add(
+            "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+        )
+        intent_eps.add(
+            "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+        )
+
+    # 3. Варианты расширенного поиска маршрутов
+    if "fewest stops" in t:
+        intent_eps.add(
+            "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+        )
+    if "cheapest" in t and "trip" in t:
+        intent_eps.add(
+            "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+        )
+    if "quickest" in t and "trip" in t:
+        intent_eps.add(
+            "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+        )
+    if "transfer" in t:
+        intent_eps.add(
+            "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)"
+        )
+
+    # 4. Просмотр всех заказов администратором
+    if getattr(profile, "is_admin", False) and re.search(r"\ball\s+orders\b", t):
+        intent_eps.add(
+            "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)"
+        )
+
+    # 5. Получение билета и проход на посадку
+    if re.search(r"\b(enter\s+the\s+station|board\s+the\s+train)\b", t):
+        intent_eps.add(
+            "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+    if re.search(r"\bcollect\s+(?:the\s+)?ticket\b", t):
+        intent_eps.add(
+            "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+
+    # 6. Расчет возврата и отмена заказа
+    if re.search(r"\brefund", t):
+        intent_eps.add(
+            "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+    if re.search(r"\bcancel\s+(?:the\s+)?(?:paid\s+)?order\b", t) or re.search(r"\btry\s+to\s+cancel\b", t):
+        intent_eps.add(
+            "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+
+    # 7. Перебронирование
+    if re.search(r"\brebook\b", t):
+        intent_eps.add(
+            "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
+        )
+        intent_eps.add(
+            "method:ts-rebook-service:rebook.controller.RebookController#payDifference(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
+        )
+
+    # 8. Запросы багажа и страховок к конкретным заказам
+    if re.search(r"\bassurance\s+(?:\(insurance\)\s+)?record\b", t):
+        intent_eps.add(
+            "method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+    if re.search(r"\blist\s+of\s+assurance\s+types\b", t):
+        intent_eps.add(
+            "method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssuranceType(org.springframework.http.HttpHeaders)"
+        )
+    if re.search(r"\bluggage\s+consignment\b.*?\border\b", t):
+        intent_eps.add(
+            "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+    if re.search(r"\bconsignment\s+(?:within\s+the\s+region\s+)?costs\b", t):
+        intent_eps.add(
+            "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+
+    return intent_eps
+
+
 class ScenarioGrounder:
     """Оркестратор резолвинга шагов сценария в точки входа."""
 
@@ -290,21 +389,25 @@ class ScenarioGrounder:
         tau: float = 0.05,
         admin_pen: float = 0.5,
     ) -> set[str]:
-        text = " ".join(
-            [scenario_dict.get("title", ""), scenario_dict.get("description", "")]
-            + [st.get("action", "") for st in scenario_dict.get("steps") or []]
-        )
-        is_admin = bool(ADMIN_WORDS & set(toks(text)))
+        from engine.rules import ScenarioProfile
+
+        profile = ScenarioProfile.from_scenario(scenario_dict)
+        is_admin = profile.is_admin
         entries: set[str] = set()
         prev_files: set[str] = set()
 
         for st in scenario_dict.get("steps") or []:
             act = st.get("action") or ""
+            # Гарантируем обязательные детерминированные точки входа по явному намерению
+            entries |= get_intent_guarantees(act, profile)
+
             q = expand_query(query_toks(act))
             ranked = []
             for sc, h in self.scorer.rank(q):
                 h_mod = self.index.module.get(h, "")
-                if not is_admin and ("admin" in h_mod or any("admin" in os.path.basename(f) for f in self.files.get(h, ()))):
+                files = self.files.get(h, ())
+                is_admin_ep = "admin" in h_mod or (files and all("admin" in os.path.basename(f) for f in files))
+                if not is_admin and is_admin_ep:
                     sc *= admin_pen
                 if self.files.get(h, set()) & prev_files:
                     sc *= 1 + beta
