@@ -362,4 +362,18 @@ class MethodPoolIR:
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
 
+            # 10. TokenServiceImpl#getToken: проверка кода подтверждения (verifyCode)
+            # !StringUtils.isEmpty(verifyCode)
+            if 'verifyCode' in cond:
+                val = getattr(profile, "has_verification_code", False)
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
+            # 11. UserServiceImpl#saveUser: новый пользователь vs уже существующий
+            # user1 == null
+            if 'user1 == null' in cond:
+                val = True  # Штатный сценарий регистрации нового пользователя
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
         return True
