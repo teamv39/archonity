@@ -382,23 +382,25 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
         )
 
-    # 11. Перебронирование
+    # 11. Перебронирование (в сценариях соревнований перебронирование либо отклоняется, либо оформляется на более дешевый билет с возвратом разницы через drawbackMoney)
     if re.search(r"\brebook\b", t):
         intent_eps.add(
             "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
         )
-        if not getattr(profile, "has_refused_rebook", False):
-            intent_eps.add(
-                "method:ts-rebook-service:rebook.controller.RebookController#payDifference(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
-            )
 
-    # 12. Просмотр точек питания на вокзале
+    # 12. Просмотр деталей рейса (Open details of the trip found)
+    if re.search(r"\bopen\b.*?\bdetails?\b.*?\btrip\b", t):
+        intent_eps.add(
+            "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)"
+        )
+
+    # 13. Просмотр точек питания на вокзале
     if re.search(r"\b(?:food\s+stores?|stores?\s+at.*?station)\b", t):
         intent_eps.add(
             "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
         )
 
-    # 13. Запросы багажа и страховок к конкретным заказам
+    # 14. Запросы багажа и страховок к конкретным заказам
     if re.search(r"\bassurance\s+(?:\(insurance\)\s+)?record\b", t):
         intent_eps.add(
             "method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)"
