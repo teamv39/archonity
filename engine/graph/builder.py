@@ -59,6 +59,15 @@ class GraphBuilder:
                 continue
             seen_methods.add((m, u))
 
+            # 0. Enum-вызовы по правилу R7 из AST IR пула методов
+            if hasattr(self.index, "pool_ir") and self.index.pool_ir.has_method(m):
+                for c_enum in self.index.pool_ir.enum_calls_by_method.get(m, []):
+                    if self.index.pool_ir.evaluate_guard(m, c_enum.guard, profile, scenario_state):
+                        enum_target = self.index.pool_ir.get_enum_target(c_enum)
+                        if enum_target and enum_target in self.index.N:
+                            edges_calls.add((m, enum_target))
+                            seen_methods.add((enum_target, self.index.unit_of(enum_target)))
+
             # 1. Внутрисервисные вызовы (calls + overrides/CHA + runtime_dispatch)
             for t in self.index.calls.get(m, ()):
                 dispatch_targets = (
@@ -76,6 +85,13 @@ class GraphBuilder:
                         continue
                     if self.rules.is_dead_code_edge(m, "calls", x, profile=profile, is_admin_scenario=is_admin_scenario):
                         continue
+
+                    # Проверка активности вызова по AST Guard из IR (M2 -> M4)
+                    if hasattr(self.index, "edge_guards"):
+                        guards = self.index.edge_guards.get((m, "calls", x)) or self.index.edge_guards.get((m, "calls", t))
+                        if guards:
+                            if not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
+                                continue
 
                     # Исключаем вызовы конструкторов ошибок в штатных успешных сценариях
                     if "Exception#<init>" in x:
@@ -95,6 +111,16 @@ class GraphBuilder:
                 if self.rules.is_dead_code_edge(m, "remote", t, profile=profile, is_admin_scenario=is_admin_scenario):
                     continue
 
+                # Проверка активности вызова по AST Guard из IR (M2 -> M4)
+                if hasattr(self.index, "edge_guards"):
+                    guards = (
+                        self.index.edge_guards.get((m, "remote_call", t))
+                        or self.index.edge_guards.get((m, "message_delivery", t))
+                    )
+                    if guards:
+                        if not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
+                            continue
+
                 edges_remote.add((m, t))
                 stack.append((t, self.index.unit_of(t)))
 
@@ -103,6 +129,14 @@ class GraphBuilder:
             for t in self.index.wiring["data_access"].get(m, set()):
                 if self.rules.is_dead_code_edge(m, "data", t, profile=profile, is_admin_scenario=is_admin_scenario):
                     continue
+
+                # Проверка активности вызова по AST Guard из IR (M2 -> M4)
+                if hasattr(self.index, "edge_guards"):
+                    guards = self.index.edge_guards.get((m, "data_access", t))
+                    if guards:
+                        if not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
+                            continue
+
                 edges_data.add((m, t))
 
         active_methods = {m for m, _ in seen_methods}

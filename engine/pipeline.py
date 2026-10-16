@@ -9,6 +9,7 @@ from engine.adapters.submission import SubmissionAdapter
 from engine.evidence import EvidenceLogger
 from engine.graph.builder import GraphBuilder
 from engine.resolver import ScenarioGrounder
+from engine.ir import MethodPoolIR
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
 
@@ -22,13 +23,20 @@ class ArchonityPipeline:
         targets_root: str | Path,
         rules_path: str | Path | None = None,
         db_dump_path: str | Path | None = None,
+        pool_ir: MethodPoolIR | None = None,
+        ir_path: str | Path | None = None,
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
 
-        # 1. Загрузка скелета и инициализация DB State (M0)
+        # 1. Загрузка скелета, инициализация DB State (M0) и AST IR (M2)
         sk_dict = load_json(self.skeleton_path)
-        self.index = SkeletonIndex(sk_dict, db_dump_path=db_dump_path)
+        self.index = SkeletonIndex(
+            sk_dict,
+            db_dump_path=db_dump_path,
+            pool_ir=pool_ir,
+            ir_path=ir_path,
+        )
 
         # 2. Логгер доказательств (Evidence Log)
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
