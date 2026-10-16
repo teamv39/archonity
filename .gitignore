@@ -136,3 +136,6 @@ hackaton/
 visualizer/public/data/canonical_graph.json
 visualizer/public/data/evidence.json
 visualizer/public/data/submission.json
+
+# Teamwork scratchpads
+.agents/

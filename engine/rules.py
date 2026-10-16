@@ -26,6 +26,7 @@ class ScenarioProfile:
     has_refused_rebook: bool = False
     has_external_payment: bool = False
     has_advanced_search: bool = False
+    has_consign_weight_change: bool = False
 
     @classmethod
     def from_scenario(cls, scenario_dict: dict[str, Any]) -> ScenarioProfile:
@@ -51,11 +52,19 @@ class ScenarioProfile:
 
         # 3. Багаж (Consignment / Luggage)
         has_consign = False
+        has_consign_weight_change = False
         if "consign" in text or "luggage" in text or "baggage" in text:
             # Положительные триггеры: вес, проверка записей, смена получателя, просмотр
             has_consign = bool(
                 re.search(
                     r"\b(?:\d+(?:\.\d+)?\s*kg|consign\w*\s+record\w*|look\s*up[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|check[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|view[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|change[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|consign\w*\s+within)\b",
+                    text,
+                )
+            )
+            # Изменение веса багажа при модификации consignment (ConsignServiceImpl.java:97)
+            has_consign_weight_change = bool(
+                re.search(
+                    r"\b(?:change\w*|update\w*|modif\w*|alter\w*)\b[^\n.;,]{0,40}?\b(?:weight|heavy|kg|kilo)\b",
                     text,
                 )
             )
@@ -111,6 +120,7 @@ class ScenarioProfile:
             has_refused_rebook=has_refused_rebook,
             has_external_payment=has_external_payment,
             has_advanced_search=has_advanced_search,
+            has_consign_weight_change=has_consign_weight_change,
         )
 
 
@@ -389,9 +399,12 @@ class RuntimeRules:
                             return True
                     if s_svc == "ts-execute-service" and "executeOrder" in source and t_svc == "ts-order-service":
                         return True
-                # В S7 при смене получателя багажа вес не меняется, пересчет цены не вызывается
-                if profile.id == "S7" and "updateConsignRecord" in source and "ts-consign-price-service" in target:
-                    return True
+                # В ConsignServiceImpl.java:97 пересчет цены (ts-consign-price-service) вызывается
+                # только если originalRecord.getWeight() != consignRequest.getWeight().
+                # Если вес не меняется (например, меняется только получатель/телефон), пересчет цены не вызывается.
+                if not getattr(profile, "has_consign_weight_change", False):
+                    if "updateConsignRecord" in source and "ts-consign-price-service" in target:
+                        return True
 
         if relation == "data":
             target_svc = self.extract_service(target)

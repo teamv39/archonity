@@ -95,6 +95,7 @@ class TestScenarioProfile:
         assert prof.train_mode == "high_speed_only"
         assert prof.has_refused_cancel
         assert prof.has_refused_rebook
+        assert not prof.has_consign_weight_change
 
 
 class TestRuntimeRules:
@@ -303,13 +304,21 @@ class TestRuntimeRules:
             "remote",
             "method:ts-assurance-service:assurance.controller.AssuranceController#getAssuranceById()",
         )
-        # В S7 при смене получателя багажа пересчет цены отсекается
-        prof_s7 = ScenarioProfile("S7", False, False, True, False, train_mode="high_speed_only")
+        # При смене получателя багажа без изменения веса пересчет цены отсекается (ConsignServiceImpl.java:97)
+        prof_no_weight_change = ScenarioProfile("test_consign", False, False, True, False, train_mode="high_speed_only", has_consign_weight_change=False)
         assert rules.is_dead_code_edge(
             "method:ts-consign-service:consign.service.ConsignServiceImpl#updateConsignRecord()",
             "remote",
             "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion()",
-            profile=prof_s7,
+            profile=prof_no_weight_change,
+        )
+        # А при изменении веса пересчет цены НЕ отсекается
+        prof_with_weight_change = ScenarioProfile("test_consign_wt", False, False, True, False, train_mode="high_speed_only", has_consign_weight_change=True)
+        assert not rules.is_dead_code_edge(
+            "method:ts-consign-service:consign.service.ConsignServiceImpl#updateConsignRecord()",
+            "remote",
+            "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion()",
+            profile=prof_with_weight_change,
         )
 
     def test_advanced_search_travel_service_preservation(self, rules: RuntimeRules) -> None:

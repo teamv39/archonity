@@ -8,10 +8,12 @@
 """
 from __future__ import annotations
 
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex
 from engine.rules import RuntimeRules, ScenarioProfile
+from engine.state import ScenarioState
 
 
 class GraphBuilder:
@@ -27,6 +29,7 @@ class GraphBuilder:
         is_admin_scenario: bool = False,
         scenario_meta: dict[str, Any] | None = None,
         profile: ScenarioProfile | None = None,
+        scenario_state: ScenarioState | None = None,
     ) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
         """Обход графа от точек входа.
 
@@ -105,7 +108,14 @@ class GraphBuilder:
         active_methods = {m for m, _ in seen_methods}
 
         # 4. Архитектурные правила Spring Security и ORM Entity Lifecycle
-        self._apply_framework_and_entity_lifecycle(active_methods, edges_calls, edges_data, scenario_meta, profile=profile)
+        self._apply_framework_and_entity_lifecycle(
+            active_methods,
+            edges_calls,
+            edges_data,
+            scenario_meta,
+            profile=profile,
+            scenario_state=scenario_state,
+        )
 
         return active_methods, edges_calls, edges_remote, edges_data
 
@@ -116,6 +126,7 @@ class GraphBuilder:
         edges_data: set[tuple[str, str]],
         scenario_meta: dict[str, Any] | None = None,
         profile: ScenarioProfile | None = None,
+        scenario_state: ScenarioState | None = None,
     ) -> None:
         """Применение семантики Spring Security и гидрации JPA/MongoDB сущностей."""
         # 1. Spring Security Authentication Flow при логине через ts-auth-service
@@ -183,7 +194,13 @@ class GraphBuilder:
             )
             string2date = "method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)"
             # Если сценарий не фильтрует явно по датам поездки (как S0)
-            if scenario_meta and not any("travel date" in s.lower() or "bought date" in s.lower() for s in scenario_meta.get("step_texts", [])):
+            if scenario_state is not None:
+                if not scenario_state.has_date_filter_query():
+                    edges_calls.discard((query_orders, string2date))
+            elif scenario_meta and not any(
+                "travel date" in s.lower() or "bought date" in s.lower()
+                for s in scenario_meta.get("step_texts", [])
+            ):
                 edges_calls.discard((query_orders, string2date))
 
     def _add_order_constructor_calls(
