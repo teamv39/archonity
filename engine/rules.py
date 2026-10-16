@@ -39,7 +39,10 @@ class ScenarioProfile:
         if "assurance" in text or "insurance" in text:
             # Положительные триггеры: выбор типа, просмотр типов или записей страховки
             has_assurance = bool(
-                re.search(r"\b(?:first type|assurance record|assurance types|type 1|type 2)\b", text)
+                re.search(
+                    r"\b(?:first type|assurance\w*\s+record\w*|assurance\w*\s+types?|list of assurance\w*|type 1|type 2)\b",
+                    text,
+                )
             )
 
         # 3. Багаж (Consignment / Luggage)
@@ -48,7 +51,7 @@ class ScenarioProfile:
             # Положительные триггеры: вес, проверка записей, смена получателя, просмотр
             has_consign = bool(
                 re.search(
-                    r"\b(?:\d+(?:\.\d+)?\s*kg|consign\w*\s+record|look\s*up[^\n.;,]{0,30}?(?:consign|luggage)|check[^\n.;,]{0,30}?(?:consign|luggage)|view[^\n.;,]{0,30}?(?:consign|luggage)|change[^\n.;,]{0,30}?(?:consign|luggage)|consign\w*\s+within)\b",
+                    r"\b(?:\d+(?:\.\d+)?\s*kg|consign\w*\s+record\w*|look\s*up[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|check[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|view[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|change[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|consign\w*\s+within)\b",
                     text,
                 )
             )
@@ -58,7 +61,7 @@ class ScenarioProfile:
         if "food" in text:
             has_food = bool(
                 re.search(
-                    r"\b(?:food menu|menu offered|food stores|station food|food on the train|first dish)\b",
+                    r"\b(?:food\w*\s+menu|menu offered|food\w*\s+stores?|station food|food on the train|first dish)\b",
                     text,
                 )
             )
