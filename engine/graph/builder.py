@@ -71,6 +71,8 @@ class GraphBuilder:
                         continue
                     if self.rules.is_dead_code_method(x, profile=profile, is_admin_scenario=is_admin_scenario):
                         continue
+                    if self.rules.is_dead_code_edge(m, "calls", x, profile=profile, is_admin_scenario=is_admin_scenario):
+                        continue
 
                     # Исключаем вызовы конструкторов ошибок в штатных успешных сценариях
                     if "Exception#<init>" in x:
@@ -86,6 +88,8 @@ class GraphBuilder:
             )
             for t in remote_targets:
                 if self.rules.is_dead_code_method(t, profile=profile, is_admin_scenario=is_admin_scenario):
+                    continue
+                if self.rules.is_dead_code_edge(m, "remote", t, profile=profile, is_admin_scenario=is_admin_scenario):
                     continue
 
                 edges_remote.add((m, t))

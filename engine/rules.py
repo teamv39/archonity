@@ -22,6 +22,8 @@ class ScenarioProfile:
     has_consign: bool
     has_food: bool
     train_mode: str  # "both", "high_speed_only", "regular_only"
+    has_refused_cancel: bool = False
+    has_refused_rebook: bool = False
 
     @classmethod
     def from_scenario(cls, scenario_dict: dict[str, Any]) -> ScenarioProfile:
@@ -78,6 +80,14 @@ class ScenarioProfile:
         else:
             train_mode = "both"
 
+        # 6. Бизнес-отказы (Refusals)
+        has_refused_cancel = bool(
+            re.search(r"\b(?:refus\w*.*?cancel\w*|cancel\w*.*?refus\w*)\b", text)
+        )
+        has_refused_rebook = bool(
+            re.search(r"\b(?:refus\w*.*?rebook\w*|rebook\w*.*?refus\w*)\b", text)
+        )
+
         return cls(
             id=sid,
             is_admin=is_admin,
@@ -85,6 +95,8 @@ class ScenarioProfile:
             has_consign=has_consign,
             has_food=has_food,
             train_mode=train_mode,
+            has_refused_cancel=has_refused_cancel,
+            has_refused_rebook=has_refused_rebook,
         )
 
 
@@ -178,8 +190,9 @@ class RuntimeRules:
                 return True
 
             # 4. Скоростные против медленных поездов
+            # Замечание: ts-order-other-service опрашивается фронтендом всегда при refresh orders
             if profile.train_mode == "high_speed_only":
-                if svc in ("ts-preserve-other-service", "ts-order-other-service"):
+                if svc in ("ts-preserve-other-service",):
                     return True
             elif profile.train_mode == "regular_only":
                 if svc in ("ts-preserve-service",):
@@ -205,6 +218,41 @@ class RuntimeRules:
         if relation in ("calls", "remote") and self.is_dead_code_method(target, profile, is_admin_scenario):
             return True
 
+        if profile:
+            # 1. Отказ в отмене заказа (билет уже собран / использован)
+            if profile.has_refused_cancel:
+                if "CancelServiceImpl" in source:
+                    blocked_cancel = (
+                        "cancelFromOrder",
+                        "cancelFromOtherOrder",
+                        "drawbackMoney",
+                        "getAccount",
+                        "sendEmail",
+                    )
+                    if any(b in target or b in source for b in blocked_cancel):
+                        return True
+                if "InsidePaymentController#drawBack" in target:
+                    return True
+
+            # 2. Отказ в перебронировании (билет уже собран / использован)
+            if profile.has_refused_rebook:
+                if "RebookServiceImpl" in source:
+                    blocked_rebook = (
+                        "dipatchSeat",
+                        "payDifferentMoney",
+                        "drawBackMoney",
+                        "createOrder",
+                        "updateOrder",
+                        "deleteOrder",
+                        "queryTrainTypeByName",
+                        "getRouteByRouteId",
+                        "getTripAllDetailInformation",
+                    )
+                    if any(b in target or b in source for b in blocked_rebook):
+                        return True
+                if "InsidePaymentController#payDifference" in target or "SeatController#create" in target:
+                    return True
+
         if relation == "data":
             target_svc = self.extract_service(target)
             if not target_svc:
@@ -224,7 +272,7 @@ class RuntimeRules:
                     return True
                 if not profile.has_food and "food" in target_svc:
                     return True
-                if profile.train_mode == "high_speed_only" and target_svc in ("ts-preserve-other-service", "ts-order-other-service"):
+                if profile.train_mode == "high_speed_only" and target_svc in ("ts-preserve-other-service",):
                     return True
                 if profile.train_mode == "regular_only" and target_svc in ("ts-preserve-service",):
                     return True

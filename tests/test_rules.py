@@ -93,6 +93,8 @@ class TestScenarioProfile:
         assert prof.has_consign
         assert not prof.has_food
         assert prof.train_mode == "high_speed_only"
+        assert prof.has_refused_cancel
+        assert prof.has_refused_rebook
 
 
 class TestRuntimeRules:
@@ -153,7 +155,8 @@ class TestRuntimeRules:
         assert rules.is_dead_code_method("method:ts-food-service:food.service.FoodServiceImpl#getFood()", profile=profile_no_ass)
         assert rules.is_dead_code_method("method:ts-station-food-service:food.service.StationFoodServiceImpl#getFood()", profile=profile_no_ass)
         assert rules.is_dead_code_method("method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve()", profile=profile_no_ass)
-        assert rules.is_dead_code_method("method:ts-order-other-service:other.service.OrderOtherServiceImpl#query()", profile=profile_no_ass)
+        # ts-order-other-service не отсекается, так как опрашивается фронтендом при любом refresh orders
+        assert not rules.is_dead_code_method("method:ts-order-other-service:other.service.OrderOtherServiceImpl#query()", profile=profile_no_ass)
 
         # Профиль с активной страховкой
         profile_with_ass = ScenarioProfile(
