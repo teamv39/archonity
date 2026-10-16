@@ -111,7 +111,19 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 }) => {
   const filteredCount = totalEdgesCount - visibleEdgesCount;
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [exportCoords, setExportCoords] = useState<{ top: number; right: number } | null>(null);
   const exportRef = useRef<HTMLDivElement>(null);
+
+  const handleToggleExportMenu = () => {
+    if (!isExportMenuOpen && exportRef.current) {
+      const rect = exportRef.current.getBoundingClientRect();
+      setExportCoords({
+        top: rect.bottom + 4,
+        right: Math.max(8, window.innerWidth - rect.right),
+      });
+    }
+    setIsExportMenuOpen((prev) => !prev);
+  };
 
   // Закрытие меню экспорта по клику вне
   useEffect(() => {
@@ -434,7 +446,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <button
             type="button"
             className={`cad-btn export-btn ${isExportMenuOpen ? 'active' : ''}`}
-            onClick={() => setIsExportMenuOpen((prev) => !prev)}
+            onClick={handleToggleExportMenu}
             disabled={isExporting}
             title="Экспорт графа в PNG (2x Retina), SVG или JSON"
           >
@@ -444,7 +456,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           </button>
 
           {isExportMenuOpen && (
-            <div className="export-menu">
+            <div
+              className="export-menu"
+              style={{
+                position: 'fixed',
+                top: exportCoords?.top ?? 44,
+                right: exportCoords?.right ?? 8,
+                zIndex: 9999,
+              }}
+            >
               <button
                 type="button"
                 className="export-menu-item"

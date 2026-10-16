@@ -146,6 +146,7 @@ const VisualizerCanvas: React.FC = () => {
   const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
   const [isLoadingLayout, setIsLoadingLayout] = useState<boolean>(false);
   const lastDirectionRef = React.useRef(direction);
+  const shouldResetPositionsRef = React.useRef<boolean>(true);
 
   // Изменение ширины правого сайдбара (Splitter)
   const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
@@ -278,15 +279,20 @@ const VisualizerCanvas: React.FC = () => {
 
     const isDirectionChanged = lastDirectionRef.current !== direction;
     lastDirectionRef.current = direction;
+    const shouldForceReset = shouldResetPositionsRef.current || isDirectionChanged;
 
     setNodes((currentNodes) => {
-      if (isDirectionChanged || currentNodes.length === 0) {
+      if (shouldForceReset || currentNodes.length === 0) {
+        shouldResetPositionsRef.current = false;
         return flowNodes;
       }
       const currentPosMap = new Map(currentNodes.map((n) => [n.id, n.position]));
       return flowNodes.map((n) => {
         const existingPos = currentPosMap.get(n.id);
-        return existingPos ? { ...n, position: existingPos } : n;
+        if (existingPos && (existingPos.x !== 0 || existingPos.y !== 0)) {
+          return { ...n, position: existingPos };
+        }
+        return n;
       });
     });
 
@@ -321,6 +327,7 @@ const VisualizerCanvas: React.FC = () => {
   // Обработчик загрузки нового графа (из модалки или dropzone)
   const handleLoadGraph = useCallback(
     (newGraph: CanonicalGraph, summary: string, sourceName: string) => {
+      shouldResetPositionsRef.current = true;
       setIsLoadingLayout(true);
       setGraph(newGraph);
       setDatasetName(sourceName);
@@ -329,6 +336,7 @@ const VisualizerCanvas: React.FC = () => {
       setSelectedEdgeId(null);
       setBlastRadius(null);
       setCallTrace(null);
+      setActiveScenarioId(null);
       setToast({
         type: 'success',
         message: `Датасет "${sourceName}" загружен: ${summary}`,
@@ -511,25 +519,38 @@ const VisualizerCanvas: React.FC = () => {
   }, []);
 
   // Управление сценарным плеером (ADR-003, RFC-05)
+  const ensureBenchmarkLoadedForScenario = useCallback(() => {
+    if (graph.nodes.length < 19) {
+      shouldResetPositionsRef.current = true;
+      setIsLoadingLayout(true);
+      setGraph(trainTicketBenchmarkGraph);
+      setDatasetName('Train Ticket Benchmark (19N / 27E)');
+      setIsCustomDataset(true);
+    }
+  }, [graph.nodes.length]);
+
   const handleToggleScenarioPlayer = useCallback(() => {
     if (activeScenarioId) {
       setActiveScenarioId(null);
       setIsScenarioPlaying(false);
       setCurrentStepIndex(0);
+      fitView({ padding: 0.25, duration: 350 });
     } else {
+      ensureBenchmarkLoadedForScenario();
       setActiveScenarioId(BENCHMARK_SCENARIOS[0].id);
       setCurrentStepIndex(0);
       setIsScenarioPlaying(false);
       setCallTrace(null);
       setBlastRadius(null);
     }
-  }, [activeScenarioId]);
+  }, [activeScenarioId, ensureBenchmarkLoadedForScenario, fitView]);
 
   const handleSelectScenario = useCallback((scenarioId: string) => {
+    ensureBenchmarkLoadedForScenario();
     setActiveScenarioId(scenarioId);
     setCurrentStepIndex(0);
     setIsScenarioPlaying(false);
-  }, []);
+  }, [ensureBenchmarkLoadedForScenario]);
 
   const handleNextScenarioStep = useCallback(() => {
     if (!activeScenarioId) return;
@@ -550,7 +571,8 @@ const VisualizerCanvas: React.FC = () => {
     setActiveScenarioId(null);
     setIsScenarioPlaying(false);
     setCurrentStepIndex(0);
-  }, []);
+    fitView({ padding: 0.25, duration: 350 });
+  }, [fitView]);
 
   // Автопроигрывание шагов сценария
   useEffect(() => {
@@ -572,11 +594,14 @@ const VisualizerCanvas: React.FC = () => {
   }, [isScenarioPlaying, activeScenarioId]);
 
   // Фокусировка камеры на активном шаге сценария
+  const activeStepSource = playbackState?.sourceNodeId;
+  const activeStepTarget = playbackState?.targetNodeId;
+
   useEffect(() => {
-    if (!playbackState) return;
+    if (!activeStepSource || !activeStepTarget) return;
     const timer = setTimeout(() => {
-      const srcNode = nodes.find((n) => n.id === playbackState.sourceNodeId);
-      const dstNode = nodes.find((n) => n.id === playbackState.targetNodeId);
+      const srcNode = nodes.find((n) => n.id === activeStepSource);
+      const dstNode = nodes.find((n) => n.id === activeStepTarget);
       const targetNodes = [srcNode, dstNode].filter(Boolean) as Node[];
       if (targetNodes.length > 0) {
         fitView({
@@ -585,12 +610,13 @@ const VisualizerCanvas: React.FC = () => {
           duration: 350,
         });
       }
-    }, 50);
+    }, 60);
     return () => clearTimeout(timer);
-  }, [playbackState, fitView, nodes]);
+  }, [activeStepSource, activeStepTarget, fitView, nodes]);
 
   // Быстрое переключение пресетов датасета
   const handleLoadBenchmarkSlice = useCallback(() => {
+    shouldResetPositionsRef.current = true;
     setIsLoadingLayout(true);
     setGraph(trainTicketBenchmarkGraph);
     setDatasetName('Train Ticket Benchmark (19N / 27E)');
@@ -607,6 +633,7 @@ const VisualizerCanvas: React.FC = () => {
   }, []);
 
   const handleLoadStandardDemo = useCallback(() => {
+    shouldResetPositionsRef.current = true;
     setIsLoadingLayout(true);
     setGraph(demoGraph);
     setDatasetName('ДЕМО (Train Ticket — 9 сервисов)');
@@ -644,7 +671,8 @@ const VisualizerCanvas: React.FC = () => {
   }, []);
 
   const handleResetAll = useCallback(() => {
-    fitView({ padding: 0.25, duration: 300 });
+    shouldResetPositionsRef.current = true;
+    setIsLoadingLayout(true);
     setSelectedNodeId(null);
     setSelectedEdgeId(null);
     setBlastRadius(null);
@@ -666,7 +694,22 @@ const VisualizerCanvas: React.FC = () => {
     });
     setColorMode('by_source');
     setDirection('RIGHT');
-  }, [fitView]);
+
+    // Принудительный пересчет и сброс местоположения всех сущностей
+    computeLayout(graph.nodes, graph.edges, 'RIGHT')
+      .then((newPositions) => {
+        setPositions(newPositions);
+        setIsLoadingLayout(false);
+        setTimeout(() => {
+          fitView({ padding: 0.25, duration: 350 });
+        }, 50);
+      })
+      .catch((err) => {
+        console.error('Ошибка сброса позиций ELK:', err);
+        setIsLoadingLayout(false);
+        fitView({ padding: 0.25, duration: 350 });
+      });
+  }, [graph.nodes, graph.edges, fitView]);
 
   // Сброс трейса или выделения по Escape
   useEffect(() => {

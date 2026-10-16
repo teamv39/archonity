@@ -434,8 +434,11 @@ export function buildReactFlowElements(
     referenceEdges.filter((e) => isEdgeReachable(e)).map((e) => e.id)
   );
 
-  const flowNodes: Node<NodeData>[] = nodes.map((node) => {
-    const pos = positions.get(node.id) || { x: 0, y: 0 };
+  const flowNodes: Node<NodeData>[] = nodes.map((node, idx) => {
+    const pos = positions.get(node.id) || {
+      x: (idx % 4) * 320 + 40,
+      y: Math.floor(idx / 4) * 160 + 60,
+    };
     let blastState: NodeData['blastState'] = 'normal';
     let traceState: NodeData['traceState'] = 'none';
     let scenarioState: NodeData['scenarioState'] = 'none';

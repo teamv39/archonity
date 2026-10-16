@@ -2,27 +2,47 @@
 
 .control-bar {
   height: 40px;
-  width: 100vw;
+  width: 100%;
+  max-width: 100vw;
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border-hairline);
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 0 8px;
+  padding: 0 6px;
   font-family: var(--font-sans);
   font-size: 11px;
   color: var(--text-primary);
   box-sizing: border-box;
   user-select: none;
   z-index: 100;
-  overflow: visible;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hairline) transparent;
   gap: 2px;
+}
+
+.control-bar::-webkit-scrollbar {
+  height: 3px;
+}
+
+.control-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.control-bar::-webkit-scrollbar-thumb {
+  background: var(--border-hairline);
+}
+
+.control-bar::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
 }
 
 .bar-section {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 3px;
   flex-shrink: 0;
 }
 
@@ -30,7 +50,7 @@
   width: 1px;
   height: 18px;
   background: var(--border-hairline);
-  margin: 0 3px;
+  margin: 0 2px;
   flex-shrink: 0;
 }
 
@@ -416,7 +436,7 @@
 }
 
 /* Адаптивные медиа-запросы */
-@media (max-width: 1400px) {
+@media (max-width: 1500px) {
   .actions-section .btn-text {
     display: none;
   }
@@ -424,7 +444,7 @@
     display: none;
   }
   .actions-section .cad-btn {
-    padding: 0 6px;
+    padding: 0 5px;
   }
   .reachability-section .sub-toggle-btn .btn-text {
     display: none;
