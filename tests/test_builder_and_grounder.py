@@ -78,6 +78,16 @@ class TestGraphBuilder:
         # Должен вызваться конструктор Order#<init>()
         assert any("order.entity.Order#<init>()" in m for m in methods)
 
+    def test_r7_seat_class_enum_calls_in_travel_and_rebook(self, skeleton_index: SkeletonIndex, rules: RuntimeRules) -> None:
+        builder = GraphBuilder(skeleton_index, rules)
+        seat_code = "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()"
+        entry = [
+            "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+        ]
+        methods, calls, remote, data = builder.traverse(entry)
+        assert seat_code in methods
+        assert any(tgt == seat_code and "TravelServiceImpl#setResponse" in src for src, tgt in calls)
+
         # Конструктор Order обязан вызывать вспомогательные методы getCode и Date2String
         order_callees = {t for s, t in calls if "Order#<init>()" in s}
         assert any("OrderStatus#getCode" in t for t in order_callees)
