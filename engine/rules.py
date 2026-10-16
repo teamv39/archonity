@@ -221,6 +221,10 @@ class RuntimeRules:
                     "cancelFromOtherOrder" in method_id or "getOrderByIdFromOrderOther" in method_id
                 ):
                     return True
+                if "ExecuteServiceImpl" in method_id and (
+                    "executeOrderOther" in method_id or "getOrderByIdFromOrderOther" in method_id
+                ):
+                    return True
             elif profile.train_mode == "regular_only":
                 if svc == "ts-preserve-service":
                     return True
@@ -229,6 +233,8 @@ class RuntimeRules:
                 if "CancelServiceImpl" in method_id and (
                     "cancelFromOrder" in method_id or "getAccount" in method_id
                 ):
+                    return True
+                if "ExecuteServiceImpl" in method_id and "executeOrder(" in method_id:
                     return True
 
             # 6. Rebook и Cancel методы в рантайме:
@@ -251,6 +257,7 @@ class RuntimeRules:
                         "drawbackMoney",
                         "getAccount",
                         "sendEmail",
+                        "calculateRefund(edu.fudan.common.entity.Order)",
                     )
                     if any(b in method_id for b in blocked_cancel):
                         return True
@@ -268,6 +275,7 @@ class RuntimeRules:
                         "queryTrainTypeByName",
                         "getRouteByRouteId",
                         "getTripAllDetailInformation",
+                        "checkTime",
                     )
                     if any(b in method_id for b in blocked_rebook):
                         return True
@@ -306,12 +314,20 @@ class RuntimeRules:
                         "drawbackMoney",
                         "getAccount",
                         "sendEmail",
+                        "calculateRefund(edu.fudan.common.entity.Order)",
+                        "NotifyInfo#<init>",
+                        "SeatClass#getNameByCode",
                     )
                     if any(b in target or b in source for b in blocked_cancel):
                         return True
                     if "order-other" in target or "orderother" in target.lower():
                         return True
                 if "InsidePaymentController#drawBack" in target or "InsidePaymentController#drawBack" in source:
+                    return True
+
+            # При отмене билета на обычный поезд (ts-order-other-service) уведомления на email (NotifyInfo) и поиск класса места не вызываются
+            if profile.train_mode == "regular_only":
+                if "CancelServiceImpl" in source and any(b in target for b in ("NotifyInfo#<init>", "SeatClass#getNameByCode")):
                     return True
 
             # 2. Отказ в перебронировании (билет уже собран / использован)
@@ -327,6 +343,9 @@ class RuntimeRules:
                         "queryTrainTypeByName",
                         "getRouteByRouteId",
                         "getTripAllDetailInformation",
+                        "checkTime",
+                        "TripAllDetailInfo#<init>",
+                        "Order#<init>",
                     )
                     if any(b in target or b in source for b in blocked_rebook):
                         return True

@@ -397,3 +397,74 @@ class TestRuntimeRules:
             profile=prof_s4,
         )
 
+    def test_execute_and_refusal_dead_code_refinements(self, rules: RuntimeRules) -> None:
+        prof_hs = ScenarioProfile("S1", False, True, True, True, train_mode="high_speed_only")
+        prof_reg = ScenarioProfile("S5", False, False, False, False, train_mode="regular_only")
+        prof_s7 = ScenarioProfile(
+            "S7", False, False, True, False,
+            train_mode="high_speed_only",
+            has_refused_cancel=True,
+            has_refused_rebook=True,
+        )
+
+        # 1. ExecuteServiceImpl: отсечение чужого типа поезда
+        assert rules.is_dead_code_method(
+            "method:ts-execute-service:execute.serivce.ExecuteServiceImpl#executeOrderOther(java.lang.String,int,org.springframework.http.HttpHeaders)",
+            profile=prof_hs,
+        )
+        assert rules.is_dead_code_method(
+            "method:ts-execute-service:execute.serivce.ExecuteServiceImpl#getOrderByIdFromOrderOther(java.lang.String,org.springframework.http.HttpHeaders)",
+            profile=prof_hs,
+        )
+        assert rules.is_dead_code_method(
+            "method:ts-execute-service:execute.serivce.ExecuteServiceImpl#executeOrder(java.lang.String,int,org.springframework.http.HttpHeaders)",
+            profile=prof_reg,
+        )
+
+        # 2. Refusal cancel dead code (S7)
+        assert rules.is_dead_code_method(
+            "method:ts-cancel-service:cancel.service.CancelServiceImpl#calculateRefund(edu.fudan.common.entity.Order)",
+            profile=prof_s7,
+        )
+        src_cancel = "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+        assert rules.is_dead_code_edge(
+            src_cancel, "calls",
+            "method:ts-common:edu.fudan.common.entity.NotifyInfo#<init>()",
+            profile=prof_s7,
+        )
+        assert rules.is_dead_code_edge(
+            src_cancel, "calls",
+            "method:ts-common:edu.fudan.common.entity.SeatClass#getNameByCode(int)",
+            profile=prof_s7,
+        )
+
+        # 3. Regular train cancel dead code (S2)
+        prof_s2 = ScenarioProfile("S2", False, False, False, True, train_mode="regular_only")
+        assert rules.is_dead_code_edge(
+            src_cancel, "calls",
+            "method:ts-common:edu.fudan.common.entity.NotifyInfo#<init>()",
+            profile=prof_s2,
+        )
+        assert rules.is_dead_code_edge(
+            src_cancel, "calls",
+            "method:ts-common:edu.fudan.common.entity.SeatClass#getNameByCode(int)",
+            profile=prof_s2,
+        )
+
+        # 4. Refusal rebook dead code (S7)
+        assert rules.is_dead_code_method(
+            "method:ts-rebook-service:rebook.service.RebookServiceImpl#checkTime(java.lang.String,java.lang.String)",
+            profile=prof_s7,
+        )
+        src_rebook = "method:ts-rebook-service:rebook.service.RebookServiceImpl#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
+        assert rules.is_dead_code_edge(
+            src_rebook, "calls",
+            "method:ts-common:edu.fudan.common.entity.TripAllDetailInfo#<init>()",
+            profile=prof_s7,
+        )
+        assert rules.is_dead_code_edge(
+            src_rebook, "calls",
+            "method:ts-common:edu.fudan.common.entity.Order#<init>()",
+            profile=prof_s7,
+        )
+
