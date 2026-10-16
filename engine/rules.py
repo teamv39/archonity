@@ -231,10 +231,12 @@ class RuntimeRules:
                 if svc == "ts-travel-service" and not getattr(profile, "has_advanced_search", False):
                     return True
                 if "CancelServiceImpl" in method_id and (
-                    "cancelFromOrder" in method_id or "getAccount" in method_id
+                    "cancelFromOrder" in method_id or "getAccount" in method_id or "getOrderByIdFromOrder(" in method_id
                 ):
                     return True
-                if "ExecuteServiceImpl" in method_id and "executeOrder(" in method_id:
+                if "ExecuteServiceImpl" in method_id and (
+                    "executeOrder(" in method_id or "getOrderByIdFromOrder(" in method_id
+                ):
                     return True
 
             # 6. Rebook и Cancel методы в рантайме:
@@ -377,16 +379,11 @@ class RuntimeRules:
                     if s_svc in (
                         "ts-inside-payment-service",
                         "ts-seat-service",
+                        "ts-execute-service",
+                        "ts-cancel-service",
                         "ts-rebook-service",
                         "ts-preserve-other-service",
                     ) and t_svc == "ts-order-service":
-                        return True
-                    if s_svc == "ts-cancel-service" and t_svc == "ts-order-service":
-                        # При отмене билета CancelServiceImpl всегда вызывает getOrderByIdFromOrder,
-                        # но НЕ вызывает cancelFromOrder (modifyOrder) для чужого сервиса.
-                        if "cancelFromOrder" in source or "modify" in target.lower():
-                            return True
-                    if s_svc == "ts-execute-service" and "executeOrder" in source and t_svc == "ts-order-service":
                         return True
                 # В S7 при смене получателя багажа вес не меняется, пересчет цены не вызывается
                 if profile.id == "S7" and "updateConsignRecord" in source and "ts-consign-price-service" in target:
@@ -425,7 +422,7 @@ class RuntimeRules:
                     if target_svc == "ts-travel-service" and not getattr(profile, "has_advanced_search", False):
                         return True
                     if target_svc == "ts-order-service":
-                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source or "getOrderById" in source):
+                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source):
                             return True
 
             return False
