@@ -25,6 +25,7 @@ class ScenarioProfile:
     has_refused_cancel: bool = False
     has_refused_rebook: bool = False
     has_external_payment: bool = False
+    has_advanced_search: bool = False
 
     @classmethod
     def from_scenario(cls, scenario_dict: dict[str, Any]) -> ScenarioProfile:
@@ -94,6 +95,11 @@ class ScenarioProfile:
             re.search(r"\b(?:external payment|empty balance)\b", text)
         )
 
+        # 8. Расширенный поиск / пересадки (поиск идет по всей сети, включая скоростные поезда)
+        has_advanced_search = bool(
+            re.search(r"\b(?:advanced search|cheapest|quickest|fewest-stops|minstation|transfer)\b", text)
+        )
+
         return cls(
             id=sid,
             is_admin=is_admin,
@@ -104,6 +110,7 @@ class ScenarioProfile:
             has_refused_cancel=has_refused_cancel,
             has_refused_rebook=has_refused_rebook,
             has_external_payment=has_external_payment,
+            has_advanced_search=has_advanced_search,
         )
 
 
@@ -211,7 +218,9 @@ class RuntimeRules:
                 if svc in ("ts-preserve-other-service", "ts-travel2-service"):
                     return True
             elif profile.train_mode == "regular_only":
-                if svc in ("ts-preserve-service", "ts-travel-service"):
+                if svc == "ts-preserve-service":
+                    return True
+                if svc == "ts-travel-service" and not getattr(profile, "has_advanced_search", False):
                     return True
 
             # 6. Отказы в отмене и перебронировании
@@ -332,11 +341,15 @@ class RuntimeRules:
                     if s_svc in (
                         "ts-inside-payment-service",
                         "ts-seat-service",
-                        "ts-cancel-service",
                         "ts-rebook-service",
                         "ts-preserve-other-service",
                     ) and t_svc == "ts-order-service":
                         return True
+                    if s_svc == "ts-cancel-service" and t_svc == "ts-order-service":
+                        # При отмене билета CancelServiceImpl всегда вызывает getOrderByIdFromOrder,
+                        # но НЕ вызывает cancelFromOrder (modifyOrder) для чужого сервиса.
+                        if "cancelFromOrder" in source or "modify" in target.lower():
+                            return True
                     if s_svc == "ts-execute-service" and "executeOrder" in source and t_svc == "ts-order-service":
                         return True
                 # В S7 при смене получателя багажа вес не меняется, пересчет цены не вызывается
@@ -371,10 +384,12 @@ class RuntimeRules:
                         if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source):
                             return True
                 elif profile.train_mode == "regular_only":
-                    if target_svc in ("ts-preserve-service", "ts-travel-service"):
+                    if target_svc == "ts-preserve-service":
+                        return True
+                    if target_svc == "ts-travel-service" and not getattr(profile, "has_advanced_search", False):
                         return True
                     if target_svc == "ts-order-service":
-                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source):
+                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source or "getOrderById" in source):
                             return True
 
             return False

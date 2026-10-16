@@ -312,3 +312,46 @@ class TestRuntimeRules:
             profile=prof_s7,
         )
 
+    def test_advanced_search_travel_service_preservation(self, rules: RuntimeRules) -> None:
+        prof_s5 = ScenarioProfile(
+            id="S5",
+            is_admin=False,
+            has_assurance=False,
+            has_consign=False,
+            has_food=False,
+            train_mode="regular_only",
+            has_advanced_search=True,
+        )
+        # При advanced search сервис ts-travel-service НЕ должен отсекаться, так как опрашивается для сравнения
+        assert not rules.is_dead_code_method("method:ts-travel-service:travel.service.TravelServiceImpl#queryInfo()", profile=prof_s5)
+        assert not rules.is_dead_code_edge(
+            "method:ts-travel-service:travel.service.TravelServiceImpl#queryInfo()",
+            "data",
+            "res:table:ts-travel-service.trip",
+            profile=prof_s5,
+        )
+
+    def test_cancel_service_probing_order_service(self, rules: RuntimeRules) -> None:
+        prof_s2 = ScenarioProfile(
+            id="S2",
+            is_admin=False,
+            has_assurance=False,
+            has_consign=False,
+            has_food=True,
+            train_mode="regular_only",
+        )
+        # CancelServiceImpl делает зондирующий getOrderByIdFromOrder к ts-order-service
+        assert not rules.is_dead_code_edge(
+            "method:ts-cancel-service:cancel.service.CancelServiceImpl#getOrderByIdFromOrder(java.lang.String,org.springframework.http.HttpHeaders)",
+            "remote",
+            "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
+            profile=prof_s2,
+        )
+        # Но попытка мутации cancelFromOrder отсекается
+        assert rules.is_dead_code_edge(
+            "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelFromOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+            "remote",
+            "method:ts-order-service:order.controller.OrderController#modifyOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+            profile=prof_s2,
+        )
+
