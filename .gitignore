@@ -129,3 +129,13 @@ out/
 *.code-workspace
 .history/
 hackaton/
+
+# Сгенерированные артефакты
+/output/*
+!/output/confirmed_edges.json
+visualizer/public/data/canonical_graph.json
+visualizer/public/data/evidence.json
+visualizer/public/data/submission.json
+
+# Teamwork scratchpads
+.agents/

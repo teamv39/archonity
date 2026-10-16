@@ -22,5 +22,5 @@ test {
     useJUnitPlatform()
 }
 application {
-    mainClass = 'org.v39a.Main'
+    mainClass = 'com.v39a.Main'
 }

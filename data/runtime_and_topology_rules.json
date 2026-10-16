@@ -553,9 +553,7 @@
       "ts-admin-travel-service",
       "ts-admin-user-service"
     ],
-    "canary_duplicates": [
-      "ts-travel2-service"
-    ],
+    "canary_duplicates": [],
     "slow_train_branch": [
       "ts-preserve-other-service",
       "ts-order-other-service"

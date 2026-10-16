@@ -24,6 +24,14 @@ export const trainTicketBenchmarkGraph: CanonicalGraph = mergePipelineFiles([
  */
 export async function fetchDemoGraph(): Promise<CanonicalGraph> {
   try {
+    const response = await fetch('/data/canonical_graph.json');
+    if (response.ok) {
+      return (await response.json()) as CanonicalGraph;
+    }
+  } catch {
+    // fallback to demo_graph.json
+  }
+  try {
     const response = await fetch('/data/demo_graph.json');
     if (response.ok) {
       return (await response.json()) as CanonicalGraph;
