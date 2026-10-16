@@ -47,7 +47,7 @@ class ArchonityPipeline:
         scenario_dict: dict[str, Any],
         scenario_state: ScenarioState | None = None,
     ) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
-        """Обработка одного сценария: grounding + state tracking + graph traversal + filtering."""
+        """Обработка одного сценария: пошаговый grounding + state tracking + graph traversal + filtering."""
         sid = scenario_dict.get("id", "S?")
         profile = ScenarioProfile.from_scenario(scenario_dict)
 
@@ -59,13 +59,6 @@ class ArchonityPipeline:
                 scenario_profile=profile,
             )
 
-        # Шаг 2: Применение мутаций по шагам сценария (M3)
-        for st in scenario_dict.get("steps") or []:
-            scenario_state.apply_step(st, scenario_dict=scenario_dict)
-
-        # Шаг 3: Grounding точек входа
-        entries = self.grounder.ground(scenario_dict)
-
         step_texts = [st.get("action", "") for st in scenario_dict.get("steps") or []]
         scenario_meta = {
             "id": sid,
@@ -74,16 +67,45 @@ class ArchonityPipeline:
             "step_texts": step_texts,
         }
 
-        # Шаг 4: Обход графа с изоляцией БД, состоянием сценария и фильтрацией мертвого кода
-        methods, calls, remote, data = self.builder.traverse(
-            entries,
-            is_admin_scenario=profile.is_admin,
-            scenario_meta=scenario_meta,
-            profile=profile,
-            scenario_state=scenario_state,
-        )
+        all_methods: set[str] = set()
+        all_calls: set[tuple[str, str]] = set()
+        all_remote: set[tuple[str, str]] = set()
+        all_data: set[tuple[str, str]] = set()
 
-        return methods, calls, remote, data
+        prev_files: set[str] = set()
+
+        # Шаг 2: Пошаговый обход графа (Step-by-step Execution)
+        for st in scenario_dict.get("steps") or []:
+            step_profile = profile.for_step(st)
+            step_entries, prev_files = self.grounder.ground_step(
+                st,
+                step_profile,
+                prev_files=prev_files,
+            )
+            if not step_entries:
+                # Клиентский UI-шаг без обращения к бэкенду
+                scenario_state.apply_step(st, scenario_dict=scenario_dict)
+                continue
+
+            m, c, r, d = self.builder.traverse(
+                step_entries,
+                is_admin_scenario=step_profile.is_admin,
+                scenario_meta=scenario_meta,
+                profile=step_profile,
+                scenario_state=scenario_state,
+            )
+            all_methods |= m
+            all_calls |= c
+            all_remote |= r
+            all_data |= d
+
+            # Применение мутаций текущего шага к состоянию сценария
+            scenario_state.apply_step(st, scenario_dict=scenario_dict)
+
+        # Гарантия правила R19: каждый метод из связей calls/remote/data входит в executes
+        all_methods |= {s for s, _ in all_calls | all_remote | all_data} | {t for _, t in all_calls | all_remote}
+
+        return all_methods, all_calls, all_remote, all_data
 
     def run_all(
         self,

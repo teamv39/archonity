@@ -195,3 +195,22 @@ class TestPipelineE2E:
 
         assert data1 == data2, "Non-deterministic submission generation detected across consecutive runs"
 
+    def test_step_by_step_options_isolation(self, pipeline: ArchonityPipeline) -> None:
+        """Изоляция опций бронирования (README): в сценариях без страховки/еды/багажа эти сервисы не вызываются."""
+        # В S5 пассажир заказывает билет 'without food, assurance or consignment'
+        s5_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S5.json")
+        methods, calls, remote, data = pipeline.run_scenario(s5_dict)
+
+        remote_targets = {t for _, t in remote}
+        assert not any("ts-consign" in t for t in remote_targets), "S5 unexpectedly called ts-consign-service"
+        assert not any("ts-assurance" in t for t in remote_targets), "S5 unexpectedly called ts-assurance-service"
+        assert not any("ts-food" in t for t in remote_targets), "S5 unexpectedly called ts-food-service"
+
+        # В S2 пассажир заказывает билет 'with food from a station store, no assurance and no luggage consignment'
+        s2_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S2.json")
+        _, _, remote_s2, _ = pipeline.run_scenario(s2_dict)
+        remote_s2_targets = {t for _, t in remote_s2}
+        assert not any("ts-consign" in t for t in remote_s2_targets), "S2 unexpectedly called ts-consign-service"
+        assert not any("ts-assurance" in t for t in remote_s2_targets), "S2 unexpectedly called ts-assurance-service"
+        assert any("ts-food" in t or "food" in t for t in remote_s2_targets), "S2 should call food services"
+

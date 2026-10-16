@@ -40,44 +40,48 @@ class ScenarioProfile:
         is_admin = "admin" in text or "administrator" in text
 
         # 2. Страховка (Assurance / Insurance)
-        has_assurance = False
-        if "assurance" in text or "insurance" in text:
-            # Положительные триггеры: выбор типа, просмотр типов или записей страховки
-            has_assurance = bool(
-                re.search(
-                    r"\b(?:first type|assurance\w*\s+record\w*|assurance\w*\s+types?|list of assurance\w*|type 1|type 2)\b",
-                    text,
-                )
+        neg_ass = bool(re.search(r"\b(?:no|without)\b[^\n.;]*?\b(?:assurance|insurance)\b", text))
+        pos_ass = bool(
+            re.search(
+                r"\b(?:with\s+assurance|assurance\s+of|insurance\s+of|type\s+1|type\s+2|first\s+type|assurance\w*\s+record|list\s+of\s+assurance)\b",
+                text,
             )
+        )
+        has_assurance = pos_ass and not (
+            neg_ass and not bool(re.search(r"\b(?:with\s+assurance|first\s+type|assurance\w*\s+record)\b", text))
+        )
 
         # 3. Багаж (Consignment / Luggage)
-        has_consign = False
-        has_consign_weight_change = False
-        if "consign" in text or "luggage" in text or "baggage" in text:
-            # Положительные триггеры: вес, проверка записей, смена получателя, просмотр
-            has_consign = bool(
-                re.search(
-                    r"\b(?:\d+(?:\.\d+)?\s*kg|consign\w*\s+record\w*|look\s*up[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|check[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|view[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|change[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|consign\w*\s+within)\b",
-                    text,
-                )
+        neg_con = bool(re.search(r"\b(?:no|without)\b[^\n.;]*?\b(?:consign\w*|luggage|baggage)\b", text))
+        pos_con = bool(
+            re.search(
+                r"\b(?:\d+(?:\.\d+)?\s*kg|with\s+(?:a\s+)?luggage|with\s+(?:a\s+)?consign\w*|look\s*up[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|check[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|view[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|change[^\n.;,]{0,30}?(?:consign\w*|luggage\w*)|consign\w*\s+within)\b",
+                text,
             )
-            # Изменение веса багажа при модификации consignment (ConsignServiceImpl.java:97)
-            has_consign_weight_change = bool(
-                re.search(
-                    r"\b(?:change\w*|update\w*|modif\w*|alter\w*)\b[^\n.;,]{0,40}?\b(?:weight|heavy|kg|kilo)\b",
-                    text,
-                )
+        )
+        has_consign = pos_con and not (
+            neg_con and not bool(re.search(r"\b(?:\d+(?:\.\d+)?\s*kg|look\s*up[^\n.;,]{0,30}?(?:consign\w*|luggage\w*))\b", text))
+        )
+
+        # Изменение веса багажа при модификации consignment (ConsignServiceImpl.java:97)
+        has_consign_weight_change = bool(
+            re.search(
+                r"\b(?:change\w*|update\w*|modif\w*|alter\w*)\b[^\n.;,]{0,40}?\b(?:weight|heavy|kg|kilo)\b",
+                text,
             )
+        )
 
         # 4. Бортовое и вокзальное питание (Food)
-        has_food = False
-        if "food" in text:
-            has_food = bool(
-                re.search(
-                    r"\b(?:food\w*\s+menu|menu offered|food\w*\s+stores?|station food|food on the train|first dish)\b",
-                    text,
-                )
+        neg_food = bool(re.search(r"\b(?:no|without)\b[^\n.;]*?\bfood\b", text))
+        pos_food = bool(
+            re.search(
+                r"\b(?:with\s+food|food\s+on|station\s+food|food\s+from|food\s+offered|first\s+dish|food\w*\s+menu|food\w*\s+stores?)\b",
+                text,
             )
+        )
+        has_food = pos_food and not (
+            neg_food and not bool(re.search(r"\b(?:with\s+food|station\s+food|first\s+dish|food\w*\s+menu)\b", text))
+        )
 
         # 5. Тип поездов (высокоскоростные / обычные)
         if "both train types" in text or "both types" in text or "both high-speed" in text:
@@ -121,6 +125,60 @@ class ScenarioProfile:
             has_external_payment=has_external_payment,
             has_advanced_search=has_advanced_search,
             has_consign_weight_change=has_consign_weight_change,
+        )
+
+    def for_step(self, step_dict: dict[str, Any]) -> ScenarioProfile:
+        """Построение профиля, адаптированного под конкретный шаг сценария."""
+        act = (step_dict.get("action") or "").lower()
+
+        # По умолчанию наследуем параметры сценария
+        step_has_assurance = self.has_assurance
+        step_has_food = self.has_food
+        step_has_consign = self.has_consign
+        step_train_mode = self.train_mode
+        step_has_refused_cancel = self.has_refused_cancel
+        step_has_refused_rebook = self.has_refused_rebook
+
+        is_preserve = bool(re.search(r"\b(?:book|reserve|preserve)\b", act))
+        if is_preserve:
+            # Опции заказа при бронировании (билет со страховкой/едой/багажом или без)
+            neg_step_ass = bool(re.search(r"\b(?:no|without)\b[^\n.;]*?\b(?:assurance|insurance)\b", act))
+            pos_step_ass = bool(re.search(r"\b(?:with\s+assurance|assurance\s+of|insurance\s+of|first\s+type)\b", act))
+            step_has_assurance = pos_step_ass and not neg_step_ass
+
+            neg_step_food = bool(re.search(r"\b(?:no|without)\b[^\n.;]*?\bfood\b", act))
+            pos_step_food = bool(re.search(r"\b(?:with\s+food|food\s+on|station\s+food|food\s+from|first\s+dish)\b", act))
+            step_has_food = pos_step_food and not neg_step_food
+
+            neg_step_con = bool(re.search(r"\b(?:no|without)\b[^\n.;]*?\b(?:consign\w*|luggage|baggage)\b", act))
+            pos_step_con = bool(re.search(r"\b(?:\d+(?:\.\d+)?\s*kg|with\s+(?:a\s+)?luggage|with\s+(?:a\s+)?consign\w*)\b", act))
+            step_has_consign = pos_step_con and not neg_step_con
+
+        # Уточнение типа поезда для конкретного шага
+        if "regular" in act or "other" in act:
+            step_train_mode = "regular_only"
+        elif "high-speed" in act or "gaotie" in act or "dongche" in act:
+            step_train_mode = "high_speed_only"
+
+        # Шаги с отказом (refused)
+        if "refuses" in act or "try to" in act or "refused" in act:
+            if "cancel" in act:
+                step_has_refused_cancel = True
+            if "rebook" in act:
+                step_has_refused_rebook = True
+
+        return ScenarioProfile(
+            id=self.id,
+            is_admin=self.is_admin,
+            has_assurance=step_has_assurance,
+            has_consign=step_has_consign,
+            has_food=step_has_food,
+            train_mode=step_train_mode,
+            has_refused_cancel=step_has_refused_cancel,
+            has_refused_rebook=step_has_refused_rebook,
+            has_external_payment=self.has_external_payment,
+            has_advanced_search=self.has_advanced_search,
+            has_consign_weight_change=self.has_consign_weight_change,
         )
 
 
@@ -211,17 +269,20 @@ class RuntimeRules:
             if not getattr(profile, "has_external_payment", False) and svc == "ts-payment-service":
                 return True
 
-            # 2. Сервис страховок
-            if not profile.has_assurance and svc == "ts-assurance-service":
-                return True
+            # 2. Сервис страховок и вызовы в preserve
+            if not profile.has_assurance:
+                if svc == "ts-assurance-service" or "addAssuranceForOrder" in method_id:
+                    return True
 
-            # 3. Сервисы багажа
-            if not profile.has_consign and "consign" in svc:
-                return True
+            # 3. Сервисы багажа и вызовы в preserve
+            if not profile.has_consign:
+                if "consign" in svc or "createConsign" in method_id:
+                    return True
 
-            # 4. Сервисы питания
-            if not profile.has_food and "food" in svc:
-                return True
+            # 4. Сервисы питания и вызовы в preserve
+            if not profile.has_food:
+                if "food" in svc or "createFoodOrder" in method_id or "FoodOrder#<init>" in method_id:
+                    return True
 
             # 5. Скоростные против медленных поездов
             # Замечание: ts-order-other-service опрашивается фронтендом всегда при refresh orders
