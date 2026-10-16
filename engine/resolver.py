@@ -478,6 +478,56 @@ class ScenarioGrounder:
         code_docs, ui_docs = build_handler_docs(index, ui_tokens)
         self.scorer = Scorer(code_docs, ui_docs)
 
+    def ground_step(
+        self,
+        st: dict[str, Any],
+        profile: Any,
+        prev_files: set[str] | None = None,
+        beta: float = 0.0,
+        tau: float = 0.05,
+        admin_pen: float = 0.5,
+    ) -> tuple[set[str], set[str]]:
+        """Резолвинг одного шага сценария в точки входа и контекст связанных файлов."""
+        prev = set(prev_files) if prev_files else set()
+        act = st.get("action") or ""
+
+        # Пропуск клиентских UI-шагов без обращения к бэкенду (просмотр строк таблицы заказов и цен в кэше UI)
+        if re.search(
+            r"^\s*(?:open\s+(?:the\s+)?(?:first\s+|second\s+)?(?:new\s+)?order|check\s+(?:the\s+)?price\s+of\s+(?:the\s+)?order)\s*$",
+            act,
+            re.IGNORECASE,
+        ):
+            return set(), prev
+
+        # Принцип Guarantees-first: если шаг имеет детерминированные точки входа по явному намерению,
+        # используем их и пропускаем BM25 для предотвращения ложноположительных срабатываний.
+        guarantees = get_intent_guarantees(act, profile)
+        if guarantees:
+            return guarantees, prev
+
+        is_admin = getattr(profile, "is_admin", False)
+        q = expand_query(query_toks(act))
+        ranked = []
+        for sc, h in self.scorer.rank(q):
+            h_mod = self.index.module.get(h, "")
+            files = self.files.get(h, ())
+            is_admin_ep = "admin" in h_mod or (files and all("admin" in os.path.basename(f) for f in files))
+            if not is_admin and is_admin_ep:
+                sc *= admin_pen
+            if self.files.get(h, set()) & prev:
+                sc *= 1 + beta
+            ranked.append((sc, h))
+        ranked.sort(reverse=True)
+        entries: set[str] = set()
+        if ranked:
+            best = ranked[0][0]
+            hs = {h for sc, h in ranked if sc >= best * (1 - tau)}
+            entries |= hs
+            if hs:
+                prev = set().union(*(self.files.get(h, set()) for h in hs))
+
+        return entries, prev
+
     def ground(
         self,
         scenario_dict: dict[str, Any],
@@ -489,44 +539,18 @@ class ScenarioGrounder:
         from engine.rules import ScenarioProfile
 
         profile = ScenarioProfile.from_scenario(scenario_dict)
-        is_admin = profile.is_admin
         entries: set[str] = set()
         prev_files: set[str] = set()
 
         for st in scenario_dict.get("steps") or []:
-            act = st.get("action") or ""
-            # Пропуск клиентских UI-шагов без обращения к бэкенду (просмотр строк таблицы заказов и цен в кэше UI)
-            if re.search(
-                r"^\s*(?:open\s+(?:the\s+)?(?:first\s+|second\s+)?(?:new\s+)?order|check\s+(?:the\s+)?price\s+of\s+(?:the\s+)?order)\s*$",
-                act,
-                re.IGNORECASE,
-            ):
-                continue
-
-            # Принцип Guarantees-first: если шаг имеет детерминированные точки входа по явному намерению,
-            # используем их и пропускаем BM25 для предотвращения ложноположительных срабатываний.
-            guarantees = get_intent_guarantees(act, profile)
-            if guarantees:
-                entries |= guarantees
-                continue
-
-            q = expand_query(query_toks(act))
-            ranked = []
-            for sc, h in self.scorer.rank(q):
-                h_mod = self.index.module.get(h, "")
-                files = self.files.get(h, ())
-                is_admin_ep = "admin" in h_mod or (files and all("admin" in os.path.basename(f) for f in files))
-                if not is_admin and is_admin_ep:
-                    sc *= admin_pen
-                if self.files.get(h, set()) & prev_files:
-                    sc *= 1 + beta
-                ranked.append((sc, h))
-            ranked.sort(reverse=True)
-            if ranked:
-                best = ranked[0][0]
-                hs = {h for sc, h in ranked if sc >= best * (1 - tau)}
-                entries |= hs
-                if hs:
-                    prev_files = set().union(*(self.files.get(h, set()) for h in hs))
+            step_entries, prev_files = self.ground_step(
+                st,
+                profile,
+                prev_files=prev_files,
+                beta=beta,
+                tau=tau,
+                admin_pen=admin_pen,
+            )
+            entries |= step_entries
 
         return entries
