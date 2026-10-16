@@ -13,7 +13,7 @@ from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex
 from engine.rules import RuntimeRules, ScenarioProfile
-from engine.state import ScenarioState
+from engine.state import ScenarioState, TrainType
 
 
 class GraphBuilder:
@@ -250,10 +250,29 @@ class GraphBuilder:
 
         # ts-order-other-service.orders_other
         if any("ts-order-other-service.orders_other" in t for t in table_targets):
-            order_other_init = "method:ts-order-other-service:other.entity.Order#<init>()"
-            if order_other_init in self.index.N:
-                active_methods.add(order_other_init)
-                self._add_order_constructor_calls(order_other_init, active_methods, edges_calls)
+            has_other_orders = True
+            is_new = False
+            if scenario_state is not None:
+                is_new = scenario_state.is_new_user
+            elif profile is not None:
+                is_new = getattr(profile, "is_new_user", False)
+
+            if is_new:
+                if scenario_state is not None:
+                    has_other_orders = any(
+                        getattr(o.get("train_type", None), "name", str(o.get("train_type", ""))) == "Other"
+                        or o.get("train_type") == TrainType.Other
+                        or o.get("train_type") == "Other"
+                        for o in scenario_state.orders
+                    )
+                else:
+                    has_other_orders = False
+
+            if has_other_orders:
+                order_other_init = "method:ts-order-other-service:other.entity.Order#<init>()"
+                if order_other_init in self.index.N:
+                    active_methods.add(order_other_init)
+                    self._add_order_constructor_calls(order_other_init, active_methods, edges_calls)
 
             # Фильтрация неактивного условия по дате в queryOrders
             query_orders = (
