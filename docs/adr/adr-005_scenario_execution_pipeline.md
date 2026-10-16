@@ -189,7 +189,7 @@ Python. Обёртка над `platform/evaluate_golden.py`: балл на S0, �
 
 Предварительно (16.10, [исследование](../researches/model_selection.md); окончательно — по бейкоффу 17.10, [OQ-05](../open-questions.md#oq-05)):
 
-- Эмбеддинги: `Qwen3-Embedding-4B` (Apache-2.0), запасная `Qwen3-Embedding-0.6B`. CodeBERT, Jina Code и SFR-Code не берём: слабее на независимом бенчмарке поиска кода или лицензия CC-BY-NC.
+- Эмбеддинги: `Qwen3-Embedding-4B` или `EmbeddingGemma 2` (обе Apache-2.0, выберет бейкофф), запасная `Qwen3-Embedding-0.6B`. CodeBERT, Jina Code и SFR-Code не берём: слабее на независимом бенчмарке поиска кода или лицензия CC-BY-NC.
 - LLM: при NVFP4 и 16 ГБ VRAM остаётся класс 9B (`Qwen3.5-9B`). `Qwen3.6-35B-A3B` в GGUF с частью экспертов в RAM заметно сильнее по заявленным цифрам, но не укладывается в формулировку выше. Нужно решение команды: остаётся ли NVFP4 жёстким требованием.
 
 ## Последствия

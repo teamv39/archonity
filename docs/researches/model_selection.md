@@ -14,7 +14,7 @@
 
 ### Вывод
 
-Основной кандидат — **Qwen3-Embedding-4B** (Apache-2.0). Запасной, лёгкий — Qwen3-Embedding-0.6B. CodeBERT, Jina Code и SFR-Code не берём.
+Основной кандидат — **Qwen3-Embedding-4B** (Apache-2.0). Рядом в бейкофф идёт **EmbeddingGemma 2** (Apache-2.0): по заявленным цифрам на коде она отстаёт от 4B на 1.4 пункта и в несколько раз меньше. Запасной, лёгкий — Qwen3-Embedding-0.6B. CodeBERT, Jina Code и SFR-Code не берём.
 
 ### Кандидаты
 
@@ -23,6 +23,7 @@
 | Qwen3-Embedding-8B | 8B | Apache-2.0 | 80.68 | 71.7 | около 16 ГБ (оценка) | В бейкофф. Целиком в 16 ГБ не влезает: 8-бит или CPU |
 | **Qwen3-Embedding-4B** | 4B | Apache-2.0 | 80.06 | 72.7 | около 8 ГБ (оценка) | **Основной** |
 | Qwen3-Embedding-0.6B | 0.6B | Apache-2.0 | 75.41 | 66.9 | около 1.2 ГБ (оценка) | Запасной, работает на CPU |
+| EmbeddingGemma 2 | 0.74B (текст 0.27B) | Apache-2.0 | 78.68 (данные Google) | нет | 1.49 ГБ | В бейкофф: второй основной кандидат |
 | jina-code-embeddings-1.5b | 1.54B | CC-BY-NC-4.0 | 78.94 (данные Jina) | 56.2 | 3.1 ГБ | Только контроль в бейкоффе |
 | jina-code-embeddings-0.5b | 0.49B | CC-BY-NC-4.0 | 78.72 (данные Jina) | нет | около 1 ГБ | Не берём |
 | SFR-Embedding-Code-2B_R | 2B | CC-BY-NC-4.0 и условия Gemma | CoIR 67.4 (карточка) | нет | нет данных | Не берём |
@@ -37,6 +38,23 @@ MTEB-Code для Qwen — таблица 9 статьи Qwen3-Embedding. CORE-Be
 - Apache-2.0. Jina Code, Jina v5 и SFR выпущены под CC-BY-NC-4.0: для хакатона, вероятно, допустимо, но код лучших решений организаторы перезапускают и проверяют, поэтому лучше обойтись моделью без ограничений.
 - Размерность 2560 с поддержкой Matryoshka, контекст 32K (документы у нас короткие), запуск через `sentence-transformers` (`transformers` от 4.51) или vLLM.
 - 8B на CORE-Bench L1 не лучше 4B (71.7 против 72.7), на MTEB-Code прирост меньше одного пункта. Стоит проверить на своих данных, но ожидать выигрыша не стоит.
+
+### EmbeddingGemma 2
+
+Google, [`google/embeddinggemma-2`](https://huggingface.co/google/embeddinggemma-2), на Hugging Face с 14.09.2026, Apache-2.0, без gated-доступа. Один файл 1.49 ГБ в BF16: 0.74B параметров, из них текст 0.27B, остальное визуальный и аудио-энкодеры. В текстовом режиме их не грузим (`config_kwargs={"vision_config": None, "audio_config": None}`), отдельного id для текстовой версии нет. Контекст 8K, вектор 768 с усечением до 512, 256, 128, mean pooling.
+
+Числа Google; независимых замеров нет, в CORE-Bench её нет. Qwen — из карточки Qwen3-Embedding и статьи.
+
+| | EmbeddingGemma 2 | Qwen3-Embedding 0.6B | 4B | 8B |
+|---|---|---|---|---|
+| MTEB-Code, nDCG@10 | 78.68 | 75.41 | 80.06 | 80.68 |
+| MTEB English v2, среднее | 68.46 | 70.70 | 74.60 | 75.22 |
+
+- На коде она на 1.4 пункта ниже 4B и на 3.3 выше 0.6B. При усечении вектора до 256 измерений код даёт 76.18; нам это не нужно, корпус крошечный.
+- На английском среднем отставание от 4B больше шести пунктов, от 0.6B — два. Но это среднее по всем задачам MTEB, включая классификацию, кластеризацию и STS, а нам нужен только поиск. Отдельной цифры по английскому поиску на карточке нет. MTEB-Code ближе к нашей задаче: запросы там тоже на английском, документ — код. Разрыв не отбрасываем, а проверяем на своих парах.
+- У неё готовые промпты для кода: запрос `task: code retrieval | query: {запрос}`, документ `title: {имя файла} | text: {код}`. Для Qwen инструкцию пишем сами.
+- Только `bfloat16` или `float32`: карточка предупреждает, что `float16` даёт NaN или искажённые векторы без ошибки.
+- Размер для нас не главное: векторы считаем один раз и кешируем. Что даёт малый размер: пересчёт на CPU без GPU и 1.5 ГБ вместо 8 ГБ у 4B, если эмбеддер и LLM окажутся в памяти вместе. Если Recall@k в бейкоффе в пределах шума от 4B, берём EmbeddingGemma 2 по правилу «при равенстве меньшая модель».
 
 ### Почему не CodeBERT
 
@@ -117,7 +135,7 @@ Qwen3.8 и Qwen3.6 меньше 27B не имеют. Меньшие размер
 Данные: 5 шагов S0 из `gold/S0.json` плюс пары «шаг — обработчик» из ручной сверки S1–S7 ([OQ-08](../open-questions.md#oq-08)), порядка 40–60 пар. На такой выборке разница в одну-две пары — шум; при равенстве берём меньшую модель.
 
 Эмбеддинги:
-- Recall@5/10/15 для BM25, dense и RRF; модели: Qwen3-Embedding 0.6B, 4B, 8B, jina-code-embeddings-1.5b (контроль), CodeBERT (нижняя граница); два варианта рендера документа.
+- Recall@5/10/15 для BM25, dense и RRF; модели: Qwen3-Embedding 0.6B, 4B, 8B, EmbeddingGemma 2, jina-code-embeddings-1.5b (контроль), CodeBERT (нижняя граница); два варианта рендера документа.
 - Смотрим, какие пары теряет RRF, а не только среднее.
 
 LLM:
@@ -128,6 +146,7 @@ LLM:
 ## Источники
 
 - Qwen3-Embedding: [статья](https://arxiv.org/abs/2506.05176), [карточка 4B](https://huggingface.co/Qwen/Qwen3-Embedding-4B)
+- [EmbeddingGemma 2](https://huggingface.co/google/embeddinggemma-2)
 - Jina: [jina-code-embeddings](https://jina.ai/news/jina-code-embeddings-sota-code-retrieval-at-0-5b-and-1-5b), [карточка 1.5B](https://huggingface.co/jinaai/jina-code-embeddings-1.5b), [jina-embeddings-v5-text-small](https://huggingface.co/jinaai/jina-embeddings-v5-text-small)
 - [CORE-Bench](https://arxiv.org/abs/2606.11864), таблица 3 в [HTML-версии](https://arxiv.org/html/2606.11864v3)
 - [SFR-Embedding-Code-2B_R](https://huggingface.co/Salesforce/SFR-Embedding-Code-2B_R), [C2LLM-7B](https://huggingface.co/codefuse-ai/C2LLM-7B)
