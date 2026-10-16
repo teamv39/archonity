@@ -1,5 +1,7 @@
 # RFC-001: Архитектура пайплайна восстановления графа
 
+> **Устарело.** Написано до выхода пакета участника, под задачу глобального графа сервисов. Действующий пайплайн — [ADR-005](../adr/adr-005_scenario_execution_pipeline.md), правила разметки — [annotation_rules.md](../annotation_rules.md).
+
 * **Статус:** superseded (заменен [ADR-004](../adr/adr-004_hybrid_recovery_pipeline_and_arbitration.md) / [RFC-05](rfc-05_hybrid_recovery_pipeline_and_arbitration.md))
 * **Дата:** 15 октября 2026
 
