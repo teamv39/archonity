@@ -1,0 +1,267 @@
+/* ScenarioPlayer.css - CAD-стиль сценарного плеера сквозных сценариев Train Ticket */
+
+.scenario-player-dock {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  width: min(720px, calc(100vw - 380px));
+  background: var(--bg-panel);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+  user-select: none;
+  animation: scenarioSlideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  border-radius: 0;
+  pointer-events: auto;
+}
+
+@keyframes scenarioSlideUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 12px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Верхняя полоса плеера */
+.scenario-player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.scenario-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.scenario-player-icon {
+  color: #0969DA;
+  flex-shrink: 0;
+}
+
+.scenario-tag {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(9, 105, 218, 0.1);
+  color: #0969DA;
+  padding: 1px 4px;
+}
+
+.scenario-select {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  background: #FFFFFF;
+  border: 1px solid var(--border-hairline);
+  color: var(--text-primary);
+  padding: 2px 6px;
+  border-radius: 0;
+  cursor: pointer;
+  max-width: 320px;
+}
+
+.scenario-select:focus {
+  outline: none;
+  border-color: #0969DA;
+}
+
+.scenario-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.scenario-step-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-hairline);
+  color: var(--text-primary);
+}
+
+.scenario-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 22px;
+  padding: 0 6px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-hairline);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.1s ease;
+}
+
+.scenario-ctrl-btn:hover:not(:disabled) {
+  background: var(--bg-subtle);
+  border-color: var(--border-strong);
+}
+
+.scenario-ctrl-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.scenario-ctrl-btn.active-play {
+  background: #EFF6FF;
+  border-color: #3B82F6;
+  color: #1D4ED8;
+}
+
+.scenario-close-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-hairline);
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.1s ease;
+}
+
+.scenario-close-btn:hover {
+  background: #FEF2F2;
+  border-color: #F87171;
+  color: #DC2626;
+}
+
+/* Прогресс-бар */
+.scenario-progress-bar {
+  width: 100%;
+  height: 2px;
+  background: #E4E4E7;
+}
+
+.scenario-progress-fill {
+  height: 100%;
+  background: #0969DA;
+  transition: width 0.2s ease;
+}
+
+/* Тело карточки активного шага */
+.scenario-step-body {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scenario-route-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.scenario-endpoints-flow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.scenario-node-name {
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+  padding: 1px 6px;
+  border: 1px solid var(--border-hairline);
+}
+
+.scenario-arrow {
+  color: #0969DA;
+  font-weight: bold;
+}
+
+.scenario-meta-badges {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.scenario-method-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border: 1px solid var(--border-hairline);
+}
+
+.scenario-method-badge.post {
+  background: #E0F2FE;
+  color: #0284C7;
+  border-color: #BAE6FD;
+}
+
+.scenario-method-badge.get {
+  background: #D1FAE5;
+  color: #059669;
+  border-color: #A7F3D0;
+}
+
+.scenario-method-badge.db {
+  background: #FEF3C7;
+  color: #B45309;
+  border-color: #FDE68A;
+}
+
+.scenario-method-badge.mq {
+  background: #F3E8FF;
+  color: #7E22CE;
+  border-color: #DDD6FE;
+}
+
+.scenario-action-desc {
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+}
+
+.scenario-details-toggle {
+  font-size: 9px;
+  color: #0969DA;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  text-decoration: underline;
+  margin-top: 2px;
+}
+
+.scenario-code-box {
+  background: #18181B;
+  color: #FAFAFA;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.4;
+  padding: 6px 8px;
+  overflow-x: auto;
+  border-radius: 0;
+  margin-top: 4px;
+}

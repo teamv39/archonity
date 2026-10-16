@@ -21,6 +21,11 @@ export const ServiceNode: React.FC<NodeProps> = memo((props) => {
   else if (data.traceState === 'sink') traceClass = 'trace-sink';
   else if (data.traceState === 'dimmed') traceClass = 'trace-dimmed';
 
+  let scenarioClass = '';
+  if (data.scenarioState === 'source') scenarioClass = 'scenario-active-source';
+  else if (data.scenarioState === 'target') scenarioClass = 'scenario-active-target';
+  else if (data.scenarioState === 'dimmed') scenarioClass = 'scenario-dimmed';
+
   const deadCodeClass = data.isDeadCode ? `node-dead-code ${data.deadCodeDisplay.toLowerCase()}` : '';
   const searchClass = data.isMatchedSearch ? 'search-matched' : '';
 
@@ -29,7 +34,7 @@ export const ServiceNode: React.FC<NodeProps> = memo((props) => {
   const sourcePos = isDown ? Position.Bottom : Position.Right;
 
   return (
-    <div className={`custom-node service-node ${blastClass} ${traceClass} ${deadCodeClass} ${searchClass}`}>
+    <div className={`custom-node service-node ${blastClass} ${traceClass} ${scenarioClass} ${deadCodeClass} ${searchClass}`}>
       <Handle type="target" position={targetPos} className="custom-handle" />
 
       <div className="node-header">
@@ -45,6 +50,8 @@ export const ServiceNode: React.FC<NodeProps> = memo((props) => {
           {data.traceState === 'start' && <span className="node-badge badge-trace start">[1] START</span>}
           {data.traceState === 'hop' && <span className="node-badge badge-trace hop">[HOP]</span>}
           {data.traceState === 'sink' && <span className="node-badge badge-trace sink">[SINK]</span>}
+          {data.scenarioState === 'source' && <span className="node-badge badge-trace start">[SRC]</span>}
+          {data.scenarioState === 'target' && <span className="node-badge badge-trace sink">[DST]</span>}
           {data.isDeadCode && <span className="node-badge badge-dead-code" title="Не достижим из публичных точек входа">DEAD</span>}
           <span className="node-badge badge-service">
             {(node.language || 'Java').replace(/ .*/, '').toUpperCase()}
