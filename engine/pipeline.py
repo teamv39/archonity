@@ -80,7 +80,6 @@ class ArchonityPipeline:
                 calls=calls,
                 remote=remote,
                 data=data,
-                stmts=self.index.stmts,
             )
 
         adapter.save(output_path)

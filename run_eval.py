@@ -112,7 +112,7 @@ def print_evaluation_summary(eval_res: dict) -> None:
             continue
         status = sdata.get("status", "unknown")
         accepted = sdata.get("accepted", 0)
-        rejected = len(sdata.get("rejected", {}))
+        rejected = sum(sdata.get("rejected", {}).values())
         print(f"  {sid}: статус '{status}', принято рёбер: {accepted}, отклонено: {rejected}")
 
     if errors := eval_res.get("errors"):

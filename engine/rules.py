@@ -45,10 +45,10 @@ class ScenarioProfile:
         # 3. Багаж (Consignment / Luggage)
         has_consign = False
         if "consign" in text or "luggage" in text or "baggage" in text:
-            # Положительные триггеры: указание веса в кг, просмотр/изменение записей
+            # Положительные триггеры: вес, проверка записей, смена получателя, просмотр
             has_consign = bool(
                 re.search(
-                    r"\b(?:\d+(?:\.\d+)?\s*kg|consign.*record|look up.*(?:consign|luggage)|change.*consign|registered on the account|consignment within)\b",
+                    r"\b(?:\d+(?:\.\d+)?\s*kg|consign\w*\s+record|look\s*up[^\n.;,]{0,30}?(?:consign|luggage)|check[^\n.;,]{0,30}?(?:consign|luggage)|view[^\n.;,]{0,30}?(?:consign|luggage)|change[^\n.;,]{0,30}?(?:consign|luggage)|consign\w*\s+within)\b",
                     text,
                 )
             )
@@ -63,12 +63,12 @@ class ScenarioProfile:
                 )
             )
 
-        # 5. Тип поездов
-        if sid == "S0":
+        # 5. Тип поездов (высокоскоростные / обычные)
+        if "both train types" in text or "both types" in text or "both high-speed" in text:
             train_mode = "both"
-        elif bool(re.search(r"book.*(?:regular|cheapest.*regular|same regular)", text)):
-            train_mode = "regular_only"
-        elif bool(re.search(r"search.*regular trains.*not high-speed", text)):
+        elif bool(re.search(r"book.*?(?:regular|cheapest.*regular|same regular)", text)) or bool(
+            re.search(r"search.*regular trains.*not high-speed", text)
+        ):
             train_mode = "regular_only"
         elif "high-speed" in text or "gaotie" in text:
             train_mode = "high_speed_only"
@@ -133,6 +133,9 @@ class RuntimeRules:
         """Извлечение имени сервиса из method:ts-service:... или res:table:ts-service..."""
         if not node_or_method_id:
             return None
+        if node_or_method_id.startswith("res:table:"):
+            rest = node_or_method_id[len("res:table:"):]
+            return rest.split(".", 1)[0]
         parts = node_or_method_id.split(":")
         if len(parts) >= 2:
             return parts[1]
@@ -163,12 +166,12 @@ class RuntimeRules:
             if not profile.has_assurance and svc == "ts-assurance-service":
                 return True
 
-            # 2. Сервис багажа
-            if not profile.has_consign and svc in ("ts-consign-service", "ts-consign-price-service"):
+            # 2. Сервисы багажа
+            if not profile.has_consign and "consign" in svc:
                 return True
 
             # 3. Сервисы питания
-            if not profile.has_food and svc in ("ts-food-service", "ts-station-food-service", "ts-food-map-service"):
+            if not profile.has_food and "food" in svc:
                 return True
 
             # 4. Скоростные против медленных поездов
@@ -214,11 +217,13 @@ class RuntimeRules:
             if profile:
                 if not profile.has_assurance and target_svc == "ts-assurance-service":
                     return True
-                if not profile.has_consign and target_svc in ("ts-consign-service", "ts-consign-price-service", "ts-consign-mysql"):
+                if not profile.has_consign and "consign" in target_svc:
                     return True
-                if not profile.has_food and target_svc in ("ts-food-service", "ts-station-food-service", "ts-food-map-service"):
+                if not profile.has_food and "food" in target_svc:
                     return True
                 if profile.train_mode == "high_speed_only" and target_svc in ("ts-preserve-other-service", "ts-order-other-service"):
+                    return True
+                if profile.train_mode == "regular_only" and target_svc in ("ts-preserve-service",):
                     return True
 
         return False

@@ -20,7 +20,6 @@ class SubmissionAdapter:
         calls: Iterable[tuple[str, str]],
         remote: Iterable[tuple[str, str]],
         data: Iterable[tuple[str, str]],
-        stmts: dict[str, list[str]] | None = None,
     ) -> None:
         edges: list[dict[str, str]] = []
 
@@ -55,16 +54,6 @@ class SubmissionAdapter:
                 "relation": "data",
                 "target": t,
             })
-
-        # Операторы методов (если есть в скелете, для полноты)
-        if stmts:
-            for m in sorted(methods):
-                for st in stmts.get(m, []):
-                    edges.append({
-                        "source": f"scenario:{scenario_id}",
-                        "relation": "executes",
-                        "target": st,
-                    })
 
         self.scenarios[scenario_id] = edges
 
