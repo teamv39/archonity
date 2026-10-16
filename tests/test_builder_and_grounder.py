@@ -106,3 +106,51 @@ class TestScenarioGrounder:
         assert any("ContactsController#findContactsByAccountId" in e for e in entries)
         assert any("OrderController#queryOrdersForRefresh" in e for e in entries)
         assert any("ConsignController#findByAccountId" in e for e in entries)
+
+    def test_ground_s6_admin_guarantees(self, grounder: ScenarioGrounder, skeleton_index: SkeletonIndex) -> None:
+        s6_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S6.json")
+        entries = grounder.ground(s6_dict)
+
+        for e in entries:
+            assert e in skeleton_index.N
+
+        assert any("AdminBasicInfoController#addStation" in e for e in entries)
+        assert any("AdminBasicInfoController#addTrain" in e for e in entries)
+        assert any("AdminRouteController#addRoute" in e for e in entries)
+        assert any("AdminBasicInfoController#addPrice" in e for e in entries)
+        assert any("AdminTravelController#addTravel" in e for e in entries)
+        assert any("AdminOrderController#getAllOrders" in e for e in entries)
+
+    def test_ground_s5_search_and_regular_trip_details(self, grounder: ScenarioGrounder, skeleton_index: SkeletonIndex) -> None:
+        s5_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S5.json")
+        entries = grounder.ground(s5_dict)
+
+        for e in entries:
+            assert e in skeleton_index.N
+
+        assert any("TravelPlanController#getByMinStation" in e for e in entries)
+        assert any("TravelPlanController#getByCheapest" in e for e in entries)
+        assert any("TravelPlanController#getByQuickest" in e for e in entries)
+        assert any("TravelPlanController#getTransferResult" in e for e in entries)
+        # В S5 детали рейса открываются для обычного поезда (Travel2Controller)
+        assert any("Travel2Controller#getTripAllDetailInfo" in e for e in entries)
+
+    def test_ground_s1_and_s4_food_menu(self, grounder: ScenarioGrounder, skeleton_index: SkeletonIndex) -> None:
+        s1_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S1.json")
+        entries_s1 = grounder.ground(s1_dict)
+        assert any("FoodController#getAllFood" in e for e in entries_s1)
+
+        s4_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S4.json")
+        entries_s4 = grounder.ground(s4_dict)
+        assert any("FoodController#getAllFood" in e for e in entries_s4)
+
+    def test_ground_ui_order_inspection_no_consign_pollution(self, grounder: ScenarioGrounder) -> None:
+        # В S3 нет запроса багажа по номеру заказа, поэтому ConsignController#findByOrderId не должен попадать в точки входа
+        s3_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S3.json")
+        entries_s3 = grounder.ground(s3_dict)
+        assert not any("ConsignController#findByOrderId" in e for e in entries_s3)
+
+        # В S4 багаж вообще отсутствует, findByOrderId не должен появляться
+        s4_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S4.json")
+        entries_s4 = grounder.ground(s4_dict)
+        assert not any("ConsignController#findByOrderId" in e for e in entries_s4)

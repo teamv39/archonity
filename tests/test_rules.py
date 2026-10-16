@@ -126,9 +126,12 @@ class TestRuntimeRules:
         assert RuntimeRules.extract_service("invalid") is None
 
     def test_dead_code_canary_and_unreferenced(self, rules: RuntimeRules) -> None:
-        # Канареечный дубль
-        assert rules.is_dead_code_method("method:ts-travel2-service:travel2.service.Travel2ServiceImpl#getRoutes()")
-        # Капча и аватарки
+        # ts-travel2-service больше не является безусловно мертвым кодом
+        assert not rules.is_dead_code_method("method:ts-travel2-service:travel2.service.Travel2ServiceImpl#getRoutes()")
+        # В high_speed_only ts-travel2-service отсекается профилем
+        prof_hs = ScenarioProfile("test", False, False, False, False, train_mode="high_speed_only")
+        assert rules.is_dead_code_method("method:ts-travel2-service:travel2.service.Travel2ServiceImpl#getRoutes()", profile=prof_hs)
+        # Капча и аватарки — всегда мертвый код
         assert rules.is_dead_code_method("method:ts-verification-code-service:verify.VerifyController#verify()")
         assert rules.is_dead_code_method("method:ts-avatar-service:avatar.controller.AvatarController#get()")
 
@@ -141,7 +144,7 @@ class TestRuntimeRules:
         assert not rules.is_dead_code_method(admin_method, is_admin_scenario=True)
 
     def test_profile_specific_dead_code_filtering(self, rules: RuntimeRules) -> None:
-        # Профиль без страховки и без еды
+        # Профиль без страховки и без еды (внутренний платеж)
         profile_no_ass = ScenarioProfile(
             id="test",
             is_admin=False,
@@ -149,16 +152,20 @@ class TestRuntimeRules:
             has_consign=False,
             has_food=False,
             train_mode="high_speed_only",
+            has_external_payment=False,
         )
         assert rules.is_dead_code_method("method:ts-assurance-service:assurance.service.AssuranceServiceImpl#find()", profile=profile_no_ass)
         assert rules.is_dead_code_method("method:ts-consign-service:consign.service.ConsignServiceImpl#query()", profile=profile_no_ass)
         assert rules.is_dead_code_method("method:ts-food-service:food.service.FoodServiceImpl#getFood()", profile=profile_no_ass)
         assert rules.is_dead_code_method("method:ts-station-food-service:food.service.StationFoodServiceImpl#getFood()", profile=profile_no_ass)
         assert rules.is_dead_code_method("method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve()", profile=profile_no_ass)
+        assert rules.is_dead_code_method("method:ts-travel2-service:travel2.service.Travel2ServiceImpl#queryInfo()", profile=profile_no_ass)
+        # ts-payment-service отсекается, так как has_external_payment=False
+        assert rules.is_dead_code_method("method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay()", profile=profile_no_ass)
         # ts-order-other-service не отсекается, так как опрашивается фронтендом при любом refresh orders
         assert not rules.is_dead_code_method("method:ts-order-other-service:other.service.OrderOtherServiceImpl#query()", profile=profile_no_ass)
 
-        # Профиль с активной страховкой
+        # Профиль с активной страховкой и внешним платежом
         profile_with_ass = ScenarioProfile(
             id="test2",
             is_admin=False,
@@ -166,11 +173,54 @@ class TestRuntimeRules:
             has_consign=True,
             has_food=True,
             train_mode="regular_only",
+            has_external_payment=True,
         )
         assert not rules.is_dead_code_method("method:ts-assurance-service:assurance.service.AssuranceServiceImpl#find()", profile=profile_with_ass)
         assert not rules.is_dead_code_method("method:ts-consign-service:consign.service.ConsignServiceImpl#query()", profile=profile_with_ass)
-        # В regular_only ts-preserve-service (скоростной) должен быть отсечен
+        assert not rules.is_dead_code_method("method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay()", profile=profile_with_ass)
+        # В regular_only ts-preserve-service и ts-travel-service должны быть отсечены
         assert rules.is_dead_code_method("method:ts-preserve-service:preserve.service.PreserveServiceImpl#preserve()", profile=profile_with_ass)
+        assert rules.is_dead_code_method("method:ts-travel-service:travel.service.TravelServiceImpl#queryInfo()", profile=profile_with_ass)
+        # А ts-travel2-service активен
+        assert not rules.is_dead_code_method("method:ts-travel2-service:travel2.service.Travel2ServiceImpl#queryInfo()", profile=profile_with_ass)
+
+    def test_refuse_cancellation_and_rebook_filtering(self, rules: RuntimeRules) -> None:
+        prof_refused = ScenarioProfile(
+            id="test_refused",
+            is_admin=False,
+            has_assurance=False,
+            has_consign=False,
+            has_food=False,
+            train_mode="high_speed_only",
+            has_refused_cancel=True,
+            has_refused_rebook=True,
+        )
+        src_cancel = "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+        assert rules.is_dead_code_edge(src_cancel, "calls", "method:ts-cancel-service:cancel.service.CancelServiceImpl#drawbackMoney()", profile=prof_refused)
+        assert rules.is_dead_code_edge(src_cancel, "remote", "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#drawBack()", profile=prof_refused)
+        assert rules.is_dead_code_edge(src_cancel, "remote", "method:ts-order-other-service:other.controller.OrderOtherController#getOrder()", profile=prof_refused)
+
+        # Проверка is_dead_code_method для методов CancelServiceImpl и InsidePaymentController
+        assert rules.is_dead_code_method("method:ts-cancel-service:cancel.service.CancelServiceImpl#drawbackMoney()", profile=prof_refused)
+        assert rules.is_dead_code_method("method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelFromOrder()", profile=prof_refused)
+        assert rules.is_dead_code_method("method:ts-cancel-service:cancel.service.CancelServiceImpl#getAccount()", profile=prof_refused)
+        assert rules.is_dead_code_method("method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#drawBack()", profile=prof_refused)
+
+        src_rebook = "method:ts-rebook-service:rebook.service.RebookServiceImpl#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
+        assert rules.is_dead_code_edge(src_rebook, "calls", "method:ts-rebook-service:rebook.service.RebookServiceImpl#payDifferentMoney()", profile=prof_refused)
+        assert rules.is_dead_code_edge(src_rebook, "remote", "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#payDifference()", profile=prof_refused)
+        assert rules.is_dead_code_edge(src_rebook, "remote", "method:ts-seat-service:seat.controller.SeatController#create()", profile=prof_refused)
+        assert rules.is_dead_code_edge(src_rebook, "remote", "method:ts-order-other-service:other.controller.OrderOtherController#getOrder()", profile=prof_refused)
+
+        # Проверка is_dead_code_method для методов RebookServiceImpl и зависимых контроллеров
+        assert rules.is_dead_code_method("method:ts-rebook-service:rebook.service.RebookServiceImpl#payDifferentMoney()", profile=prof_refused)
+        assert rules.is_dead_code_method("method:ts-rebook-service:rebook.service.RebookServiceImpl#dipatchSeat()", profile=prof_refused)
+        assert rules.is_dead_code_method("method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#payDifference()", profile=prof_refused)
+        assert rules.is_dead_code_method("method:ts-seat-service:seat.controller.SeatController#create()", profile=prof_refused)
+
+        # Проверка возврата явного False (не None) для разрешенных ребер
+        is_dead = rules.is_dead_code_edge(src_cancel, "calls", "method:ts-cancel-service:cancel.service.CancelServiceImpl#getOrderByIdFromOrder()", profile=prof_refused)
+        assert is_dead is False
 
     def test_dead_code_data_edge(self, rules: RuntimeRules) -> None:
         profile = ScenarioProfile(
@@ -180,11 +230,16 @@ class TestRuntimeRules:
             has_consign=False,
             has_food=False,
             train_mode="high_speed_only",
+            has_external_payment=False,
         )
         src = "method:ts-order-service:order.service.OrderServiceImpl#query()"
 
-        # Таблица мертвого канареечного сервиса
+        # Таблица ts-travel2-service в режиме high_speed_only
         assert rules.is_dead_code_edge(src, "data", "res:table:ts-travel2-service.trip2", profile=profile)
+
+        # Таблицы внешнего платежа при has_external_payment=False
+        assert rules.is_dead_code_edge(src, "data", "res:table:ts-payment-service.payment", profile=profile)
+        assert rules.is_dead_code_edge(src, "data", "res:table:ts-payment-service.money", profile=profile)
 
         # Таблица неактивной страховки
         assert rules.is_dead_code_edge(src, "data", "res:table:ts-assurance-service.assurance", profile=profile)

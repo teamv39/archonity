@@ -277,16 +277,26 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
     t = act.lower()
     intent_eps: set[str] = set()
 
+    # 0. Вход в систему (Log in)
+    if re.search(r"\blog\s*in\b", t):
+        intent_eps.add(
+            "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)"
+        )
+
     # 1. Регистрация нового пассажира
     if re.search(r"\bregister\b.*?(?:account|passenger|user)\b", t):
         intent_eps.add(
             "method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)"
         )
 
-    # 2. Добавление нового контакта в телефонную книгу
+    # 2. Контактная книга: добавление нового контакта vs открытие книги контактов
     if re.search(r"\badd\b.*?\bcontact\b", t):
         intent_eps.add(
             "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)"
+        )
+    elif re.search(r"\b(?:contact\s+book|open.*?contacts?)\b", t):
+        intent_eps.add(
+            "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)"
         )
 
     # 3. Поиск поездов (GaoTie/DongChe против обычных)
@@ -339,15 +349,15 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             )
 
     # 7. Варианты расширенного поиска маршрутов
-    if "fewest stops" in t:
+    if "fewest stops" in t or "minstation" in t:
         intent_eps.add(
             "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
         )
-    if "cheapest" in t and "trip" in t:
+    if "cheapest" in t and ("search" in t or "trips" in t) and not "book" in t:
         intent_eps.add(
             "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
         )
-    if "quickest" in t and "trip" in t:
+    if "quickest" in t and ("search" in t or "trips" in t) and not "book" in t:
         intent_eps.add(
             "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
         )
@@ -356,11 +366,32 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)"
         )
 
-    # 8. Просмотр всех заказов администратором
-    if getattr(profile, "is_admin", False) and re.search(r"\ball\s+orders\b", t):
-        intent_eps.add(
-            "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)"
-        )
+    # 8. Административные действия (S6)
+    if getattr(profile, "is_admin", False):
+        if re.search(r"\badd\b.*?\bprice\b", t):
+            intent_eps.add(
+                "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)"
+            )
+        elif re.search(r"\badd\b.*?\b(?:trip|travel)\b", t):
+            intent_eps.add(
+                "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)"
+            )
+        elif re.search(r"\badd\b.*?\broute\b", t):
+            intent_eps.add(
+                "method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)"
+            )
+        elif re.search(r"\badd\b.*?\btrain\b", t):
+            intent_eps.add(
+                "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)"
+            )
+        elif re.search(r"\badd\b.*?\bstation\b", t):
+            intent_eps.add(
+                "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)"
+            )
+        if re.search(r"\ball\s+orders\b", t):
+            intent_eps.add(
+                "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)"
+            )
 
     # 9. Получение билета и проход на посадку
     if re.search(r"\b(enter\s+the\s+station|board\s+the\s+train)\b", t):
@@ -382,19 +413,30 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
         )
 
-    # 11. Перебронирование (в сценариях соревнований перебронирование либо отклоняется, либо оформляется на более дешевый билет с возвратом разницы через drawbackMoney)
+    # 11. Перебронирование
     if re.search(r"\brebook\b", t):
         intent_eps.add(
             "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
         )
 
     # 12. Просмотр деталей рейса (Open details of the trip found)
-    if re.search(r"\bopen\b.*?\bdetails?\b.*?\btrip\b", t):
-        intent_eps.add(
-            "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)"
-        )
+    if re.search(r"\bopen\b.*?\bdetails?\b.*?\btrip\b", t) or re.search(
+        r"\bdetails?\s+of\s+(?:the\s+)?(?:first\s+|new\s+|cheapest\s+)?trip\b", t
+    ):
+        if getattr(profile, "train_mode", "both") == "regular_only" or "regular" in t or "other" in t:
+            intent_eps.add(
+                "method:ts-travel2-service:travel2.controller.Travel2Controller#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)"
+            )
+        else:
+            intent_eps.add(
+                "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)"
+            )
 
-    # 13. Просмотр точек питания на вокзале
+    # 13. Просмотр меню питания в поезде и точек питания на вокзале
+    if re.search(r"\b(?:food\s+menu|menu\s+offered)\b", t):
+        intent_eps.add(
+            "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+        )
     if re.search(r"\b(?:food\s+stores?|stores?\s+at.*?station)\b", t):
         intent_eps.add(
             "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -454,8 +496,20 @@ class ScenarioGrounder:
 
         for st in scenario_dict.get("steps") or []:
             act = st.get("action") or ""
-            # Гарантируем обязательные детерминированные точки входа по явному намерению
-            entries |= get_intent_guarantees(act, profile)
+            # Пропуск клиентских UI-шагов без обращения к бэкенду (просмотр строк таблицы заказов и цен в кэше UI)
+            if re.search(
+                r"^\s*(?:open\s+(?:the\s+)?(?:first\s+|second\s+)?(?:new\s+)?order|check\s+(?:the\s+)?price\s+of\s+(?:the\s+)?order)\s*$",
+                act,
+                re.IGNORECASE,
+            ):
+                continue
+
+            # Принцип Guarantees-first: если шаг имеет детерминированные точки входа по явному намерению,
+            # используем их и пропускаем BM25 для предотвращения ложноположительных срабатываний.
+            guarantees = get_intent_guarantees(act, profile)
+            if guarantees:
+                entries |= guarantees
+                continue
 
             q = expand_query(query_toks(act))
             ranked = []

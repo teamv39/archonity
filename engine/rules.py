@@ -24,6 +24,7 @@ class ScenarioProfile:
     train_mode: str  # "both", "high_speed_only", "regular_only"
     has_refused_cancel: bool = False
     has_refused_rebook: bool = False
+    has_external_payment: bool = False
 
     @classmethod
     def from_scenario(cls, scenario_dict: dict[str, Any]) -> ScenarioProfile:
@@ -88,6 +89,11 @@ class ScenarioProfile:
             re.search(r"\b(?:refus\w*.*?rebook\w*|rebook\w*.*?refus\w*)\b", text)
         )
 
+        # 7. Внешний платеж (External payment vs внутренний баланс)
+        has_external_payment = bool(
+            re.search(r"\b(?:external payment|empty balance)\b", text)
+        )
+
         return cls(
             id=sid,
             is_admin=is_admin,
@@ -97,6 +103,7 @@ class ScenarioProfile:
             train_mode=train_mode,
             has_refused_cancel=has_refused_cancel,
             has_refused_rebook=has_refused_rebook,
+            has_external_payment=has_external_payment,
         )
 
 
@@ -125,7 +132,7 @@ class RuntimeRules:
                 "ts-admin-travel-service",
                 "ts-admin-user-service",
             }
-            self.canary_services = {"ts-travel2-service"}
+            self.canary_services = set()
             self.unreferenced_services = {"ts-verification-code-service", "ts-avatar-service"}
             return
 
@@ -135,6 +142,7 @@ class RuntimeRules:
         candidates = self.data.get("dead_code_candidates", {})
         self.admin_services = set(candidates.get("admin_cluster", []))
         self.canary_services = set(candidates.get("canary_duplicates", []))
+        self.canary_services.discard("ts-travel2-service")
         self.unreferenced_endpoint_ids = set(candidates.get("unreferenced_endpoint_ids", []))
         self.unreferenced_paths = set(candidates.get("unreferenced_endpoint_paths", []))
         self.hub_exclusions = set(self.data.get("topology_hub_exclusions", []))
@@ -177,26 +185,62 @@ class RuntimeRules:
 
         # Специфические правила профиля сценария
         if profile:
-            # 1. Сервис страховок
+            # 1. Внешний платежный шлюз (ts-payment-service) vs внутренний баланс счета
+            if not getattr(profile, "has_external_payment", False) and svc == "ts-payment-service":
+                return True
+
+            # 2. Сервис страховок
             if not profile.has_assurance and svc == "ts-assurance-service":
                 return True
 
-            # 2. Сервисы багажа
+            # 3. Сервисы багажа
             if not profile.has_consign and "consign" in svc:
                 return True
 
-            # 3. Сервисы питания
+            # 4. Сервисы питания
             if not profile.has_food and "food" in svc:
                 return True
 
-            # 4. Скоростные против медленных поездов
+            # 5. Скоростные против медленных поездов
             # Замечание: ts-order-other-service опрашивается фронтендом всегда при refresh orders
             if profile.train_mode == "high_speed_only":
-                if svc in ("ts-preserve-other-service",):
+                if svc in ("ts-preserve-other-service", "ts-travel2-service"):
                     return True
             elif profile.train_mode == "regular_only":
-                if svc in ("ts-preserve-service",):
+                if svc in ("ts-preserve-service", "ts-travel-service"):
                     return True
+
+            # 6. Отказы в отмене и перебронировании
+            if profile.has_refused_cancel:
+                if "InsidePaymentController#drawBack" in method_id:
+                    return True
+                if "CancelServiceImpl" in method_id:
+                    blocked_cancel = (
+                        "cancelFromOrder",
+                        "cancelFromOtherOrder",
+                        "drawbackMoney",
+                        "getAccount",
+                        "sendEmail",
+                    )
+                    if any(b in method_id for b in blocked_cancel):
+                        return True
+            if profile.has_refused_rebook:
+                if "InsidePaymentController#payDifference" in method_id or "SeatController#create" in method_id:
+                    return True
+                if "RebookServiceImpl" in method_id:
+                    blocked_rebook = (
+                        "dipatchSeat",
+                        "payDifferentMoney",
+                        "drawBackMoney",
+                        "createOrder",
+                        "updateOrder",
+                        "deleteOrder",
+                        "queryTrainTypeByName",
+                        "getRouteByRouteId",
+                        "getTripAllDetailInformation",
+                    )
+                    if any(b in method_id for b in blocked_rebook):
+                        return True
 
         return False
 
@@ -231,7 +275,9 @@ class RuntimeRules:
                     )
                     if any(b in target or b in source for b in blocked_cancel):
                         return True
-                if "InsidePaymentController#drawBack" in target:
+                    if "order-other" in target or "orderother" in target.lower():
+                        return True
+                if "InsidePaymentController#drawBack" in target or "InsidePaymentController#drawBack" in source:
                     return True
 
             # 2. Отказ в перебронировании (билет уже собран / использован)
@@ -250,8 +296,21 @@ class RuntimeRules:
                     )
                     if any(b in target or b in source for b in blocked_rebook):
                         return True
-                if "InsidePaymentController#payDifference" in target or "SeatController#create" in target:
+                    if "order-other" in target or "orderother" in target.lower():
+                        return True
+                if (
+                    "InsidePaymentController#payDifference" in target
+                    or "SeatController#create" in target
+                    or "InsidePaymentController#payDifference" in source
+                    or "SeatController#create" in source
+                ):
                     return True
+
+            # Режим скоростных поездов: в путях CancelServiceImpl и RebookServiceImpl отсекаем вызовы к ts-order-other-service
+            if profile.train_mode == "high_speed_only":
+                if "CancelServiceImpl" in source or "RebookServiceImpl" in source:
+                    if "order-other" in target or "orderother" in target.lower():
+                        return True
 
         if relation == "data":
             target_svc = self.extract_service(target)
@@ -266,16 +325,20 @@ class RuntimeRules:
                 return True
 
             if profile:
+                if not getattr(profile, "has_external_payment", False) and target_svc == "ts-payment-service":
+                    return True
                 if not profile.has_assurance and target_svc == "ts-assurance-service":
                     return True
                 if not profile.has_consign and "consign" in target_svc:
                     return True
                 if not profile.has_food and "food" in target_svc:
                     return True
-                if profile.train_mode == "high_speed_only" and target_svc in ("ts-preserve-other-service",):
+                if profile.train_mode == "high_speed_only" and target_svc in ("ts-preserve-other-service", "ts-travel2-service"):
                     return True
-                if profile.train_mode == "regular_only" and target_svc in ("ts-preserve-service",):
+                if profile.train_mode == "regular_only" and target_svc in ("ts-preserve-service", "ts-travel-service"):
                     return True
+
+            return False
 
         return False
 
