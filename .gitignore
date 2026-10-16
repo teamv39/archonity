@@ -129,3 +129,7 @@ out/
 *.code-workspace
 .history/
 hackaton/
+
+# Сгенерированные артефакты
+/output/*
+!/output/confirmed_edges.json
