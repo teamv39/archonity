@@ -340,14 +340,14 @@ class TestRuntimeRules:
             has_food=True,
             train_mode="regular_only",
         )
-        # В regular_only зондирующий вызов чужого ts-order-service отсекается как мертвый код (симметрично high_speed_only)
-        assert rules.is_dead_code_edge(
+        # CancelServiceImpl делает зондирующий getOrderByIdFromOrder к ts-order-service
+        assert not rules.is_dead_code_edge(
             "method:ts-cancel-service:cancel.service.CancelServiceImpl#getOrderByIdFromOrder(java.lang.String,org.springframework.http.HttpHeaders)",
             "remote",
             "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
             profile=prof_s2,
         )
-        # А вот попытка мутации cancelFromOrder отсекается как мертвый код
+        # Но попытка мутации cancelFromOrder отсекается
         assert rules.is_dead_code_edge(
             "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelFromOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
             "remote",
