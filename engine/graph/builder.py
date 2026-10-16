@@ -68,36 +68,6 @@ class GraphBuilder:
                             edges_calls.add((m, enum_target))
                             seen_methods.add((enum_target, self.index.unit_of(enum_target)))
 
-            # 0.1 Дополнительные R7 Enum-вызовы SeatClass в сервисах Travel, TravelPlan и Rebook
-            if (
-                "TravelServiceImpl#setResponse(" in m
-                or "TravelPlanServiceImpl#getCheapest(" in m
-                or "TravelPlanServiceImpl#getQuickest(" in m
-                or "TravelPlanServiceImpl#getMinStation(" in m
-                or ("RebookServiceImpl#updateOrder(" in m and "TripAllDetail" in m)
-            ):
-                seat_get_code = "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()"
-                if seat_get_code in self.index.N:
-                    edges_calls.add((m, seat_get_code))
-                    seen_methods.add((seat_get_code, self.index.unit_of(seat_get_code)))
-
-            # 0.2 Дополнительные R7 Enum-вызовы OrderStatus в сервисах Rebook, Cancel и Order
-            if (
-                ("RebookServiceImpl#updateOrder(" in m and "TripAllDetail" in m)
-                or "CancelServiceImpl#cancelFromOrder(" in m
-                or "CancelServiceImpl#cancelFromOtherOrder(" in m
-                or "OrderServiceImpl#cancelOrder(" in m
-                or "OrderOtherServiceImpl#cancelOrder(" in m
-                or "OrderServiceImpl#alterOrder(" in m
-                or "OrderOtherServiceImpl#alterOrder(" in m
-                or "OrderServiceImpl#payOrder(" in m
-                or "OrderOtherServiceImpl#payOrder(" in m
-            ):
-                order_get_code = "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
-                if order_get_code in self.index.N:
-                    edges_calls.add((m, order_get_code))
-                    seen_methods.add((order_get_code, self.index.unit_of(order_get_code)))
-
             # 1. Внутрисервисные вызовы (calls + overrides/CHA + runtime_dispatch)
             for t in self.index.calls.get(m, ()):
                 dispatch_targets = (

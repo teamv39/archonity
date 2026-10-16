@@ -27,6 +27,7 @@ class ScenarioProfile:
     has_external_payment: bool = False
     has_advanced_search: bool = False
     has_consign_weight_change: bool = False
+    has_registration: bool = False
 
     @classmethod
     def from_scenario(cls, scenario_dict: dict[str, Any]) -> ScenarioProfile:
@@ -61,6 +62,11 @@ class ScenarioProfile:
         )
         has_consign = pos_con and not (
             neg_con and not bool(re.search(r"\b(?:\d+(?:\.\d+)?\s*kg|look\s*up[^\n.;,]{0,30}?(?:consign\w*|luggage\w*))\b", text))
+        )
+
+        # Регистрация нового пассажира (UserServiceImpl#saveUser: user1 == null)
+        has_registration = any(
+            re.match(r"\s*register\b", (st.get("action") or "").lower()) for st in scenario_dict.get("steps") or []
         )
 
         # Изменение веса багажа при модификации consignment (ConsignServiceImpl.java:97)
@@ -125,6 +131,7 @@ class ScenarioProfile:
             has_external_payment=has_external_payment,
             has_advanced_search=has_advanced_search,
             has_consign_weight_change=has_consign_weight_change,
+            has_registration=has_registration,
         )
 
     def for_step(self, step_dict: dict[str, Any]) -> ScenarioProfile:
@@ -185,6 +192,7 @@ class ScenarioProfile:
             has_external_payment=self.has_external_payment,
             has_advanced_search=self.has_advanced_search,
             has_consign_weight_change=self.has_consign_weight_change,
+            has_registration=self.has_registration,
         )
 
 

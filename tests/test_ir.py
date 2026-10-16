@@ -26,7 +26,7 @@ def test_ensure_pool_ir_fallback():
 
 def test_method_pool_ir_load():
     pool = MethodPoolIR.load()
-    assert len(pool.methods) == 14
+    assert len(pool.methods) == 32
     # Check that cancelOrder is present
     cancel_mid = "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
     assert pool.has_method(cancel_mid)
@@ -187,3 +187,69 @@ def test_evaluate_guard_preserve_options():
     # getConsigneeName() -> then: has consign, else: no consign
     assert pool.evaluate_guard(mid, (f"{consign_bid}:then",), p_with_all) is True
     assert pool.evaluate_guard(mid, (f"{consign_bid}:then",), p_none) is False
+
+
+CANCEL_REFUND_MID = (
+    "method:ts-cancel-service:cancel.service.CancelServiceImpl#calculateRefund("
+    "java.lang.String,org.springframework.http.HttpHeaders)"
+)
+
+
+def _profile_for(scenario_file: str):
+    import json
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parent.parent / "hackaton" / "tt-challenge" / "scenarios" / scenario_file
+    return ScenarioProfile.from_scenario(json.loads(path.read_text(encoding="utf-8")))
+
+
+def test_refund_for_paid_order_calls_private_calculate_refund():
+    """Внутренняя проверка == NOTPAID не должна гасить вызов calculateRefund(Order) для оплаченного заказа."""
+    pool = MethodPoolIR.load()
+    mir = pool.methods[CANCEL_REFUND_MID]
+    private_calls = [c for c in mir.calls if c.callee == "calculateRefund"]
+    assert len(private_calls) == 2
+    s2 = _profile_for("S2.json")  # обычный поезд: активна только ветка Other
+    s4 = _profile_for("S4.json")  # скоростной поезд: активна только ветка G/D
+    active_s2 = [c.line for c in private_calls if pool.evaluate_guard(CANCEL_REFUND_MID, c.guard, s2)]
+    active_s4 = [c.line for c in private_calls if pool.evaluate_guard(CANCEL_REFUND_MID, c.guard, s4)]
+    assert active_s2 == [187]
+    assert active_s4 == [169]
+
+
+def test_refused_cancel_blocks_refund_branch():
+    pool = MethodPoolIR.load()
+    mir = pool.methods[CANCEL_REFUND_MID]
+    s7 = _profile_for("S7.json")
+    assert not any(pool.evaluate_guard(CANCEL_REFUND_MID, c.guard, s7) for c in mir.calls if c.callee == "calculateRefund")
+
+
+def test_catch_arm_and_lazy_lambda_are_inactive():
+    pool = MethodPoolIR.load()
+    s2 = _profile_for("S2.json")
+    any_mid = next(iter(pool.methods))
+    assert pool.evaluate_guard(any_mid, ("t10:catch",), s2) is False
+    assert pool.evaluate_guard(any_mid, ("l91:orElseThrow",), s2) is False
+    assert pool.evaluate_guard(any_mid, ("l91:map",), s2) is True
+
+
+def test_get_token_exception_constructor_is_inactive_via_lambda_guard():
+    pool = MethodPoolIR.load()
+    mid = next(m for m in pool.methods if "TokenServiceImpl#getToken" in m)
+    s0 = _profile_for("S0.json")
+    lambda_calls = [c for c in pool.methods[mid].calls if any(g.startswith("l") and ":orElseThrow" in g for g in c.guard)]
+    assert lambda_calls, "тело лямбды orElseThrow должно быть помечено guard-ом"
+    assert not any(pool.evaluate_guard(mid, c.guard, s0) for c in lambda_calls)
+
+
+def test_rebook_same_family_branch_is_active_for_regular_scenario():
+    pool = MethodPoolIR.load()
+    mid = next(m for m in pool.methods if "RebookServiceImpl#updateOrder(" in m and "TripAllDetail" in m)
+    s2 = _profile_for("S2.json")
+    updates = [c for c in pool.methods[mid].calls if c.callee == "updateOrder"]
+    assert updates and all(pool.evaluate_guard(mid, c.guard, s2) for c in updates)
+
+
+def test_registration_flag_only_for_registering_scenario():
+    assert _profile_for("S4.json").has_registration is True
+    assert _profile_for("S1.json").has_registration is False
