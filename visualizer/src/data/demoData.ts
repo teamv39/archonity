@@ -1,12 +1,23 @@
 import type { CanonicalGraph } from '../types/graph';
 import rawDemoGraph from './demo_graph.json';
+import rawSubmission from './demo_submission.json';
+import rawEvidence from './demo_evidence.json';
+import rawFacts from './demo_facts.json';
+import { mergePipelineFiles } from '../adapters/dataLoader';
 
 /**
- * Канонический демонстрационный граф микросервисов Train Ticket.
- * Вынесен в отдельный JSON-файл demo_graph.json для изоляции тестовых данных
- * и единого источника правды между фронтендом, CLI и тестами.
+ * Канонический демонстрационный граф микросервисов Train Ticket (базовый срез 9 сервисов).
  */
 export const demoGraph: CanonicalGraph = rawDemoGraph as unknown as CanonicalGraph;
+
+/**
+ * Полный бенчмарк Train Ticket Slice (19 узлов, 27 рёбер, все типы связей и evidence: AST, CFG, ML, LLM-Judge, DB, MQ).
+ */
+export const trainTicketBenchmarkGraph: CanonicalGraph = mergePipelineFiles([
+  { name: 'demo_submission.json', content: rawSubmission },
+  { name: 'demo_evidence.json', content: rawEvidence },
+  { name: 'demo_facts.json', content: rawFacts },
+]).graph;
 
 /**
  * Загрузка эталонного демо-графа через HTTP с fallback на встроенный JSON.
@@ -22,3 +33,4 @@ export async function fetchDemoGraph(): Promise<CanonicalGraph> {
   }
   return demoGraph;
 }
+

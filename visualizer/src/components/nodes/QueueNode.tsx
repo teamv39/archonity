@@ -19,6 +19,13 @@ export const QueueNode: React.FC<NodeProps> = memo((props) => {
   if (data.traceState === 'sink' || data.traceState === 'hop') traceClass = 'trace-sink';
   else if (data.traceState === 'dimmed') traceClass = 'trace-dimmed';
 
+  let scenarioClass = '';
+  if (data.scenarioState === 'target' || data.scenarioState === 'source') {
+    scenarioClass = 'scenario-active-target';
+  } else if (data.scenarioState === 'dimmed') {
+    scenarioClass = 'scenario-dimmed';
+  }
+
   const deadCodeClass = data.isDeadCode ? `node-dead-code ${data.deadCodeDisplay.toLowerCase()}` : '';
   const searchClass = data.isMatchedSearch ? 'search-matched' : '';
 
@@ -27,7 +34,7 @@ export const QueueNode: React.FC<NodeProps> = memo((props) => {
   const sourcePos = isDown ? Position.Bottom : Position.Right;
 
   return (
-    <div className={`custom-node queue-node ${blastClass} ${traceClass} ${deadCodeClass} ${searchClass}`}>
+    <div className={`custom-node queue-node ${blastClass} ${traceClass} ${scenarioClass} ${deadCodeClass} ${searchClass}`}>
       <Handle type="target" position={targetPos} className="custom-handle" />
 
       <div className="node-header">
@@ -40,6 +47,9 @@ export const QueueNode: React.FC<NodeProps> = memo((props) => {
         <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           {(data.traceState === 'sink' || data.traceState === 'hop') && (
             <span className="node-badge badge-trace sink">[MQ/BROKER]</span>
+          )}
+          {data.scenarioState === 'target' && (
+            <span className="node-badge badge-trace sink">[MQ/SINK]</span>
           )}
           {data.isDeadCode && (
             <span className="node-badge badge-dead-code" title="Очередь не слушается активными потребителями">
@@ -60,8 +70,8 @@ export const QueueNode: React.FC<NodeProps> = memo((props) => {
 
         {node.destinations && node.destinations.length > 0 && (
           <div className="node-tags">
-            {node.destinations.map((d) => (
-              <span key={d.destination} className="tag-pill" title={`Routing: ${d.routingKey || d.destination}`}>
+            {node.destinations.map((d, idx) => (
+              <span key={`${d.destination}-${idx}`} className="tag-pill" title={`Routing: ${d.routingKey || d.destination}`}>
                 <Layers size={10} style={{ display: 'inline', marginRight: 3, verticalAlign: 'middle' }} />
                 {d.destination}
               </span>

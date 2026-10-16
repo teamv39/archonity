@@ -105,9 +105,35 @@
   border-color: #BAE6FD;
 }
 
+.badge-terminal-sink {
+  background-color: #F1F5F9 !important;
+  color: #475569 !important;
+  border-color: #CBD5E1 !important;
+  font-weight: 700 !important;
+}
+
+.badge-shared-persistence {
+  background-color: #FEF3C7 !important;
+  color: #B45309 !important;
+  border-color: #FCD34D !important;
+  font-weight: 700 !important;
+}
+
 .badge-queue {
   background-color: var(--bg-subtle);
   color: var(--text-primary);
+}
+
+.node-shared-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: #B45309;
+  background-color: #FFFBEB;
+  border: 1px solid #FEF3C7;
+  padding: 2px 4px;
+  margin-top: 2px;
 }
 
 /* Тело узла */
@@ -256,3 +282,19 @@
 .custom-handle:hover {
   background: var(--border-strong) !important;
 }
+
+/* Состояния Scenario Stepper */
+.scenario-active-source {
+  border: 2px solid #0969DA !important;
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.25) !important;
+}
+
+.scenario-active-target {
+  border: 2px solid #10B981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
+}
+
+.scenario-dimmed {
+  opacity: 0.18 !important;
+}
+

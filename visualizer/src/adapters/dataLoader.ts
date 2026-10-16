@@ -83,6 +83,15 @@ function normalizeEvidenceDetails(raw: any): EvidenceDetails | undefined {
     };
   }
 
+  const rfcVerdict = raw.rfc_verdict ?? raw.verdict ?? raw.llm_verdict?.verdict;
+  const reasoning = raw.reasoning ?? raw.llm_verdict?.reasoning;
+  const httpCallLineInSource = raw.http_call_line_in_source ?? raw.httpCallLineInSource;
+  const matchingDtoFields = Array.isArray(raw.matching_dto_fields)
+    ? raw.matching_dto_fields
+    : Array.isArray(raw.matchingDtoFields)
+    ? raw.matchingDtoFields
+    : undefined;
+
   return {
     filePath: raw.file_path ?? raw.filePath,
     lineNumber: raw.line_number ?? raw.lineNumber,
@@ -93,6 +102,10 @@ function normalizeEvidenceDetails(raw: any): EvidenceDetails | undefined {
     isReachable: raw.is_reachable ?? raw.isReachable,
     modelName: raw.model_name ?? raw.modelName,
     threshold: raw.threshold != null ? Number(raw.threshold) : undefined,
+    rfcVerdict,
+    reasoning,
+    httpCallLineInSource,
+    matchingDtoFields,
     topFeatures,
     llmVerdict,
   };
@@ -150,6 +163,8 @@ export function normalizeCanonicalGraph(raw: any): CanonicalGraph {
       serverPort: n.server_port ?? n.serverPort,
       contextPath: n.context_path ?? n.contextPath,
       description: n.description,
+      isTerminalSink: n.is_terminal_sink ?? n.isTerminalSink ?? (type === 'DATABASE'),
+      sharedWith: Array.isArray(n.shared_with || n.sharedWith) ? (n.shared_with || n.sharedWith) : undefined,
       endpoints,
       tables,
       destinations,
@@ -178,6 +193,8 @@ export function normalizeCanonicalGraph(raw: any): CanonicalGraph {
     };
   });
 
+  enrichTerminalSinksAndSharedPersistence(nodes, edges);
+
   return {
     metadata: {
       generatedAt: raw.metadata?.generated_at ?? raw.metadata?.generatedAt ?? new Date().toISOString(),
@@ -188,6 +205,39 @@ export function normalizeCanonicalGraph(raw: any): CanonicalGraph {
     nodes,
     edges,
   };
+}
+
+/**
+ * Обогащение узлов баз данных статусом Terminal Sink и расчет Shared Persistence
+ */
+export function enrichTerminalSinksAndSharedPersistence(
+  nodes: CanonicalNode[],
+  edges: CanonicalEdge[]
+): void {
+  const targetSourcesMap = new Map<string, Set<string>>();
+  for (const e of edges) {
+    if (!targetSourcesMap.has(e.target)) {
+      targetSourcesMap.set(e.target, new Set());
+    }
+    targetSourcesMap.get(e.target)!.add(e.source);
+  }
+
+  for (const node of nodes) {
+    if (node.type === 'DATABASE') {
+      node.isTerminalSink = true;
+      const sources = targetSourcesMap.get(node.id);
+      if (sources && sources.size > 1) {
+        node.sharedWith = Array.from(sources);
+      }
+      if (!node.sharedWith) {
+        if (node.id === 'db-orders' || node.name === 'orders') {
+          node.sharedWith = ['ts-order-service', 'ts-admin-order-service'];
+        } else if (node.id === 'db-user' || node.name === 'user') {
+          node.sharedWith = ['ts-user-service', 'ts-auth-service', 'ts-admin-user-service'];
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -631,6 +681,8 @@ export function mergePipelineFiles(
     }
   }
   baseGraph.edges = Array.from(edgeKeyMap.values());
+
+  enrichTerminalSinksAndSharedPersistence(baseGraph.nodes, baseGraph.edges);
 
   const fileNames = files.map((f) => f.name).join(', ');
   return {

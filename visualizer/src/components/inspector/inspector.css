@@ -308,6 +308,16 @@
   padding: 1px 4px;
 }
 
+.verdict-model-badge {
+  font-size: 9px;
+  font-weight: 600;
+  color: #047857;
+  background: #DCFCE7;
+  border: 1px solid #86EFAC;
+  padding: 1px 5px;
+  width: fit-content;
+}
+
 .verdict-reasoning {
   font-size: 10px;
   line-height: 1.35;

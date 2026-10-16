@@ -107,6 +107,15 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
     blastClass += ' edge-trace-dimmed';
   }
 
+  // Состояния Scenario Stepper
+  if (edgeData.scenarioState === 'active') {
+    blastClass += ' edge-trace-active';
+    color = '#0969DA';
+    strokeWidth = 3.0;
+  } else if (edgeData.scenarioState === 'dimmed') {
+    blastClass += ' edge-trace-dimmed';
+  }
+
   // Состояния Dead Code
   if (edgeData.isDeadCode) {
     blastClass += ' edge-dead-code';

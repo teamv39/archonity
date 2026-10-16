@@ -15,6 +15,9 @@ import {
   Activity,
   Eye,
   EyeOff,
+  Compass,
+  Layers,
+  Sparkles,
 } from 'lucide-react';
 import type {
   SourceType,
@@ -46,6 +49,8 @@ interface ToolbarProps {
   datasetName: string;
   isCustomDataset: boolean;
   onOpenDataLoader: () => void;
+  onLoadBenchmarkSlice?: () => void;
+  onLoadStandardDemo?: () => void;
 
   // Экспорт
   onExportPng: () => void;
@@ -59,6 +64,14 @@ interface ToolbarProps {
   deadCodeDisplay: DeadCodeDisplay;
   onToggleDeadCodeDisplay: () => void;
   unreachableEdgesCount: number;
+
+  // Инфраструктурные хабы (ADR-003)
+  excludeHubs: boolean;
+  onToggleExcludeHubs: () => void;
+
+  // Сценарный плеер
+  isScenarioActive: boolean;
+  onToggleScenarioPlayer: () => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -89,10 +102,28 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   deadCodeDisplay,
   onToggleDeadCodeDisplay,
   unreachableEdgesCount,
+  excludeHubs,
+  onToggleExcludeHubs,
+  isScenarioActive,
+  onToggleScenarioPlayer,
+  onLoadBenchmarkSlice,
+  onLoadStandardDemo,
 }) => {
   const filteredCount = totalEdgesCount - visibleEdgesCount;
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+  const [exportCoords, setExportCoords] = useState<{ top: number; right: number } | null>(null);
   const exportRef = useRef<HTMLDivElement>(null);
+
+  const handleToggleExportMenu = () => {
+    if (!isExportMenuOpen && exportRef.current) {
+      const rect = exportRef.current.getBoundingClientRect();
+      setExportCoords({
+        top: rect.bottom + 4,
+        right: Math.max(8, window.innerWidth - rect.right),
+      });
+    }
+    setIsExportMenuOpen((prev) => !prev);
+  };
 
   // Закрытие меню экспорта по клику вне
   useEffect(() => {
@@ -128,6 +159,29 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <span className="dataset-label">{datasetName}</span>
           <ChevronDown size={10} style={{ opacity: 0.6 }} />
         </button>
+
+        {onLoadBenchmarkSlice && !datasetName.includes('Slice') && !datasetName.includes('Benchmark') && (
+          <button
+            type="button"
+            className="cad-btn preset-pill-btn"
+            onClick={onLoadBenchmarkSlice}
+            title="Быстро загрузить полный эталонный Train Ticket Benchmark Slice (19 узлов, 27 рёбер)"
+          >
+            <Sparkles size={11} color="#0969DA" />
+            <span>TT 19N</span>
+          </button>
+        )}
+
+        {onLoadStandardDemo && (datasetName.includes('Slice') || datasetName.includes('Benchmark') || isCustomDataset) && (
+          <button
+            type="button"
+            className="cad-btn preset-pill-btn"
+            onClick={onLoadStandardDemo}
+            title="Переключиться на компактный демо-срез бронирования (9 узлов)"
+          >
+            <span>ДЕМО 9N</span>
+          </button>
+        )}
       </div>
 
       <div className="section-divider" />
@@ -304,7 +358,41 @@ export const Toolbar: React.FC<ToolbarProps> = ({
 
       <div className="section-divider" />
 
-      {/* 7. Поиск */}
+      {/* 7. Инфраструктурные хабы (ADR-003 п. 5.1) */}
+      <div className="bar-section hubs-section">
+        <button
+          type="button"
+          className={`cad-btn ${excludeHubs ? 'active' : ''}`}
+          onClick={onToggleExcludeHubs}
+          title={
+            excludeHubs
+              ? 'Инфра-хабы скрыты (Eureka, Gateway, RabbitMQ исключены)'
+              : 'Инфра-хабы отображаются (клик для исключения)'
+          }
+        >
+          <Layers size={11} />
+          <span className="btn-text">{excludeHubs ? 'ХАБЫ: ИСКЛ' : 'ХАБЫ: ВКЛ'}</span>
+        </button>
+      </div>
+
+      <div className="section-divider" />
+
+      {/* 8. Интерактивные сценарии (Сценарный плеер) */}
+      <div className="bar-section scenario-section">
+        <button
+          type="button"
+          className={`cad-btn ${isScenarioActive ? 'active' : ''}`}
+          onClick={onToggleScenarioPlayer}
+          title="Сценарный плеер эталонных цепочек Train Ticket (Preservation, Payment, Cancellation, Route Planning)"
+        >
+          <Compass size={12} style={{ color: isScenarioActive ? '#0969DA' : 'inherit' }} />
+          <span className="btn-text">СЦЕНАРИИ</span>
+        </button>
+      </div>
+
+      <div className="section-divider" />
+
+      {/* 9. Поиск */}
       <div className="bar-section search-section">
         <div className="search-wrapper">
           <Search size={12} className="search-icon" />
@@ -331,7 +419,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         </div>
       </div>
 
-      {/* 8. Кнопки управления CAD */}
+      {/* 10. Кнопки управления CAD */}
       <div className="bar-section actions-section">
         <button
           type="button"
@@ -358,7 +446,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           <button
             type="button"
             className={`cad-btn export-btn ${isExportMenuOpen ? 'active' : ''}`}
-            onClick={() => setIsExportMenuOpen((prev) => !prev)}
+            onClick={handleToggleExportMenu}
             disabled={isExporting}
             title="Экспорт графа в PNG (2x Retina), SVG или JSON"
           >
@@ -368,7 +456,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
           </button>
 
           {isExportMenuOpen && (
-            <div className="export-menu">
+            <div
+              className="export-menu"
+              style={{
+                position: 'fixed',
+                top: exportCoords?.top ?? 44,
+                right: exportCoords?.right ?? 8,
+                zIndex: 9999,
+              }}
+            >
               <button
                 type="button"
                 className="export-menu-item"
