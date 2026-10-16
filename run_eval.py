@@ -64,6 +64,11 @@ def parse_args() -> argparse.Namespace:
         help="Путь к файлу правил отсева мертвого кода",
     )
     parser.add_argument(
+        "--reparse",
+        action="store_true",
+        help="Принудительный перезапуск archparse gradle перед прогоном",
+    )
+    parser.add_argument(
         "--no-eval",
         action="store_true",
         help="Пропустить автоматический вызов evaluate_golden.py",
@@ -144,11 +149,18 @@ def main() -> None:
     print(f"Правила:    {args.rules}")
     print("-" * 60)
 
+    # 0. Подготовка AST IR тел методов (archparse)
+    from engine.ir import ensure_pool_ir
+
+    pool_ir_path = ensure_pool_ir(reparse=args.reparse, project_root=ROOT_DIR)
+    print(f"AST IR:     {pool_ir_path}")
+
     # Запуск пайплайна
     pipeline = ArchonityPipeline(
         skeleton_path=args.skeleton,
         targets_root=args.targets,
         rules_path=args.rules,
+        ir_path=pool_ir_path,
     )
 
     print("Генерация графов для сценариев...")

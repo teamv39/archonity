@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from engine.adapters.db import DatabaseState, TableNodeResolution, load_db_dump
+from engine.ir import MethodPoolIR
 
 
 def load_json(path: str | Path) -> dict[str, Any]:
@@ -68,6 +69,8 @@ class SkeletonIndex:
         db_dump_path: str | Path | None = None,
         db_path: str | Path | None = None,
         db_state: DatabaseState | None = None,
+        pool_ir: MethodPoolIR | None = None,
+        ir_path: str | Path | None = None,
     ) -> None:
         if isinstance(skeleton_source, (str, Path)):
             skeleton_dict = load_json(skeleton_source)
@@ -122,6 +125,11 @@ class SkeletonIndex:
         self.cs_method = {
             nid: n["method"] for nid, n in self.N.items() if n.get("kind") == "call_site"
         }
+        self.pool_ir: MethodPoolIR = (
+            pool_ir if pool_ir is not None else MethodPoolIR.load(ir_path=ir_path, safe=True)
+        )
+        self.edge_guards: dict[tuple[str, str, str], list[tuple[str, ...]]] = collections.defaultdict(list)
+
         self.calls: dict[str, set[str]] = collections.defaultdict(set)
         self.over: dict[str, set[str]] = collections.defaultdict(set)
         self.wiring: dict[str, dict[str, set[str]]] = collections.defaultdict(
@@ -140,6 +148,18 @@ class SkeletonIndex:
             elif etype in ("remote_call", "message_delivery", "runtime_dispatch", "data_access"):
                 caller = self.cs_method.get(src, src)
                 self.wiring[etype][caller].add(tgt)
+
+            # Сопоставление call_site скелета с AST CallIR для извлечения guard
+            if etype in ("calls", "remote_call", "message_delivery", "runtime_dispatch", "data_access"):
+                node = self.N.get(src)
+                if node and node.get("kind") == "call_site":
+                    caller_m = node.get("method")
+                    if caller_m and self.pool_ir.has_method(caller_m):
+                        line = node.get("line")
+                        col = node.get("col")
+                        c_ir = self.pool_ir.calls_by_mid_line_col.get((caller_m, line, col))
+                        if c_ir is not None:
+                            self.edge_guards[(caller_m, etype, tgt)].append(c_ir.guard)
 
         self.module = {
             nid: n.get("module") for nid, n in self.N.items() if n.get("kind") == "method"
