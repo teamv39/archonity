@@ -399,7 +399,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
         )
 
     # 10. Расчет возврата и отмена заказа
-    if re.search(r"\brefund", t):
+    if re.search(r"\b(?:ask\s+.*?refund\w*|how\s+much\s+.*?refund\w*)\b", t):
         intent_eps.add(
             "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)"
         )
@@ -428,13 +428,9 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             )
 
     # 13. Просмотр меню питания в поезде и точек питания на вокзале
-    if re.search(r"\b(?:food\s+menu|menu\s+offered)\b", t):
+    if re.search(r"\b(?:food\s+menu|menu\s+offered|food\s+stores?|stores?\s+at.*?station)\b", t):
         intent_eps.add(
             "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
-        )
-    if re.search(r"\b(?:food\s+stores?|stores?\s+at.*?station)\b", t):
-        intent_eps.add(
-            "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
         )
 
     # 14. Запросы багажа и страховок к конкретным заказам
@@ -449,6 +445,10 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
     if re.search(r"\bluggage\s+consignment\b.*?\border\b", t):
         intent_eps.add(
             "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+    if re.search(r"\b(?:luggage|consign\w*)\b.*?\baccount\b", t):
+        intent_eps.add(
+            "method:ts-consign-service:consign.controller.ConsignController#findByAccountId(java.lang.String,org.springframework.http.HttpHeaders)"
         )
     if re.search(r"\bchange\b.*?\bconsignee\b", t):
         intent_eps.add(

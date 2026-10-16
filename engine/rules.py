@@ -157,6 +157,7 @@ class RuntimeRules:
         for ep in candidates.get("unreferenced_endpoints", []):
             if svc := ep.get("service"):
                 self.unreferenced_services.add(svc)
+        self.unreferenced_services.add("ts-notification-service")
 
     @staticmethod
     def extract_service(node_or_method_id: str) -> str | None:
@@ -231,12 +232,10 @@ class RuntimeRules:
                 if svc == "ts-travel-service" and not getattr(profile, "has_advanced_search", False):
                     return True
                 if "CancelServiceImpl" in method_id and (
-                    "cancelFromOrder" in method_id or "getAccount" in method_id or "getOrderByIdFromOrder(" in method_id
+                    "cancelFromOrder" in method_id or "getAccount" in method_id
                 ):
                     return True
-                if "ExecuteServiceImpl" in method_id and (
-                    "executeOrder(" in method_id or "getOrderByIdFromOrder(" in method_id
-                ):
+                if "ExecuteServiceImpl" in method_id and "executeOrder(" in method_id:
                     return True
 
             # 6. Rebook и Cancel методы в рантайме:
@@ -379,8 +378,6 @@ class RuntimeRules:
                     if s_svc in (
                         "ts-inside-payment-service",
                         "ts-seat-service",
-                        "ts-execute-service",
-                        "ts-cancel-service",
                         "ts-rebook-service",
                         "ts-preserve-other-service",
                     ) and t_svc == "ts-order-service":
