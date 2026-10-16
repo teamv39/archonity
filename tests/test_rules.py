@@ -249,3 +249,66 @@ class TestRuntimeRules:
 
         # Таблица активных заказов скоростных поездов
         assert not rules.is_dead_code_edge(src, "data", "res:table:ts-order-service.orders", profile=profile)
+
+    def test_home_endpoint_filtered(self, rules: RuntimeRules) -> None:
+        home_m1 = "method:ts-contacts-service:contacts.controller.ContactsController#home()"
+        home_m2 = "method:ts-train-food-service:trainFood.controller.TrainFoodController#home()"
+        assert rules.is_dead_code_method(home_m1)
+        assert rules.is_dead_code_method(home_m2)
+        assert rules.is_dead_code_edge("method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood()", "remote", home_m2)
+
+    def test_cross_service_train_mode_remote_filtering(self, rules: RuntimeRules) -> None:
+        prof_hs = ScenarioProfile("test_hs", False, True, True, True, train_mode="high_speed_only")
+        prof_reg = ScenarioProfile("test_reg", False, True, True, True, train_mode="regular_only")
+
+        # В high_speed_only inside-payment и seat не вызывают order-other
+        assert rules.is_dead_code_edge(
+            "method:ts-inside-payment-service:inside_payment.service.InsidePaymentServiceImpl#pay()",
+            "remote",
+            "method:ts-order-other-service:other.controller.OrderOtherController#getOrderById()",
+            profile=prof_hs,
+        )
+        assert rules.is_dead_code_edge(
+            "method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat()",
+            "remote",
+            "method:ts-order-other-service:other.controller.OrderOtherController#getTicketListByDateAndTripId()",
+            profile=prof_hs,
+        )
+        # Но в high_speed_only они могут вызывать order-service
+        assert not rules.is_dead_code_edge(
+            "method:ts-inside-payment-service:inside_payment.service.InsidePaymentServiceImpl#pay()",
+            "remote",
+            "method:ts-order-service:order.controller.OrderController#getOrderById()",
+            profile=prof_hs,
+        )
+
+        # В regular_only inside-payment и seat не вызывают order-service
+        assert rules.is_dead_code_edge(
+            "method:ts-inside-payment-service:inside_payment.service.InsidePaymentServiceImpl#pay()",
+            "remote",
+            "method:ts-order-service:order.controller.OrderController#getOrderById()",
+            profile=prof_reg,
+        )
+        assert rules.is_dead_code_edge(
+            "method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat()",
+            "remote",
+            "method:ts-order-service:order.controller.OrderController#getTicketListByDateAndTripId()",
+            profile=prof_reg,
+        )
+
+    def test_phantom_edges_and_s7_refusal(self, rules: RuntimeRules) -> None:
+        # Фантомное ребро getAssuranceById отсекается всегда
+        assert rules.is_dead_code_edge(
+            "method:ts-preserve-service:preserve.service.PreserveServiceImpl#addAssuranceForOrder()",
+            "remote",
+            "method:ts-assurance-service:assurance.controller.AssuranceController#getAssuranceById()",
+        )
+        # В S7 при смене получателя багажа пересчет цены отсекается
+        prof_s7 = ScenarioProfile("S7", False, False, True, False, train_mode="high_speed_only")
+        assert rules.is_dead_code_edge(
+            "method:ts-consign-service:consign.service.ConsignServiceImpl#updateConsignRecord()",
+            "remote",
+            "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion()",
+            profile=prof_s7,
+        )
+

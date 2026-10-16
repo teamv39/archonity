@@ -154,3 +154,11 @@ class TestScenarioGrounder:
         s4_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S4.json")
         entries_s4 = grounder.ground(s4_dict)
         assert not any("ConsignController#findByOrderId" in e for e in entries_s4)
+
+    def test_ground_s4_inside_payment_gateway_entry(self, grounder: ScenarioGrounder) -> None:
+        # В S4 оплата в UI идет в InsidePaymentController#pay, а PaymentController вызывается как remote call
+        s4_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S4.json")
+        entries_s4 = grounder.ground(s4_dict)
+        assert any("InsidePaymentController#pay" in e for e in entries_s4)
+        assert not any("com.trainticket.controller.PaymentController#pay" in e for e in entries_s4)
+

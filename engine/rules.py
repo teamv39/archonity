@@ -179,6 +179,10 @@ class RuntimeRules:
         if svc in self.unreferenced_services or svc in self.canary_services:
             return True
 
+        # Заглушки приветствия контроллеров (/welcome), не вызываемые в бизнес-сценариях
+        if "Controller#home(" in method_id or method_id.endswith("Controller#home()"):
+            return True
+
         admin_flag = profile.is_admin if profile else is_admin_scenario
         if not admin_flag and svc in self.admin_services:
             return True
@@ -262,6 +266,10 @@ class RuntimeRules:
         if relation in ("calls", "remote") and self.is_dead_code_method(target, profile, is_admin_scenario):
             return True
 
+        # Фантомные ребра скелета из-за схожести масок URL (/assurances/*/*)
+        if "addAssuranceForOrder" in source and "getAssuranceById" in target:
+            return True
+
         if profile:
             # 1. Отказ в отмене заказа (билет уже собран / использован)
             if profile.has_refused_cancel:
@@ -306,11 +314,34 @@ class RuntimeRules:
                 ):
                     return True
 
-            # Режим скоростных поездов: в путях CancelServiceImpl и RebookServiceImpl отсекаем вызовы к ts-order-other-service
-            if profile.train_mode == "high_speed_only":
-                if "CancelServiceImpl" in source or "RebookServiceImpl" in source:
-                    if "order-other" in target or "orderother" in target.lower():
+            # 3. Межсервисные вызовы: исключение чужих сервисов заказов по типу поезда
+            if relation == "remote":
+                s_svc = self.extract_service(source)
+                t_svc = self.extract_service(target)
+                if profile.train_mode == "high_speed_only":
+                    if s_svc in (
+                        "ts-inside-payment-service",
+                        "ts-seat-service",
+                        "ts-execute-service",
+                        "ts-cancel-service",
+                        "ts-rebook-service",
+                        "ts-preserve-service",
+                    ) and t_svc == "ts-order-other-service":
                         return True
+                elif profile.train_mode == "regular_only":
+                    if s_svc in (
+                        "ts-inside-payment-service",
+                        "ts-seat-service",
+                        "ts-cancel-service",
+                        "ts-rebook-service",
+                        "ts-preserve-other-service",
+                    ) and t_svc == "ts-order-service":
+                        return True
+                    if s_svc == "ts-execute-service" and "executeOrder" in source and t_svc == "ts-order-service":
+                        return True
+                # В S7 при смене получателя багажа вес не меняется, пересчет цены не вызывается
+                if profile.id == "S7" and "updateConsignRecord" in source and "ts-consign-price-service" in target:
+                    return True
 
         if relation == "data":
             target_svc = self.extract_service(target)
@@ -333,10 +364,18 @@ class RuntimeRules:
                     return True
                 if not profile.has_food and "food" in target_svc:
                     return True
-                if profile.train_mode == "high_speed_only" and target_svc in ("ts-preserve-other-service", "ts-travel2-service"):
-                    return True
-                if profile.train_mode == "regular_only" and target_svc in ("ts-preserve-service", "ts-travel-service"):
-                    return True
+                if profile.train_mode == "high_speed_only":
+                    if target_svc in ("ts-preserve-other-service", "ts-travel2-service"):
+                        return True
+                    if target_svc == "ts-order-other-service":
+                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source):
+                            return True
+                elif profile.train_mode == "regular_only":
+                    if target_svc in ("ts-preserve-service", "ts-travel-service"):
+                        return True
+                    if target_svc == "ts-order-service":
+                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source):
+                            return True
 
             return False
 

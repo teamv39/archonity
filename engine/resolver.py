@@ -337,16 +337,11 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
         )
 
-    # 6. Оплата заказа (внешний платежный шлюз vs внутренний баланс счета)
+    # 6. Оплата заказа (в веб-интерфейсе точка входа всегда InsidePaymentController#pay; при пустом балансе он сам обращается к PaymentController через remote_call)
     if re.search(r"\bpay\s+for\b.*?\border\b", t) or re.search(r"\bpay\b", t):
-        if "external payment" in t or "outside payment" in t or "external channel" in t:
-            intent_eps.add(
-                "method:ts-payment-service:com.trainticket.controller.PaymentController#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)"
-            )
-        else:
-            intent_eps.add(
-                "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)"
-            )
+        intent_eps.add(
+            "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)"
+        )
 
     # 7. Варианты расширенного поиска маршрутов
     if "fewest stops" in t or "minstation" in t:
