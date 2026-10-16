@@ -92,6 +92,10 @@ class GraphBuilder:
                 or "OrderOtherServiceImpl#alterOrder(" in m
                 or "OrderServiceImpl#payOrder(" in m
                 or "OrderOtherServiceImpl#payOrder(" in m
+                or (
+                    "checkSecurityAboutOrder(" in m
+                    and not (profile and getattr(profile, "is_new_user", False))
+                )
             ):
                 order_get_code = "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
                 if order_get_code in self.index.N:
