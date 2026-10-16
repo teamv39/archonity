@@ -397,5 +397,12 @@ class MethodPoolIR:
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
 
+            # 13. RebookServiceImpl#rebook: разница в цене при перебронировании (S2)
+            # priceOld.compareTo(priceNew) > 0
+            if 'priceOld.compareTo(priceNew) > 0' in cond:
+                val = True  # В S2 билет дешевле (second class), разница возвращается
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
 
         return True
