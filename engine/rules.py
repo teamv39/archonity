@@ -139,7 +139,11 @@ class ScenarioProfile:
         step_has_refused_cancel = self.has_refused_cancel
         step_has_refused_rebook = self.has_refused_rebook
 
-        is_preserve = bool(re.search(r"\b(?:book|reserve|preserve)\b", act))
+        is_preserve = (
+            bool(re.search(r"\b(?:book\s+(?:a|an|one|another|\d+)|book\b.*?seat|reserve|preserve)\b", act))
+            and "contact book" not in act
+            and "address book" not in act
+        )
         if is_preserve:
             # Опции заказа при бронировании (билет со страховкой/едой/багажом или без)
             neg_step_ass = bool(re.search(r"\b(?:no|without)\b[^\n.;]*?\b(?:assurance|insurance)\b", act))
@@ -155,7 +159,9 @@ class ScenarioProfile:
             step_has_consign = pos_step_con and not neg_step_con
 
         # Уточнение типа поезда для конкретного шага
-        if "regular" in act or "other" in act:
+        if "advanced search" in act or "transfer" in act:
+            step_train_mode = "both"
+        elif "regular" in act or re.search(r"\bother\b", act):
             step_train_mode = "regular_only"
         elif "high-speed" in act or "gaotie" in act or "dongche" in act:
             step_train_mode = "high_speed_only"
