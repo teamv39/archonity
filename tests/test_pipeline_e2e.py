@@ -132,3 +132,66 @@ class TestPipelineE2E:
         assert len(ev_data) > 50
         # В evidence.json не должно быть фантомных маршрутов к ts-common
         assert not any("ts-common" in k for k in ev_data)
+
+    def test_canonical_graph_structural_integrity(
+        self,
+        pipeline: ArchonityPipeline,
+        tmp_path: Path,
+    ) -> None:
+        """Проверка структурной целостности графа: отсутствие висячих рёбер, терминальные стоки БД, 100% покрытие evidence."""
+        scenario_files = sorted((ROOT / "hackaton" / "tt-challenge" / "scenarios").glob("*.json"))
+        sub_file = tmp_path / "submission.json"
+        cg_file = tmp_path / "canonical_graph.json"
+
+        adapter = pipeline.run_all(scenario_files, output_path=sub_file)
+        adapter.save_canonical_graph(cg_file)
+
+        cg_data = json.loads(cg_file.read_text(encoding="utf-8"))
+        nodes = cg_data.get("nodes", [])
+        edges = cg_data.get("edges", [])
+
+        node_map = {n["id"]: n for n in nodes}
+        assert len(node_map) == len(nodes), "Duplicate node IDs detected in canonical graph"
+
+        for edge in edges:
+            src = edge["source"]
+            tgt = edge["target"]
+            rel = edge.get("relation_type") or edge.get("type")
+
+            # 1. Отсутствие висячих рёбер
+            assert src in node_map, f"Dangling edge: source '{src}' not in nodes"
+            assert tgt in node_map, f"Dangling edge: target '{tgt}' not in nodes"
+
+            # 2. База данных — строгий терминальный сток (0 исходящих рёбер)
+            src_node = node_map[src]
+            assert not src_node.get("isTerminalSink", False), f"Terminal sink node {src} has outgoing edge to {tgt}"
+            assert src_node.get("type") != "database", f"Database node {src} has outgoing edge to {tgt}"
+
+            # 3. Отсутствие петель на самом себе для межсервисных вызовов
+            if rel == "REST_HTTP":
+                assert src != tgt, f"Self-loop remote HTTP call detected: {src} -> {tgt}"
+
+            # 4. 100% покрытие evidence_details с реальными сниппетами
+            assert "evidence_details" in edge, f"Edge {src} -> {tgt} is missing evidence_details"
+            details = edge["evidence_details"]
+            assert details.get("file_path"), f"Edge {src} -> {tgt} is missing file_path"
+            assert details.get("code_snippet"), f"Edge {src} -> {tgt} is missing code_snippet"
+
+    def test_determinism_invariant(
+        self,
+        pipeline: ArchonityPipeline,
+        tmp_path: Path,
+    ) -> None:
+        """Инвариант детерминизма: повторные запуски конвейера дают побитово идентичный результат."""
+        scenario_files = sorted((ROOT / "hackaton" / "tt-challenge" / "scenarios").glob("*.json"))
+        sub1 = tmp_path / "sub1.json"
+        sub2 = tmp_path / "sub2.json"
+
+        pipeline.run_all(scenario_files, output_path=sub1)
+        pipeline.run_all(scenario_files, output_path=sub2)
+
+        data1 = json.loads(sub1.read_text(encoding="utf-8"))
+        data2 = json.loads(sub2.read_text(encoding="utf-8"))
+
+        assert data1 == data2, "Non-deterministic submission generation detected across consecutive runs"
+
