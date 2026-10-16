@@ -10,6 +10,7 @@ from engine.evidence import EvidenceLogger
 from engine.graph.builder import GraphBuilder
 from engine.resolver import ScenarioGrounder
 from engine.rules import RuntimeRules, ScenarioProfile
+from engine.state import ScenarioState
 
 
 class ArchonityPipeline:
@@ -20,13 +21,14 @@ class ArchonityPipeline:
         skeleton_path: str | Path,
         targets_root: str | Path,
         rules_path: str | Path | None = None,
+        db_dump_path: str | Path | None = None,
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
 
-        # 1. Загрузка скелета
+        # 1. Загрузка скелета и инициализация DB State (M0)
         sk_dict = load_json(self.skeleton_path)
-        self.index = SkeletonIndex(sk_dict)
+        self.index = SkeletonIndex(sk_dict, db_dump_path=db_dump_path)
 
         # 2. Логгер доказательств (Evidence Log)
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
@@ -40,12 +42,28 @@ class ArchonityPipeline:
         # 5. Инициализация графового строителя
         self.builder = GraphBuilder(self.index, self.rules)
 
-    def run_scenario(self, scenario_dict: dict[str, Any]) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
-        """Обработка одного сценария: grounding + graph traversal + filtering."""
+    def run_scenario(
+        self,
+        scenario_dict: dict[str, Any],
+        scenario_state: ScenarioState | None = None,
+    ) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
+        """Обработка одного сценария: grounding + state tracking + graph traversal + filtering."""
         sid = scenario_dict.get("id", "S?")
         profile = ScenarioProfile.from_scenario(scenario_dict)
 
-        # Шаг 1: Grounding точек входа
+        # Шаг 1: Инициализация изолированного состояния сценария (M3)
+        if scenario_state is None:
+            db_state = getattr(self.index, "db_state", None)
+            scenario_state = ScenarioState.create_initial(
+                db_state=db_state.fork() if db_state else None,
+                scenario_profile=profile,
+            )
+
+        # Шаг 2: Применение мутаций по шагам сценария (M3)
+        for st in scenario_dict.get("steps") or []:
+            scenario_state.apply_step(st, scenario_dict=scenario_dict)
+
+        # Шаг 3: Grounding точек входа
         entries = self.grounder.ground(scenario_dict)
 
         step_texts = [st.get("action", "") for st in scenario_dict.get("steps") or []]
@@ -56,12 +74,13 @@ class ArchonityPipeline:
             "step_texts": step_texts,
         }
 
-        # Шаг 2: Обход графа с изоляцией БД и фильтрацией мертвого кода
+        # Шаг 4: Обход графа с изоляцией БД, состоянием сценария и фильтрацией мертвого кода
         methods, calls, remote, data = self.builder.traverse(
             entries,
             is_admin_scenario=profile.is_admin,
             scenario_meta=scenario_meta,
             profile=profile,
+            scenario_state=scenario_state,
         )
 
         return methods, calls, remote, data
