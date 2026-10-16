@@ -190,4 +190,63 @@ public class ArchparseTest {
         assertEquals(List.of("b4:else"), ir.getBranches().get(1).getGuard());
         assertEquals(List.of("b4:then"), ir.getCalls().get(0).getGuard());
     }
+
+    @Test
+    public void testTokenAndUserServicesAnalysis() throws Exception {
+        Path tokenPath = resolveTargetPath("ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java");
+        assertNotNull(tokenPath, "TokenServiceImpl.java must exist in targets");
+
+        CompilationUnit cu = StaticJavaParser.parse(tokenPath);
+        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
+        TypeIndex typeIndex = new TypeIndex(cu, cid);
+
+        TargetMethod target = new TargetMethod(
+                "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+                "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+                "getToken",
+                "BasicAuthDto", "HttpHeaders"
+        );
+
+        MethodDeclaration md = cid.getMethodsByName("getToken").get(0);
+        MethodIR ir = AstAnalyzer.analyze(target, md, cu, typeIndex);
+
+        assertNotNull(ir);
+        assertEquals(24, ir.getCalls().size(), "getToken must have 24 calls");
+
+        // exchange (remote call к verifyCode) должен иметь guard b65:then
+        CallIR exchangeCall = ir.getCalls().stream()
+                .filter(c -> "exchange".equals(c.getCallee()))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(List.of("b65:then"), exchangeCall.getGuard());
+
+        // Проверяем UserServiceImpl.saveUser
+        Path userPath = resolveTargetPath("ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java");
+        assertNotNull(userPath, "UserServiceImpl.java must exist in targets");
+
+        CompilationUnit cuUser = StaticJavaParser.parse(userPath);
+        ClassOrInterfaceDeclaration cidUser = cuUser.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
+        TypeIndex typeIndexUser = new TypeIndex(cuUser, cidUser);
+
+        TargetMethod targetUser = new TargetMethod(
+                "method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)",
+                "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+                "saveUser",
+                "UserDto", "HttpHeaders"
+        );
+
+        MethodDeclaration mdUser = cidUser.getMethodsByName("saveUser").get(0);
+        MethodIR irUser = AstAnalyzer.analyze(targetUser, mdUser, cuUser, typeIndexUser);
+
+        assertNotNull(irUser);
+        assertEquals(37, irUser.getCalls().size(), "saveUser must have 37 calls");
+
+        // createDefaultAuthUser и save() внутри if (user1 == null) должны иметь guard b64:then
+        CallIR createAuthCall = irUser.getCalls().stream()
+                .filter(c -> "createDefaultAuthUser".equals(c.getCallee()))
+                .findFirst()
+                .orElseThrow();
+        assertEquals(List.of("b64:then"), createAuthCall.getGuard());
+    }
 }
+

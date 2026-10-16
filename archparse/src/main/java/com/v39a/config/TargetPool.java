@@ -89,11 +89,46 @@ public class TargetPool {
                 "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)",
                 orderFile, "queryOrders", "OrderInfo", "String", "HttpHeaders"
         ));
-
         String orderOtherFile = "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java";
         list.add(new TargetMethod(
                 "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)",
                 orderOtherFile, "queryOrders", "QueryInfo", "String", "HttpHeaders"
+        ));
+
+        // 8. TokenServiceImpl (ts-auth-service)
+        String tokenFile = "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java";
+        list.add(new TargetMethod(
+                "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+                tokenFile, "getToken", "BasicAuthDto", "HttpHeaders"
+        ));
+
+        // 9. UserServiceImpl (ts-user-service)
+        String userFile = "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java";
+        list.add(new TargetMethod(
+                "method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)",
+                userFile, "saveUser", "UserDto", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)",
+                userFile, "createDefaultAuthUser", "AuthDto"
+        ));
+        // 10. AdminOrderServiceImpl (ts-admin-order-service)
+        String adminOrderFile = "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java";
+        list.add(new TargetMethod(
+                "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)",
+                adminOrderFile, "getAllOrders", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+                adminOrderFile, "deleteOrder", "String", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+                adminOrderFile, "updateOrder", "Order", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+                adminOrderFile, "addOrder", "Order", "HttpHeaders"
         ));
 
         return Collections.unmodifiableList(list);

@@ -12010,4 +12010,1606 @@
     "guard" : [ "b148:else" ]
   } ],
   "unsupported" : [ "line 150: foreach loop not modeled (R17)" ]
+}, {
+  "method_id" : "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+  "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+  "branches" : [ {
+    "id" : "b65",
+    "line" : 65,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "!StringUtils.isEmpty(verifyCode)",
+    "refers_to" : [ "field:StringUtils.empty", "local:verifyCode" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:66:40", "cs:67:55", "cs:72:29" ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b75",
+    "line" : 75,
+    "guard" : [ "b65:then" ],
+    "kind" : "if",
+    "condition_text" : "!id",
+    "refers_to" : [ "local:id" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : false
+    },
+    "then_calls" : [ "cs:76:24", "cs:77:24" ],
+    "else_calls" : [ ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 60,
+    "col" : 31,
+    "callee" : "getUsername",
+    "receiver" : "dto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 61,
+    "col" : 31,
+    "callee" : "getPassword",
+    "receiver" : "dto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 62,
+    "col" : 33,
+    "callee" : "getVerificationCode",
+    "receiver" : "dto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 64,
+    "col" : 48,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 65,
+    "col" : 26,
+    "callee" : "isEmpty",
+    "receiver" : "StringUtils",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 66,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ "b65:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 67,
+    "col" : 55,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b65:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 72,
+    "col" : 29,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b65:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 76,
+    "col" : 24,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b65:then", "b75:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 77,
+    "col" : 24,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b65:then", "b75:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 82,
+    "col" : 52,
+    "callee" : "<init>",
+    "receiver" : "UsernamePasswordAuthenticationToken",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 84,
+    "col" : 35,
+    "callee" : "authenticate",
+    "receiver" : "authenticationManager",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 86,
+    "col" : 20,
+    "callee" : "warn",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 3,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 87,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 90,
+    "col" : 36,
+    "callee" : "findByUsername",
+    "receiver" : "userRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 91,
+    "col" : 18,
+    "callee" : "orElseThrow",
+    "receiver" : "userRepository.findByUsername(username)",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 91,
+    "col" : 36,
+    "callee" : "<init>",
+    "receiver" : "UserOperationException",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 91,
+    "col" : 77,
+    "callee" : "format",
+    "receiver" : "MessageFormat",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 94,
+    "col" : 36,
+    "callee" : "createToken",
+    "receiver" : "jwtProvider",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 95,
+    "col" : 16,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 3,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 95,
+    "col" : 84,
+    "callee" : "getUserId",
+    "receiver" : "user",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 96,
+    "col" : 16,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 96,
+    "col" : 51,
+    "callee" : "<init>",
+    "receiver" : "TokenDto",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 96,
+    "col" : 69,
+    "callee" : "getUserId",
+    "receiver" : "user",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ "line 83: try-catch block not modeled", "line 91: lambda not modeled" ]
+}, {
+  "method_id" : "method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)",
+  "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+  "branches" : [ {
+    "id" : "b49",
+    "line" : 49,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "userDto.getUserId() == null",
+    "refers_to" : [ "field:UserDto.userId", "local:userDto" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:50:40", "cs:50:27" ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b64",
+    "line" : 64,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "user1 == null",
+    "refers_to" : [ "local:user1" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : true
+    },
+    "then_calls" : [ "cs:66:13", "cs:68:51", "cs:68:22", "cs:67:22", "cs:66:53", "cs:66:43", "cs:67:36", "cs:68:36", "cs:70:50", "cs:71:20", "cs:73:20" ],
+    "else_calls" : [ "cs:75:36", "cs:75:113", "cs:76:20" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 47,
+    "col" : 16,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 47,
+    "col" : 74,
+    "callee" : "getUserName",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 48,
+    "col" : 33,
+    "callee" : "getUserId",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 49,
+    "col" : 21,
+    "callee" : "getUserId",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 50,
+    "col" : 27,
+    "callee" : "randomUUID",
+    "receiver" : "UUID",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b49:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 50,
+    "col" : 40,
+    "callee" : "toString",
+    "receiver" : "UUID.randomUUID()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b49:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 53,
+    "col" : 26,
+    "callee" : "builder",
+    "receiver" : "User",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 54,
+    "col" : 18,
+    "callee" : "userId",
+    "receiver" : "User.builder()",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 55,
+    "col" : 18,
+    "callee" : "userName",
+    "receiver" : "User.builder().userId(userId)",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 55,
+    "col" : 35,
+    "callee" : "getUserName",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 56,
+    "col" : 18,
+    "callee" : "password",
+    "receiver" : "User.builder().userId(userId).userName(userDto.getUserName())",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 56,
+    "col" : 35,
+    "callee" : "getPassword",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 57,
+    "col" : 18,
+    "callee" : "gender",
+    "receiver" : "User.builder().userId(userId).userName(userDto.getUserName()).password(userDto.getPassword())",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 57,
+    "col" : 33,
+    "callee" : "getGender",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 58,
+    "col" : 18,
+    "callee" : "documentType",
+    "receiver" : "User.builder().userId(userId).userName(userDto.getUserName()).password(userDto.getPassword()).gender(userDto.getGender())",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 58,
+    "col" : 39,
+    "callee" : "getDocumentType",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 59,
+    "col" : 18,
+    "callee" : "documentNum",
+    "receiver" : "User.builder().userId(userId).userName(userDto.getUserName()).password(userDto.getPassword()).gender(userDto.getGender()).documentType(userDto.getDocumentType())",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 59,
+    "col" : 38,
+    "callee" : "getDocumentNum",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 60,
+    "col" : 18,
+    "callee" : "email",
+    "receiver" : "User.builder().userId(userId).userName(userDto.getUserName()).password(userDto.getPassword()).gender(userDto.getGender()).documentType(userDto.getDocumentType()).documentNum(userDto.getDocumentNum())",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 60,
+    "col" : 32,
+    "callee" : "getEmail",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 60,
+    "col" : 44,
+    "callee" : "build",
+    "receiver" : "User.builder().userId(userId).userName(userDto.getUserName()).password(userDto.getPassword()).gender(userDto.getGender()).documentType(userDto.getDocumentType()).documentNum(userDto.getDocumentNum()).email(userDto.getEmail())",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 63,
+    "col" : 37,
+    "callee" : "findByUserName",
+    "receiver" : "userRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 63,
+    "col" : 60,
+    "callee" : "getUserName",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 66,
+    "col" : 13,
+    "callee" : "createDefaultAuthUser",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 66,
+    "col" : 43,
+    "callee" : "builder",
+    "receiver" : "AuthDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 66,
+    "col" : 53,
+    "callee" : "userId",
+    "receiver" : "AuthDto.builder()",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 67,
+    "col" : 22,
+    "callee" : "userName",
+    "receiver" : "AuthDto.builder().userId(userId + \"\")",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 67,
+    "col" : 36,
+    "callee" : "getUserName",
+    "receiver" : "user",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 68,
+    "col" : 22,
+    "callee" : "password",
+    "receiver" : "AuthDto.builder().userId(userId + \"\").userName(user.getUserName())",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 68,
+    "col" : 36,
+    "callee" : "getPassword",
+    "receiver" : "user",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 68,
+    "col" : 51,
+    "callee" : "build",
+    "receiver" : "AuthDto.builder().userId(userId + \"\").userName(user.getUserName()).password(user.getPassword())",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 70,
+    "col" : 50,
+    "callee" : "save",
+    "receiver" : "userRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 71,
+    "col" : 20,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 73,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b64:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 75,
+    "col" : 36,
+    "callee" : "error",
+    "receiver" : "UserServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b64:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 75,
+    "col" : 113,
+    "callee" : "getUserId",
+    "receiver" : "userDto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b64:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 76,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b64:else" ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)",
+  "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+  "branches" : [ {
+    "id" : "b87",
+    "line" : 87,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "auth_svcs.size() > 0",
+    "refers_to" : [ "local:auth_svcs" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:88:50", "cs:89:20", "cs:89:113", "cs:89:133" ],
+    "else_calls" : [ "cs:91:20" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 81,
+    "col" : 16,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 81,
+    "col" : 79,
+    "callee" : "toString",
+    "receiver" : "dto",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 82,
+    "col" : 31,
+    "callee" : "<init>",
+    "receiver" : "HttpHeaders",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 83,
+    "col" : 38,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 84,
+    "col" : 35,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 86,
+    "col" : 59,
+    "callee" : "getInstances",
+    "receiver" : "discoveryClient",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 87,
+    "col" : 22,
+    "callee" : "size",
+    "receiver" : "auth_svcs",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 88,
+    "col" : 50,
+    "callee" : "get",
+    "receiver" : "auth_svcs",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b87:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 89,
+    "col" : 20,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 3,
+    "guard" : [ "b87:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 89,
+    "col" : 113,
+    "callee" : "getHost",
+    "receiver" : "auth_svc",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b87:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 89,
+    "col" : 133,
+    "callee" : "getPort",
+    "receiver" : "auth_svc",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b87:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 91,
+    "col" : 20,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b87:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 94,
+    "col" : 63,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 97,
+    "col" : 17,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<AuthDto>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 99,
+    "col" : 20,
+    "callee" : "getBody",
+    "receiver" : "res",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)",
+  "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+  "branches" : [ {
+    "id" : "b56",
+    "line" : 56,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "result.getStatus() == 1",
+    "refers_to" : [ "field:Response.status", "local:result" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:57:42", "cs:58:47", "cs:59:20" ],
+    "else_calls" : [ "cs:61:42" ]
+  }, {
+    "id" : "b74",
+    "line" : 74,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "result.getStatus() == 1",
+    "refers_to" : [ "field:Response.status", "local:result" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:75:42", "cs:76:66", "cs:77:20" ],
+    "else_calls" : [ "cs:79:42" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 41,
+    "col" : 38,
+    "callee" : "info",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 43,
+    "col" : 35,
+    "callee" : "<init>",
+    "receiver" : "ArrayList<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 45,
+    "col" : 36,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 47,
+    "col" : 36,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 48,
+    "col" : 70,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 52,
+    "col" : 17,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<ArrayList<Order>>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 54,
+    "col" : 48,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 56,
+    "col" : 20,
+    "callee" : "getStatus",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 57,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b56:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 58,
+    "col" : 47,
+    "callee" : "getData",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b56:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 59,
+    "col" : 20,
+    "callee" : "addAll",
+    "receiver" : "orders",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b56:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 61,
+    "col" : 42,
+    "callee" : "error",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b56:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 64,
+    "col" : 37,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 65,
+    "col" : 42,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 66,
+    "col" : 71,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 70,
+    "col" : 17,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<ArrayList<Order>>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 72,
+    "col" : 22,
+    "callee" : "getBody",
+    "receiver" : "re2",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 74,
+    "col" : 20,
+    "callee" : "getStatus",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 75,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b74:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 76,
+    "col" : 66,
+    "callee" : "getData",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b74:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 77,
+    "col" : 20,
+    "callee" : "addAll",
+    "receiver" : "orders",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b74:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 79,
+    "col" : 42,
+    "callee" : "error",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b74:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 82,
+    "col" : 16,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+  "branches" : [ {
+    "id" : "b89",
+    "line" : 89,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "trainNumber.startsWith(\"G\") || trainNumber.startsWith(\"D\")",
+    "refers_to" : [ "local:trainNumber" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:90:42", "cs:91:40", "cs:92:40", "cs:93:56", "cs:98:36" ],
+    "else_calls" : [ "cs:101:42", "cs:102:40", "cs:103:46", "cs:104:56", "cs:109:36" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 89,
+    "col" : 25,
+    "callee" : "startsWith",
+    "receiver" : "trainNumber",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 89,
+    "col" : 56,
+    "callee" : "startsWith",
+    "receiver" : "trainNumber",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 90,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 3,
+    "guard" : [ "b89:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 91,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ "b89:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 92,
+    "col" : 40,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b89:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 93,
+    "col" : 56,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b89:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 98,
+    "col" : 36,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b89:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 101,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b89:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 102,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ "b89:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 103,
+    "col" : 46,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b89:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 104,
+    "col" : 56,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b89:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 109,
+    "col" : 36,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b89:else" ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+  "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+  "branches" : [ {
+    "id" : "b121",
+    "line" : 121,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "request.getTrainNumber().startsWith(\"G\") || request.getTrainNumber().startsWith(\"D\")",
+    "refers_to" : [ "field:Order.trainNumber", "local:request" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:123:42", "cs:124:40", "cs:125:40", "cs:126:56", "cs:131:36" ],
+    "else_calls" : [ "cs:134:42", "cs:135:40", "cs:136:46", "cs:137:56", "cs:142:36" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 120,
+    "col" : 16,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 120,
+    "col" : 83,
+    "callee" : "toString",
+    "receiver" : "request",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 121,
+    "col" : 21,
+    "callee" : "getTrainNumber",
+    "receiver" : "request",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 121,
+    "col" : 38,
+    "callee" : "startsWith",
+    "receiver" : "request.getTrainNumber()",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 121,
+    "col" : 65,
+    "callee" : "getTrainNumber",
+    "receiver" : "request",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 121,
+    "col" : 82,
+    "callee" : "startsWith",
+    "receiver" : "request.getTrainNumber()",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 123,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b121:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 124,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ "b121:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 125,
+    "col" : 40,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b121:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 126,
+    "col" : 56,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b121:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 131,
+    "col" : 36,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b121:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 134,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b121:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 135,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ "b121:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 136,
+    "col" : 46,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b121:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 137,
+    "col" : 56,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b121:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 142,
+    "col" : 36,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b121:else" ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+  "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+  "branches" : [ {
+    "id" : "b153",
+    "line" : 153,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "request.getTrainNumber().startsWith(\"G\") || request.getTrainNumber().startsWith(\"D\")",
+    "refers_to" : [ "field:Order.trainNumber", "local:request" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:154:42", "cs:155:40", "cs:156:40", "cs:157:56", "cs:162:33" ],
+    "else_calls" : [ "cs:165:42", "cs:166:40", "cs:167:46", "cs:168:56", "cs:173:33" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 152,
+    "col" : 16,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 152,
+    "col" : 72,
+    "callee" : "toString",
+    "receiver" : "request",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 153,
+    "col" : 21,
+    "callee" : "getTrainNumber",
+    "receiver" : "request",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 153,
+    "col" : 38,
+    "callee" : "startsWith",
+    "receiver" : "request.getTrainNumber()",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 153,
+    "col" : 65,
+    "callee" : "getTrainNumber",
+    "receiver" : "request",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 153,
+    "col" : 82,
+    "callee" : "startsWith",
+    "receiver" : "request.getTrainNumber()",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 154,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b153:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 155,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ "b153:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 156,
+    "col" : 40,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b153:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 157,
+    "col" : 56,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b153:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 162,
+    "col" : 33,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b153:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 165,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "AdminOrderServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b153:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 166,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ "b153:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 167,
+    "col" : 46,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b153:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 168,
+    "col" : 56,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b153:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+    "line" : 173,
+    "col" : 33,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b153:else" ]
+  } ],
+  "unsupported" : [ ]
 } ]
