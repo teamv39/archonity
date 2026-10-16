@@ -248,5 +248,77 @@ public class ArchparseTest {
                 .orElseThrow();
         assertEquals(List.of("b64:then"), createAuthCall.getGuard());
     }
-}
 
+    @Test
+    public void testTryCatchAndLambdaGuards() {
+        CompilationUnit cu = StaticJavaParser.parse("package test;\n" +
+                "import java.util.Optional;\n" +
+                "public class Dummy {\n" +
+                "    void f(Optional<String> o) {\n" +
+                "        try {\n" +
+                "            a();\n" +
+                "        } catch (Exception e) {\n" +
+                "            b();\n" +
+                "        } finally {\n" +
+                "            c();\n" +
+                "        }\n" +
+                "        o.orElseThrow(() -> d());\n" +
+                "    }\n" +
+                "    void a() {} void b() {} void c() {} RuntimeException d() { return null; }\n" +
+                "}");
+        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).get();
+        MethodDeclaration md = cid.getMethods().get(0);
+        TargetMethod target = new TargetMethod("method:dummy:Dummy#f(Optional)", "Dummy.java", "f", "Optional");
+        MethodIR ir = AstAnalyzer.analyze(target, md, cu, new TypeIndex(cu, cid));
+
+        java.util.Map<String, List<String>> guards = new java.util.HashMap<>();
+        for (var c : ir.getCalls()) guards.put(c.getCallee(), c.getGuard());
+        assertEquals(List.of(), guards.get("a"));
+        assertEquals(List.of("t5:catch"), guards.get("b"));
+        assertEquals(List.of(), guards.get("c"));
+        assertEquals(List.of("l12:orElseThrow"), guards.get("d"));
+    }
+
+    @Test
+    public void testColumnIsUtf8ByteOffset() throws Exception {
+        java.nio.file.Path file = java.nio.file.Files.createTempFile("Utf8Col", ".java");
+        java.nio.file.Files.writeString(file,
+                "public class Utf8Col {\n" +
+                "    void f() {\n" +
+                "        String s = \"жж\"; g();\n" +
+                "    }\n" +
+                "    void g() {}\n" +
+                "}\n", java.nio.charset.StandardCharsets.UTF_8);
+        CompilationUnit cu = StaticJavaParser.parse(file);
+        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).get();
+        MethodDeclaration md = cid.getMethods().get(0);
+        TargetMethod target = new TargetMethod("method:dummy:Utf8Col#f()", "Utf8Col.java", "f");
+        MethodIR ir = AstAnalyzer.analyze(target, md, cu, new TypeIndex(cu, cid));
+        // g() стоит на 26-м символе, но на 28-м байте: каждая "ж" занимает 2 байта UTF-8
+        assertEquals(28, ir.getCalls().get(0).getCol());
+        java.nio.file.Files.deleteIfExists(file);
+    }
+
+    @Test
+    public void testForEachBodyGuard() {
+        CompilationUnit cu = StaticJavaParser.parse("package test;\n" +
+                "import java.util.List;\n" +
+                "public class Dummy {\n" +
+                "    void f(List<String> orders) {\n" +
+                "        a();\n" +
+                "        for (String o : orders) {\n" +
+                "            b();\n" +
+                "        }\n" +
+                "    }\n" +
+                "    void a() {} void b() {}\n" +
+                "}");
+        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).get();
+        MethodDeclaration md = cid.getMethods().get(0);
+        TargetMethod target = new TargetMethod("method:dummy:Dummy#f(List)", "Dummy.java", "f", "List");
+        MethodIR ir = AstAnalyzer.analyze(target, md, cu, new TypeIndex(cu, cid));
+        java.util.Map<String, List<String>> guards = new java.util.HashMap<>();
+        for (var c : ir.getCalls()) guards.put(c.getCallee(), c.getGuard());
+        assertEquals(List.of(), guards.get("a"));
+        assertEquals(List.of("f6:orders"), guards.get("b"));
+    }
+}

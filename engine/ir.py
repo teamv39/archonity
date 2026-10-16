@@ -25,6 +25,8 @@ LOGGER = logging.getLogger(__name__)
 ORDER_STATUS_GET_CODE = "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
 ORDER_STATUS_GET_NAME_BY_CODE = "method:ts-common:edu.fudan.common.entity.OrderStatus#getNameByCode(int)"
 SEAT_CLASS_GET_CODE = "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()"
+EMPTY_FOR_NEW_USER_COLLECTIONS = frozenset({"orders"})
+LAZY_LAMBDA_HOSTS = frozenset({"orElseThrow", "orElseGet"})
 SEAT_CLASS_GET_NAME_BY_CODE = "method:ts-common:edu.fudan.common.entity.SeatClass#getNameByCode(int)"
 
 
@@ -186,7 +188,7 @@ def ensure_pool_ir(
 
 
 class MethodPoolIR:
-    """Индекс IR тел методов пула (14 ключевых методов)."""
+    """Индекс IR тел методов пула (список в archparse TargetPool)."""
 
     def __init__(self, methods: dict[str, MethodIR]) -> None:
         self.methods = methods
@@ -275,6 +277,24 @@ class MethodPoolIR:
             if ":" not in pred:
                 continue
             bid, arm = pred.split(":", 1)
+
+            # Плечо catch выполняется только при исключении: на штатном пути не активно (R15)
+            if arm == "catch":
+                return False
+            # Тело лямбды выполняется, только если хост-метод её вызывает (R16):
+            # orElseThrow/orElseGet вызывают supplier лишь для пустого Optional
+            if bid[:1] == "l" and bid[1:].isdigit():
+                if arm in LAZY_LAMBDA_HOSTS:
+                    return False
+                continue
+
+            # Цикл foreach исполняется, только если коллекция непуста (R17). Коллекция "orders" читается из БД
+            # по аккаунту: у нового зарегистрированного пользователя заказов нет (S4)
+            if bid[:1] == "f" and bid[1:].isdigit():
+                if arm in EMPTY_FOR_NEW_USER_COLLECTIONS and getattr(profile, "is_new_user", False):
+                    return False
+                continue
+
             branch = branches.get(bid)
             if not branch:
                 continue
@@ -297,7 +317,13 @@ class MethodPoolIR:
 
             # 2. InsidePaymentServiceImpl#pay: G/D диспатч
             # info.getTripId().startsWith("G") || info.getTripId().startsWith("D")
-            if 'startsWith("G")' in cond or 'startsWith("D")' in cond or 'tripGD' in cond:
+            if 'tripGD' in cond and '&&' in cond:
+                # RebookServiceImpl#updateOrder: (G/D && G/D) || (!G/D && !G/D) - перебронирование внутри одного семейства.
+                # Ни один сценарий не меняет тип поезда при перебронировании (S2: тот же обычный поезд).
+                val = True
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+            elif 'startsWith("G")' in cond or 'startsWith("D")' in cond or 'tripGD' in cond:
                 if profile.train_mode == "regular_only":
                     val = False
                 elif profile.train_mode == "high_speed_only":
@@ -314,13 +340,15 @@ class MethodPoolIR:
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
 
-            # 4. Refused Cancel: статус собранного билета (COLLECTED) не позволяет отмену
-            # order.getStatus() == OrderStatus.NOTPAID.getCode() || ...
+            # 4. CancelServiceImpl: проверка статуса заказа перед отменой/расчётом возврата
             if 'OrderStatus.NOTPAID.getCode()' in cond and 'cancel' in method_id.lower():
-                if profile.has_refused_cancel:
-                    val = False
+                if 'OrderStatus.PAID.getCode()' in cond:
+                    # Общий гейт NOTPAID || PAID || CHANGE: пропускает всё, кроме собранного/использованного заказа
+                    val = not profile.has_refused_cancel
                 else:
-                    val = True
+                    # Одиночная проверка order.getStatus() == NOTPAID (ветка "возврат 0"):
+                    # возврат и отмена в сценариях запрашиваются для оплаченного заказа
+                    val = False
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
 
@@ -372,7 +400,7 @@ class MethodPoolIR:
             # 11. UserServiceImpl#saveUser: новый пользователь vs уже существующий
             # user1 == null
             if 'user1 == null' in cond:
-                val = True  # Штатный сценарий регистрации нового пользователя
+                val = getattr(profile, "is_new_user", False)
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
 

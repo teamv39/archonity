@@ -13,6 +13,10 @@ import com.v39a.model.CallIR;
 import com.v39a.model.EnumConstantIR;
 import com.v39a.model.MethodIR;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 public class AstAnalyzer {
@@ -66,21 +70,18 @@ public class AstAnalyzer {
             } else if (node instanceof ForStmt) {
                 int line = node.getBegin().map(p -> p.line).orElse(0);
                 unsupported.add("line " + line + ": for loop not modeled (R17)");
-            } else if (node instanceof ForEachStmt) {
+            } else if (node instanceof ForEachStmt forEach) {
                 int line = node.getBegin().map(p -> p.line).orElse(0);
-                unsupported.add("line " + line + ": foreach loop not modeled (R17)");
+                unsupported.add("line " + line + ": foreach body guarded as " + loopId(forEach) + " (assumed non-empty unless state says otherwise)");
             } else if (node instanceof ConditionalExpr) {
                 int line = node.getBegin().map(p -> p.line).orElse(0);
                 unsupported.add("line " + line + ": ternary operator not modeled");
             } else if (node instanceof SwitchStmt) {
                 int line = node.getBegin().map(p -> p.line).orElse(0);
                 unsupported.add("line " + line + ": switch statement not modeled");
-            } else if (node instanceof TryStmt) {
+            } else if (node instanceof LambdaExpr lambda) {
                 int line = node.getBegin().map(p -> p.line).orElse(0);
-                unsupported.add("line " + line + ": try-catch block not modeled");
-            } else if (node instanceof LambdaExpr) {
-                int line = node.getBegin().map(p -> p.line).orElse(0);
-                unsupported.add("line " + line + ": lambda not modeled");
+                unsupported.add("line " + line + ": lambda body guarded as " + lambdaId(lambda) + " (executed only if the host invokes it)");
             } else if (node instanceof MethodReferenceExpr) {
                 int line = node.getBegin().map(p -> p.line).orElse(0);
                 unsupported.add("line " + line + ": method reference not modeled");
@@ -109,7 +110,7 @@ public class AstAnalyzer {
         // Если это вызов метода
         if (node instanceof MethodCallExpr call) {
             int line = call.getName().getBegin().map(p -> p.line).orElse(0);
-            int col = call.getName().getBegin().map(p -> p.column).orElse(0);
+            int col = skeletonCol(call.getName());
             String callee = call.getNameAsString();
             String receiver = call.getScope().map(Expression::toString).orElse("this");
             EnumConstantIR enumConst = EnumResolver.resolveCall(call, cu);
@@ -141,7 +142,7 @@ public class AstAnalyzer {
         // Если это создание объекта new Foo(...)
         if (node instanceof ObjectCreationExpr creation) {
             int line = creation.getBegin().map(p -> p.line).orElse(0);
-            int col = creation.getBegin().map(p -> p.column).orElse(0);
+            int col = skeletonCol(creation);
             String callee = "<init>";
             String receiver = creation.getType().asString();
             int argCount = creation.getArguments().size();
@@ -156,6 +157,40 @@ public class AstAnalyzer {
             }
 
             // По R1: НЕ обходим методы анонимного класса, если он есть
+            return;
+        }
+
+        // try/catch: тело и finally идут при текущем guard, catch-плечи только при исключении (R15)
+        if (node instanceof TryStmt tryStmt) {
+            for (Expression resource : tryStmt.getResources()) {
+                extractCallsWithGuard(resource, currentGuard, relFile, cu, typeIndex, classMethodNames, resultCalls);
+            }
+            extractCallsWithGuard(tryStmt.getTryBlock(), currentGuard, relFile, cu, typeIndex, classMethodNames, resultCalls);
+            for (CatchClause cc : tryStmt.getCatchClauses()) {
+                List<String> catchGuard = new ArrayList<>(currentGuard);
+                catchGuard.add(tryId(tryStmt) + ":catch");
+                extractCallsWithGuard(cc.getBody(), catchGuard, relFile, cu, typeIndex, classMethodNames, resultCalls);
+            }
+            if (tryStmt.getFinallyBlock().isPresent()) {
+                extractCallsWithGuard(tryStmt.getFinallyBlock().get(), currentGuard, relFile, cu, typeIndex, classMethodNames, resultCalls);
+            }
+            return;
+        }
+
+        // foreach: тело исполняется, только если коллекция непуста (R17)
+        if (node instanceof ForEachStmt forEach) {
+            extractCallsWithGuard(forEach.getIterable(), currentGuard, relFile, cu, typeIndex, classMethodNames, resultCalls);
+            List<String> loopGuard = new ArrayList<>(currentGuard);
+            loopGuard.add(loopId(forEach));
+            extractCallsWithGuard(forEach.getBody(), loopGuard, relFile, cu, typeIndex, classMethodNames, resultCalls);
+            return;
+        }
+
+        // Лямбда: тело исполняется только если хост-метод её вызывает (R16)
+        if (node instanceof LambdaExpr lambda) {
+            List<String> lambdaGuard = new ArrayList<>(currentGuard);
+            lambdaGuard.add(lambdaId(lambda));
+            extractCallsWithGuard(lambda.getBody(), lambdaGuard, relFile, cu, typeIndex, classMethodNames, resultCalls);
             return;
         }
 
@@ -191,13 +226,64 @@ public class AstAnalyzer {
         return "b" + ifStmt.getBegin().map(p -> p.line).orElse(0);
     }
 
+    private static final Map<Path, List<String>> LINE_CACHE = new HashMap<>();
+
+    /**
+     * Колонка начала узла в системе скелета: 1-based смещение в байтах UTF-8.
+     * JavaParser считает символы, поэтому строки с кириллицей или иероглифами до вызова сдвигают колонку.
+     */
+    static int skeletonCol(Node node) {
+        Optional<com.github.javaparser.Position> pos = node.getBegin();
+        if (pos.isEmpty()) return 0;
+        int line = pos.get().line;
+        int col = pos.get().column;
+        Optional<Path> path = node.findCompilationUnit().flatMap(CompilationUnit::getStorage).map(s -> s.getPath());
+        if (path.isEmpty()) return col;
+        List<String> lines = LINE_CACHE.computeIfAbsent(path.get(), pth -> {
+            try {
+                return Files.readAllLines(pth, StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                return List.of();
+            }
+        });
+        if (line - 1 >= lines.size()) return col;
+        String text = lines.get(line - 1);
+        int end = Math.min(col - 1, text.length());
+        return text.substring(0, end).getBytes(StandardCharsets.UTF_8).length + 1;
+    }
+
+    /** Идентификатор try: "t" + строка оператора try. Плечо catch записывается как "t12:catch". */
+    static String tryId(TryStmt tryStmt) {
+        return "t" + tryStmt.getBegin().map(p -> p.line).orElse(0);
+    }
+
+    /** Идентификатор цикла foreach: "f<строка>:<выражение коллекции>", например "f390:orders". */
+    static String loopId(ForEachStmt forEach) {
+        return "f" + forEach.getBegin().map(p -> p.line).orElse(0) + ":" + forEach.getIterable().toString();
+    }
+
+    /** Идентификатор лямбды: "l<строка>:<имя метода, куда лямбда передана>", например "l91:orElseThrow". */
+    static String lambdaId(LambdaExpr lambda) {
+        String host = lambda.getParentNode()
+                .filter(p -> p instanceof MethodCallExpr)
+                .map(p -> ((MethodCallExpr) p).getNameAsString())
+                .orElse("unknown");
+        return "l" + lambda.getBegin().map(p -> p.line).orElse(0) + ":" + host;
+    }
+
     /** Плечи объемлющих if (снаружи внутрь), в которых лежит узел: ["b49:else", "b105:then"]. */
     static List<String> guardOf(Node node) {
         LinkedList<String> guard = new LinkedList<>();
         Node child = node;
         Node parent = node.getParentNode().orElse(null);
         while (parent != null) {
-            if (parent instanceof IfStmt is) {
+            if (parent instanceof CatchClause && parent.getParentNode().orElse(null) instanceof TryStmt ts) {
+                guard.addFirst(tryId(ts) + ":catch");
+            } else if (parent instanceof LambdaExpr lambda) {
+                guard.addFirst(lambdaId(lambda));
+            } else if (parent instanceof ForEachStmt forEach && forEach.getBody() == child) {
+                guard.addFirst(loopId(forEach));
+            } else if (parent instanceof IfStmt is) {
                 if (is.getThenStmt() == child) {
                     guard.addFirst(branchId(is) + ":then");
                 } else if (is.getElseStmt().isPresent() && is.getElseStmt().get() == child) {
@@ -289,11 +375,11 @@ public class AstAnalyzer {
 
             if (node instanceof MethodCallExpr call) {
                 int line = call.getName().getBegin().map(p -> p.line).orElse(0);
-                int col = call.getName().getBegin().map(p -> p.column).orElse(0);
+                int col = skeletonCol(call.getName());
                 coords.add("cs:" + line + ":" + col);
             } else if (node instanceof ObjectCreationExpr creation) {
                 int line = creation.getBegin().map(p -> p.line).orElse(0);
-                int col = creation.getBegin().map(p -> p.column).orElse(0);
+                int col = skeletonCol(creation);
                 coords.add("cs:" + line + ":" + col);
             }
         });

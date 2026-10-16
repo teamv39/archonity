@@ -118,18 +118,72 @@ public class TargetPool {
                 "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)",
                 adminOrderFile, "getAllOrders", "HttpHeaders"
         ));
+
+        // 11. Методы с enum-вызовами R7 вне основных сценарных обработчиков
+        String cancelFile = "ts-cancel-service/src/main/java/cancel/service/CancelServiceImpl.java";
         list.add(new TargetMethod(
-                "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
-                adminOrderFile, "deleteOrder", "String", "String", "HttpHeaders"
+                "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelFromOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+                cancelFile, "cancelFromOrder", "Order", "HttpHeaders"
         ));
         list.add(new TargetMethod(
-                "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
-                adminOrderFile, "updateOrder", "Order", "HttpHeaders"
+                "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelFromOtherOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+                cancelFile, "cancelFromOtherOrder", "Order", "HttpHeaders"
         ));
         list.add(new TargetMethod(
-                "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
-                adminOrderFile, "addOrder", "Order", "HttpHeaders"
+                "method:ts-rebook-service:rebook.service.RebookServiceImpl#updateOrder(edu.fudan.common.entity.Order,rebook.entity.RebookInfo,edu.fudan.common.entity.TripAllDetail,java.lang.String,org.springframework.http.HttpHeaders)",
+                "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+                "updateOrder", "Order", "RebookInfo", "TripAllDetail", "String", "HttpHeaders"
         ));
+        list.add(new TargetMethod(
+                "method:ts-order-service:order.service.OrderServiceImpl#alterOrder(order.entity.OrderAlterInfo,org.springframework.http.HttpHeaders)",
+                orderFile, "alterOrder", "OrderAlterInfo", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-service:order.service.OrderServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+                orderFile, "cancelOrder", "String", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-service:order.service.OrderServiceImpl#payOrder(java.lang.String,org.springframework.http.HttpHeaders)",
+                orderFile, "payOrder", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#alterOrder(other.entity.OrderAlterInfo,org.springframework.http.HttpHeaders)",
+                orderOtherFile, "alterOrder", "OrderAlterInfo", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+                orderOtherFile, "cancelOrder", "String", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#payOrder(java.lang.String,org.springframework.http.HttpHeaders)",
+                orderOtherFile, "payOrder", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-travel-service:travel.service.TravelServiceImpl#setResponse(travel.entity.Trip,edu.fudan.common.entity.TravelResult,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+                "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+                "setResponse", "Trip", "TravelResult", "String", "String", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-travel2-service:travel2.service.TravelServiceImpl#setResponse(travel2.entity.Trip,edu.fudan.common.entity.TravelResult,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+                "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+                "setResponse", "Trip", "TravelResult", "String", "String", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-service:order.service.OrderServiceImpl#checkSecurityAboutOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)",
+                orderFile, "checkSecurityAboutOrder", "Date", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#checkSecurityAboutOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)",
+                orderOtherFile, "checkSecurityAboutOrder", "Date", "String", "HttpHeaders"
+        ));
+        String planFile = "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java";
+        for (String name : new String[]{"getCheapest", "getQuickest", "getMinStation"}) {
+            list.add(new TargetMethod(
+                    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#" + name
+                            + "(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+                    planFile, name, "TripInfo", "HttpHeaders"
+            ));
+        }
 
         return Collections.unmodifiableList(list);
     }
