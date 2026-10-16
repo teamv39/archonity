@@ -124,7 +124,7 @@ class SubmissionAdapter:
                         for s in (svc_src, svc_tgt):
                             if s not in nodes_map:
                                 nodes_map[s] = {"id": s, "name": s, "type": "SERVICE", "endpoints": []}
-                        edge_id = f"{svc_src}->{svc_tgt}:CALLS_HTTP"
+                        edge_id = f"{svc_src}->{svc_tgt}:REST_HTTP"
                         if edge_id not in seen_edges:
                             seen_edges.add(edge_id)
                             ev_entry = (
@@ -136,7 +136,7 @@ class SubmissionAdapter:
                                 "id": edge_id,
                                 "source": svc_src,
                                 "target": svc_tgt,
-                                "relation_type": "CALLS_HTTP",
+                                "relation_type": "REST_HTTP",
                                 "source_type": ev_entry.get("source_type", "AST_EXACT"),
                                 "confidence": ev_entry.get("confidence", 1.0),
                                 "is_reachable": True,
@@ -199,7 +199,7 @@ class SubmissionAdapter:
                             "id": edge_id,
                             "source": "ts-gateway-service",
                             "target": tgt,
-                            "relation_type": "CALLS_HTTP",
+                            "relation_type": "REST_HTTP",
                             "source_type": "CONFIG",
                             "confidence": 1.0,
                             "is_reachable": True,
@@ -208,9 +208,11 @@ class SubmissionAdapter:
                             edge_data["evidence_details"] = ev_details
                         edges_list.append(edge_data)
 
+        from datetime import datetime, timezone
+
         return {
             "metadata": {
-                "generated_at": "2026-10-16T15:30:00Z",
+                "generated_at": datetime.now(timezone.utc).isoformat(),
                 "version": "1.0.0-archonity-engine",
                 "total_nodes": len(nodes_map),
                 "total_edges": len(edges_list),
