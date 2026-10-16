@@ -404,5 +404,19 @@ class MethodPoolIR:
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
 
+            # 14. OrderServiceImpl#queryOrders / OrderOtherServiceImpl#queryOrders: фильтрация заказов (b131, b148)
+            # qi.isEnableStateQuery() || qi.isEnableBoughtDateQuery() || qi.isEnableTravelDateQuery()
+            if 'isEnableStateQuery()' in cond and 'isEnableBoughtDateQuery()' in cond:
+                val = getattr(profile, "has_order_filter", False)
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
+            # 15. OrderServiceImpl#queryOrders / OrderOtherServiceImpl#queryOrders: фильтрация по статусу (b138, b155)
+            # qi.isEnableStateQuery()
+            if cond.strip() == 'qi.isEnableStateQuery()':
+                val = getattr(profile, "has_status_filter", False)
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
 
         return True

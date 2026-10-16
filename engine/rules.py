@@ -28,6 +28,8 @@ class ScenarioProfile:
     has_advanced_search: bool = False
     has_consign_weight_change: bool = False
     is_new_user: bool = False
+    has_order_filter: bool = False
+    has_status_filter: bool = False
 
     @classmethod
     def from_scenario(cls, scenario_dict: dict[str, Any]) -> ScenarioProfile:
@@ -117,6 +119,20 @@ class ScenarioProfile:
         # 9. Новый пользователь (регистрация аккаунта с нуля, пустая история заказов)
         is_new_user = bool(re.search(r"\bregister(?:s|\s+a\s+new)\b", text))
 
+        # 10. Фильтрация заказов по статусу или датам (OrderServiceImpl / OrderOtherServiceImpl)
+        has_order_filter = bool(
+            re.search(
+                r"\b(?:filtered\b|filter\w*\s+by|travel\s+date|purchase\s+date|bought\s+date)\b",
+                text,
+            )
+        )
+        if "status" in text and ("filter" in text or "paid" in text or "cancel" in text):
+            has_order_filter = True
+
+        has_status_filter = bool(
+            re.search(r"\b(?:filtered\b|filter\w*\s+by)[^\n.;]*?\bstatus\b", text)
+        )
+
         return cls(
             id=sid,
             is_admin=is_admin,
@@ -130,6 +146,8 @@ class ScenarioProfile:
             has_advanced_search=has_advanced_search,
             has_consign_weight_change=has_consign_weight_change,
             is_new_user=is_new_user,
+            has_order_filter=has_order_filter,
+            has_status_filter=has_status_filter,
         )
 
     def for_step(self, step_dict: dict[str, Any]) -> ScenarioProfile:
@@ -178,6 +196,20 @@ class ScenarioProfile:
             if "rebook" in act:
                 step_has_refused_rebook = True
 
+        # Фильтрация заказов на данном конкретном шаге
+        step_has_order_filter = bool(
+            re.search(
+                r"\b(?:filtered\b|filter\w*\s+by|travel\s+date|purchase\s+date|bought\s+date)\b",
+                act,
+            )
+        )
+        if "status" in act and ("filter" in act or "paid" in act or "cancel" in act):
+            step_has_order_filter = True
+
+        step_has_status_filter = bool(
+            re.search(r"\b(?:filtered\b|filter\w*\s+by)[^\n.;]*?\bstatus\b", act)
+        )
+
         return ScenarioProfile(
             id=self.id,
             is_admin=self.is_admin,
@@ -191,6 +223,8 @@ class ScenarioProfile:
             has_advanced_search=self.has_advanced_search,
             has_consign_weight_change=self.has_consign_weight_change,
             is_new_user=self.is_new_user,
+            has_order_filter=step_has_order_filter,
+            has_status_filter=step_has_status_filter,
         )
 
 
