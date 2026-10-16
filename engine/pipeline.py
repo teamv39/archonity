@@ -49,8 +49,18 @@ class ArchonityPipeline:
         # Шаг 1: Grounding точек входа
         entries = self.grounder.ground(scenario_dict)
 
+        step_texts = [st.get("action", "") for st in scenario_dict.get("steps") or []]
+        scenario_meta = {
+            "id": sid,
+            "title": scenario_dict.get("title", ""),
+            "description": scenario_dict.get("description", ""),
+            "step_texts": step_texts,
+        }
+
         # Шаг 2: Обход графа с изоляцией БД и фильтрацией мертвого кода
-        methods, calls, remote, data = self.builder.traverse(entries, is_admin_scenario=is_admin)
+        methods, calls, remote, data = self.builder.traverse(
+            entries, is_admin_scenario=is_admin, scenario_meta=scenario_meta
+        )
 
         return methods, calls, remote, data
 
