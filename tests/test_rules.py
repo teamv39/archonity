@@ -355,3 +355,45 @@ class TestRuntimeRules:
             profile=prof_s2,
         )
 
+    def test_rebook_and_cancel_dead_code_refinements(self, rules: RuntimeRules) -> None:
+        prof_s2 = ScenarioProfile("S2", False, False, False, True, train_mode="regular_only")
+        prof_s4 = ScenarioProfile("S4", False, False, False, True, train_mode="high_speed_only")
+
+        # В RebookServiceImpl смена типа поезда и доплата являются мертвым кодом
+        assert rules.is_dead_code_method(
+            "method:ts-rebook-service:rebook.service.RebookServiceImpl#createOrder(edu.fudan.common.entity.Order,java.lang.String,org.springframework.http.HttpHeaders)",
+            profile=prof_s2,
+        )
+        assert rules.is_dead_code_method(
+            "method:ts-rebook-service:rebook.service.RebookServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+            profile=prof_s2,
+        )
+        assert rules.is_dead_code_method(
+            "method:ts-rebook-service:rebook.service.RebookServiceImpl#payDifferentMoney(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+            profile=prof_s2,
+        )
+        assert rules.is_dead_code_method(
+            "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#payDifference(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+            profile=prof_s2,
+        )
+
+        # В regular_only CancelServiceImpl не вызывает cancelFromOrder и getAccount
+        assert rules.is_dead_code_method(
+            "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelFromOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+            profile=prof_s2,
+        )
+        assert rules.is_dead_code_method(
+            "method:ts-cancel-service:cancel.service.CancelServiceImpl#getAccount(java.lang.String,org.springframework.http.HttpHeaders)",
+            profile=prof_s2,
+        )
+
+        # В high_speed_only CancelServiceImpl не вызывает cancelFromOtherOrder и getOrderByIdFromOrderOther
+        assert rules.is_dead_code_method(
+            "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelFromOtherOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+            profile=prof_s4,
+        )
+        assert rules.is_dead_code_method(
+            "method:ts-cancel-service:cancel.service.CancelServiceImpl#getOrderByIdFromOrderOther(java.lang.String,org.springframework.http.HttpHeaders)",
+            profile=prof_s4,
+        )
+
