@@ -1,16 +1,23 @@
-"""Адаптер для формирования submission.json и канонического графа для visualizer/."""
 from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable
+
+if TYPE_CHECKING:
+    from engine.evidence import EvidenceLogger
 
 
 class SubmissionAdapter:
     """Адаптер экспорта результатов по сценариям."""
 
-    def __init__(self, project: str = "trainticket") -> None:
+    def __init__(
+        self,
+        project: str = "trainticket",
+        evidence_logger: EvidenceLogger | None = None,
+    ) -> None:
         self.project = project
+        self.evidence_logger = evidence_logger
         self.scenarios: dict[str, list[dict[str, str]]] = {}
 
     def add_scenario_edges(
@@ -56,6 +63,17 @@ class SubmissionAdapter:
             })
 
         self.scenarios[scenario_id] = edges
+
+        # Регистрация в EvidenceLogger
+        if self.evidence_logger:
+            for s, t in remote:
+                self.evidence_logger.record_remote_call(s, t, scenario_id=scenario_id)
+            for s, t in data:
+                self.evidence_logger.record_data_access(s, t, scenario_id=scenario_id)
+            for m in methods:
+                if m.startswith("method:"):
+                    svc = m.split(":")[1]
+                    self.evidence_logger.record_gateway_route(svc)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -109,15 +127,23 @@ class SubmissionAdapter:
                         edge_id = f"{svc_src}->{svc_tgt}:CALLS_HTTP"
                         if edge_id not in seen_edges:
                             seen_edges.add(edge_id)
-                            edges_list.append({
+                            ev_entry = (
+                                self.evidence_logger.evidence.get(edge_id, {})
+                                if self.evidence_logger
+                                else {}
+                            )
+                            edge_data: dict[str, Any] = {
                                 "id": edge_id,
                                 "source": svc_src,
                                 "target": svc_tgt,
-                                "relation_type": "REST_HTTP",
-                                "source_type": "AST_EXACT",
-                                "confidence": 1.0,
+                                "relation_type": "CALLS_HTTP",
+                                "source_type": ev_entry.get("source_type", "AST_EXACT"),
+                                "confidence": ev_entry.get("confidence", 1.0),
                                 "is_reachable": True,
-                            })
+                            }
+                            if ev_details := ev_entry.get("evidence_details"):
+                                edge_data["evidence_details"] = ev_details
+                            edges_list.append(edge_data)
 
                 # 3. Базы данных data
                 elif rel == "data":
@@ -137,19 +163,54 @@ class SubmissionAdapter:
                         edge_id = f"{svc_src}->{db_node_id}:DATABASE"
                         if edge_id not in seen_edges:
                             seen_edges.add(edge_id)
-                            edges_list.append({
+                            ev_entry = (
+                                self.evidence_logger.evidence.get(edge_id, {})
+                                if self.evidence_logger
+                                else {}
+                            )
+                            edge_data = {
                                 "id": edge_id,
                                 "source": svc_src,
                                 "target": db_node_id,
                                 "relation_type": "DATABASE",
-                                "source_type": "AST_EXACT",
-                                "confidence": 1.0,
+                                "source_type": ev_entry.get("source_type", "AST_EXACT"),
+                                "confidence": ev_entry.get("confidence", 1.0),
                                 "is_reachable": True,
-                            })
+                            }
+                            if ev_details := ev_entry.get("evidence_details"):
+                                edge_data["evidence_details"] = ev_details
+                            edges_list.append(edge_data)
+
+        # 4. Маршруты шлюза из evidence_logger
+        if self.evidence_logger:
+            for edge_id, ev in self.evidence_logger.evidence.items():
+                if ev.get("source") == "ts-gateway-service":
+                    tgt = ev.get("target")
+                    if tgt in nodes_map and edge_id not in seen_edges:
+                        if "ts-gateway-service" not in nodes_map:
+                            nodes_map["ts-gateway-service"] = {
+                                "id": "ts-gateway-service",
+                                "name": "ts-gateway-service",
+                                "type": "SERVICE",
+                                "endpoints": [],
+                            }
+                        seen_edges.add(edge_id)
+                        edge_data = {
+                            "id": edge_id,
+                            "source": "ts-gateway-service",
+                            "target": tgt,
+                            "relation_type": "CALLS_HTTP",
+                            "source_type": "CONFIG",
+                            "confidence": 1.0,
+                            "is_reachable": True,
+                        }
+                        if ev_details := ev.get("evidence_details"):
+                            edge_data["evidence_details"] = ev_details
+                        edges_list.append(edge_data)
 
         return {
             "metadata": {
-                "generated_at": "2026-10-16T14:40:00Z",
+                "generated_at": "2026-10-16T15:30:00Z",
                 "version": "1.0.0-archonity-engine",
                 "total_nodes": len(nodes_map),
                 "total_edges": len(edges_list),
@@ -169,3 +230,7 @@ class SubmissionAdapter:
         p.parent.mkdir(parents=True, exist_ok=True)
         with open(p, "w", encoding="utf-8") as f:
             json.dump(self.to_canonical_graph(), f, ensure_ascii=False, indent=2)
+
+    def save_evidence_log(self, output_path: str | Path) -> None:
+        if self.evidence_logger:
+            self.evidence_logger.save(output_path)

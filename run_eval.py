@@ -159,6 +159,19 @@ def main() -> None:
     adapter.save_canonical_graph(canonical_out)
     print(f"Канонический граф для visualizer/ сохранен в: {canonical_out}")
 
+    evidence_out = args.out.parent / "evidence.json"
+    adapter.save_evidence_log(evidence_out)
+    print(f"Evidence Log сохранен в: {evidence_out}")
+
+    # Синхронизация с visualizer/public/data/
+    vis_data_dir = ROOT_DIR / "visualizer" / "public" / "data"
+    if vis_data_dir.is_dir():
+        import shutil
+        shutil.copy(canonical_out, vis_data_dir / "canonical_graph.json")
+        shutil.copy(evidence_out, vis_data_dir / "evidence.json")
+        shutil.copy(args.out, vis_data_dir / "submission.json")
+        print(f"Файлы синхронизированы с {vis_data_dir}")
+
     # Оценка через evaluate_golden.py
     if not args.no_eval and args.gold.is_file():
         eval_script = ROOT_DIR / "hackaton" / "tt-challenge" / "platform" / "evaluate_golden.py"

@@ -6,6 +6,7 @@ from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex, load_json
 from engine.adapters.submission import SubmissionAdapter
+from engine.evidence import EvidenceLogger
 from engine.graph.builder import GraphBuilder
 from engine.resolver import ScenarioGrounder
 from engine.rules import RuntimeRules, ScenarioProfile
@@ -27,13 +28,16 @@ class ArchonityPipeline:
         sk_dict = load_json(self.skeleton_path)
         self.index = SkeletonIndex(sk_dict)
 
-        # 2. Загрузка правил
+        # 2. Логгер доказательств (Evidence Log)
+        self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
+
+        # 3. Загрузка правил
         self.rules = RuntimeRules(rules_path)
 
-        # 3. Инициализация резолвера шагов
+        # 4. Инициализация резолвера шагов
         self.grounder = ScenarioGrounder(self.index, self.targets_root)
 
-        # 4. Инициализация графового строителя
+        # 5. Инициализация графового строителя
         self.builder = GraphBuilder(self.index, self.rules)
 
     def run_scenario(self, scenario_dict: dict[str, Any]) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
@@ -68,7 +72,10 @@ class ArchonityPipeline:
         output_path: str | Path,
     ) -> SubmissionAdapter:
         """Прогон по списку сценариев и экспорт submission.json."""
-        adapter = SubmissionAdapter(project=self.index.project)
+        adapter = SubmissionAdapter(
+            project=self.index.project,
+            evidence_logger=self.evidence_logger,
+        )
 
         for sp in sorted(scenario_paths, key=lambda p: str(p)):
             s_dict = load_json(sp)
