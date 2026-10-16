@@ -1,7 +1,7 @@
 # Дорожная карта реализации проекта Archonity (Roadmap)
 
 ## Статус документа
-Утверждено на основе анализа пакета участника TechArena 2026 ([hackaton/tt-challenge/](file:///Users/shteppinson/dev/hacks/archonity/hackaton/tt-challenge)), открытого эталона S0 ([gold/S0.json](file:///Users/shteppinson/dev/hacks/archonity/hackaton/tt-challenge/gold/S0.json)), принятых архитектурных решений ([docs/adr/](file:///Users/shteppinson/dev/hacks/archonity/docs/adr)) и аналитических артефактов ([docs/analytics/trainticket_artifacts_summary.md](file:///Users/shteppinson/dev/hacks/archonity/docs/analytics/trainticket_artifacts_summary.md)).
+Утверждено на основе анализа пакета участника TechArena 2026 ([hackaton/tt-challenge/](../hackaton/tt-challenge/)), открытого эталона S0 ([gold/S0.json](../hackaton/tt-challenge/gold/S0.json)), принятых архитектурных решений ([docs/adr/](adr/)) и аналитических артефактов ([docs/analytics/trainticket_artifacts_summary.md](analytics/trainticket_artifacts_summary.md)).
 
 ---
 
@@ -12,24 +12,24 @@
 * **Специфика задачи:** Статическое предсказание подграфа выполнения для **8 пользовательских сценариев** ($S_0 \dots S_7$) по их текстовому описанию и исходному коду **без рантайм-запуска проекта**.
 * **Целевая метрика:** Средний **IoU (Intersection over Union)** по 4 типам связей на 7 скрытых сценариях ($S_1 \dots S_7$):
   $$\text{IoU} = \frac{|P \cap G|}{|P \cup G|} = \frac{TP}{TP + FP + FN}$$
-  *Сценарий $S_0$ открыт ([gold/S0.json](file:///Users/shteppinson/dev/hacks/archonity/hackaton/tt-challenge/gold/S0.json)) для локальной разработки и валидации, но не входит в итоговый балл платформы.*
-* **Формат сдачи:** ZIP-архив с кодом и обязательным файлом `submission.json` в корне ([hackaton/sample/README.md](file:///Users/shteppinson/dev/hacks/archonity/hackaton/sample/README.md)).
+  *Сценарий $S_0$ открыт ([gold/S0.json](../hackaton/tt-challenge/gold/S0.json)) для локальной разработки и валидации, но не входит в итоговый балл платформы.*
+* **Формат сдачи:** ZIP-архив с кодом и обязательным файлом `submission.json` в корне ([hackaton/sample/README.md](../hackaton/sample/README.md)).
 * **Бонус за Rust:** +10% к итоговому баллу (множитель 1.10) при реализации анализа кода и построения графа на Rust.
 
 ---
 
 ## 2. Сопоставление с наработанными аналитическими артефактами
 
-В проекте уже подготовлена аналитическая база ([docs/analytics/trainticket_artifacts_summary.md](file:///Users/shteppinson/dev/hacks/archonity/docs/analytics/trainticket_artifacts_summary.md)), которая напрямую закрывает ключевые этапы нового пайплайна:
+В проекте уже подготовлена аналитическая база ([docs/analytics/trainticket_artifacts_summary.md](analytics/trainticket_artifacts_summary.md)), которая напрямую закрывает ключевые этапы нового пайплайна:
 
 | Артефакт в репозитории | Назначение в контексте сценариев $S_0 \dots S_7$ | Применение в дорожной карте |
 |:---|:---|:---|
-| [facts/configs_topology.json](file:///Users/shteppinson/dev/hacks/archonity/facts/configs_topology.json) | 43 маршрута Spring Cloud Gateway (`ts-gateway-service:18888`), Nginx-прокси, порты, топология MySQL/MongoDB, очередь RabbitMQ `email`. | Маппинг URL-запросов из UI в целевые микросервисы и резолвинг очередей. |
-| [facts/ts-*.json](file:///Users/shteppinson/dev/hacks/archonity/facts/) (4 полиглота) | Эндпоинты, DTO, доступ к БД и вызовы сервисов на Node.js, Python, Go. | Готовые факты для шагов, затрагивающих вспомогательные сервисы (аватары, новости, ваучеры). |
-| [data/runtime_and_topology_rules.json](file:///Users/shteppinson/dev/hacks/archonity/data/runtime_and_topology_rules.json) | Правила отсева административных сервисов (`ts-admin-*`), канареечных дублей (`ts-travel2-service`), сервисов медленных поездов (`*-other`). | Защита от False Positives ($FP$) при анализе сценариев без администраторов и с фильтрами типов поездов. |
-| [data/llm_judge_dossiers_and_traps.json](file:///Users/shteppinson/dev/hacks/archonity/data/llm_judge_dossiers_and_traps.json) | Каталог семантических ловушек (одинаковые DTO без HTTP-связи), GBNF-грамматика вердиктов для `Qwen2.5-Coder-7B`. | Локальный арбитраж пограничных вызовов в серой зоне ($0.35 \le P < 0.85$). |
-| [docs/analytics/trainticket_reference.md](file:///Users/shteppinson/dev/hacks/archonity/docs/analytics/trainticket_reference.md) | Шаблоны AST JavaParser для `RestTemplate`, распаковки generic-ответов `ParameterizedTypeReference<Response<T>>`. | Извлечение вызовов и типов возвращаемых данных в `archparse/`. |
-| [visualizer/](file:///Users/shteppinson/dev/hacks/archonity/visualizer) | React Flow + ELK.js интерактивный визуализатор с инспектором доказательств. | Визуальный Error Analysis: подсветка $TP$ (зеленый), $FP$ (красный) и $FN$ (фиолетовый) на открытом $S_0$. |
+| [facts/configs_topology.json](../facts/configs_topology.json) | 43 маршрута Spring Cloud Gateway (`ts-gateway-service:18888`), Nginx-прокси, порты, топология MySQL/MongoDB, очередь RabbitMQ `email`. | Маппинг URL-запросов из UI в целевые микросервисы и резолвинг очередей. |
+| [facts/ts-*.json](../facts/) (4 полиглота) | Эндпоинты, DTO, доступ к БД и вызовы сервисов на Node.js, Python, Go. | Готовые факты для шагов, затрагивающих вспомогательные сервисы (аватары, новости, ваучеры). |
+| [data/runtime_and_topology_rules.json](../data/runtime_and_topology_rules.json) | Правила отсева административных сервисов (`ts-admin-*`), канареечных дублей (`ts-travel2-service`), сервисов медленных поездов (`*-other`). | Защита от False Positives ($FP$) при анализе сценариев без администраторов и с фильтрами типов поездов. |
+| [data/llm_judge_dossiers_and_traps.json](../data/llm_judge_dossiers_and_traps.json) | Каталог семантических ловушек (одинаковые DTO без HTTP-связи), GBNF-грамматика вердиктов для `Qwen2.5-Coder-7B`. | Локальный арбитраж пограничных вызовов в серой зоне ($0.35 \le P < 0.85$). |
+| [docs/analytics/trainticket_reference.md](analytics/trainticket_reference.md) | Шаблоны AST JavaParser для `RestTemplate`, распаковки generic-ответов `ParameterizedTypeReference<Response<T>>`. | Извлечение вызовов и типов возвращаемых данных в `archparse/`. |
+| [visualizer/](../visualizer/) | React Flow + ELK.js интерактивный визуализатор с инспектором доказательств. | Визуальный Error Analysis: подсветка $TP$ (зеленый), $FP$ (красный) и $FN$ (фиолетовый) на открытом $S_0$. |
 
 ---
 
@@ -81,7 +81,7 @@ flowchart TD
 | **`remote`** | `method:...` | `method:...` (другого сервиса) | Сетевой REST-запрос (`RestTemplate`, Feign) или сообщение RabbitMQ (`email`), обработанное методом целевого сервиса. |
 | **`data`** | `method:...` | `res:table:<service>.<table_name>` | SQL-запрос к таблице. Источник — **метод, в котором расположен вызов репозитория**; включает таблицы сущностей и таблицы коллекций (`user_roles`, `route_stations`). |
 
-*Все идентификаторы методов и таблиц строго копируются из `nodes` графа-скелета [skeleton/trainticket.json.gz](file:///Users/shteppinson/dev/hacks/archonity/hackaton/tt-challenge/skeleton).*
+*Все идентификаторы методов и таблиц строго копируются из `nodes` графа-скелета [skeleton/trainticket.json.gz](../hackaton/tt-challenge/skeleton/trainticket.json.gz).*
 
 ---
 
@@ -90,8 +90,8 @@ flowchart TD
 ### Этап 0: Локальный бенчмарк и воспроизводимый стенд (16 октября)
 * **Цель:** Зафиксировать воспроизводимый baseline и инфраструктуру тестирования на $S_0$.
 * **Задачи:**
-  1. Развернуть скрипт локального замера метрики на базе [evaluate_golden.py](file:///Users/shteppinson/dev/hacks/archonity/hackaton/tt-challenge/platform/evaluate_golden.py).
-  2. Зафиксировать базовый скор [baseline_nlp.py](file:///Users/shteppinson/dev/hacks/archonity/hackaton/sample/code/baseline_nlp.py) на $S_0$ ($0.431$).
+  1. Развернуть скрипт локального замера метрики на базе [evaluate_golden.py](../hackaton/tt-challenge/platform/evaluate_golden.py).
+  2. Зафиксировать базовый скор [baseline_nlp.py](../hackaton/sample/code/baseline_nlp.py) на $S_0$ ($0.431$).
   3. Сформировать утилиту сборки zip-посылки с валидацией целостности структуры.
 * **Результат:** Единый раннер `python3 run_eval.py`, выдающий подробный отчёт по $S_0$ ($TP/FP/FN$) и валидирующий формат $S_1 \dots S_7$.
 
@@ -102,7 +102,7 @@ flowchart TD
 * **Проблема текущего бейзлайна:** Лексический BM25 по UI путает похожие сервисы (`ts-order-service` vs `ts-order-other-service`) и не учитывает отрицания («no insurance», «without luggage»).
 * **Задачи:**
   1. Собрать реестр соответствий «кнопка/функция UI в `ts-ui-dashboard` $\leftrightarrow$ URL/HTTP-метод $\leftrightarrow$ `@RequestMapping` в Spring».
-  2. Использовать конфигурацию [facts/configs_topology.json](file:///Users/shteppinson/dev/hacks/archonity/facts/configs_topology.json) для сопоставления URL через предикаты Spring Cloud Gateway.
+  2. Использовать конфигурацию [facts/configs_topology.json](../facts/configs_topology.json) для сопоставления URL через предикаты Spring Cloud Gateway.
   3. Реализовать синтаксический анализатор отрицаний и фильтров в тексте шагов (исключение веток страховки, багажа, выбора типа поезда).
   4. (Опционально) Подключить локальную модель `Qwen2.5-Coder-7B` в режиме Structured Outputs для точного маппинга сложных шагов в эндпоинты.
 * **Критерий готовности:** Точность выбора входных методов (`executes` верхнего уровня) на $S_0$ равна 100%.
@@ -112,14 +112,14 @@ flowchart TD
 ### Этап 2: Граф вызовов внутри сервиса и отсев неактивных веток (17–18 октября)
 * **Цель:** Устранить False Positives в `calls` и `executes`, возникающие из-за слепого статического замыкания.
 * **Задачи:**
-  1. Доработать синтаксический парсер [archparse/](file:///Users/shteppinson/dev/hacks/archonity/archparse) на JavaParser:
+  1. Доработать синтаксический парсер [archparse/](../archparse/) на JavaParser:
      - Разрешение интерфейсов в конкретные классы: `OrderService` $\to$ `OrderServiceImpl`.
      - Извлечение прямых вызовов методов, включая методы доменных сущностей и утилит (`StringUtils.Date2String`, `OrderStatus.getCode`), входящие в эталон.
      - Исключение инфраструктурного кода Spring/библиотек (фильтры JWT не порождают `calls` к контроллерам).
-  2. Интегрировать правила [data/runtime_and_topology_rules.json](file:///Users/shteppinson/dev/hacks/archonity/data/runtime_and_topology_rules.json):
+  2. Интегрировать правила [data/runtime_and_topology_rules.json](../data/runtime_and_topology_rules.json):
      - Безусловное отсечение мертвого кода административных модулей (`ts-admin-*`), канареечных дубликатов (`ts-travel2-service`).
      - Отсечение ветки `ts-order-other-service` при сценариях с высокоскоростными поездами.
-  3. Проверка предусловий по [context/db-after-warmup.sql.gz](file:///Users/shteppinson/dev/hacks/archonity/hackaton/tt-challenge/context/db-after-warmup.sql.gz): аккаунт уже существует, баланс достаточен, в контактах есть `Contacts_One`.
+  3. Проверка предусловий по [context/db-after-warmup.sql.gz](../hackaton/tt-challenge/context/db-after-warmup.sql.gz): аккаунт уже существует, баланс достаточен, в контактах есть `Contacts_One`.
 * **Критерий готовности:** IoU по `calls` на $S_0$ возрастает с 0.533 до $>0.75$.
 
 ---
@@ -128,9 +128,9 @@ flowchart TD
 * **Цель:** Точное предсказание сетевых связей и обращений к таблицам БД.
 * **Задачи:**
   1. **Резолвинг `remote`:**
-     - Разбор вызовов `RestTemplate` (`postForObject`, `getForObject`, `exchange`) с извлечением целевого сервиса из `getServiceUrl(...)` и конкатенаций строк (по чек-листу [docs/analytics/trainticket_reference.md](file:///Users/shteppinson/dev/hacks/archonity/docs/analytics/trainticket_reference.md)).
+     - Разбор вызовов `RestTemplate` (`postForObject`, `getForObject`, `exchange`) с извлечением целевого сервиса из `getServiceUrl(...)` и конкатенаций строк (по чек-листу [docs/analytics/trainticket_reference.md](analytics/trainticket_reference.md)).
      - Разрешение очередей RabbitMQ: сопоставление вызовов `rabbitTemplate.convertAndSend("email", ...)` с обработчиками `@RabbitListener(queues = "email")` в `ts-notification-service`.
-     - Направление неоднозначных вызовов на локальный арбитраж `Qwen2.5-Coder-7B` с отсевом FP-ловушек по [data/llm_judge_dossiers_and_traps.json](file:///Users/shteppinson/dev/hacks/archonity/data/llm_judge_dossiers_and_traps.json).
+     - Направление неоднозначных вызовов на локальный арбитраж `Qwen2.5-Coder-7B` с отсевом FP-ловушек по [data/llm_judge_dossiers_and_traps.json](../data/llm_judge_dossiers_and_traps.json).
   2. **Резолвинг `data`:**
      - Привязка ребра `data` строго к методу, вызывающему репозиторий (Spring Data JPA `JpaRepository` или Mongo `MongoRepository`).
      - Учет таблиц коллекций сущностей (например, чтение `user_roles` при обращении к `auth_user`, чтение `route_stations` при обращении к `route`).
@@ -142,7 +142,7 @@ flowchart TD
 ### Этап 4: Комплексная калибровка и Error Analysis (20 октября)
 * **Цель:** Достижение максимального интегрального балла на $S_0$ и верификация всех 8 сценариев.
 * **Задачи:**
-  1. Визуальный анализ расхождений на $S_0$ в [visualizer/](file:///Users/shteppinson/dev/hacks/archonity/visualizer) через режим сравнения (Diff Mode: $TP$ / $FP$ / $FN$).
+  1. Визуальный анализ расхождений на $S_0$ в [visualizer/](../visualizer/) через режим сравнения (Diff Mode: $TP$ / $FP$ / $FN$).
   2. Тонкая настройка порогов и правил для сценариев $S_1 \dots S_7$:
      - Сценарии покупки билетов с различными опциями (страховка, еда, багаж).
      - Сценарии отмены и перебронирования заказов.
