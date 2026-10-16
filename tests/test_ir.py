@@ -232,3 +232,14 @@ def test_evaluate_guard_high_speed_vs_regular_order_branches():
     assert pool.evaluate_guard(execute_mid, ("b95:else", "b113:then"), p_reg) is True
     assert pool.evaluate_guard(execute_mid, ("b95:else", "b113:then"), p_hs) is False
 
+
+def test_evaluate_guard_consign_is_present():
+    pool = MethodPoolIR.load()
+    consign_mid = "method:ts-consign-service:consign.service.ConsignServiceImpl#updateConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)"
+    profile = ScenarioProfile(id="S7", is_admin=False, has_assurance=False, has_food=False, has_consign=True, train_mode="high_speed_only")
+    # b85: !repository.findById(consignRequest.getId()).isPresent() -> then (fallback insert) should be False
+    assert pool.evaluate_guard(consign_mid, ("b85:then",), profile) is False
+    assert pool.evaluate_guard(consign_mid, ("b85:else",), profile) is True
+
+
+

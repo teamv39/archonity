@@ -390,4 +390,12 @@ class MethodPoolIR:
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
 
+            # 12. ConsignServiceImpl#updateConsignRecord: при обновлении запись уже существует
+            # !repository.findById(consignRequest.getId()).isPresent()
+            if 'consignRequest.getId()).isPresent()' in cond or ('findById' in cond and 'isPresent' in cond):
+                val = False  # Консигнация существует, поэтому !isPresent == False
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
+
         return True
