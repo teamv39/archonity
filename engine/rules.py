@@ -217,13 +217,30 @@ class RuntimeRules:
             if profile.train_mode == "high_speed_only":
                 if svc in ("ts-preserve-other-service", "ts-travel2-service"):
                     return True
+                if "CancelServiceImpl" in method_id and (
+                    "cancelFromOtherOrder" in method_id or "getOrderByIdFromOrderOther" in method_id
+                ):
+                    return True
             elif profile.train_mode == "regular_only":
                 if svc == "ts-preserve-service":
                     return True
                 if svc == "ts-travel-service" and not getattr(profile, "has_advanced_search", False):
                     return True
+                if "CancelServiceImpl" in method_id and (
+                    "cancelFromOrder" in method_id or "getAccount" in method_id
+                ):
+                    return True
 
-            # 6. Отказы в отмене и перебронировании
+            # 6. Rebook и Cancel методы в рантайме:
+            # - В RebookServiceImpl смена типа поезда (createOrder / deleteOrder) и доплата (payDifferentMoney) не выполняются
+            # - В InsidePaymentController метод payDifference никогда не вызывается (в S2 возврат, в S7 отказ)
+            if "RebookServiceImpl" in method_id:
+                if any(x in method_id for x in ("createOrder", "deleteOrder", "payDifferentMoney")):
+                    return True
+            if "InsidePaymentController#payDifference" in method_id:
+                return True
+
+            # 7. Отказы в отмене и перебронировании
             if profile.has_refused_cancel:
                 if "InsidePaymentController#drawBack" in method_id:
                     return True
@@ -238,7 +255,7 @@ class RuntimeRules:
                     if any(b in method_id for b in blocked_cancel):
                         return True
             if profile.has_refused_rebook:
-                if "InsidePaymentController#payDifference" in method_id or "SeatController#create" in method_id:
+                if "SeatController#create" in method_id:
                     return True
                 if "RebookServiceImpl" in method_id:
                     blocked_rebook = (
