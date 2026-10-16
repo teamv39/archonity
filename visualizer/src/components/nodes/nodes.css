@@ -1,0 +1,300 @@
+/* nodes.css - Стилизация кастомных узлов по разделу 6.1 DESIGN.md */
+
+.custom-node {
+  border-radius: 0;
+  padding: 8px 10px;
+  background-color: var(--bg-panel);
+  border: 1.5px solid var(--border-strong);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  box-shadow: none;
+  transition: opacity 0.15s ease, border-color 0.15s ease;
+  box-sizing: border-box;
+  position: relative;
+  cursor: pointer;
+}
+
+/* 1. Микросервис (SERVICE) */
+.service-node {
+  background-color: #FFFFFF;
+  border: 1.5px solid #18181B;
+  width: 290px;
+}
+
+/* 2. Таблица БД (DB_TABLE) */
+.database-node {
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  border-left: 4px solid var(--edge-config);
+  width: 260px;
+}
+
+/* 3. Очередь / Топик (MESSAGE_QUEUE) */
+.queue-node {
+  background-color: #FFFFFF;
+  border: 1.5px dashed #18181B;
+  width: 260px;
+}
+
+/* Заголовок узла */
+.node-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-hairline);
+  margin-bottom: 6px;
+}
+
+.node-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.node-type-prefix {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.database-node .node-type-prefix {
+  color: var(--edge-config);
+}
+
+.queue-node .node-type-prefix {
+  color: var(--text-primary);
+}
+
+.node-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -0.01em;
+}
+
+/* Бейджи */
+.node-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background-color: var(--bg-subtle);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-hairline);
+}
+
+.badge-service {
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.badge-db {
+  background-color: #E0F2FE;
+  color: var(--edge-config);
+  border-color: #BAE6FD;
+}
+
+.badge-terminal-sink {
+  background-color: #F1F5F9 !important;
+  color: #475569 !important;
+  border-color: #CBD5E1 !important;
+  font-weight: 700 !important;
+}
+
+.badge-shared-persistence {
+  background-color: #FEF3C7 !important;
+  color: #B45309 !important;
+  border-color: #FCD34D !important;
+  font-weight: 700 !important;
+}
+
+.badge-queue {
+  background-color: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.node-shared-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: #B45309;
+  background-color: #FFFBEB;
+  border: 1px solid #FEF3C7;
+  padding: 2px 4px;
+  margin-top: 2px;
+}
+
+/* Тело узла */
+.node-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.node-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 10px;
+}
+
+.meta-label {
+  color: var(--text-muted);
+  font-size: 9px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.meta-value {
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.node-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.tag-pill {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 0;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-hairline);
+}
+
+/* Состояния Blast Radius */
+.blast-root {
+  border: 2px solid var(--alert-blast) !important;
+  background-color: #FEF2F2 !important;
+}
+
+.blast-upstream {
+  border: 2px solid var(--border-strong) !important;
+  background-color: #FAFAFA !important;
+}
+
+.blast-downstream {
+  border: 2px solid var(--edge-config) !important;
+  background-color: #F0F9FF !important;
+}
+
+.blast-dimmed {
+  opacity: 0.2 !important;
+}
+
+/* Состояния Call Path Tracing */
+.trace-start {
+  border: 2px solid #0969DA !important;
+  background-color: #EFF6FF !important;
+}
+
+.trace-hop {
+  border: 2px solid #0284C7 !important;
+  background-color: #F0F9FF !important;
+}
+
+.trace-sink {
+  border: 2px solid #059669 !important;
+  background-color: #ECFDF5 !important;
+}
+
+.trace-dimmed {
+  opacity: 0.15 !important;
+}
+
+/* Состояния Dead Code / Unreachable */
+.node-dead-code {
+  border-style: dashed !important;
+  border-color: #9CA3AF !important;
+  background-color: #F4F4F5 !important;
+}
+
+.node-dead-code.dim {
+  opacity: 0.35 !important;
+}
+
+.badge-dead-code {
+  background-color: #FEE2E2 !important;
+  color: #B91C1C !important;
+  border-color: #FCA5A5 !important;
+  font-weight: 700 !important;
+}
+
+.badge-trace {
+  font-weight: 700 !important;
+}
+
+.badge-trace.start {
+  background-color: #DBEAFE !important;
+  color: #1D4ED8 !important;
+  border-color: #93C5FD !important;
+}
+
+.badge-trace.hop {
+  background-color: #E0F2FE !important;
+  color: #0369A1 !important;
+  border-color: #BAE6FD !important;
+}
+
+.badge-trace.sink {
+  background-color: #D1FAE5 !important;
+  color: #047857 !important;
+  border-color: #A7F3D0 !important;
+}
+
+.search-matched {
+  outline: 2px solid var(--border-strong);
+  outline-offset: 2px;
+}
+
+/* React Flow Handles - строгие CAD-порты */
+.custom-handle {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 0 !important;
+  background: var(--bg-panel) !important;
+  border: 1px solid var(--border-strong) !important;
+  box-shadow: none !important;
+  transition: background-color 0.15s ease;
+}
+
+.custom-handle:hover {
+  background: var(--border-strong) !important;
+}
+
+/* Состояния Scenario Stepper */
+.scenario-active-source {
+  border: 2px solid #0969DA !important;
+  box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.25) !important;
+}
+
+.scenario-active-target {
+  border: 2px solid #10B981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
+}
+
+.scenario-dimmed {
+  opacity: 0.18 !important;
+}
+

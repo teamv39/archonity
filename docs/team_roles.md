@@ -1,5 +1,7 @@
 # Роли в команде
 
-- **Паша (@Pavelgrr7) (Java / AST):** детерминированный парсер Spring (`JavaParser`), эндпоинты/клиенты/БД, Call Graph, отсев мёртвого кода, экспорт `service_facts.json`.
-- **Миша (@vocisyy) (AI / Link Prediction):** эмбеддинги (`UniXcoder` / `GraphCodeBERT`), классификатор рёбер на скелете графа, калибровка порога под $\text{IoU}$.
-- **Денис (@ischademadda) (Analysys / Graph Engine / frontend):** . Проектирование архитектуры, парсинг конфигов и не-Java сервисов, сборка графа (`NetworkX`), валидация схемы, Evidence Log, локальный MCP-сервер, фронтенд графовый
+Модули — по [ADR-005](adr/adr-005_scenario_execution_pipeline.md). Распределение — предложение, правится командой.
+
+- **Паша (@Pavelgrr7) (Java / AST):** M2 — `archparse` на JavaParser: IR тел методов с условиями, привязка вызовов к call_site скелета, вызовы, которых нет в скелете (enum-константы, конструкторы).
+- **Миша (@vocisyy) (AI / LLM):** M1 — каталог UI и заземление шагов (BM25 + LLM); судья для условий UNKNOWN; локальный инференс в NVFP4 и кеш ответов.
+- **Денис (@ischademadda) (Engine / frontend):** M0 — индекс скелета и дампа БД; M3 — состояние сценария; M4 — исполнитель; M5 — атрибуция по [annotation_rules.md](annotation_rules.md); M6 — оценка и абляции; визуализатор трассы.

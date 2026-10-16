@@ -1,0 +1,486 @@
+/* toolbar.css - Верхняя панель управления (Control Bar, h: 40px) по DESIGN.md */
+
+.control-bar {
+  height: 40px;
+  width: 100%;
+  max-width: 100vw;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 6px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  color: var(--text-primary);
+  box-sizing: border-box;
+  user-select: none;
+  z-index: 100;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hairline) transparent;
+  gap: 2px;
+}
+
+.control-bar::-webkit-scrollbar {
+  height: 3px;
+}
+
+.control-bar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.control-bar::-webkit-scrollbar-thumb {
+  background: var(--border-hairline);
+}
+
+.control-bar::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+.bar-section {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.section-divider {
+  width: 1px;
+  height: 18px;
+  background: var(--border-hairline);
+  margin: 0 2px;
+  flex-shrink: 0;
+}
+
+/* 1. Бренд */
+.brand-section {
+  gap: 5px;
+}
+
+.brand-logo {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--border-strong);
+}
+
+.brand-sub {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+/* 2. Датасет */
+.dataset-section {
+  gap: 4px;
+}
+
+.dataset-btn {
+  max-width: 130px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 6px;
+}
+
+.dataset-btn.custom {
+  background: #E8F0FE;
+  border-color: #0969DA;
+  color: #0969DA;
+  font-weight: 600;
+}
+
+.dataset-label {
+  max-width: 95px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preset-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+  padding: 0 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #166534;
+  cursor: pointer;
+  border-radius: 0;
+  transition: all 0.1s ease;
+}
+
+.preset-pill-btn:hover {
+  background: #DCFCE7;
+  border-color: #86EFAC;
+}
+
+/* 3. Чекбоксы слоев */
+.layer-checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.layer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 5px;
+  height: 24px;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 0;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+}
+
+.layer-toggle input {
+  margin: 0;
+  width: 11px;
+  height: 11px;
+  accent-color: var(--border-strong);
+  cursor: pointer;
+}
+
+.layer-toggle:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.layer-toggle.active {
+  background: var(--bg-selected);
+  border-color: var(--border-hairline);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.layer-toggle.active.ast {
+  border-bottom: 2px solid var(--edge-ast);
+}
+
+.layer-toggle.active.cfg {
+  border-bottom: 2px solid var(--edge-config);
+}
+
+.layer-toggle.active.ml {
+  border-bottom: 2px solid var(--edge-ml);
+}
+
+.layer-toggle.active.llm {
+  border-bottom: 2px solid #047857;
+}
+
+.layer-toggle.active.trans {
+  border-bottom: 2px solid var(--edge-transitive);
+}
+
+/* 4. Порог ML */
+.threshold-section {
+  gap: 4px;
+}
+
+.mono-badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 4px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  color: var(--edge-ml);
+  white-space: nowrap;
+}
+
+.threshold-slider {
+  width: 48px;
+  height: 12px;
+  cursor: pointer;
+  accent-color: var(--edge-ml);
+  margin: 0;
+}
+
+/* 5. Единый HUD-чип счетчиков */
+.counters-section {
+  gap: 4px;
+}
+
+.cad-hud-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+  padding: 0 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: default;
+  white-space: nowrap;
+}
+
+.hud-metric {
+  display: inline-flex;
+  align-items: baseline;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.hud-sub {
+  font-size: 8px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-left: 1px;
+}
+
+.hud-dot {
+  color: #A1A1AA;
+  font-size: 10px;
+  margin: 0 1px;
+}
+
+.hud-metric.hud-dead {
+  color: #DC2626;
+  background: rgba(220, 38, 38, 0.08);
+  padding: 0 2px;
+}
+
+.hud-metric.hud-dead .hud-sub {
+  color: #DC2626;
+}
+
+/* 6. Секция Reachability & Dead Code */
+.reachability-section {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.reachability-btn.active {
+  background: #18181B;
+  color: #FFFFFF;
+  border-color: #18181B;
+}
+
+.sub-toggle-btn {
+  padding: 0 5px;
+  background: var(--bg-subtle);
+  border-color: var(--border-hairline);
+  color: var(--text-secondary);
+}
+
+.sub-toggle-btn:hover {
+  background: #E4E4E7;
+  color: var(--text-primary);
+}
+
+/* 7. Поиск */
+.search-section {
+  gap: 4px;
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+  height: 24px;
+  padding: 0 6px;
+  gap: 4px;
+}
+
+.search-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.search-input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-primary);
+  width: 75px;
+  padding: 0;
+  transition: width 0.15s ease;
+}
+
+.search-input:focus {
+  width: 105px;
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.search-clear-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.search-clear-btn:hover {
+  color: var(--text-primary);
+}
+
+/* 8. Кнопки действий */
+.actions-section {
+  margin-left: auto;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.cad-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 7px;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 0;
+  box-shadow: none;
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+  white-space: nowrap;
+}
+
+.cad-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--text-primary);
+}
+
+.cad-btn.active {
+  background: var(--bg-selected);
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.reset-btn:hover {
+  background: #FEF2F2;
+  border-color: var(--alert-blast);
+  color: var(--alert-blast);
+}
+
+/* Экспорт */
+.export-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.export-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-hairline);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  z-index: 200;
+  min-width: 165px;
+  border-radius: 0;
+}
+
+.export-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+  text-align: left;
+  border-radius: 0;
+}
+
+.export-menu-item:last-child {
+  border-bottom: none;
+}
+
+.export-menu-item:hover {
+  background-color: var(--bg-subtle);
+  color: #0969DA;
+}
+
+/* Адаптивные медиа-запросы */
+@media (max-width: 1500px) {
+  .actions-section .btn-text {
+    display: none;
+  }
+  .brand-sub {
+    display: none;
+  }
+  .actions-section .cad-btn {
+    padding: 0 5px;
+  }
+  .reachability-section .sub-toggle-btn .btn-text {
+    display: none;
+  }
+}
+
+@media (max-width: 1200px) {
+  .dataset-label {
+    max-width: 70px;
+  }
+  .search-input {
+    width: 60px;
+  }
+  .search-input:focus {
+    width: 85px;
+  }
+  .threshold-slider {
+    width: 40px;
+  }
+  .control-bar {
+    padding: 0 4px;
+    gap: 1px;
+  }
+  .section-divider {
+    margin: 0 2px;
+  }
+}
+
+@media (max-width: 1050px) {
+  .reachability-section .reachability-btn .btn-text {
+    display: none;
+  }
+  .dataset-label {
+    display: none;
+  }
+  .cad-hud-chip {
+    padding: 0 4px;
+  }
+}

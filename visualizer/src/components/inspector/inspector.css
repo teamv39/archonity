@@ -1,0 +1,904 @@
+/* inspector.css - Стили панели инспектора и реестра рёбер по DESIGN.md */
+
+.inspector-sidebar {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  border-left: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  user-select: text;
+}
+
+/* Верхняя область: прокручиваемый паспорт / evidence / blast radius */
+.inspector-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-canvas);
+}
+
+.inspector-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.inspector-pane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-hairline);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+.pane-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pane-title {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+}
+
+.inspector-close-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+}
+
+.inspector-close-btn:hover {
+  background: var(--bg-subtle);
+  border-color: var(--border-hairline);
+  color: var(--text-primary);
+}
+
+.inspector-pane-body {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* CAD Карточки секций */
+.cad-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.card-section-title {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.edge-route-display {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+}
+
+.mono-node-id {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.route-arrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.cad-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.cad-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cad-field-label {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.cad-field-value {
+  font-size: 11px;
+  color: var(--text-primary);
+}
+
+.mono-val {
+  font-family: var(--font-mono);
+}
+
+.score-highlight {
+  font-weight: 700;
+  color: var(--edge-ast);
+}
+
+.confidence-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cad-meter-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  margin-top: 2px;
+}
+
+.cad-meter-fill {
+  height: 100%;
+  transition: width 0.2s ease;
+}
+
+/* Локация в коде */
+.code-location-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  padding: 3px 6px;
+}
+
+.location-path {
+  font-size: 11px;
+  color: var(--edge-config);
+  word-break: break-all;
+}
+
+.copy-btn {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  border-radius: 0;
+}
+
+.copy-btn:hover {
+  background: var(--bg-selected);
+  color: var(--text-primary);
+}
+
+/* Цепочка вызовов */
+.call-chain-cad {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+}
+
+.call-chain-node {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-primary);
+  display: flex;
+  gap: 4px;
+}
+
+.step-num {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.step-text {
+  word-break: break-all;
+}
+
+/* Сниппет кода */
+.cad-code-snippet {
+  margin: 0;
+  padding: 6px 8px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 140px;
+  overflow-y: auto;
+  border-radius: 0;
+}
+
+/* ML Признаки */
+.features-cad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+.feature-cell {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  padding: 3px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feature-key {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.feature-val {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--edge-ml);
+}
+
+/* LLM Verdict */
+.llm-cad-verdict {
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.verdict-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.verdict-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  background: #047857;
+  color: #FFFFFF;
+  padding: 1px 4px;
+}
+
+.verdict-model-badge {
+  font-size: 9px;
+  font-weight: 600;
+  color: #047857;
+  background: #DCFCE7;
+  border: 1px solid #86EFAC;
+  padding: 1px 5px;
+  width: fit-content;
+}
+
+.verdict-reasoning {
+  font-size: 10px;
+  line-height: 1.35;
+  color: #166534;
+}
+
+/* Узлы и Blast Radius */
+.mono-node-name {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.node-description-text {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.35;
+}
+
+.cad-action-btn {
+  height: 28px;
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 0;
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.blast-trigger {
+  background: var(--alert-blast);
+  border-color: var(--alert-blast);
+  color: #FFFFFF;
+}
+
+.blast-trigger:hover {
+  background: #991B1B;
+}
+
+.blast-reset {
+  background: var(--bg-subtle);
+  border-color: var(--border-hairline);
+  color: var(--text-primary);
+}
+
+.blast-reset:hover {
+  background: var(--bg-selected);
+}
+
+.blast-report-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.metric-box-cad {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Список эндпоинтов и сущностей узла */
+.endpoints-cad-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-canvas);
+  padding: 4px;
+}
+
+.endpoint-cad-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+}
+
+.endpoint-path-text {
+  color: var(--text-primary);
+  word-break: break-all;
+  font-weight: 500;
+}
+
+.endpoint-handler-text {
+  color: var(--text-muted);
+  font-size: 9px;
+  margin-left: auto;
+}
+
+.method-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 0;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.method-badge.get { background: #E0F2FE; color: #0369A1; }
+.method-badge.post { background: #DCFCE7; color: #15803D; }
+.method-badge.put { background: #FEF3C7; color: #B45309; }
+.method-badge.delete { background: #FEE2E2; color: #B91C1C; }
+.method-badge.patch { background: #F3E8FF; color: #7E22CE; }
+.method-badge.db { background: #E0E7FF; color: #4338CA; }
+.method-badge.mq { background: #FFEDD5; color: #C2410C; }
+
+.metric-box-cad .metric-val {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.metric-box-cad .metric-lbl {
+  font-size: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.affected-list-cad {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 90px;
+  overflow-y: auto;
+}
+
+.affected-row {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 6px;
+  background: var(--bg-subtle);
+  border-left: 3px solid var(--border-strong);
+  color: var(--text-primary);
+}
+
+.affected-row.downstream {
+  border-left-color: var(--edge-config);
+}
+
+.affected-row.transitive {
+  border-left-color: var(--edge-transitive);
+}
+
+/* Общая сводка топологии */
+.intro-hint {
+  background: var(--bg-subtle);
+}
+
+.hint-title {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.hint-text {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+/* ========================================================== */
+/* Нижняя секция: Табличный реестр рёбер (Блок 3)             */
+/* ========================================================== */
+
+.inspector-registry-pane {
+  height: 240px;
+  min-height: 180px;
+  border-top: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.registry-table-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.registry-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--bg-subtle);
+  border-bottom: 1px solid var(--border-hairline);
+  user-select: none;
+}
+
+.registry-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.registry-count {
+  color: var(--text-muted);
+}
+
+.registry-table-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+}
+
+.registry-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  text-align: left;
+}
+
+.registry-table thead {
+  position: sticky;
+  top: 0;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border-hairline);
+  z-index: 2;
+}
+
+.registry-table th {
+  padding: 4px 6px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.registry-table th:hover {
+  color: var(--text-primary);
+  background: var(--bg-subtle);
+}
+
+.table-sort-icon {
+  margin-left: 3px;
+  vertical-align: middle;
+}
+
+.table-sort-icon.neutral {
+  color: var(--border-hairline);
+}
+
+.table-sort-icon.active {
+  color: var(--text-primary);
+}
+
+.registry-row {
+  height: 28px;
+  border-bottom: 1px solid var(--border-hairline);
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+}
+
+.registry-row:hover {
+  background-color: var(--bg-subtle);
+}
+
+.registry-row.row-selected {
+  background-color: var(--bg-selected) !important;
+}
+
+.registry-row td {
+  padding: 4px 6px;
+  vertical-align: middle;
+}
+
+.mono-cell {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 90px;
+}
+
+.cell-source {
+  color: var(--text-primary);
+}
+
+.cell-target {
+  color: var(--text-primary);
+}
+
+.proto-tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.layer-badge {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  padding: 1px 3px;
+  border: 1px solid var(--border-hairline);
+  background: var(--bg-panel);
+}
+
+.layer-ast {
+  color: var(--edge-ast);
+  border-color: var(--edge-ast);
+}
+
+.layer-cfg {
+  color: var(--edge-config);
+  border-color: var(--edge-config);
+}
+
+.layer-ml {
+  color: var(--edge-ml);
+  border-color: var(--edge-ml);
+}
+
+.layer-llm {
+  color: #047857;
+  border-color: #047857;
+}
+
+.layer-trans {
+  color: var(--edge-transitive);
+  border-color: var(--edge-transitive);
+}
+
+.cell-score {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.table-empty-row {
+  padding: 16px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* Баннер мертвого кода */
+.dead-code-alert-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #DC2626;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  margin-top: 6px;
+}
+
+/* Эндпоинты в инспекторе */
+.endpoint-cad-item.dead-endpoint {
+  opacity: 0.6;
+  background-color: #F4F4F5;
+  border-style: dashed;
+}
+
+.endpoint-cad-item.traced-endpoint {
+  background-color: #EFF6FF;
+  border-color: #93C5FD;
+}
+
+.endpoint-dead-badge {
+  font-size: 8px;
+  font-weight: 700;
+  padding: 1px 3px;
+  background-color: #FEE2E2;
+  color: #DC2626;
+  border: 1px solid #FECACA;
+}
+
+.endpoint-trace-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 5px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-secondary);
+  cursor: pointer;
+  margin-left: auto;
+  border-radius: 0;
+  transition: all 0.1s ease;
+}
+
+.endpoint-trace-btn:hover {
+  background-color: #EFF6FF;
+  color: #0969DA;
+  border-color: #93C5FD;
+}
+
+.endpoint-trace-btn.active {
+  background-color: #0969DA;
+  color: #FFFFFF;
+  border-color: #0969DA;
+}
+
+/* Карточка сквозной трассировки (Call Path Trace) */
+.call-trace-card {
+  border-left: 3px solid #0969DA;
+}
+
+.trace-header-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  margin-top: 4px;
+}
+
+.trace-root-path {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+/* Таймлайн цепочки вызовов */
+.trace-steps-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+  margin-top: 6px;
+  padding-right: 2px;
+}
+
+.trace-step-item {
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hairline);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.trace-step-item.controller-root {
+  border-left: 3px solid #0969DA;
+  background-color: #F8FAFC;
+}
+
+.trace-step-item.service-hop {
+  border-left: 3px solid #0284C7;
+}
+
+.trace-step-item.db-sink {
+  border-left: 3px solid #059669;
+  background-color: #F0FDF4;
+}
+
+.trace-step-item.mq-sink {
+  border-left: 3px solid #D97706;
+  background-color: #FFFBEB;
+}
+
+.step-marker {
+  flex-shrink: 0;
+}
+
+.marker-number {
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.step-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex-grow: 1;
+}
+
+.step-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.step-service-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.step-protocol-badge {
+  font-size: 8px;
+  padding: 1px 3px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-muted);
+}
+
+.step-caller-text {
+  font-size: 9px;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+
+.step-target-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  color: var(--text-primary);
+  flex-wrap: wrap;
+}
+
+.step-arrow {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.step-target-name {
+  font-weight: 600;
+  color: #0969DA;
+}
+
+.step-table-badge {
+  font-size: 9px;
+  padding: 1px 4px;
+  background-color: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #BBF7D0;
+}
+
+.step-ep-text {
+  font-size: 9px;
+  color: var(--text-secondary);
+}
+
+.trace-code-snippet {
+  margin: 4px 0 0 0;
+  padding: 4px 6px;
+  background: #18181B;
+  color: #F4F4F5;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1.3;
+  overflow-x: auto;
+  border-radius: 0;
+}
+

@@ -1,0 +1,224 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(24, 24, 27, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modal-dialog {
+  width: 580px;
+  max-width: 90vw;
+  background-color: #FFFFFF;
+  border: 1px solid #18181B;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+}
+
+.modal-header {
+  height: 38px;
+  background-color: #ECEAE4;
+  border-bottom: 1px solid #D6D3CD;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: #18181B;
+  letter-spacing: 0.05em;
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6E6D7A;
+  cursor: pointer;
+  padding: 0;
+}
+
+.modal-close-btn:hover {
+  background-color: #D6D3CD;
+  color: #18181B;
+  border-color: #A8A29E;
+}
+
+.modal-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Dropzone */
+.modal-dropzone {
+  border: 2px dashed #0969DA;
+  background-color: #F7F6F2;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+  border-radius: 0;
+}
+
+.modal-dropzone.drag-active {
+  background-color: #E8F0FE;
+  border-color: #0550AE;
+}
+
+.dropzone-icon {
+  color: #0969DA;
+}
+
+.dropzone-text {
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  font-weight: 600;
+  color: #18181B;
+}
+
+.dropzone-subtext {
+  font-size: 11px;
+  color: #6E6D7A;
+}
+
+.dropzone-btn {
+  margin-top: 4px;
+  height: 28px;
+  padding: 0 12px;
+  background-color: #0969DA;
+  color: #FFFFFF;
+  border: 1px solid #0550AE;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.dropzone-btn:hover {
+  background-color: #0550AE;
+}
+
+/* Presets */
+.modal-presets-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-label {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  color: #6E6D7A;
+  letter-spacing: 0.05em;
+}
+
+.preset-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.preset-btn {
+  background-color: #F7F6F2;
+  border: 1px solid #D6D3CD;
+  border-radius: 0;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.preset-btn:hover {
+  background-color: #ECEAE4;
+  border-color: #18181B;
+}
+
+.preset-name {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  font-weight: 700;
+  color: #18181B;
+}
+
+.preset-desc {
+  font-size: 10px;
+  color: #6E6D7A;
+}
+
+/* Format info table */
+.contracts-info {
+  border: 1px solid #E4E2DC;
+  background-color: #FAF9F5;
+  padding: 10px 12px;
+}
+
+.contracts-title {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  color: #18181B;
+  margin-bottom: 6px;
+}
+
+.contracts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  color: #6E6D7A;
+}
+
+.contract-item code {
+  color: #0969DA;
+  font-weight: 600;
+}
+
+/* Error state */
+.modal-error-box {
+  background-color: #FFF0F0;
+  border: 1px solid #CF222E;
+  color: #CF222E;
+  padding: 8px 12px;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
