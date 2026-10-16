@@ -282,8 +282,22 @@ class MethodPoolIR:
             cond = branch.condition_text
 
             # 1. CancelServiceImpl / ExecuteServiceImpl: поезд G/D vs Regular
-            # orderResult.getStatus() == 1  или  resultFromOrder.getStatus() == 1
-            if 'getStatus() == 1' in cond and ('orderResult' in cond or 'resultFromOrder' in cond):
+            # Regular ветка:
+            # - в ts-cancel: b105, b178 (orderOtherResult.getStatus() == 1)
+            # - в ts-execute: b65, b113 (resultFromOrder.getStatus() == 1 на втором вызове)
+            if 'orderOtherResult' in cond or ("ExecuteServiceImpl" in method_id and bid in ("b65", "b113")):
+                if profile.train_mode == "regular_only":
+                    val = True
+                elif profile.train_mode == "high_speed_only":
+                    val = False
+                else:
+                    val = True
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+            # High-speed ветка:
+            # - в ts-cancel: b49, b160 (orderResult.getStatus() == 1)
+            # - в ts-execute: b47, b95 (resultFromOrder.getStatus() == 1 на первом вызове)
+            elif 'getStatus() == 1' in cond and ('orderResult' in cond or ("ExecuteServiceImpl" in method_id and bid in ("b47", "b95"))):
                 if profile.train_mode == "regular_only":
                     # Для regular-поездов заказ в ts-order-service не найден (status != 1)
                     val = False
