@@ -8,7 +8,7 @@ from engine.adapters.skeleton import SkeletonIndex, load_json
 from engine.adapters.submission import SubmissionAdapter
 from engine.graph.builder import GraphBuilder
 from engine.resolver import ScenarioGrounder
-from engine.rules import RuntimeRules
+from engine.rules import RuntimeRules, ScenarioProfile
 
 
 class ArchonityPipeline:
@@ -39,12 +39,7 @@ class ArchonityPipeline:
     def run_scenario(self, scenario_dict: dict[str, Any]) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
         """Обработка одного сценария: grounding + graph traversal + filtering."""
         sid = scenario_dict.get("id", "S?")
-        # Проверяем, административный ли сценарий
-        text = " ".join(
-            [scenario_dict.get("title", ""), scenario_dict.get("description", "")]
-            + [st.get("action", "") for st in scenario_dict.get("steps") or []]
-        )
-        is_admin = "admin" in text.lower() or "administrator" in text.lower()
+        profile = ScenarioProfile.from_scenario(scenario_dict)
 
         # Шаг 1: Grounding точек входа
         entries = self.grounder.ground(scenario_dict)
@@ -59,7 +54,10 @@ class ArchonityPipeline:
 
         # Шаг 2: Обход графа с изоляцией БД и фильтрацией мертвого кода
         methods, calls, remote, data = self.builder.traverse(
-            entries, is_admin_scenario=is_admin, scenario_meta=scenario_meta
+            entries,
+            is_admin_scenario=profile.is_admin,
+            scenario_meta=scenario_meta,
+            profile=profile,
         )
 
         return methods, calls, remote, data

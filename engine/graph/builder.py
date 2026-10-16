@@ -11,7 +11,7 @@ from __future__ import annotations
 from typing import Any, Iterable
 
 from engine.adapters.skeleton import SkeletonIndex
-from engine.rules import RuntimeRules
+from engine.rules import RuntimeRules, ScenarioProfile
 
 
 class GraphBuilder:
@@ -26,6 +26,7 @@ class GraphBuilder:
         entry_methods: Iterable[str],
         is_admin_scenario: bool = False,
         scenario_meta: dict[str, Any] | None = None,
+        profile: ScenarioProfile | None = None,
     ) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
         """Обход графа от точек входа.
 
@@ -43,7 +44,7 @@ class GraphBuilder:
         # Фильтруем сами точки входа от заведомого мертвого кода
         valid_entries = [
             m for m in entry_methods
-            if not self.rules.is_dead_code_method(m, is_admin_scenario)
+            if not self.rules.is_dead_code_method(m, profile=profile, is_admin_scenario=is_admin_scenario)
         ]
 
         # Очередь обхода: (текущий_метод, deployment_unit)
@@ -68,7 +69,7 @@ class GraphBuilder:
                     target_mod = self.index.module.get(x, "")
                     if u not in self.index.units.get(target_mod, ()):
                         continue
-                    if self.rules.is_dead_code_method(x, is_admin_scenario):
+                    if self.rules.is_dead_code_method(x, profile=profile, is_admin_scenario=is_admin_scenario):
                         continue
 
                     # Исключаем вызовы конструкторов ошибок в штатных успешных сценариях
@@ -84,7 +85,7 @@ class GraphBuilder:
                 | self.index.wiring["message_delivery"].get(m, set())
             )
             for t in remote_targets:
-                if self.rules.is_dead_code_method(t, is_admin_scenario):
+                if self.rules.is_dead_code_method(t, profile=profile, is_admin_scenario=is_admin_scenario):
                     continue
 
                 edges_remote.add((m, t))
@@ -93,14 +94,14 @@ class GraphBuilder:
             # 3. Обращения к таблицам баз данных (data_access)
             # ПРАВИЛО БД: узлы БД являются терминальными стоками.
             for t in self.index.wiring["data_access"].get(m, set()):
-                if self.rules.is_dead_code_edge(m, "data", t, is_admin_scenario):
+                if self.rules.is_dead_code_edge(m, "data", t, profile=profile, is_admin_scenario=is_admin_scenario):
                     continue
                 edges_data.add((m, t))
 
         active_methods = {m for m, _ in seen_methods}
 
         # 4. Архитектурные правила Spring Security и ORM Entity Lifecycle
-        self._apply_framework_and_entity_lifecycle(active_methods, edges_calls, edges_data, scenario_meta)
+        self._apply_framework_and_entity_lifecycle(active_methods, edges_calls, edges_data, scenario_meta, profile=profile)
 
         return active_methods, edges_calls, edges_remote, edges_data
 
@@ -110,6 +111,7 @@ class GraphBuilder:
         edges_calls: set[tuple[str, str]],
         edges_data: set[tuple[str, str]],
         scenario_meta: dict[str, Any] | None = None,
+        profile: ScenarioProfile | None = None,
     ) -> None:
         """Применение семантики Spring Security и гидрации JPA/MongoDB сущностей."""
         # 1. Spring Security Authentication Flow при логине через ts-auth-service
