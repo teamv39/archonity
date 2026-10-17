@@ -177,13 +177,18 @@ public class TargetPool {
                 orderOtherFile, "checkSecurityAboutOrder", "Date", "String", "HttpHeaders"
         ));
         String planFile = "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java";
-        for (String name : new String[]{"getCheapest", "getQuickest", "getMinStation"}) {
-            list.add(new TargetMethod(
-                    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#" + name
-                            + "(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
-                    planFile, name, "TripInfo", "HttpHeaders"
-            ));
-        }
+        list.add(new TargetMethod(
+                "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+                planFile, "getCheapest", "TripInfo", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+                planFile, "getQuickest", "TripInfo", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+                planFile, "getMinStation", "TripInfo", "HttpHeaders"
+        ));
 
         // 12. Диспатч скоростной vs обычный поезд (SeatServiceImpl, TravelServiceImpl/travel2, OrderOtherServiceImpl)
         String seatFile = "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java";

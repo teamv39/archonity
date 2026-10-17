@@ -41,16 +41,12 @@ cmd /c gradlew.bat run --args="--pool all"
    ```powershell
    cmd /c gradlew.bat run --args="--pool all"
    ```
-3. **Синхронизация артефакта в data/:**
-   Генератор пишет в `archparse/out/pool_ir.json`. Для воспроизводимости и работы движка без пересборки файл необходимо скопировать:
+   Генератор пишет прямо в `data/pool_ir.json`. Это единственный артефакт IR: движок, тесты и скрипты читают только его, копировать ничего не нужно. Старый `archparse/out/pool_ir.json` больше нигде не читается, его можно удалить.
+3. **Проверка геометрии (100% совпадение со скелетом):**
    ```powershell
-   Copy-Item archparse/out/pool_ir.json data/pool_ir.json -Force
+   $env:PYTHONUTF8=1; python scripts/verify_pool_ir.py
    ```
-4. **Проверка геометрии (100% совпадение со скелетом):**
-   ```powershell
-   $env:PYTHONUTF8=1; python scripts/verify_pool_ir.py --ir data/pool_ir.json
-   ```
-5. **Проверка калибровки S0:**
+4. **Проверка калибровки S0:**
    ```powershell
    $env:PYTHONUTF8=1; python run_eval.py
    ```
@@ -86,19 +82,23 @@ methods, calls, remote, data = pipeline.run_scenario(scenario_dict)
 
 ## 5. Диагностика решений: журнал решений (decision_log.py)
 
-Для оценки того, что решило судьбу каждого ребра скелета (IR-guard, эвристика rules.py или обход по умолчанию), использовать:
+Каждое решение по ребру (включение, отсев, удаление) пишет сам `GraphBuilder` в журнал `engine/decisions.py`. `run_eval.py` сохраняет журнал в `output/decisions.json` (evidence v2, ADR-005): для каждого ребра сценария — попало ли оно в ответ, на каких шагах, источник решения (`source_type`) и правило (`rule`), плюс все решения по шагам. Правило — это ID из `branch_rules.json` с предикатом (`BR_TRIP_GD_DISPATCH@b53:else`), R7/R15-R17, строка `rules.py` (`rules.py:508`) или имя правила движка.
+
+Сводка и списки риска по сценариям:
 ```powershell
 $env:PYTHONUTF8=1; python scripts/decision_log.py --scenarios S2 S3
 ```
-Скрипт формирует список риска — рёбра, отсекаемые `rules.py`, которые необходимо в первую очередь покрывать AST IR.
+- Список риска A — рёбра ответа, включённые только достижимостью скелета: условия на них движок не проверял. Пометка `[IR]` — метод уже в пуле, но ни одно правило не решило его ветки.
+- Список риска B — рёбра, отсеянные эвристиками `rules.py`, со строкой сработавшего правила.
+
+Скрипт не пересчитывает обход сам и на каждом прогоне проверяет, что журнал совпадает с ответом сценария.
 
 ## 6. Git, .gitattributes и сгенерированные JSON
 
-Файлы `data/pool_ir.json` и `archparse/out/pool_ir.json` содержат десятки тысяч строк сгенерированного AST IR.
+Файл `data/pool_ir.json` содержит десятки тысяч строк сгенерированного AST IR.
 В `.gitattributes` для них настроены атрибуты:
 ```gitattributes
 data/pool_ir.json linguist-generated=true -diff
-archparse/out/pool_ir.json linguist-generated=true -diff
 ```
 - `linguist-generated=true` скрывает файл из диффа Pull Request на GitHub.
 - `-diff` отключает построчный расчет в локальном `git diff` и `git diff --stat` (файл отображается как бинарный, без десятков тысяч строк).

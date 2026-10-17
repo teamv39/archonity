@@ -175,6 +175,11 @@ def main() -> None:
     adapter.save_evidence_log(evidence_out)
     print(f"Evidence Log сохранен в: {evidence_out}")
 
+    decisions_out = args.out.parent / "decisions.json"
+    with open(decisions_out, "w", encoding="utf-8") as f:
+        json.dump(pipeline.ledger.to_dict(), f, ensure_ascii=False, indent=1)
+    print(f"Журнал решений (evidence v2) сохранен в: {decisions_out}")
+
     # Синхронизация с visualizer/public/data/
     vis_data_dir = ROOT_DIR / "visualizer" / "public" / "data"
     if vis_data_dir.is_dir():

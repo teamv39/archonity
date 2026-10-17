@@ -172,11 +172,12 @@ public class Main {
             return Paths.get(explicit);
         }
 
+        // Единственный артефакт IR, который читает движок, — data/pool_ir.json.
         // Если запускается из archparse/
         if (Files.exists(Paths.get("build.gradle"))) {
-            return Paths.get("out/pool_ir.json");
+            return Paths.get("../data/pool_ir.json");
         }
 
-        return Paths.get("archparse/out/pool_ir.json");
+        return Paths.get("data/pool_ir.json");
     }
 }
