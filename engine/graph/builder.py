@@ -90,9 +90,8 @@ class GraphBuilder:
                     # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                     if hasattr(self.index, "edge_guards"):
                         guards = self.index.edge_guards.get((m, "calls", x)) or self.index.edge_guards.get((m, "calls", t))
-                        if guards:
-                            if not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
-                                continue
+                        if guards and not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
+                            continue
 
                     # Исключаем вызовы конструкторов ошибок в штатных успешных сценариях
                     if "Exception#<init>" in x:
@@ -118,9 +117,8 @@ class GraphBuilder:
                         self.index.edge_guards.get((m, "remote_call", t))
                         or self.index.edge_guards.get((m, "message_delivery", t))
                     )
-                    if guards:
-                        if not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
-                            continue
+                    if guards and not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
+                        continue
 
                 edges_remote.add((m, t))
                 stack.append((t, self.index.unit_of(t)))
@@ -134,9 +132,8 @@ class GraphBuilder:
                 # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                 if hasattr(self.index, "edge_guards"):
                     guards = self.index.edge_guards.get((m, "data_access", t))
-                    if guards:
-                        if not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
-                            continue
+                    if guards and not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
+                        continue
 
                 edges_data.add((m, t))
 
