@@ -26,6 +26,7 @@ class ArchonityPipeline:
         db_dump_path: str | Path | None = None,
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
+        entity_ir_path: str | Path | None = None,
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -37,6 +38,7 @@ class ArchonityPipeline:
             db_dump_path=db_dump_path,
             pool_ir=pool_ir,
             ir_path=ir_path,
+            entity_ir_path=entity_ir_path,
         )
 
         # 2. Логгер доказательств (Evidence Log)

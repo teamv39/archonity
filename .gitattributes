@@ -1,2 +1,3 @@
 # Автоматически скрывать большие сгенерированные JSON-артефакты из диффа на GitHub и локального git diff
 data/pool_ir.json linguist-generated=true -diff
+data/entity_ir.json linguist-generated=true -diff

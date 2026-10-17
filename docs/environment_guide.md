@@ -42,6 +42,11 @@ cmd /c gradlew.bat run --args="--pool all"
    cmd /c gradlew.bat run --args="--pool all"
    ```
    Генератор пишет прямо в `data/pool_ir.json`. Это единственный артефакт IR: движок, тесты и скрипты читают только его, копировать ничего не нужно. Старый `archparse/out/pool_ir.json` больше нигде не читается, его можно удалить.
+   Факты о сущностях и вызовах репозиториев (правило R7) — отдельный режим, пишет `data/entity_ir.json`:
+   ```powershell
+   Set-Location archparse; & .\gradlew.bat run --args="--mode entities"
+   ```
+   Оба файла коммитятся: движок читает их без JDK.
 3. **Проверка геометрии (100% совпадение со скелетом):**
    ```powershell
    $env:PYTHONUTF8=1; python scripts/verify_pool_ir.py

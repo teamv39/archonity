@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from engine.adapters.db import DatabaseState, TableNodeResolution, load_db_dump
+from engine.entities import EntityFacts
 from engine.ir import MethodPoolIR
 
 
@@ -71,6 +72,8 @@ class SkeletonIndex:
         db_state: DatabaseState | None = None,
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
+        entity_facts: EntityFacts | None = None,
+        entity_ir_path: str | Path | None = None,
     ) -> None:
         if isinstance(skeleton_source, (str, Path)):
             skeleton_dict = load_json(skeleton_source)
@@ -128,6 +131,11 @@ class SkeletonIndex:
         self.pool_ir: MethodPoolIR = (
             pool_ir if pool_ir is not None else MethodPoolIR.load(ir_path=ir_path, safe=True)
         )
+        # Факты archparse о сущностях (R7): IR конструкторов без аргументов идут в общий индекс IR
+        self.entities: EntityFacts = (
+            entity_facts if entity_facts is not None else EntityFacts.load(entity_ir_path)
+        )
+        self.pool_ir.add_methods(self.entities.constructors)
         self.edge_guards: dict[tuple[str, str, str], list[tuple[str, ...]]] = collections.defaultdict(list)
 
         self.calls: dict[str, set[str]] = collections.defaultdict(set)
@@ -176,6 +184,8 @@ class SkeletonIndex:
             if caller and cs in cs_calls:
                 for c in cs_calls[cs]:
                     self.call_dispatch[caller][c].update(dispatches)
+
+        self.entities.bind(self.N, skeleton_dict.get("edges", []))
 
         self.module = {
             nid: n.get("module") for nid, n in self.N.items() if n.get("kind") == "method"
