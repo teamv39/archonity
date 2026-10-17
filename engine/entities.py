@@ -17,7 +17,7 @@ from __future__ import annotations
 import json
 import logging
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
@@ -79,6 +79,8 @@ class EntityFacts:
         self.ctor_statements: dict[str, int] = data.get("no_arg_ctor_statements") or {}
         self.entities: dict[str, Entity] = {}
         self.calls_by_method: dict[str, list[RepositoryCall]] = {}
+        # Конструкторы, в теле которых есть вызов проектного метода (ребро calls скелета или enum-вызов IR)
+        self.ctors_with_project_calls: frozenset[str] = frozenset()
 
     @classmethod
     def load(cls, path: str | Path | None = None) -> EntityFacts:
@@ -97,9 +99,21 @@ class EntityFacts:
             if n.get("kind") == "call_site":
                 cs_by_pos[(n.get("file", ""), n.get("line", 0), n.get("col", 0))] = nid
         tables_by_cs: dict[str, set[str]] = {}
+        calls_from_cs: set[str] = set()
         for e in edges:
             if e["type"] == "data_access":
                 tables_by_cs.setdefault(e["source"], set()).add(e["target"])
+            elif e["type"] == "calls":
+                calls_from_cs.add(e["source"])
+
+        with_calls = set()
+        for ir in self.constructors:
+            for c in ir.get("calls") or []:
+                cs = cs_by_pos.get((c.get("file", ""), c.get("line", 0), c.get("col", 0)))
+                if c.get("kind") == "ENUM" or (cs is not None and cs in calls_from_cs):
+                    with_calls.add(ir.get("method_id", ""))
+                    break
+        self.ctors_with_project_calls = frozenset(with_calls)
 
         for d in self.raw_entities:
             self.entities[d["type"]] = Entity(
@@ -143,6 +157,14 @@ class EntityFacts:
         if unmatched:
             LOGGER.warning("entity_ir.json: %d вызовов репозиториев без call_site в скелете", unmatched)
 
+    def allowed_ctors(self, mode: str) -> frozenset[str] | None:
+        """Конструкторы, которые допускает режим правила (None — все с непустым телом)."""
+        if mode == "project_calls":
+            return self.ctors_with_project_calls
+        if mode == "off":
+            return frozenset()
+        return None
+
     def _ctors_of(self, entity: Entity | None, nodes: dict[str, dict[str, Any]]) -> tuple[str, ...]:
         """Конструкторы с непустым телом, которые Hibernate вызывает при создании экземпляра сущности."""
         if entity is None:
@@ -157,13 +179,24 @@ class EntityFacts:
         return tuple(out)
 
 
-def hydration(call: RepositoryCall, state: Any, table_db_name: Any, is_new_user: bool = False) -> Hydration:
+def hydration(
+    call: RepositoryCall,
+    state: Any,
+    table_db_name: Any,
+    is_new_user: bool = False,
+    allowed: frozenset[str] | None = None,
+) -> Hydration:
     """Исполнились ли конструкторы сущности на этом вызове репозитория.
 
     `table_db_name` переводит ID узла таблицы в имя таблицы дампа.
+    `allowed` — конструкторы, которые допускает режим правила (None — все с непустым телом).
     """
     if not call.ctors:
         return Hydration((), "R7:no_ctor_body")
+    if allowed is not None and not any(c in allowed for c in call.ctors):
+        return Hydration((), "R7:mode_excludes_ctor")
+    if allowed is not None:
+        call = replace(call, ctors=tuple(c for c in call.ctors if c in allowed))
     op = call.operation
     if op == "SAVE":
         if call.id_assigned:
