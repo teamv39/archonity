@@ -91,3 +91,15 @@ methods, calls, remote, data = pipeline.run_scenario(scenario_dict)
 $env:PYTHONUTF8=1; python scripts/decision_log.py --scenarios S2 S3
 ```
 Скрипт формирует список риска — рёбра, отсекаемые `rules.py`, которые необходимо в первую очередь покрывать AST IR.
+
+## 6. Git, .gitattributes и сгенерированные JSON
+
+Файлы `data/pool_ir.json` и `archparse/out/pool_ir.json` содержат десятки тысяч строк сгенерированного AST IR.
+В `.gitattributes` для них настроены атрибуты:
+```gitattributes
+data/pool_ir.json linguist-generated=true -diff
+archparse/out/pool_ir.json linguist-generated=true -diff
+```
+- `linguist-generated=true` скрывает файл из диффа Pull Request на GitHub.
+- `-diff` отключает построчный расчет в локальном `git diff` и `git diff --stat` (файл отображается как бинарный, без десятков тысяч строк).
+- **Правило для агента:** при показе пользователю `git diff --stat` перед запросом аппрува фокусироваться на коде и документации, не перегружая отчет сгенерированными артефактами.
