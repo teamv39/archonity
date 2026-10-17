@@ -30,6 +30,7 @@ class ArchonityPipeline:
         entity_ir_path: str | Path | None = None,
         entity_constructors_on_load: str = "project_calls",
         collection_tables_on_read: str = "loaded",
+        element_callbacks: str = "on",
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
     ) -> None:
@@ -54,6 +55,7 @@ class ArchonityPipeline:
             rules_path,
             entity_constructors_on_load=entity_constructors_on_load,
             collection_tables_on_read=collection_tables_on_read,
+            element_callbacks=element_callbacks,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
