@@ -97,6 +97,12 @@ def parse_args() -> argparse.Namespace:
         help="Таблица коллекции блюд station_food_list: step4_store_only — на шаге 4 в S2/S3 только магазины (по умолчанию), all — учитывать везде, off — исключить везде",
     )
     parser.add_argument(
+        "--probe-orders-data",
+        choices=("on", "off"),
+        default="on",
+        help="Зондирующий SELECT в S2 (шаги 9 и 10 к ts-order-service.orders): on — учитывать (по умолчанию), off — абляция (исключить)",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -219,6 +225,7 @@ def main() -> None:
         element_callbacks=args.element_callbacks,
         rabbitmq_delivery=args.rabbitmq_delivery,
         station_food_collection=args.station_food_collection,
+        probe_orders_data=args.probe_orders_data,
         grounder=args.grounder,
         m1_options=m1_options,
     )

@@ -256,6 +256,11 @@ class RuntimeRules:
     # off — исключить таблицу коллекции везде.
     STATION_FOOD_COLLECTION_MODES = ("step4_store_only", "all", "off")
 
+    # Зондирующий SELECT в S2 (шаги 9 и 10 к ts-order-service.orders при regular_only):
+    # on (по умолчанию) — учитывать SELECT к таблице orders даже при 0 возвращенных строк;
+    # off — абляция (исключить ребро data к orders при probe в regular_only).
+    PROBE_ORDERS_DATA_MODES = ("on", "off")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -264,6 +269,7 @@ class RuntimeRules:
         element_callbacks: str = "on",
         rabbitmq_delivery: str = "on",
         station_food_collection: str = "step4_store_only",
+        probe_orders_data: str = "on",
     ) -> None:
         if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
             raise ValueError(
@@ -282,10 +288,13 @@ class RuntimeRules:
             raise ValueError(
                 f"station_food_collection: {station_food_collection!r}, ожидается одно из {self.STATION_FOOD_COLLECTION_MODES}"
             )
+        if probe_orders_data not in self.PROBE_ORDERS_DATA_MODES:
+            raise ValueError(f"probe_orders_data: {probe_orders_data!r}, ожидается одно из {self.PROBE_ORDERS_DATA_MODES}")
         self.collection_tables_on_read = collection_tables_on_read
         self.element_callbacks = element_callbacks
         self.rabbitmq_delivery = rabbitmq_delivery
         self.station_food_collection = station_food_collection
+        self.probe_orders_data = probe_orders_data
         self.rules_path = Path(rules_path) if rules_path else self.DEFAULT_RULES_PATH
         self.data: dict[str, Any] = {}
         self.admin_services: set[str] = set()
