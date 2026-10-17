@@ -98,7 +98,7 @@ call:method:ts-inside-payment-service:inside_payment.service.InsidePaymentServic
 
 ### R7. Конструктор сущности при загрузке из БД
 
-Статус: S0 для `Order`; обобщение на остальные сущности — Гипотеза (17.10.2026).
+Статус: README, S0. Обобщение «любой непустой конструктор» опровергнуто платформой 17.10.2026 (0.8842 против 0.8927).
 
 Явный конструктор без аргументов исполняется, когда Hibernate создаёт экземпляр сущности, вместе со своими вызовами:
 
@@ -114,7 +114,11 @@ calls:    Order#<init>() -> edu.fudan.common.entity.SeatClass#getCode()
 - Вызовы через enum-константу (`OrderStatus.PAID.getCode()`) в скелете отсутствуют — у call_site нет `receiver_type` и рёбер. Их должен разрешать наш парсер (M2).
 - Аналогично при создании нового заказа (`new Order()`) в коде сервисов `ts-preserve-service`, `ts-preserve-other-service` и `ts-rebook-service` конструктор `ts-common:edu.fudan.common.entity.Order#<init>()` выполняет те же вызовы `Date2String`, `OrderStatus#getCode()` и `SeatClass#getCode()`.
 
-Пустой конструктор в эталон не попадает: `Contacts#<init>()` (тело — только комментарий) в S0 отсутствует, хотя контакты пользователя в S0 загружаются (5 строк в дампе). Обобщение, которое сходится с обоими случаями: конструктор при загрузке идёт в `executes`, если в его теле есть хотя бы один оператор. Так попадают `Route`, `Station`, `Trip`, `Config`, `PriceConfig`, `StationFoodStore`, `TrainFood`, `Money`, `user.entity.User`, `Assurance`.
+Организаторы прямо исключают «конструкторы, вызванные библиотекой лишь через отражение» ([REFERENCE](../hackaton/tt-challenge/REFERENCE.md), «Во-вторых»). Hibernate создаёт сущности через отражение, поэтому конструктор при загрузке идёт в `executes`, только если сам вызывает методы проекта: `Order#<init>()` вызывает `Date2String` и `getCode()`. `Contacts#<init>()` (пустой) в S0 отсутствует, хотя контакты загружаются.
+
+Проверено на платформе: добавление 55 конструкторов без проектных вызовов (`Route`, `Station`, `Trip`, `Config`, `PriceConfig`, `StationFoodStore`, `TrainFood`, `Money`, `user.entity.User`, `Assurance`) опустило балл с 0.8927 до 0.8842 — величина совпадает со случаем «все 55 лишние». Разбор: [r7_score_drop.md](researches/r7_score_drop.md).
+
+Конструкторы, вызванные проектным кодом через `new`, — обычные вызовы проекта, ограничение их не касается.
 
 Когда Hibernate создаёт экземпляр (факты archparse, `data/entity_ir.json`; решение — `engine/entities.py`):
 
@@ -124,12 +128,12 @@ calls:    Order#<init>() -> edu.fudan.common.entity.SeatClass#getCode()
 - `save` сущности с заданным id: Spring Data делает `merge`, Hibernate загружает строку и создаёт управляемую копию конструктором. Без id — `persist`, конструктор не вызывается;
 - `exists*`, `count*`, `@Modifying @Query` экземпляров не создают.
 
-Встраиваемые поля (`@Embedded TripId` у `Trip`) создаются вместе с сущностью по тому же правилу непустого тела. Элементы `@ElementCollection` (`Food`) не учитываются: коллекции ленивые.
+Встраиваемые поля (`@Embedded TripId` у `Trip`) создаются вместе с сущностью по тому же правилу. Элементы `@ElementCollection` (`Food`) не учитываются: коллекции ленивые.
 
-Эталон S0 объясняют две гипотезы, режим выбирается флагом `RuntimeRules(entity_constructors_on_load=...)` или ключом `run_eval.py --entity-ctors`:
+Режим выбирается флагом `RuntimeRules(entity_constructors_on_load=...)` или ключом `run_eval.py --entity-ctors`:
 
-- `body` (по умолчанию) — конструктор с непустым телом;
-- `project_calls` — только конструктор, в теле которого есть вызов проектного метода (`Order`: `Date2String`, `getCode`). Совпадает с выдачей до обобщения R7 ребро в ребро;
+- `project_calls` (по умолчанию) — только конструктор, в теле которого есть вызов проектного метода (`Order`: `Date2String`, `getCode`). Выдача совпадает с посылкой на 0.8927 ребро в ребро;
+- `body` — любой конструктор с непустым телом. Опровергнуто платформой, оставлено для абляций;
 - `off` — правило выключено целиком, вместе с `Order` (S0 падает; только для отладки).
 
 ### R8. Отражение Jackson не учитывается

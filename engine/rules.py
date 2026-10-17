@@ -234,14 +234,15 @@ class RuntimeRules:
     DEFAULT_RULES_PATH = Path(__file__).resolve().parent.parent / "data" / "runtime_and_topology_rules.json"
 
     # Режимы правила R7 (конструктор сущности при загрузке строк Hibernate), см. engine/entities.py:
-    # body — конструктор с непустым телом (по умолчанию); project_calls — только конструктор с вызовом
-    # проектного метода (как Order#<init>(), выдача до обобщения R7); off — правило выключено целиком.
+    # project_calls (по умолчанию) — только конструктор с вызовом проектного метода (как Order#<init>());
+    # body — любой конструктор с непустым телом (опровергнуто платформой 17.10: 0.8842 против 0.8927);
+    # off — правило выключено целиком.
     ENTITY_CTOR_MODES = ("body", "project_calls", "off")
 
     def __init__(
         self,
         rules_path: str | Path | None = None,
-        entity_constructors_on_load: str = "body",
+        entity_constructors_on_load: str = "project_calls",
     ) -> None:
         if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
             raise ValueError(
