@@ -27,6 +27,7 @@ class ArchonityPipeline:
         db_dump_path: str | Path | None = None,
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
+        entity_ir_path: str | Path | None = None,
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
     ) -> None:
