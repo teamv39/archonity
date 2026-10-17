@@ -1,0 +1,2399 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-verification-code-service",
+  "methods" : {
+    "method:ts-verification-code-service:verifycode.VerifyCodeApplication#main(java.lang.String[])" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/VerifyCodeApplication.java",
+      "line" : 17,
+      "end" : 19,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 18,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.VerifyCodeApplication#main(java.lang.String[])@18:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "VerifyCodeApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.VerifyCodeApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/VerifyCodeApplication.java",
+      "line" : 20,
+      "end" : 24,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 23,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.VerifyCodeApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@23:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 78,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:55",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                      "callee" : "authorizeRequests",
+                      "recv" : {
+                        "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                        "callee" : "and",
+                        "recv" : {
+                          "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                          "callee" : "sessionCreationPolicy",
+                          "recv" : {
+                            "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                            "callee" : "sessionManagement",
+                            "recv" : {
+                              "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                              "callee" : "disable",
+                              "recv" : {
+                                "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                "callee" : "csrf",
+                                "recv" : {
+                                  "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                    "callee" : "httpBasic",
+                                    "recv" : {
+                                      "name" : "httpSecurity",
+                                      "ref" : "param"
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ {
+                            "field" : "STATELESS",
+                            "of" : {
+                              "name" : "SessionCreationPolicy",
+                              "ref" : "type"
+                            }
+                          } ]
+                        },
+                        "args" : [ ]
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "lit" : "/api/v1/verifycode/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 77,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-verification-code-service:verifycode.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/controller/VerifyCodeController.java",
+      "line" : 29,
+      "end" : 46,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      }, {
+        "name" : "request",
+        "type" : "HttpServletRequest"
+      }, {
+        "name" : "response",
+        "type" : "HttpServletResponse"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@33:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "VerifyCodeController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[imageCode][Image code]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 34,
+        "target" : {
+          "name" : "os",
+          "ref" : "local"
+        },
+        "decl" : "OutputStream",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@34:36",
+          "callee" : "getOutputStream",
+          "recv" : {
+            "name" : "response",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "name" : "map",
+          "ref" : "local"
+        },
+        "decl" : "Map<String,Object>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@35:53",
+          "callee" : "getImageCode",
+          "recv" : {
+            "name" : "verifyCodeService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : 60,
+            "type" : "int"
+          }, {
+            "lit" : 20,
+            "type" : "int"
+          }, {
+            "name" : "os",
+            "ref" : "local"
+          }, {
+            "name" : "request",
+            "ref" : "param"
+          }, {
+            "name" : "response",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "name" : "simpleCaptcha",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "lit" : "simpleCaptcha",
+          "type" : "string"
+        }
+      }, {
+        "op" : "expr",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@37:30",
+          "callee" : "setAttribute",
+          "recv" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@37:17",
+            "callee" : "getSession",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "name" : "simpleCaptcha",
+            "ref" : "local"
+          }, {
+            "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@37:90",
+            "callee" : "toLowerCase",
+            "recv" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@37:79",
+              "callee" : "toString",
+              "recv" : {
+                "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@37:62",
+                "callee" : "get",
+                "recv" : {
+                  "name" : "map",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "lit" : "strEnsure",
+                  "type" : "string"
+                } ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@38:30",
+          "callee" : "setAttribute",
+          "recv" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@38:17",
+            "callee" : "getSession",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "lit" : "codeTime",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@38:62",
+            "callee" : "currentTimeMillis",
+            "recv" : {
+              "name" : "System",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "try",
+        "line" : 39,
+        "id" : "t39",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "expr",
+          "line" : 40,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@40:21",
+            "callee" : "write",
+            "recv" : {
+              "name" : "ImageIO",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "cast" : "BufferedImage",
+              "e" : {
+                "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@40:47",
+                "callee" : "get",
+                "recv" : {
+                  "name" : "map",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "lit" : "image",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "lit" : "JPEG",
+              "type" : "string"
+            }, {
+              "name" : "os",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "IOException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "assign",
+            "line" : 43,
+            "target" : {
+              "name" : "error",
+              "ref" : "local"
+            },
+            "decl" : "String",
+            "operator" : "=",
+            "expr" : {
+              "lit" : "Can't generate verification code",
+              "type" : "string"
+            }
+          }, {
+            "op" : "expr",
+            "line" : 44,
+            "expr" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@44:16",
+              "callee" : "write",
+              "recv" : {
+                "name" : "os",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#imageCode(org.springframework.http.HttpHeaders,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)@44:28",
+                "callee" : "getBytes",
+                "recv" : {
+                  "name" : "error",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.controller.VerifyCodeController#verifyCode(java.lang.String,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/controller/VerifyCodeController.java",
+      "line" : 48,
+      "end" : 56,
+      "params" : [ {
+        "name" : "verifyCode",
+        "type" : "String"
+      }, {
+        "name" : "request",
+        "type" : "HttpServletRequest"
+      }, {
+        "name" : "response",
+        "type" : "HttpServletResponse"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#verifyCode(java.lang.String,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@51:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[verifyCode][receivedCode: {}]",
+            "type" : "string"
+          }, {
+            "name" : "verifyCode",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 53,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "boolean",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#verifyCode(java.lang.String,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@53:44",
+          "callee" : "verifyCode",
+          "recv" : {
+            "name" : "verifyCodeService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "request",
+            "ref" : "param"
+          }, {
+            "name" : "response",
+            "ref" : "param"
+          }, {
+            "name" : "verifyCode",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 54,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.controller.VerifyCodeController#verifyCode(java.lang.String,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@54:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[verifyCode][verify result: {}]",
+            "type" : "string"
+          }, {
+            "name" : "result",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 55,
+        "expr" : {
+          "lit" : true,
+          "type" : "boolean"
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/service/impl/VerifyCodeServiceImpl.java",
+      "line" : 49,
+      "end" : 110,
+      "params" : [ {
+        "name" : "width",
+        "type" : "int"
+      }, {
+        "name" : "height",
+        "type" : "int"
+      }, {
+        "name" : "os",
+        "type" : "OutputStream"
+      }, {
+        "name" : "request",
+        "type" : "HttpServletRequest"
+      }, {
+        "name" : "response",
+        "type" : "HttpServletResponse"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 51,
+        "target" : {
+          "name" : "returnMap",
+          "ref" : "local"
+        },
+        "decl" : "Map<String,Object>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HashMap<>",
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@51:41",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 52,
+        "id" : "b52",
+        "cond" : {
+          "bin" : "<=",
+          "l" : {
+            "name" : "width",
+            "ref" : "param"
+          },
+          "r" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 53,
+          "target" : {
+            "name" : "width",
+            "ref" : "param"
+          },
+          "operator" : "=",
+          "expr" : {
+            "lit" : 60,
+            "type" : "int"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 55,
+        "id" : "b55",
+        "cond" : {
+          "bin" : "<=",
+          "l" : {
+            "name" : "height",
+            "ref" : "param"
+          },
+          "r" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 56,
+          "target" : {
+            "name" : "height",
+            "ref" : "param"
+          },
+          "operator" : "=",
+          "expr" : {
+            "lit" : 20,
+            "type" : "int"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 58,
+        "target" : {
+          "name" : "image",
+          "ref" : "local"
+        },
+        "decl" : "BufferedImage",
+        "operator" : "=",
+        "expr" : {
+          "new" : "BufferedImage",
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@58:31",
+          "args" : [ {
+            "name" : "width",
+            "ref" : "param"
+          }, {
+            "name" : "height",
+            "ref" : "param"
+          }, {
+            "field" : "TYPE_INT_RGB",
+            "of" : {
+              "name" : "BufferedImage",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 60,
+        "target" : {
+          "name" : "g",
+          "ref" : "local"
+        },
+        "decl" : "Graphics",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@60:28",
+          "callee" : "getGraphics",
+          "recv" : {
+            "name" : "image",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 62,
+        "target" : {
+          "name" : "random",
+          "ref" : "local"
+        },
+        "decl" : "Random",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Random",
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@62:25",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@64:11",
+          "callee" : "setColor",
+          "recv" : {
+            "name" : "g",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@64:20",
+            "callee" : "getRandColor",
+            "recv" : null,
+            "args" : [ {
+              "lit" : 200,
+              "type" : "int"
+            }, {
+              "lit" : 250,
+              "type" : "int"
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@65:11",
+          "callee" : "fillRect",
+          "recv" : {
+            "name" : "g",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          }, {
+            "lit" : 0,
+            "type" : "int"
+          }, {
+            "name" : "width",
+            "ref" : "param"
+          }, {
+            "name" : "height",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 67,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@67:11",
+          "callee" : "setFont",
+          "recv" : {
+            "name" : "g",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "new" : "Font",
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@67:19",
+            "args" : [ {
+              "lit" : "Times New Roman",
+              "type" : "string"
+            }, {
+              "field" : "PLAIN",
+              "of" : {
+                "name" : "Font",
+                "ref" : "type"
+              }
+            }, {
+              "lit" : 18,
+              "type" : "int"
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 69,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@69:11",
+          "callee" : "setColor",
+          "recv" : {
+            "name" : "g",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@69:20",
+            "callee" : "getRandColor",
+            "recv" : null,
+            "args" : [ {
+              "lit" : 160,
+              "type" : "int"
+            }, {
+              "lit" : 200,
+              "type" : "int"
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 70,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 70,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : 168,
+            "type" : "int"
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 71,
+          "target" : {
+            "name" : "x",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@71:28",
+            "callee" : "nextInt",
+            "recv" : {
+              "name" : "random",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "width",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 72,
+          "target" : {
+            "name" : "y",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@72:28",
+            "callee" : "nextInt",
+            "recv" : {
+              "name" : "random",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "height",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 73,
+          "target" : {
+            "name" : "xl",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@73:29",
+            "callee" : "nextInt",
+            "recv" : {
+              "name" : "random",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "lit" : 12,
+              "type" : "int"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 74,
+          "target" : {
+            "name" : "yl",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@74:29",
+            "callee" : "nextInt",
+            "recv" : {
+              "name" : "random",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "lit" : 12,
+              "type" : "int"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 75,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@75:15",
+            "callee" : "drawLine",
+            "recv" : {
+              "name" : "g",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "x",
+              "ref" : "local"
+            }, {
+              "name" : "y",
+              "ref" : "local"
+            }, {
+              "bin" : "+",
+              "l" : {
+                "name" : "x",
+                "ref" : "local"
+              },
+              "r" : {
+                "name" : "xl",
+                "ref" : "local"
+              }
+            }, {
+              "bin" : "+",
+              "l" : {
+                "name" : "y",
+                "ref" : "local"
+              },
+              "r" : {
+                "name" : "yl",
+                "ref" : "local"
+              }
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 78,
+        "target" : {
+          "name" : "strEnsure",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "for",
+        "line" : 80,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 80,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : 4,
+            "type" : "int"
+          }
+        },
+        "update" : [ {
+          "un" : "++pre",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 81,
+          "target" : {
+            "name" : "strEnsure",
+            "ref" : "local"
+          },
+          "operator" : "+=",
+          "expr" : {
+            "index" : {
+              "cast" : "int",
+              "e" : {
+                "bin" : "*",
+                "l" : {
+                  "field" : "length",
+                  "of" : {
+                    "name" : "mapTable",
+                    "ref" : "field"
+                  }
+                },
+                "r" : {
+                  "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@81:65",
+                  "callee" : "random",
+                  "recv" : {
+                    "name" : "Math",
+                    "ref" : "type"
+                  },
+                  "args" : [ ]
+                }
+              }
+            },
+            "of" : {
+              "name" : "mapTable",
+              "ref" : "field"
+            }
+          }
+        }, {
+          "op" : "expr",
+          "line" : 83,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@83:15",
+            "callee" : "setColor",
+            "recv" : {
+              "name" : "g",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "new" : "Color",
+              "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@83:24",
+              "args" : [ {
+                "bin" : "+",
+                "l" : {
+                  "lit" : 20,
+                  "type" : "int"
+                },
+                "r" : {
+                  "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@83:46",
+                  "callee" : "nextInt",
+                  "recv" : {
+                    "name" : "random",
+                    "ref" : "local"
+                  },
+                  "args" : [ {
+                    "lit" : 110,
+                    "type" : "int"
+                  } ]
+                }
+              }, {
+                "bin" : "+",
+                "l" : {
+                  "lit" : 20,
+                  "type" : "int"
+                },
+                "r" : {
+                  "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@83:72",
+                  "callee" : "nextInt",
+                  "recv" : {
+                    "name" : "random",
+                    "ref" : "local"
+                  },
+                  "args" : [ {
+                    "lit" : 110,
+                    "type" : "int"
+                  } ]
+                }
+              }, {
+                "bin" : "+",
+                "l" : {
+                  "lit" : 20,
+                  "type" : "int"
+                },
+                "r" : {
+                  "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@83:98",
+                  "callee" : "nextInt",
+                  "recv" : {
+                    "name" : "random",
+                    "ref" : "local"
+                  },
+                  "args" : [ {
+                    "lit" : 110,
+                    "type" : "int"
+                  } ]
+                }
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 85,
+          "target" : {
+            "name" : "str",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@85:36",
+            "callee" : "substring",
+            "recv" : {
+              "name" : "strEnsure",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "i",
+              "ref" : "local"
+            }, {
+              "bin" : "+",
+              "l" : {
+                "name" : "i",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : 1,
+                "type" : "int"
+              }
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 86,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@86:15",
+            "callee" : "drawString",
+            "recv" : {
+              "name" : "g",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "str",
+              "ref" : "local"
+            }, {
+              "bin" : "+",
+              "l" : {
+                "bin" : "*",
+                "l" : {
+                  "lit" : 13,
+                  "type" : "int"
+                },
+                "r" : {
+                  "name" : "i",
+                  "ref" : "local"
+                }
+              },
+              "r" : {
+                "lit" : 6,
+                "type" : "int"
+              }
+            }, {
+              "lit" : 16,
+              "type" : "int"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "expr",
+        "line" : 89,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@89:11",
+          "callee" : "dispose",
+          "recv" : {
+            "name" : "g",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 90,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@90:19",
+          "callee" : "put",
+          "recv" : {
+            "name" : "returnMap",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "image",
+            "type" : "string"
+          }, {
+            "name" : "image",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 91,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@91:19",
+          "callee" : "put",
+          "recv" : {
+            "name" : "returnMap",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "strEnsure",
+            "type" : "string"
+          }, {
+            "name" : "strEnsure",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 93,
+        "target" : {
+          "name" : "cookie",
+          "ref" : "local"
+        },
+        "decl" : "Cookie",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@93:36",
+          "callee" : "getCookieByName",
+          "recv" : {
+            "name" : "CookieUtil",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "request",
+            "ref" : "param"
+          }, {
+            "name" : "ysbCaptcha",
+            "ref" : "field"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 94,
+        "target" : {
+          "name" : "cookieId",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "="
+      }, {
+        "op" : "if",
+        "line" : 95,
+        "id" : "b95",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "cookie",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 96,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@96:42",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "VerifyCodeServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getImageCode][Get image code warn.Cookie not found][Path Info: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@96:125",
+              "callee" : "getPathInfo",
+              "recv" : {
+                "name" : "request",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 97,
+          "target" : {
+            "name" : "cookieId",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@97:70",
+            "callee" : "toUpperCase",
+            "recv" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@97:53",
+              "callee" : "replace",
+              "recv" : {
+                "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@97:42",
+                "callee" : "toString",
+                "recv" : {
+                  "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@97:29",
+                  "callee" : "randomUUID",
+                  "recv" : {
+                    "name" : "UUID",
+                    "ref" : "type"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ {
+                "lit" : "-",
+                "type" : "string"
+              }, {
+                "lit" : "",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 98,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@98:24",
+            "callee" : "addCookie",
+            "recv" : {
+              "name" : "CookieUtil",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "name" : "response",
+              "ref" : "param"
+            }, {
+              "name" : "ysbCaptcha",
+              "ref" : "field"
+            }, {
+              "name" : "cookieId",
+              "ref" : "local"
+            }, {
+              "const" : "verifycode.service.impl.VerifyCodeServiceImpl.CAPTCHA_EXPIRED",
+              "value" : {
+                "lit" : 1000,
+                "type" : "int"
+              }
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "if",
+          "line" : 100,
+          "id" : "b100",
+          "cond" : {
+            "bin" : "!=",
+            "l" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@100:24",
+              "callee" : "getValue",
+              "recv" : {
+                "name" : "cookie",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "then" : [ {
+            "op" : "assign",
+            "line" : 101,
+            "target" : {
+              "name" : "cookieId",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@101:74",
+              "callee" : "toUpperCase",
+              "recv" : {
+                "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@101:57",
+                "callee" : "replace",
+                "recv" : {
+                  "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@101:46",
+                  "callee" : "toString",
+                  "recv" : {
+                    "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@101:33",
+                    "callee" : "randomUUID",
+                    "recv" : {
+                      "name" : "UUID",
+                      "ref" : "type"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "-",
+                  "type" : "string"
+                }, {
+                  "lit" : "",
+                  "type" : "string"
+                } ]
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 102,
+            "expr" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@102:28",
+              "callee" : "addCookie",
+              "recv" : {
+                "name" : "CookieUtil",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "name" : "response",
+                "ref" : "param"
+              }, {
+                "name" : "ysbCaptcha",
+                "ref" : "field"
+              }, {
+                "name" : "cookieId",
+                "ref" : "local"
+              }, {
+                "const" : "verifycode.service.impl.VerifyCodeServiceImpl.CAPTCHA_EXPIRED",
+                "value" : {
+                  "lit" : 1000,
+                  "type" : "int"
+                }
+              } ]
+            }
+          } ],
+          "else" : [ {
+            "op" : "assign",
+            "line" : 104,
+            "target" : {
+              "name" : "cookieId",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@104:35",
+              "callee" : "getValue",
+              "recv" : {
+                "name" : "cookie",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ]
+        } ]
+      }, {
+        "op" : "expr",
+        "line" : 107,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@107:38",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "VerifyCodeServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getImageCode][strEnsure: {}]",
+            "type" : "string"
+          }, {
+            "name" : "strEnsure",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 108,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@108:19",
+          "callee" : "put",
+          "recv" : {
+            "name" : "cacheCode",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "cookieId",
+            "ref" : "local"
+          }, {
+            "name" : "strEnsure",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 109,
+        "expr" : {
+          "name" : "returnMap",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getRandColor(int,int)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/service/impl/VerifyCodeServiceImpl.java",
+      "line" : 138,
+      "end" : 150,
+      "params" : [ {
+        "name" : "fc",
+        "type" : "int"
+      }, {
+        "name" : "bc",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 139,
+        "target" : {
+          "name" : "random",
+          "ref" : "local"
+        },
+        "decl" : "Random",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Random",
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getRandColor(int,int)@139:25",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 140,
+        "id" : "b140",
+        "cond" : {
+          "bin" : ">",
+          "l" : {
+            "name" : "fc",
+            "ref" : "param"
+          },
+          "r" : {
+            "lit" : 255,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 141,
+          "target" : {
+            "name" : "fc",
+            "ref" : "param"
+          },
+          "operator" : "=",
+          "expr" : {
+            "lit" : 255,
+            "type" : "int"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 143,
+        "id" : "b143",
+        "cond" : {
+          "bin" : ">",
+          "l" : {
+            "name" : "bc",
+            "ref" : "param"
+          },
+          "r" : {
+            "lit" : 255,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 144,
+          "target" : {
+            "name" : "bc",
+            "ref" : "param"
+          },
+          "operator" : "=",
+          "expr" : {
+            "lit" : 255,
+            "type" : "int"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 146,
+        "target" : {
+          "name" : "r",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "fc",
+            "ref" : "param"
+          },
+          "r" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getRandColor(int,int)@146:29",
+            "callee" : "nextInt",
+            "recv" : {
+              "name" : "random",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "bin" : "-",
+              "l" : {
+                "name" : "bc",
+                "ref" : "param"
+              },
+              "r" : {
+                "name" : "fc",
+                "ref" : "param"
+              }
+            } ]
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 147,
+        "target" : {
+          "name" : "g",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "fc",
+            "ref" : "param"
+          },
+          "r" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getRandColor(int,int)@147:29",
+            "callee" : "nextInt",
+            "recv" : {
+              "name" : "random",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "bin" : "-",
+              "l" : {
+                "name" : "bc",
+                "ref" : "param"
+              },
+              "r" : {
+                "name" : "fc",
+                "ref" : "param"
+              }
+            } ]
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 148,
+        "target" : {
+          "name" : "b",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "fc",
+            "ref" : "param"
+          },
+          "r" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getRandColor(int,int)@148:29",
+            "callee" : "nextInt",
+            "recv" : {
+              "name" : "random",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "bin" : "-",
+              "l" : {
+                "name" : "bc",
+                "ref" : "param"
+              },
+              "r" : {
+                "name" : "fc",
+                "ref" : "param"
+              }
+            } ]
+          }
+        }
+      }, {
+        "op" : "return",
+        "line" : 149,
+        "expr" : {
+          "new" : "Color",
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getRandColor(int,int)@149:16",
+          "args" : [ {
+            "name" : "r",
+            "ref" : "local"
+          }, {
+            "name" : "g",
+            "ref" : "local"
+          }, {
+            "name" : "b",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/service/impl/VerifyCodeServiceImpl.java",
+      "line" : 112,
+      "end" : 135,
+      "params" : [ {
+        "name" : "request",
+        "type" : "HttpServletRequest"
+      }, {
+        "name" : "response",
+        "type" : "HttpServletResponse"
+      }, {
+        "name" : "receivedCode",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 114,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "boolean",
+        "operator" : "=",
+        "expr" : {
+          "lit" : false,
+          "type" : "boolean"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 115,
+        "target" : {
+          "name" : "cookie",
+          "ref" : "local"
+        },
+        "decl" : "Cookie",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@115:36",
+          "callee" : "getCookieByName",
+          "recv" : {
+            "name" : "CookieUtil",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "request",
+            "ref" : "param"
+          }, {
+            "name" : "ysbCaptcha",
+            "ref" : "field"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 116,
+        "target" : {
+          "name" : "cookieId",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "="
+      }, {
+        "op" : "if",
+        "line" : 117,
+        "id" : "b117",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "cookie",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 118,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@118:42",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "VerifyCodeServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[verifyCode][Verify code warn][Cookie not found][Path Info: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@118:121",
+              "callee" : "getPathInfo",
+              "recv" : {
+                "name" : "request",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 119,
+          "target" : {
+            "name" : "cookieId",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@119:70",
+            "callee" : "toUpperCase",
+            "recv" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@119:53",
+              "callee" : "replace",
+              "recv" : {
+                "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@119:42",
+                "callee" : "toString",
+                "recv" : {
+                  "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@119:29",
+                  "callee" : "randomUUID",
+                  "recv" : {
+                    "name" : "UUID",
+                    "ref" : "type"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ {
+                "lit" : "-",
+                "type" : "string"
+              }, {
+                "lit" : "",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 120,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@120:24",
+            "callee" : "addCookie",
+            "recv" : {
+              "name" : "CookieUtil",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "name" : "response",
+              "ref" : "param"
+            }, {
+              "name" : "ysbCaptcha",
+              "ref" : "field"
+            }, {
+              "name" : "cookieId",
+              "ref" : "local"
+            }, {
+              "const" : "verifycode.service.impl.VerifyCodeServiceImpl.CAPTCHA_EXPIRED",
+              "value" : {
+                "lit" : 1000,
+                "type" : "int"
+              }
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 122,
+          "target" : {
+            "name" : "cookieId",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@122:31",
+            "callee" : "getValue",
+            "recv" : {
+              "name" : "cookie",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 125,
+        "target" : {
+          "name" : "code",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@125:33",
+          "callee" : "getIfPresent",
+          "recv" : {
+            "name" : "cacheCode",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "cookieId",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 126,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@126:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "bin" : "+",
+                "l" : {
+                  "lit" : "GET Code By cookieId ",
+                  "type" : "string"
+                },
+                "r" : {
+                  "name" : "cookieId",
+                  "ref" : "local"
+                }
+              },
+              "r" : {
+                "lit" : "   is :",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "code",
+              "ref" : "local"
+            }
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 127,
+        "id" : "b127",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "code",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 128,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@128:42",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "VerifyCodeServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[verifyCode][Get image code warn][Code not found][CookieId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "cookieId",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 129,
+          "expr" : {
+            "lit" : false,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 131,
+        "id" : "b131",
+        "cond" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#verifyCode(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,java.lang.String,org.springframework.http.HttpHeaders)@131:18",
+          "callee" : "equalsIgnoreCase",
+          "recv" : {
+            "name" : "code",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "receivedCode",
+            "ref" : "param"
+          } ]
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 132,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "lit" : true,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 134,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.util.CookieUtil#<init>()" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/util/CookieUtil.java",
+      "line" : 14,
+      "end" : 16,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "throw",
+        "line" : 15,
+        "expr" : {
+          "new" : "IllegalStateException",
+          "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#<init>()@15:15",
+          "args" : [ {
+            "lit" : "Utility class",
+            "type" : "string"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.util.CookieUtil#addCookie(javax.servlet.http.HttpServletResponse,java.lang.String,java.lang.String,int)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/util/CookieUtil.java",
+      "line" : 18,
+      "end" : 27,
+      "params" : [ {
+        "name" : "response",
+        "type" : "HttpServletResponse"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "value",
+        "type" : "String"
+      }, {
+        "name" : "maxAge",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 19,
+        "target" : {
+          "name" : "cookie",
+          "ref" : "local"
+        },
+        "decl" : "Cookie",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Cookie",
+          "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#addCookie(javax.servlet.http.HttpServletResponse,java.lang.String,java.lang.String,int)@19:25",
+          "args" : [ {
+            "name" : "name",
+            "ref" : "param"
+          }, {
+            "name" : "value",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 21,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#addCookie(javax.servlet.http.HttpServletResponse,java.lang.String,java.lang.String,int)@21:16",
+          "callee" : "setHttpOnly",
+          "recv" : {
+            "name" : "cookie",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : true,
+            "type" : "boolean"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 22,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#addCookie(javax.servlet.http.HttpServletResponse,java.lang.String,java.lang.String,int)@22:16",
+          "callee" : "setPath",
+          "recv" : {
+            "name" : "cookie",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "/",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 23,
+        "id" : "b23",
+        "cond" : {
+          "bin" : ">",
+          "l" : {
+            "name" : "maxAge",
+            "ref" : "param"
+          },
+          "r" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 24,
+          "expr" : {
+            "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#addCookie(javax.servlet.http.HttpServletResponse,java.lang.String,java.lang.String,int)@24:20",
+            "callee" : "setMaxAge",
+            "recv" : {
+              "name" : "cookie",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "maxAge",
+              "ref" : "param"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 26,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#addCookie(javax.servlet.http.HttpServletResponse,java.lang.String,java.lang.String,int)@26:18",
+          "callee" : "addCookie",
+          "recv" : {
+            "name" : "response",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "name" : "cookie",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.util.CookieUtil#getCookieByName(javax.servlet.http.HttpServletRequest,java.lang.String)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/util/CookieUtil.java",
+      "line" : 29,
+      "end" : 32,
+      "params" : [ {
+        "name" : "request",
+        "type" : "HttpServletRequest"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "name" : "cookieMap",
+          "ref" : "local"
+        },
+        "decl" : "Map<String,Cookie>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#getCookieByName(javax.servlet.http.HttpServletRequest,java.lang.String)@30:40",
+          "callee" : "readCookieMap",
+          "recv" : null,
+          "args" : [ {
+            "name" : "request",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#getCookieByName(javax.servlet.http.HttpServletRequest,java.lang.String)@31:26",
+          "callee" : "getOrDefault",
+          "recv" : {
+            "name" : "cookieMap",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "name",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-verification-code-service:verifycode.util.CookieUtil#readCookieMap(javax.servlet.http.HttpServletRequest)" : {
+      "file" : "ts-verification-code-service/src/main/java/verifycode/util/CookieUtil.java",
+      "line" : 34,
+      "end" : 43,
+      "params" : [ {
+        "name" : "request",
+        "type" : "HttpServletRequest"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "name" : "cookieMap",
+          "ref" : "local"
+        },
+        "decl" : "Map<String,Cookie>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HashMap<>",
+          "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#readCookieMap(javax.servlet.http.HttpServletRequest)@35:40",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "name" : "cookies",
+          "ref" : "local"
+        },
+        "decl" : "Cookie[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#readCookieMap(javax.servlet.http.HttpServletRequest)@36:36",
+          "callee" : "getCookies",
+          "recv" : {
+            "name" : "request",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 37,
+        "id" : "b37",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "lit" : null,
+            "type" : "null"
+          },
+          "r" : {
+            "name" : "cookies",
+            "ref" : "local"
+          }
+        },
+        "then" : [ {
+          "op" : "foreach",
+          "line" : 38,
+          "id" : "f38:cookies",
+          "var" : "cookie",
+          "var_type" : "Cookie",
+          "iter" : {
+            "name" : "cookies",
+            "ref" : "local"
+          },
+          "body" : [ {
+            "op" : "expr",
+            "line" : 39,
+            "expr" : {
+              "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#readCookieMap(javax.servlet.http.HttpServletRequest)@39:27",
+              "callee" : "put",
+              "recv" : {
+                "name" : "cookieMap",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#readCookieMap(javax.servlet.http.HttpServletRequest)@39:38",
+                "callee" : "getName",
+                "recv" : {
+                  "name" : "cookie",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "cookie",
+                "ref" : "local"
+              } ]
+            }
+          } ]
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 42,
+        "expr" : {
+          "name" : "cookieMap",
+          "ref" : "local"
+        }
+      } ]
+    }
+  }
+}

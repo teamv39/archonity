@@ -1,0 +1,4429 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-travel-plan-service",
+  "methods" : {
+    "method:ts-travel-plan-service:travelplan.TravelPlanApplication#main(java.lang.String[])" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/TravelPlanApplication.java",
+      "line" : 25,
+      "end" : 27,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 26,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.TravelPlanApplication#main(java.lang.String[])@26:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "TravelPlanApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.TravelPlanApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/TravelPlanApplication.java",
+      "line" : 29,
+      "end" : 33,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.TravelPlanApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@32:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:62",
+                      "callee" : "permitAll",
+                      "recv" : {
+                        "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/travelplanservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-travel-plan-service:travelplan.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-travel-plan-service:travelplan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/controller/TravelPlanController.java",
+      "line" : 38,
+      "end" : 42,
+      "params" : [ {
+        "name" : "queryInfo",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@40:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TravelPlanController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getCheapest][Search Cheapest][start: {},end: {},time: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@40:113",
+            "callee" : "getStartPlace",
+            "recv" : {
+              "name" : "queryInfo",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@40:139",
+            "callee" : "getEndPlace",
+            "recv" : {
+              "name" : "queryInfo",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@40:163",
+            "callee" : "getDepartureTime",
+            "recv" : {
+              "name" : "queryInfo",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@41:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@41:37",
+            "callee" : "getCheapest",
+            "recv" : {
+              "name" : "travelPlanService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "queryInfo",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/controller/TravelPlanController.java",
+      "line" : 50,
+      "end" : 54,
+      "params" : [ {
+        "name" : "queryInfo",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@52:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TravelPlanController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getMinStation][Search Min Station][start: {},end: {},time: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@52:118",
+            "callee" : "getStartPlace",
+            "recv" : {
+              "name" : "queryInfo",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@52:144",
+            "callee" : "getEndPlace",
+            "recv" : {
+              "name" : "queryInfo",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@52:168",
+            "callee" : "getDepartureTime",
+            "recv" : {
+              "name" : "queryInfo",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@53:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@53:37",
+            "callee" : "getMinStation",
+            "recv" : {
+              "name" : "travelPlanService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "queryInfo",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/controller/TravelPlanController.java",
+      "line" : 44,
+      "end" : 48,
+      "params" : [ {
+        "name" : "queryInfo",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 46,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@46:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TravelPlanController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getQuickest][Search Quickest][start: {},end: {},time: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@46:113",
+            "callee" : "getStartPlace",
+            "recv" : {
+              "name" : "queryInfo",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@46:139",
+            "callee" : "getEndPlace",
+            "recv" : {
+              "name" : "queryInfo",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@46:163",
+            "callee" : "getDepartureTime",
+            "recv" : {
+              "name" : "queryInfo",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@47:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@47:37",
+            "callee" : "getQuickest",
+            "recv" : {
+              "name" : "travelPlanService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "queryInfo",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/controller/TravelPlanController.java",
+      "line" : 32,
+      "end" : 36,
+      "params" : [ {
+        "name" : "info",
+        "type" : "TransferTravelInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@34:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TravelPlanController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getTransferSearch][Search Transit][start: {},end: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@34:104",
+            "callee" : "getStartStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@34:127",
+            "callee" : "getEndStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@35:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@35:37",
+            "callee" : "getTransferSearch",
+            "recv" : {
+              "name" : "travelPlanService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#home()" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/controller/TravelPlanController.java",
+      "line" : 27,
+      "end" : 30,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 29,
+        "expr" : {
+          "lit" : "Welcome to [ TravelPlan Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.entity.TransferTravelInfo#<init>()" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/entity/TransferTravelInfo.java",
+      "line" : 24,
+      "end" : 26,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-travel-plan-service:travelplan.entity.TransferTravelInfo#<init>(java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/entity/TransferTravelInfo.java",
+      "line" : 28,
+      "end" : 34,
+      "params" : [ {
+        "name" : "startStation",
+        "type" : "String"
+      }, {
+        "name" : "viaStation",
+        "type" : "String"
+      }, {
+        "name" : "endStation",
+        "type" : "String"
+      }, {
+        "name" : "travelDate",
+        "type" : "String"
+      }, {
+        "name" : "trainType",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "field" : "startStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "startStation",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "field" : "viaStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "viaStation",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "field" : "endStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "endStation",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 32,
+        "target" : {
+          "field" : "travelDate",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "travelDate",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 33,
+        "target" : {
+          "field" : "trainType",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "trainType",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.entity.TransferTravelInfo#getTravelDate()" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/entity/TransferTravelInfo.java",
+      "line" : 36,
+      "end" : 38,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.entity.TransferTravelInfo#getTravelDate()@37:28",
+          "callee" : "String2Date",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "travelDate",
+            "ref" : "field"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.entity.TransferTravelResult#<init>()" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/entity/TransferTravelResult.java",
+      "line" : 19,
+      "end" : 21,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-travel-plan-service:travelplan.entity.TransferTravelResult#<init>(java.util.List,java.util.List)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/entity/TransferTravelResult.java",
+      "line" : 23,
+      "end" : 27,
+      "params" : [ {
+        "name" : "firstSectionResult",
+        "type" : "List<TripResponse>"
+      }, {
+        "name" : "secondSectionResult",
+        "type" : "List<TripResponse>"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 25,
+        "target" : {
+          "field" : "firstSectionResult",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "firstSectionResult",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 26,
+        "target" : {
+          "field" : "secondSectionResult",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "secondSectionResult",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.entity.TravelAdvanceResultUnit#<init>()" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/entity/TravelAdvanceResultUnit.java",
+      "line" : 36,
+      "end" : 38,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 87,
+      "end" : 132,
+      "params" : [ {
+        "name" : "info",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 89,
+        "target" : {
+          "name" : "routePlanInfo",
+          "ref" : "local"
+        },
+        "decl" : "RoutePlanInfo",
+        "operator" : "=",
+        "expr" : {
+          "new" : "RoutePlanInfo",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@89:39",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 90,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@90:23",
+          "callee" : "setNum",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 5,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 91,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@91:23",
+          "callee" : "setStartStation",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@91:44",
+            "callee" : "getStartPlace",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 92,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@92:23",
+          "callee" : "setEndStation",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@92:42",
+            "callee" : "getEndPlace",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 93,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@93:23",
+          "callee" : "setTravelDate",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@93:42",
+            "callee" : "getDepartureTime",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 94,
+        "target" : {
+          "name" : "routePlanResultUnits",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<RoutePlanResultUnit>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@94:63",
+          "callee" : "getRoutePlanResultCheapest",
+          "recv" : null,
+          "args" : [ {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 96,
+        "id" : "b96",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@96:35",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "routePlanResultUnits",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 97,
+          "target" : {
+            "name" : "lists",
+            "ref" : "local"
+          },
+          "decl" : "ArrayList<TravelAdvanceResultUnit>",
+          "operator" : "=",
+          "expr" : {
+            "new" : "ArrayList<>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@97:56",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "for",
+          "line" : 98,
+          "init" : [ {
+            "op" : "assign",
+            "line" : 98,
+            "target" : {
+              "name" : "i",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "lit" : 0,
+              "type" : "int"
+            }
+          } ],
+          "cond" : {
+            "bin" : "<",
+            "l" : {
+              "name" : "i",
+              "ref" : "local"
+            },
+            "r" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@98:54",
+              "callee" : "size",
+              "recv" : {
+                "name" : "routePlanResultUnits",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          },
+          "update" : [ {
+            "un" : "post++",
+            "e" : {
+              "name" : "i",
+              "ref" : "local"
+            }
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 99,
+            "target" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "decl" : "RoutePlanResultUnit",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@99:69",
+              "callee" : "get",
+              "recv" : {
+                "name" : "routePlanResultUnits",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "i",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 100,
+            "target" : {
+              "name" : "newUnit",
+              "ref" : "local"
+            },
+            "decl" : "TravelAdvanceResultUnit",
+            "operator" : "=",
+            "expr" : {
+              "new" : "TravelAdvanceResultUnit",
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@100:51",
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 101,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@101:25",
+              "callee" : "setTripId",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@101:44",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 102,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@102:25",
+              "callee" : "setEndStation",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@102:48",
+                "callee" : "getEndStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 103,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@103:25",
+              "callee" : "setTrainTypeId",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@103:49",
+                "callee" : "getTrainTypeName",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 104,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@104:25",
+              "callee" : "setStartStation",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@104:50",
+                "callee" : "getStartStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 106,
+            "target" : {
+              "name" : "stops",
+              "ref" : "local"
+            },
+            "decl" : "List<String>",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@106:47",
+              "callee" : "getStopStations",
+              "recv" : {
+                "name" : "tempUnit",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 107,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@107:25",
+              "callee" : "setStopStations",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "stops",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 108,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@108:25",
+              "callee" : "setPriceForFirstClassSeat",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@108:60",
+                "callee" : "getPriceForFirstClassSeat",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 109,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@109:25",
+              "callee" : "setPriceForSecondClassSeat",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@109:61",
+                "callee" : "getPriceForSecondClassSeat",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 110,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@110:25",
+              "callee" : "setStartTime",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@110:47",
+                "callee" : "getStartTime",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 111,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@111:25",
+              "callee" : "setEndTime",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@111:45",
+                "callee" : "getEndTime",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 113,
+            "target" : {
+              "name" : "trainType",
+              "ref" : "local"
+            },
+            "decl" : "TrainType",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@113:39",
+              "callee" : "queryTrainTypeByName",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@113:69",
+                "callee" : "getTrainTypeName",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 114,
+            "target" : {
+              "name" : "firstClassTotalNum",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@114:52",
+              "callee" : "getConfortClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 115,
+            "target" : {
+              "name" : "secondClassTotalNum",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@115:53",
+              "callee" : "getEconomyClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 117,
+            "target" : {
+              "name" : "first",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@117:29",
+              "callee" : "getRestTicketNumber",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@117:54",
+                "callee" : "getDepartureTime",
+                "recv" : {
+                  "name" : "info",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@117:83",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@118:34",
+                "callee" : "getStartStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@118:62",
+                "callee" : "getEndStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@118:100",
+                "callee" : "getCode",
+                "recv" : {
+                  "enum" : "edu.fudan.common.entity.SeatClass",
+                  "constant" : "FIRSTCLASS",
+                  "args" : [ {
+                    "lit" : 2,
+                    "type" : "int"
+                  }, {
+                    "lit" : "FirstClassSeat",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ ]
+              }, {
+                "name" : "firstClassTotalNum",
+                "ref" : "local"
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@118:140",
+                "callee" : "getStopStations",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 120,
+            "target" : {
+              "name" : "second",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@120:30",
+              "callee" : "getRestTicketNumber",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@120:55",
+                "callee" : "getDepartureTime",
+                "recv" : {
+                  "name" : "info",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@120:84",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@121:34",
+                "callee" : "getStartStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@121:62",
+                "callee" : "getEndStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@121:101",
+                "callee" : "getCode",
+                "recv" : {
+                  "enum" : "edu.fudan.common.entity.SeatClass",
+                  "constant" : "SECONDCLASS",
+                  "args" : [ {
+                    "lit" : 3,
+                    "type" : "int"
+                  }, {
+                    "lit" : "SecondClassSeat",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ ]
+              }, {
+                "name" : "secondClassTotalNum",
+                "ref" : "local"
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@121:142",
+                "callee" : "getStopStations",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 122,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@122:25",
+              "callee" : "setNumberOfRestTicketFirstClass",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "first",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 123,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@123:25",
+              "callee" : "setNumberOfRestTicketSecondClass",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "second",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 124,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@124:23",
+              "callee" : "add",
+              "recv" : {
+                "name" : "lists",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "newUnit",
+                "ref" : "local"
+              } ]
+            }
+          } ]
+        }, {
+          "op" : "return",
+          "line" : 127,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@127:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "lists",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 129,
+          "expr" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@129:42",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TravelPlanServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getCheapest][Get cheapest trip warn][Route Plan Result Units: {}]",
+              "type" : "string"
+            }, {
+              "lit" : "No Content",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 130,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@130:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "cannotFind",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 182,
+      "end" : 228,
+      "params" : [ {
+        "name" : "info",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 184,
+        "target" : {
+          "name" : "routePlanInfo",
+          "ref" : "local"
+        },
+        "decl" : "RoutePlanInfo",
+        "operator" : "=",
+        "expr" : {
+          "new" : "RoutePlanInfo",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@184:39",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 185,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@185:23",
+          "callee" : "setNum",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 5,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 186,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@186:23",
+          "callee" : "setStartStation",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@186:44",
+            "callee" : "getStartPlace",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 187,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@187:23",
+          "callee" : "setEndStation",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@187:42",
+            "callee" : "getEndPlace",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 188,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@188:23",
+          "callee" : "setTravelDate",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@188:42",
+            "callee" : "getDepartureTime",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 189,
+        "target" : {
+          "name" : "routePlanResultUnits",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<RoutePlanResultUnit>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@189:63",
+          "callee" : "getRoutePlanResultMinStation",
+          "recv" : null,
+          "args" : [ {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 191,
+        "id" : "b191",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@191:35",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "routePlanResultUnits",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 193,
+          "target" : {
+            "name" : "lists",
+            "ref" : "local"
+          },
+          "decl" : "ArrayList<TravelAdvanceResultUnit>",
+          "operator" : "=",
+          "expr" : {
+            "new" : "ArrayList<>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@193:56",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "for",
+          "line" : 194,
+          "init" : [ {
+            "op" : "assign",
+            "line" : 194,
+            "target" : {
+              "name" : "i",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "lit" : 0,
+              "type" : "int"
+            }
+          } ],
+          "cond" : {
+            "bin" : "<",
+            "l" : {
+              "name" : "i",
+              "ref" : "local"
+            },
+            "r" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@194:54",
+              "callee" : "size",
+              "recv" : {
+                "name" : "routePlanResultUnits",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          },
+          "update" : [ {
+            "un" : "post++",
+            "e" : {
+              "name" : "i",
+              "ref" : "local"
+            }
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 195,
+            "target" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "decl" : "RoutePlanResultUnit",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@195:69",
+              "callee" : "get",
+              "recv" : {
+                "name" : "routePlanResultUnits",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "i",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 196,
+            "target" : {
+              "name" : "newUnit",
+              "ref" : "local"
+            },
+            "decl" : "TravelAdvanceResultUnit",
+            "operator" : "=",
+            "expr" : {
+              "new" : "TravelAdvanceResultUnit",
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@196:51",
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 197,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@197:25",
+              "callee" : "setTripId",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@197:44",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 198,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@198:25",
+              "callee" : "setTrainTypeId",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@198:49",
+                "callee" : "getTrainTypeName",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 199,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@199:25",
+              "callee" : "setStartStation",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@199:50",
+                "callee" : "getStartStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 200,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@200:25",
+              "callee" : "setEndStation",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@200:48",
+                "callee" : "getEndStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 202,
+            "target" : {
+              "name" : "stops",
+              "ref" : "local"
+            },
+            "decl" : "List<String>",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@202:47",
+              "callee" : "getStopStations",
+              "recv" : {
+                "name" : "tempUnit",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 203,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@203:25",
+              "callee" : "setStopStations",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "stops",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 205,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@205:25",
+              "callee" : "setPriceForFirstClassSeat",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@205:60",
+                "callee" : "getPriceForFirstClassSeat",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 206,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@206:25",
+              "callee" : "setPriceForSecondClassSeat",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@206:61",
+                "callee" : "getPriceForSecondClassSeat",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 207,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@207:25",
+              "callee" : "setEndTime",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@207:45",
+                "callee" : "getEndTime",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 208,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@208:25",
+              "callee" : "setStartTime",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@208:47",
+                "callee" : "getStartTime",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 210,
+            "target" : {
+              "name" : "trainType",
+              "ref" : "local"
+            },
+            "decl" : "TrainType",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@210:39",
+              "callee" : "queryTrainTypeByName",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@210:69",
+                "callee" : "getTrainTypeName",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 211,
+            "target" : {
+              "name" : "firstClassTotalNum",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@211:52",
+              "callee" : "getConfortClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 212,
+            "target" : {
+              "name" : "secondClassTotalNum",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@212:53",
+              "callee" : "getEconomyClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 214,
+            "target" : {
+              "name" : "first",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@214:29",
+              "callee" : "getRestTicketNumber",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@214:54",
+                "callee" : "getDepartureTime",
+                "recv" : {
+                  "name" : "info",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@214:83",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@215:34",
+                "callee" : "getStartStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@215:62",
+                "callee" : "getEndStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@215:100",
+                "callee" : "getCode",
+                "recv" : {
+                  "enum" : "edu.fudan.common.entity.SeatClass",
+                  "constant" : "FIRSTCLASS",
+                  "args" : [ {
+                    "lit" : 2,
+                    "type" : "int"
+                  }, {
+                    "lit" : "FirstClassSeat",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ ]
+              }, {
+                "name" : "firstClassTotalNum",
+                "ref" : "local"
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@215:140",
+                "callee" : "getStopStations",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 217,
+            "target" : {
+              "name" : "second",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@217:30",
+              "callee" : "getRestTicketNumber",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@217:55",
+                "callee" : "getDepartureTime",
+                "recv" : {
+                  "name" : "info",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@217:84",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@218:34",
+                "callee" : "getStartStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@218:62",
+                "callee" : "getEndStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@218:101",
+                "callee" : "getCode",
+                "recv" : {
+                  "enum" : "edu.fudan.common.entity.SeatClass",
+                  "constant" : "SECONDCLASS",
+                  "args" : [ {
+                    "lit" : 3,
+                    "type" : "int"
+                  }, {
+                    "lit" : "SecondClassSeat",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ ]
+              }, {
+                "name" : "secondClassTotalNum",
+                "ref" : "local"
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@218:142",
+                "callee" : "getStopStations",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 219,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@219:25",
+              "callee" : "setNumberOfRestTicketFirstClass",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "first",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 220,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@220:25",
+              "callee" : "setNumberOfRestTicketSecondClass",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "second",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 221,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@221:23",
+              "callee" : "add",
+              "recv" : {
+                "name" : "lists",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "newUnit",
+                "ref" : "local"
+              } ]
+            }
+          } ]
+        }, {
+          "op" : "return",
+          "line" : 223,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@223:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "lists",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 225,
+          "expr" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@225:42",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TravelPlanServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getMinStation][Get min stations trip warn][Route Plan Result Units: {}]",
+              "type" : "string"
+            }, {
+              "lit" : "No Content",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 226,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@226:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "cannotFind",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 134,
+      "end" : 180,
+      "params" : [ {
+        "name" : "info",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 136,
+        "target" : {
+          "name" : "routePlanInfo",
+          "ref" : "local"
+        },
+        "decl" : "RoutePlanInfo",
+        "operator" : "=",
+        "expr" : {
+          "new" : "RoutePlanInfo",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@136:39",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 137,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@137:23",
+          "callee" : "setNum",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 5,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 138,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@138:23",
+          "callee" : "setStartStation",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@138:44",
+            "callee" : "getStartPlace",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 139,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@139:23",
+          "callee" : "setEndStation",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@139:42",
+            "callee" : "getEndPlace",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 140,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@140:23",
+          "callee" : "setTravelDate",
+          "recv" : {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@140:42",
+            "callee" : "getDepartureTime",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 141,
+        "target" : {
+          "name" : "routePlanResultUnits",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<RoutePlanResultUnit>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@141:63",
+          "callee" : "getRoutePlanResultQuickest",
+          "recv" : null,
+          "args" : [ {
+            "name" : "routePlanInfo",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 144,
+        "id" : "b144",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@144:35",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "routePlanResultUnits",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 146,
+          "target" : {
+            "name" : "lists",
+            "ref" : "local"
+          },
+          "decl" : "ArrayList<TravelAdvanceResultUnit>",
+          "operator" : "=",
+          "expr" : {
+            "new" : "ArrayList<>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@146:56",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "for",
+          "line" : 147,
+          "init" : [ {
+            "op" : "assign",
+            "line" : 147,
+            "target" : {
+              "name" : "i",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "lit" : 0,
+              "type" : "int"
+            }
+          } ],
+          "cond" : {
+            "bin" : "<",
+            "l" : {
+              "name" : "i",
+              "ref" : "local"
+            },
+            "r" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@147:54",
+              "callee" : "size",
+              "recv" : {
+                "name" : "routePlanResultUnits",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          },
+          "update" : [ {
+            "un" : "post++",
+            "e" : {
+              "name" : "i",
+              "ref" : "local"
+            }
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 148,
+            "target" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "decl" : "RoutePlanResultUnit",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@148:69",
+              "callee" : "get",
+              "recv" : {
+                "name" : "routePlanResultUnits",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "i",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 149,
+            "target" : {
+              "name" : "newUnit",
+              "ref" : "local"
+            },
+            "decl" : "TravelAdvanceResultUnit",
+            "operator" : "=",
+            "expr" : {
+              "new" : "TravelAdvanceResultUnit",
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@149:51",
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 150,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@150:25",
+              "callee" : "setTripId",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@150:44",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 151,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@151:25",
+              "callee" : "setTrainTypeId",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@151:49",
+                "callee" : "getTrainTypeName",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 152,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@152:25",
+              "callee" : "setEndStation",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@152:48",
+                "callee" : "getEndStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 153,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@153:25",
+              "callee" : "setStartStation",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@153:50",
+                "callee" : "getStartStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 155,
+            "target" : {
+              "name" : "stops",
+              "ref" : "local"
+            },
+            "decl" : "List<String>",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@155:47",
+              "callee" : "getStopStations",
+              "recv" : {
+                "name" : "tempUnit",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 156,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@156:25",
+              "callee" : "setStopStations",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "stops",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 158,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@158:25",
+              "callee" : "setPriceForFirstClassSeat",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@158:60",
+                "callee" : "getPriceForFirstClassSeat",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 159,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@159:25",
+              "callee" : "setPriceForSecondClassSeat",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@159:61",
+                "callee" : "getPriceForSecondClassSeat",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 160,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@160:25",
+              "callee" : "setStartTime",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@160:47",
+                "callee" : "getStartTime",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 161,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@161:25",
+              "callee" : "setEndTime",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@161:45",
+                "callee" : "getEndTime",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 163,
+            "target" : {
+              "name" : "trainType",
+              "ref" : "local"
+            },
+            "decl" : "TrainType",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@163:39",
+              "callee" : "queryTrainTypeByName",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@163:69",
+                "callee" : "getTrainTypeName",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 164,
+            "target" : {
+              "name" : "firstClassTotalNum",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@164:52",
+              "callee" : "getConfortClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 165,
+            "target" : {
+              "name" : "secondClassTotalNum",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@165:53",
+              "callee" : "getEconomyClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 166,
+            "target" : {
+              "name" : "first",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@166:29",
+              "callee" : "getRestTicketNumber",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@166:54",
+                "callee" : "getDepartureTime",
+                "recv" : {
+                  "name" : "info",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@166:83",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@167:34",
+                "callee" : "getStartStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@167:62",
+                "callee" : "getEndStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@167:100",
+                "callee" : "getCode",
+                "recv" : {
+                  "enum" : "edu.fudan.common.entity.SeatClass",
+                  "constant" : "FIRSTCLASS",
+                  "args" : [ {
+                    "lit" : 2,
+                    "type" : "int"
+                  }, {
+                    "lit" : "FirstClassSeat",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ ]
+              }, {
+                "name" : "firstClassTotalNum",
+                "ref" : "local"
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@167:140",
+                "callee" : "getStopStations",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 169,
+            "target" : {
+              "name" : "second",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@169:30",
+              "callee" : "getRestTicketNumber",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@169:55",
+                "callee" : "getDepartureTime",
+                "recv" : {
+                  "name" : "info",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@169:84",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@170:34",
+                "callee" : "getStartStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@170:62",
+                "callee" : "getEndStation",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@170:101",
+                "callee" : "getCode",
+                "recv" : {
+                  "enum" : "edu.fudan.common.entity.SeatClass",
+                  "constant" : "SECONDCLASS",
+                  "args" : [ {
+                    "lit" : 3,
+                    "type" : "int"
+                  }, {
+                    "lit" : "SecondClassSeat",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ ]
+              }, {
+                "name" : "secondClassTotalNum",
+                "ref" : "local"
+              }, {
+                "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@170:142",
+                "callee" : "getStopStations",
+                "recv" : {
+                  "name" : "tempUnit",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 171,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@171:25",
+              "callee" : "setNumberOfRestTicketFirstClass",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "first",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 172,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@172:25",
+              "callee" : "setNumberOfRestTicketSecondClass",
+              "recv" : {
+                "name" : "newUnit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "second",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 173,
+            "expr" : {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@173:23",
+              "callee" : "add",
+              "recv" : {
+                "name" : "lists",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "newUnit",
+                "ref" : "local"
+              } ]
+            }
+          } ]
+        }, {
+          "op" : "return",
+          "line" : 175,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@175:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "lists",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 177,
+          "expr" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@177:42",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TravelPlanServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getQuickest][Get quickest trip warn][Route Plan Result Units: {}]",
+              "type" : "string"
+            }, {
+              "lit" : "No Content",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 178,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@178:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "cannotFind",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 230,
+      "end" : 252,
+      "params" : [ {
+        "name" : "travelDate",
+        "type" : "String"
+      }, {
+        "name" : "trainNumber",
+        "type" : "String"
+      }, {
+        "name" : "startStationName",
+        "type" : "String"
+      }, {
+        "name" : "endStationName",
+        "type" : "String"
+      }, {
+        "name" : "seatType",
+        "type" : "int"
+      }, {
+        "name" : "totalNum",
+        "type" : "int"
+      }, {
+        "name" : "stations",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 231,
+        "target" : {
+          "name" : "seatRequest",
+          "ref" : "local"
+        },
+        "decl" : "Seat",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Seat",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@231:28",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 233,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@233:21",
+          "callee" : "setDestStation",
+          "recv" : {
+            "name" : "seatRequest",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "startStationName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 234,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@234:21",
+          "callee" : "setStartStation",
+          "recv" : {
+            "name" : "seatRequest",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "endStationName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 235,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@235:21",
+          "callee" : "setTrainNumber",
+          "recv" : {
+            "name" : "seatRequest",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "trainNumber",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 236,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@236:21",
+          "callee" : "setTravelDate",
+          "recv" : {
+            "name" : "seatRequest",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "travelDate",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 237,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@237:21",
+          "callee" : "setSeatType",
+          "recv" : {
+            "name" : "seatRequest",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "seatType",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 238,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@238:21",
+          "callee" : "setStations",
+          "recv" : {
+            "name" : "seatRequest",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "stations",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 239,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@239:21",
+          "callee" : "setTotalNum",
+          "recv" : {
+            "name" : "seatRequest",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "totalNum",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 241,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@241:38",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TravelPlanServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getRestTicketNumber][Seat Request][Seat Request is: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@241:115",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "seatRequest",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 242,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@242:36",
+          "args" : [ {
+            "name" : "seatRequest",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 243,
+        "target" : {
+          "name" : "seat_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@243:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-seat-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 244,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<Integer>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@244:61",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "seat_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/seatservice/seats/left_tickets",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<Integer>>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@248:17",
+            "args" : [ ],
+            "anon" : "type:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl$1"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 251,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@251:29",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@251:19",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultCheapest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 254,
+      "end" : 264,
+      "params" : [ {
+        "name" : "info",
+        "type" : "RoutePlanInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 255,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultCheapest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@255:36",
+          "args" : [ {
+            "name" : "info",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 256,
+        "target" : {
+          "name" : "route_plan_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultCheapest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@256:41",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-route-plan-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 257,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<RoutePlanResultUnit>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultCheapest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@257:84",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "route_plan_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/routeplanservice/routePlan/cheapestRoute",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<RoutePlanResultUnit>>>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultCheapest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@261:17",
+            "args" : [ ],
+            "anon" : "type:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl$2"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 263,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultCheapest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@263:29",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultCheapest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@263:19",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultMinStation(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 279,
+      "end" : 289,
+      "params" : [ {
+        "name" : "info",
+        "type" : "RoutePlanInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 280,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultMinStation(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@280:36",
+          "args" : [ {
+            "name" : "info",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 281,
+        "target" : {
+          "name" : "route_plan_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultMinStation(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@281:41",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-route-plan-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 282,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<RoutePlanResultUnit>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultMinStation(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@282:84",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "route_plan_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/routeplanservice/routePlan/minStopStations",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<RoutePlanResultUnit>>>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultMinStation(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@286:17",
+            "args" : [ ],
+            "anon" : "type:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl$4"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 288,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultMinStation(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@288:29",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultMinStation(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@288:19",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultQuickest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 266,
+      "end" : 277,
+      "params" : [ {
+        "name" : "info",
+        "type" : "RoutePlanInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 267,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultQuickest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@267:36",
+          "args" : [ {
+            "name" : "info",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 268,
+        "target" : {
+          "name" : "route_plan_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultQuickest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@268:41",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-route-plan-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 269,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<RoutePlanResultUnit>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultQuickest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@269:84",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "route_plan_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/routeplanservice/routePlan/quickestRoute",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<RoutePlanResultUnit>>>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultQuickest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@273:17",
+            "args" : [ ],
+            "anon" : "type:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl$3"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 276,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultQuickest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@276:29",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getRoutePlanResultQuickest(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@276:19",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getServiceUrl(java.lang.String)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 45,
+      "end" : 47,
+      "params" : [ {
+        "name" : "serviceName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 46,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "lit" : "http://",
+            "type" : "string"
+          },
+          "r" : {
+            "name" : "serviceName",
+            "ref" : "param"
+          }
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 49,
+      "end" : 85,
+      "params" : [ {
+        "name" : "info",
+        "type" : "TransferTravelInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 52,
+        "target" : {
+          "name" : "queryInfoFirstSection",
+          "ref" : "local"
+        },
+        "decl" : "TripInfo",
+        "operator" : "=",
+        "expr" : {
+          "new" : "TripInfo",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@52:42",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@53:31",
+          "callee" : "setDepartureTime",
+          "recv" : {
+            "name" : "queryInfoFirstSection",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@53:60",
+            "callee" : "Date2String",
+            "recv" : {
+              "name" : "StringUtils",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@53:77",
+              "callee" : "getTravelDate",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 54,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@54:31",
+          "callee" : "setStartPlace",
+          "recv" : {
+            "name" : "queryInfoFirstSection",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@54:50",
+            "callee" : "getStartStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@55:31",
+          "callee" : "setEndPlace",
+          "recv" : {
+            "name" : "queryInfoFirstSection",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@55:48",
+            "callee" : "getViaStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 57,
+        "target" : {
+          "name" : "firstSectionFromHighSpeed",
+          "ref" : "local"
+        },
+        "decl" : "List<TripResponse>",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 58,
+        "target" : {
+          "name" : "firstSectionFromNormal",
+          "ref" : "local"
+        },
+        "decl" : "List<TripResponse>",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 59,
+        "target" : {
+          "name" : "firstSectionFromHighSpeed",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@59:37",
+          "callee" : "tripsFromHighSpeed",
+          "recv" : null,
+          "args" : [ {
+            "name" : "queryInfoFirstSection",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 60,
+        "target" : {
+          "name" : "firstSectionFromNormal",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@60:34",
+          "callee" : "tripsFromNormal",
+          "recv" : null,
+          "args" : [ {
+            "name" : "queryInfoFirstSection",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 62,
+        "target" : {
+          "name" : "queryInfoSecondSectoin",
+          "ref" : "local"
+        },
+        "decl" : "TripInfo",
+        "operator" : "=",
+        "expr" : {
+          "new" : "TripInfo",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@62:43",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 63,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@63:32",
+          "callee" : "setDepartureTime",
+          "recv" : {
+            "name" : "queryInfoSecondSectoin",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@63:61",
+            "callee" : "Date2String",
+            "recv" : {
+              "name" : "StringUtils",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@63:78",
+              "callee" : "getTravelDate",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@64:32",
+          "callee" : "setStartPlace",
+          "recv" : {
+            "name" : "queryInfoSecondSectoin",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@64:51",
+            "callee" : "getViaStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@65:32",
+          "callee" : "setEndPlace",
+          "recv" : {
+            "name" : "queryInfoSecondSectoin",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@65:49",
+            "callee" : "getEndStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 67,
+        "target" : {
+          "name" : "secondSectionFromHighSpeed",
+          "ref" : "local"
+        },
+        "decl" : "List<TripResponse>",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 68,
+        "target" : {
+          "name" : "secondSectionFromNormal",
+          "ref" : "local"
+        },
+        "decl" : "List<TripResponse>",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 69,
+        "target" : {
+          "name" : "secondSectionFromHighSpeed",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@69:38",
+          "callee" : "tripsFromHighSpeed",
+          "recv" : null,
+          "args" : [ {
+            "name" : "queryInfoSecondSectoin",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 70,
+        "target" : {
+          "name" : "secondSectionFromNormal",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@70:35",
+          "callee" : "tripsFromNormal",
+          "recv" : null,
+          "args" : [ {
+            "name" : "queryInfoSecondSectoin",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 72,
+        "target" : {
+          "name" : "firstSection",
+          "ref" : "local"
+        },
+        "decl" : "List<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@72:43",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 73,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@73:22",
+          "callee" : "addAll",
+          "recv" : {
+            "name" : "firstSection",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "firstSectionFromHighSpeed",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 74,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@74:22",
+          "callee" : "addAll",
+          "recv" : {
+            "name" : "firstSection",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "firstSectionFromNormal",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 76,
+        "target" : {
+          "name" : "secondSection",
+          "ref" : "local"
+        },
+        "decl" : "List<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@76:44",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 77,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@77:23",
+          "callee" : "addAll",
+          "recv" : {
+            "name" : "secondSection",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "secondSectionFromHighSpeed",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 78,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@78:23",
+          "callee" : "addAll",
+          "recv" : {
+            "name" : "secondSection",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "secondSectionFromNormal",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 80,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "TransferTravelResult",
+        "operator" : "=",
+        "expr" : {
+          "new" : "TransferTravelResult",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@80:39",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 81,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@81:16",
+          "callee" : "setFirstSectionResult",
+          "recv" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "firstSection",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 82,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@82:16",
+          "callee" : "setSecondSectionResult",
+          "recv" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "secondSection",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 84,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getTransferSearch(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)@84:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "Success.",
+            "type" : "string"
+          }, {
+            "name" : "result",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 317,
+      "end" : 328,
+      "params" : [ {
+        "name" : "trainTypeName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 318,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@318:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 319,
+        "target" : {
+          "name" : "train_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@319:34",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-train-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 320,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@320:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "train_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/trainservice/trains/byName/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "trainTypeName",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 325,
+        "target" : {
+          "name" : "response",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@325:33",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 327,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@327:26",
+          "callee" : "conveterObject",
+          "recv" : {
+            "name" : "JsonUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@327:50",
+            "callee" : "getData",
+            "recv" : {
+              "name" : "response",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }, {
+            "class" : "TrainType"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromHighSpeed(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 291,
+      "end" : 301,
+      "params" : [ {
+        "name" : "info",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 292,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromHighSpeed(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@292:36",
+          "args" : [ {
+            "name" : "info",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 293,
+        "target" : {
+          "name" : "travel_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromHighSpeed(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@293:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-travel-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 294,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<List<TripResponse>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromHighSpeed(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@294:72",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "travel_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/travelservice/trips/left",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<List<TripResponse>>>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromHighSpeed(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@298:17",
+            "args" : [ ],
+            "anon" : "type:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl$5"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 300,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromHighSpeed(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@300:29",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromHighSpeed(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@300:19",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromNormal(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
+      "line" : 303,
+      "end" : 315,
+      "params" : [ {
+        "name" : "info",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 305,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromNormal(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@305:36",
+          "args" : [ {
+            "name" : "info",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 306,
+        "target" : {
+          "name" : "travel2_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromNormal(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@306:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-travel2-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 307,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<TripResponse>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromNormal(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@307:77",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "travel2_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/travel2service/trips/left",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<TripResponse>>>",
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromNormal(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@311:17",
+            "args" : [ ],
+            "anon" : "type:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl$6"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 314,
+        "expr" : {
+          "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromNormal(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@314:29",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#tripsFromNormal(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@314:19",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    }
+  }
+}

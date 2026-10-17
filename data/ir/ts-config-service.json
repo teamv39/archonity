@@ -1,0 +1,1649 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-config-service",
+  "methods" : {
+    "method:ts-config-service:config.ConfigApplication#main(java.lang.String[])" : {
+      "file" : "ts-config-service/src/main/java/config/ConfigApplication.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.ConfigApplication#main(java.lang.String[])@27:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "ConfigApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.ConfigApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-config-service/src/main/java/config/ConfigApplication.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.ConfigApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@33:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-config-service/src/main/java/config/SecurityConfig.java",
+      "line" : 65,
+      "end" : 86,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 67,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@81:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@80:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@80:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:84",
+                      "callee" : "hasAnyRole",
+                      "recv" : {
+                        "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:79",
+                          "callee" : "hasAnyRole",
+                          "recv" : {
+                            "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+                            "callee" : "antMatchers",
+                            "recv" : {
+                              "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:80",
+                              "callee" : "hasAnyRole",
+                              "recv" : {
+                                "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+                                "callee" : "antMatchers",
+                                "recv" : {
+                                  "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:58",
+                                  "callee" : "permitAll",
+                                  "recv" : {
+                                    "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                                    "callee" : "antMatchers",
+                                    "recv" : {
+                                      "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:18",
+                                      "callee" : "authorizeRequests",
+                                      "recv" : {
+                                        "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                                        "callee" : "and",
+                                        "recv" : {
+                                          "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:38",
+                                          "callee" : "sessionCreationPolicy",
+                                          "recv" : {
+                                            "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                                            "callee" : "sessionManagement",
+                                            "recv" : {
+                                              "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:25",
+                                              "callee" : "disable",
+                                              "recv" : {
+                                                "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                                                "callee" : "csrf",
+                                                "recv" : {
+                                                  "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:34",
+                                                  "callee" : "disable",
+                                                  "recv" : {
+                                                    "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:22",
+                                                    "callee" : "httpBasic",
+                                                    "recv" : {
+                                                      "name" : "httpSecurity",
+                                                      "ref" : "param"
+                                                    },
+                                                    "args" : [ ]
+                                                  },
+                                                  "args" : [ ]
+                                                },
+                                                "args" : [ ]
+                                              },
+                                              "args" : [ ]
+                                            },
+                                            "args" : [ ]
+                                          },
+                                          "args" : [ {
+                                            "field" : "STATELESS",
+                                            "of" : {
+                                              "name" : "SessionCreationPolicy",
+                                              "ref" : "type"
+                                            }
+                                          } ]
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ {
+                                      "lit" : "/api/v1/configservice/**",
+                                      "type" : "string"
+                                    } ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ {
+                                  "field" : "POST",
+                                  "of" : {
+                                    "name" : "HttpMethod",
+                                    "ref" : "type"
+                                  }
+                                }, {
+                                  "lit" : "/api/v1/configservice/configs",
+                                  "type" : "string"
+                                } ]
+                              },
+                              "args" : [ {
+                                "name" : "admin",
+                                "ref" : "field"
+                              } ]
+                            },
+                            "args" : [ {
+                              "field" : "PUT",
+                              "of" : {
+                                "name" : "HttpMethod",
+                                "ref" : "type"
+                              }
+                            }, {
+                              "lit" : "/api/v1/configservice/configs",
+                              "type" : "string"
+                            } ]
+                          },
+                          "args" : [ {
+                            "name" : "admin",
+                            "ref" : "field"
+                          } ]
+                        },
+                        "args" : [ {
+                          "field" : "DELETE",
+                          "of" : {
+                            "name" : "HttpMethod",
+                            "ref" : "type"
+                          }
+                        }, {
+                          "lit" : "/api/v1/configservice/configs/*",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "name" : "admin",
+                        "ref" : "field"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 85,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@85:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-config-service:config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@85:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-config-service/src/main/java/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 62,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 51,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-config-service:config.SecurityConfig#corsConfigurer()@51:16",
+          "args" : [ ],
+          "anon" : "type:ts-config-service:config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-config-service:config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-config-service/src/main/java/config/SecurityConfig.java",
+      "line" : 36,
+      "end" : 39,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-config-service:config.SecurityConfig#passwordEncoder()@38:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-config-service/src/main/java/config/SecurityConfig.java",
+      "line" : 52,
+      "end" : 60,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 54,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@59:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-config-service:config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@58:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-config-service:config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@57:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-config-service:config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-config-service:config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-config-service:config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.controller.ConfigController#createConfig(config.entity.Config,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/controller/ConfigController.java",
+      "line" : 42,
+      "end" : 47,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Config"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 45,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#createConfig(config.entity.Config,org.springframework.http.HttpHeaders)@45:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[createConfig][Create config][Config name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-config-service:config.controller.ConfigController#createConfig(config.entity.Config,org.springframework.http.HttpHeaders)@45:76",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 46,
+        "expr" : {
+          "new" : "ResponseEntity<>",
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#createConfig(config.entity.Config,org.springframework.http.HttpHeaders)@46:16",
+          "args" : [ {
+            "call" : "call:method:ts-config-service:config.controller.ConfigController#createConfig(config.entity.Config,org.springframework.http.HttpHeaders)@46:51",
+            "callee" : "create",
+            "recv" : {
+              "name" : "configService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }, {
+            "field" : "CREATED",
+            "of" : {
+              "name" : "HttpStatus",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.controller.ConfigController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/controller/ConfigController.java",
+      "line" : 57,
+      "end" : 62,
+      "params" : [ {
+        "name" : "configName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 60,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@60:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[deleteConfig][Delete config][configName: {}]",
+            "type" : "string"
+          }, {
+            "name" : "configName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 61,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@61:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-config-service:config.controller.ConfigController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@61:33",
+            "callee" : "delete",
+            "recv" : {
+              "name" : "configService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "configName",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.controller.ConfigController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/controller/ConfigController.java",
+      "line" : 30,
+      "end" : 33,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 32,
+        "expr" : {
+          "lit" : "Welcome to [ Config Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-config-service:config.controller.ConfigController#queryAll(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/controller/ConfigController.java",
+      "line" : 35,
+      "end" : 40,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#queryAll(org.springframework.http.HttpHeaders)@38:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[queryAll][Query all configs]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 39,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#queryAll(org.springframework.http.HttpHeaders)@39:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-config-service:config.controller.ConfigController#queryAll(org.springframework.http.HttpHeaders)@39:33",
+            "callee" : "queryAll",
+            "recv" : {
+              "name" : "configService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.controller.ConfigController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/controller/ConfigController.java",
+      "line" : 64,
+      "end" : 69,
+      "params" : [ {
+        "name" : "configName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 67,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@67:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[retrieve][Retrieve config][configName: {}]",
+            "type" : "string"
+          }, {
+            "name" : "configName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 68,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@68:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-config-service:config.controller.ConfigController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@68:33",
+            "callee" : "query",
+            "recv" : {
+              "name" : "configService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "configName",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.controller.ConfigController#updateConfig(config.entity.Config,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/controller/ConfigController.java",
+      "line" : 49,
+      "end" : 54,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Config"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#updateConfig(config.entity.Config,org.springframework.http.HttpHeaders)@52:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[updateConfig][Update config][Config name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-config-service:config.controller.ConfigController#updateConfig(config.entity.Config,org.springframework.http.HttpHeaders)@52:76",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.controller.ConfigController#updateConfig(config.entity.Config,org.springframework.http.HttpHeaders)@53:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-config-service:config.controller.ConfigController#updateConfig(config.entity.Config,org.springframework.http.HttpHeaders)@53:33",
+            "callee" : "update",
+            "recv" : {
+              "name" : "configService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.entity.Config#<init>()" : {
+      "file" : "ts-config-service/src/main/java/config/entity/Config.java",
+      "line" : 28,
+      "end" : 31,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "field" : "value",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-config-service:config.entity.Config#<init>(java.lang.String,java.lang.String,java.lang.String)" : {
+      "file" : "ts-config-service/src/main/java/config/entity/Config.java",
+      "line" : 33,
+      "end" : 37,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "value",
+        "type" : "String"
+      }, {
+        "name" : "description",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 34,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "field" : "value",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "value",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "field" : "description",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "description",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-config-service:config.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-config-service/src/main/java/config/init/InitData.java",
+      "line" : 18,
+      "end" : 27,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 20,
+        "target" : {
+          "name" : "config",
+          "ref" : "local"
+        },
+        "decl" : "Config",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Config",
+          "call" : "call:method:ts-config-service:config.init.InitData#run(java.lang.String[])@20:25",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 22,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.init.InitData#run(java.lang.String[])@22:16",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "DirectTicketAllocationProportion",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 23,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.init.InitData#run(java.lang.String[])@23:16",
+          "callee" : "setValue",
+          "recv" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "0.5",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.init.InitData#run(java.lang.String[])@24:16",
+          "callee" : "setDescription",
+          "recv" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Allocation Proportion Of The Direct Ticket - From Start To End",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 25,
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.init.InitData#run(java.lang.String[])@25:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "config",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+      "line" : 29,
+      "end" : 41,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Config"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "if",
+        "line" : 31,
+        "id" : "b31",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@31:24",
+            "callee" : "findByName",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@31:40",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 32,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "config0",
+                "ref" : "field"
+              },
+              "r" : {
+                "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@32:44",
+                "callee" : "getName",
+                "recv" : {
+                  "name" : "info",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              }
+            },
+            "r" : {
+              "lit" : " already exists.",
+              "type" : "string"
+            }
+          }
+        }, {
+          "op" : "expr",
+          "line" : 33,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@33:20",
+            "callee" : "warn",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[create][{} already exists][config info: {}]",
+              "type" : "string"
+            }, {
+              "name" : "config0",
+              "ref" : "field"
+            }, {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@33:87",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 34,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@34:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "result",
+              "ref" : "local"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 36,
+          "target" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "decl" : "Config",
+          "operator" : "=",
+          "expr" : {
+            "new" : "Config",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@36:29",
+            "args" : [ {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@36:45",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@36:61",
+              "callee" : "getValue",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@36:78",
+              "callee" : "getDescription",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 37,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@37:24",
+            "callee" : "save",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "config",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 38,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@38:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[create][create success][Config: {}]",
+              "type" : "string"
+            }, {
+              "name" : "info",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 39,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#create(config.entity.Config,org.springframework.http.HttpHeaders)@39:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Create success",
+              "type" : "string"
+            }, {
+              "name" : "config",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-config-service:config.service.ConfigServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+      "line" : 70,
+      "end" : 83,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 73,
+        "target" : {
+          "name" : "config",
+          "ref" : "local"
+        },
+        "decl" : "Config",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@73:36",
+          "callee" : "findByName",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "name",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 74,
+        "id" : "b74",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 75,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "config0",
+                "ref" : "field"
+              },
+              "r" : {
+                "name" : "name",
+                "ref" : "param"
+              }
+            },
+            "r" : {
+              "lit" : " doesn't exist.",
+              "type" : "string"
+            }
+          }
+        }, {
+          "op" : "expr",
+          "line" : 76,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@76:20",
+            "callee" : "warn",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[delete][config doesn't exist][config name: {}]",
+              "type" : "string"
+            }, {
+              "name" : "name",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 77,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@77:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "result",
+              "ref" : "local"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 79,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@79:24",
+            "callee" : "deleteByName",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "name",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 80,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@80:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[delete][Config delete success][config name: {}]",
+              "type" : "string"
+            }, {
+              "name" : "name",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 81,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@81:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Delete success",
+              "type" : "string"
+            }, {
+              "name" : "config",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-config-service:config.service.ConfigServiceImpl#query(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+      "line" : 58,
+      "end" : 68,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 60,
+        "target" : {
+          "name" : "config",
+          "ref" : "local"
+        },
+        "decl" : "Config",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#query(java.lang.String,org.springframework.http.HttpHeaders)@60:36",
+          "callee" : "findByName",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "name",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 61,
+        "id" : "b61",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 62,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#query(java.lang.String,org.springframework.http.HttpHeaders)@62:20",
+            "callee" : "warn",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[query][Config does not exist][name: {}, message: {}]",
+              "type" : "string"
+            }, {
+              "name" : "name",
+              "ref" : "param"
+            }, {
+              "lit" : "No content",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 63,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#query(java.lang.String,org.springframework.http.HttpHeaders)@63:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No content",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 65,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#query(java.lang.String,org.springframework.http.HttpHeaders)@65:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[query][Query config success][config name: {}]",
+              "type" : "string"
+            }, {
+              "name" : "name",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 66,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#query(java.lang.String,org.springframework.http.HttpHeaders)@66:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Success",
+              "type" : "string"
+            }, {
+              "name" : "config",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-config-service:config.service.ConfigServiceImpl#queryAll(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+      "line" : 85,
+      "end" : 96,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 87,
+        "target" : {
+          "name" : "configList",
+          "ref" : "local"
+        },
+        "decl" : "List<Config>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#queryAll(org.springframework.http.HttpHeaders)@87:46",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 89,
+        "id" : "b89",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "configList",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#queryAll(org.springframework.http.HttpHeaders)@89:47",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "configList",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 90,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#queryAll(org.springframework.http.HttpHeaders)@90:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[queryAll][Query all config success]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 91,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#queryAll(org.springframework.http.HttpHeaders)@91:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Find all  config success",
+              "type" : "string"
+            }, {
+              "name" : "configList",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 93,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#queryAll(org.springframework.http.HttpHeaders)@93:20",
+            "callee" : "warn",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[queryAll][Query config, No content]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 94,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#queryAll(org.springframework.http.HttpHeaders)@94:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No content",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+      "line" : 43,
+      "end" : 55,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Config"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "if",
+        "line" : 45,
+        "id" : "b45",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@45:24",
+            "callee" : "findByName",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@45:40",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 46,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "config0",
+                "ref" : "field"
+              },
+              "r" : {
+                "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@46:44",
+                "callee" : "getName",
+                "recv" : {
+                  "name" : "info",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              }
+            },
+            "r" : {
+              "lit" : " doesn't exist.",
+              "type" : "string"
+            }
+          }
+        }, {
+          "op" : "expr",
+          "line" : 47,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@47:20",
+            "callee" : "warn",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "result",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 48,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@48:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "result",
+              "ref" : "local"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 50,
+          "target" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "decl" : "Config",
+          "operator" : "=",
+          "expr" : {
+            "new" : "Config",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@50:29",
+            "args" : [ {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@50:45",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@50:61",
+              "callee" : "getValue",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@50:78",
+              "callee" : "getDescription",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 51,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@51:24",
+            "callee" : "save",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "config",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 52,
+          "expr" : {
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@52:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[update][update success][Config: {}]",
+              "type" : "string"
+            }, {
+              "name" : "config",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 53,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-config-service:config.service.ConfigServiceImpl#update(config.entity.Config,org.springframework.http.HttpHeaders)@53:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Update success",
+              "type" : "string"
+            }, {
+              "name" : "config",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    }
+  }
+}

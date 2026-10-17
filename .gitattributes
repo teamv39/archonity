@@ -4,5 +4,6 @@ cache/llm/*.json linguist-generated=true -diff
 cache/emb/** linguist-generated=true -diff
 # data/pool_ir.json linguist-generated=true -diff
 data/entity_ir.json linguist-generated=true -diff
+data/ir/*.json linguist-generated=true -diff
 data/pool_ir.json binary
 

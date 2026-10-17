@@ -1,0 +1,4672 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-route-plan-service",
+  "methods" : {
+    "method:ts-route-plan-service:plan.RoutePlanApplication#main(java.lang.String[])" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/RoutePlanApplication.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.RoutePlanApplication#main(java.lang.String[])@27:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "RoutePlanApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.RoutePlanApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/RoutePlanApplication.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.RoutePlanApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@33:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:61",
+                      "callee" : "permitAll",
+                      "recv" : {
+                        "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/routeplanservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-route-plan-service:plan.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-route-plan-service:plan.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.controller.RoutePlanController#getCheapestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/controller/RoutePlanController.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "info",
+        "type" : "RoutePlanInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getCheapestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@32:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[searchCheapestResult][Get Cheapest Routes][From: {}, To: {}, Num: {}, Date: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getCheapestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@32:130",
+            "callee" : "getStartStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getCheapestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@32:154",
+            "callee" : "getEndStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "un" : "+",
+            "e" : {
+              "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getCheapestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@32:178",
+              "callee" : "getNum",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getCheapestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@32:193",
+            "callee" : "getTravelDate",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getCheapestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@33:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getCheapestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@33:36",
+            "callee" : "searchCheapestResult",
+            "recv" : {
+              "name" : "routePlanService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.controller.RoutePlanController#getMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/controller/RoutePlanController.java",
+      "line" : 42,
+      "end" : 46,
+      "params" : [ {
+        "name" : "info",
+        "type" : "RoutePlanInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@44:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[searchMinStopStations][Get Min Stop Stations][From: {}, To: {}, Num: {}, Date: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@44:133",
+            "callee" : "getStartStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@44:157",
+            "callee" : "getEndStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@44:179",
+            "callee" : "getNum",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@44:194",
+            "callee" : "getTravelDate",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 45,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@45:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@45:36",
+            "callee" : "searchMinStopStations",
+            "recv" : {
+              "name" : "routePlanService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.controller.RoutePlanController#getQuickestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/controller/RoutePlanController.java",
+      "line" : 36,
+      "end" : 40,
+      "params" : [ {
+        "name" : "info",
+        "type" : "RoutePlanInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getQuickestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@38:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[searchQuickestResult][Get Quickest Routes][From: {}, To: {}, Num: {}, Date: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getQuickestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@38:130",
+            "callee" : "getStartStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getQuickestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@38:154",
+            "callee" : "getEndStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getQuickestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@38:176",
+            "callee" : "getNum",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getQuickestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@38:191",
+            "callee" : "getTravelDate",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 39,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getQuickestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@39:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.controller.RoutePlanController#getQuickestRoutes(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@39:36",
+            "callee" : "searchQuickestResult",
+            "recv" : {
+              "name" : "routePlanService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.controller.RoutePlanController#home()" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/controller/RoutePlanController.java",
+      "line" : 25,
+      "end" : 28,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 27,
+        "expr" : {
+          "lit" : "Welcome to [ RoutePlan Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/service/RoutePlanServiceImpl.java",
+      "line" : 286,
+      "end" : 304,
+      "params" : [ {
+        "name" : "routeId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 287,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@287:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 288,
+        "target" : {
+          "name" : "route_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@288:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-route-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 289,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<Route>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@289:59",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "route_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/routeservice/routes/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "routeId",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<Route>>",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@293:17",
+            "args" : [ ],
+            "anon" : "type:ts-route-plan-service:plan.service.RoutePlanServiceImpl$5"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 295,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response<Route>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@295:37",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 297,
+        "id" : "b297",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@297:20",
+            "callee" : "getStatus",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 298,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@298:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "RoutePlanServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getRouteByRouteId][Get Route By Id Fail][RouteId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "routeId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 299,
+          "expr" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 301,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@301:41",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "RoutePlanServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getRouteByRouteId][Get Route By Id Success]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 302,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@302:27",
+            "callee" : "getData",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getServiceUrl(java.lang.String)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/service/RoutePlanServiceImpl.java",
+      "line" : 34,
+      "end" : 36,
+      "params" : [ {
+        "name" : "serviceName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "lit" : "http://",
+            "type" : "string"
+          },
+          "r" : {
+            "name" : "serviceName",
+            "ref" : "param"
+          }
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/service/RoutePlanServiceImpl.java",
+      "line" : 336,
+      "end" : 355,
+      "params" : [ {
+        "name" : "tripId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 338,
+        "target" : {
+          "name" : "path",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 339,
+        "target" : {
+          "name" : "travel_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@339:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-travel-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 340,
+        "target" : {
+          "name" : "travel2_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@340:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-travel2-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 341,
+        "id" : "b341",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@341:20",
+              "callee" : "charAt",
+              "recv" : {
+                "name" : "tripId",
+                "ref" : "param"
+              },
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              } ]
+            },
+            "r" : {
+              "lit" : "G",
+              "type" : "char"
+            }
+          },
+          "r" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@341:47",
+              "callee" : "charAt",
+              "recv" : {
+                "name" : "tripId",
+                "ref" : "param"
+              },
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              } ]
+            },
+            "r" : {
+              "lit" : "D",
+              "type" : "char"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 342,
+          "target" : {
+            "name" : "path",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "travel_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/travelservice/routes/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "tripId",
+              "ref" : "param"
+            }
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 344,
+          "target" : {
+            "name" : "path",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "travel2_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/travel2service/routes/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "tripId",
+              "ref" : "param"
+            }
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 346,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@346:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 347,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<Route>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@347:59",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "path",
+            "ref" : "local"
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<Route>>",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@351:17",
+            "args" : [ ],
+            "anon" : "type:ts-route-plan-service:plan.service.RoutePlanServiceImpl$8"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 353,
+        "target" : {
+          "name" : "route",
+          "ref" : "local"
+        },
+        "decl" : "Route",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@353:36",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@353:26",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 354,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getStationList(java.lang.String,org.springframework.http.HttpHeaders)@354:22",
+          "callee" : "getStations",
+          "recv" : {
+            "name" : "route",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/service/RoutePlanServiceImpl.java",
+      "line" : 306,
+      "end" : 320,
+      "params" : [ {
+        "name" : "info",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 307,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@307:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getTripFromHighSpeedTravelServive][trip info: {}]",
+            "type" : "string"
+          }, {
+            "name" : "info",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 308,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@308:36",
+          "args" : [ {
+            "name" : "info",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 309,
+        "target" : {
+          "name" : "travel_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@309:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-travel-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 310,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<TripResponse>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@310:77",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "travel_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/travelservice/trips/left",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<TripResponse>>>",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@314:17",
+            "args" : [ ],
+            "anon" : "type:ts-route-plan-service:plan.service.RoutePlanServiceImpl$6"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 317,
+        "target" : {
+          "name" : "tripResponses",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@317:62",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@317:52",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 318,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@318:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getTripFromHighSpeedTravelServive][Route Plan Get Trip][Size:{}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromHighSpeedTravelServive(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@318:125",
+            "callee" : "size",
+            "recv" : {
+              "name" : "tripResponses",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 319,
+        "expr" : {
+          "name" : "tripResponses",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromNormalTrainTravelService(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/service/RoutePlanServiceImpl.java",
+      "line" : 322,
+      "end" : 334,
+      "params" : [ {
+        "name" : "info",
+        "type" : "TripInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 323,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromNormalTrainTravelService(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@323:36",
+          "args" : [ {
+            "name" : "info",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 324,
+        "target" : {
+          "name" : "travel2_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromNormalTrainTravelService(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@324:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-travel2-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 325,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<TripResponse>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromNormalTrainTravelService(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@325:77",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "travel2_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/travel2service/trips/left",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<TripResponse>>>",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromNormalTrainTravelService(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@329:17",
+            "args" : [ ],
+            "anon" : "type:ts-route-plan-service:plan.service.RoutePlanServiceImpl$7"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 331,
+        "target" : {
+          "name" : "list",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromNormalTrainTravelService(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@331:53",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromNormalTrainTravelService(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@331:43",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 332,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromNormalTrainTravelService(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@332:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getTripFromNormalTrainTravelService][Route Plan Get TripOther][Size:{}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#getTripFromNormalTrainTravelService(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@332:123",
+            "callee" : "size",
+            "recv" : {
+              "name" : "list",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 333,
+        "expr" : {
+          "name" : "list",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/service/RoutePlanServiceImpl.java",
+      "line" : 38,
+      "end" : 93,
+      "params" : [ {
+        "name" : "info",
+        "type" : "RoutePlanInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "queryInfo",
+          "ref" : "local"
+        },
+        "decl" : "TripInfo",
+        "operator" : "=",
+        "expr" : {
+          "new" : "TripInfo",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@42:30",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@43:19",
+          "callee" : "setStartPlace",
+          "recv" : {
+            "name" : "queryInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@43:38",
+            "callee" : "getStartStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@44:19",
+          "callee" : "setEndPlace",
+          "recv" : {
+            "name" : "queryInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@44:36",
+            "callee" : "getEndStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 45,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@45:19",
+          "callee" : "setDepartureTime",
+          "recv" : {
+            "name" : "queryInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@45:41",
+            "callee" : "getTravelDate",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 47,
+        "target" : {
+          "name" : "highSpeed",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@47:45",
+          "callee" : "getTripFromHighSpeedTravelServive",
+          "recv" : null,
+          "args" : [ {
+            "name" : "queryInfo",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 48,
+        "target" : {
+          "name" : "normalTrain",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@48:47",
+          "callee" : "getTripFromNormalTrainTravelService",
+          "recv" : null,
+          "args" : [ {
+            "name" : "queryInfo",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 51,
+        "target" : {
+          "name" : "finalResult",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@51:47",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@52:21",
+          "callee" : "addAll",
+          "recv" : {
+            "name" : "finalResult",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "highSpeed",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@53:21",
+          "callee" : "addAll",
+          "recv" : {
+            "name" : "finalResult",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "normalTrain",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 55,
+        "target" : {
+          "name" : "minPrice",
+          "ref" : "local"
+        },
+        "decl" : "float",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 56,
+        "target" : {
+          "name" : "minIndex",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "un" : "-",
+          "e" : {
+            "lit" : 1,
+            "type" : "int"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 57,
+        "target" : {
+          "name" : "size",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@57:25",
+          "callee" : "min",
+          "recv" : {
+            "name" : "Math",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "lit" : 5,
+            "type" : "int"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@57:44",
+            "callee" : "size",
+            "recv" : {
+              "name" : "finalResult",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 58,
+        "target" : {
+          "name" : "returnResult",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@58:48",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 59,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 59,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "name" : "size",
+            "ref" : "local"
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 61,
+          "target" : {
+            "name" : "minPrice",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Float",
+              "ref" : "type"
+            }
+          }
+        }, {
+          "op" : "for",
+          "line" : 62,
+          "init" : [ {
+            "op" : "assign",
+            "line" : 62,
+            "target" : {
+              "name" : "j",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "lit" : 0,
+              "type" : "int"
+            }
+          } ],
+          "cond" : {
+            "bin" : "<",
+            "l" : {
+              "name" : "j",
+              "ref" : "local"
+            },
+            "r" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@62:45",
+              "callee" : "size",
+              "recv" : {
+                "name" : "finalResult",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          },
+          "update" : [ {
+            "un" : "post++",
+            "e" : {
+              "name" : "j",
+              "ref" : "local"
+            }
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 63,
+            "target" : {
+              "name" : "thisRes",
+              "ref" : "local"
+            },
+            "decl" : "TripResponse",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@63:52",
+              "callee" : "get",
+              "recv" : {
+                "name" : "finalResult",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "j",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "if",
+            "line" : 64,
+            "id" : "b64",
+            "cond" : {
+              "bin" : "<",
+              "l" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@64:27",
+                "callee" : "parseFloat",
+                "recv" : {
+                  "name" : "Float",
+                  "ref" : "type"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@64:46",
+                  "callee" : "getPriceForEconomyClass",
+                  "recv" : {
+                    "name" : "thisRes",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                } ]
+              },
+              "r" : {
+                "name" : "minPrice",
+                "ref" : "local"
+              }
+            },
+            "then" : [ {
+              "op" : "assign",
+              "line" : 65,
+              "target" : {
+                "name" : "minPrice",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@65:38",
+                "callee" : "parseFloat",
+                "recv" : {
+                  "name" : "Float",
+                  "ref" : "type"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@65:68",
+                  "callee" : "getPriceForEconomyClass",
+                  "recv" : {
+                    "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@65:61",
+                    "callee" : "get",
+                    "recv" : {
+                      "name" : "finalResult",
+                      "ref" : "local"
+                    },
+                    "args" : [ {
+                      "name" : "j",
+                      "ref" : "local"
+                    } ]
+                  },
+                  "args" : [ ]
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 66,
+              "target" : {
+                "name" : "minIndex",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "name" : "j",
+                "ref" : "local"
+              }
+            } ],
+            "else" : [ ]
+          } ]
+        }, {
+          "op" : "expr",
+          "line" : 69,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@69:26",
+            "callee" : "add",
+            "recv" : {
+              "name" : "returnResult",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@69:42",
+              "callee" : "get",
+              "recv" : {
+                "name" : "finalResult",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "minIndex",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 70,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@70:25",
+            "callee" : "remove",
+            "recv" : {
+              "name" : "finalResult",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "minIndex",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 74,
+        "target" : {
+          "name" : "units",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<RoutePlanResultUnit>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@74:48",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 75,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 75,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@75:42",
+            "callee" : "size",
+            "recv" : {
+              "name" : "returnResult",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 76,
+          "target" : {
+            "name" : "tempResponse",
+            "ref" : "local"
+          },
+          "decl" : "TripResponse",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@76:54",
+            "callee" : "get",
+            "recv" : {
+              "name" : "returnResult",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "i",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 78,
+          "target" : {
+            "name" : "tempUnit",
+            "ref" : "local"
+          },
+          "decl" : "RoutePlanResultUnit",
+          "operator" : "=",
+          "expr" : {
+            "new" : "RoutePlanResultUnit",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@78:44",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 79,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@79:22",
+            "callee" : "setTripId",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@79:57",
+              "callee" : "toString",
+              "recv" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@79:45",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempResponse",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 80,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@80:22",
+            "callee" : "setTrainTypeName",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@80:52",
+              "callee" : "getTrainTypeName",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 81,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@81:22",
+            "callee" : "setStartStation",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@81:51",
+              "callee" : "getStartStation",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 82,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@82:22",
+            "callee" : "setEndStation",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@82:49",
+              "callee" : "getTerminalStation",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 83,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@83:22",
+            "callee" : "setStopStations",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@83:38",
+              "callee" : "getStationList",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@83:78",
+                "callee" : "toString",
+                "recv" : {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@83:66",
+                  "callee" : "getTripId",
+                  "recv" : {
+                    "name" : "tempResponse",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 84,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@84:22",
+            "callee" : "setPriceForSecondClassSeat",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@84:62",
+              "callee" : "getPriceForEconomyClass",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 85,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@85:22",
+            "callee" : "setPriceForFirstClassSeat",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@85:61",
+              "callee" : "getPriceForConfortClass",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 86,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@86:22",
+            "callee" : "setEndTime",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@86:46",
+              "callee" : "getEndTime",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 87,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@87:22",
+            "callee" : "setStartTime",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@87:48",
+              "callee" : "getStartTime",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 89,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@89:19",
+            "callee" : "add",
+            "recv" : {
+              "name" : "units",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "tempUnit",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 92,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchCheapestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@92:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "Success",
+            "type" : "string"
+          }, {
+            "name" : "units",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/service/RoutePlanServiceImpl.java",
+      "line" : 160,
+      "end" : 284,
+      "params" : [ {
+        "name" : "info",
+        "type" : "RoutePlanInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 162,
+        "target" : {
+          "name" : "fromStationId",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@162:37",
+          "callee" : "getStartStation",
+          "recv" : {
+            "name" : "info",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 163,
+        "target" : {
+          "name" : "toStationId",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@163:35",
+          "callee" : "getEndStation",
+          "recv" : {
+            "name" : "info",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 164,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@164:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[searchMinStopStations][Start and Finish][From Id: {} To: {}]",
+            "type" : "string"
+          }, {
+            "name" : "fromStationId",
+            "ref" : "local"
+          }, {
+            "name" : "toStationId",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 167,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@167:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 168,
+        "target" : {
+          "name" : "route_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@168:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-route-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 169,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<Route>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@169:70",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "bin" : "+",
+                "l" : {
+                  "bin" : "+",
+                  "l" : {
+                    "name" : "route_service_url",
+                    "ref" : "local"
+                  },
+                  "r" : {
+                    "lit" : "/api/v1/routeservice/routes/",
+                    "type" : "string"
+                  }
+                },
+                "r" : {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@170:75",
+                  "callee" : "getStartStation",
+                  "recv" : {
+                    "name" : "info",
+                    "ref" : "param"
+                  },
+                  "args" : [ ]
+                }
+              },
+              "r" : {
+                "lit" : "/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@170:106",
+              "callee" : "getEndStation",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<Route>>>",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@173:17",
+            "args" : [ ],
+            "anon" : "type:ts-route-plan-service:plan.service.RoutePlanServiceImpl$1"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 177,
+        "target" : {
+          "name" : "routeList",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<Route>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@177:51",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@177:41",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 178,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@178:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[searchMinStopStations][Get the route][Candidate Route Number: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@178:122",
+            "callee" : "size",
+            "recv" : {
+              "name" : "routeList",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 180,
+        "target" : {
+          "name" : "gapList",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<Integer>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@180:38",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 181,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 181,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@181:39",
+            "callee" : "size",
+            "recv" : {
+              "name" : "routeList",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 182,
+          "target" : {
+            "name" : "indexStart",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@182:61",
+            "callee" : "indexOf",
+            "recv" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@182:47",
+              "callee" : "getStations",
+              "recv" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@182:40",
+                "callee" : "get",
+                "recv" : {
+                  "name" : "routeList",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "name" : "i",
+                  "ref" : "local"
+                } ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "name" : "fromStationId",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 183,
+          "target" : {
+            "name" : "indexEnd",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@183:59",
+            "callee" : "indexOf",
+            "recv" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@183:45",
+              "callee" : "getStations",
+              "recv" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@183:38",
+                "callee" : "get",
+                "recv" : {
+                  "name" : "routeList",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "name" : "i",
+                  "ref" : "local"
+                } ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "name" : "toStationId",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 184,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@184:21",
+            "callee" : "add",
+            "recv" : {
+              "name" : "gapList",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "bin" : "-",
+              "l" : {
+                "name" : "indexEnd",
+                "ref" : "local"
+              },
+              "r" : {
+                "name" : "indexStart",
+                "ref" : "local"
+              }
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 187,
+        "target" : {
+          "name" : "resultRoutes",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<String>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@187:42",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 188,
+        "target" : {
+          "name" : "size",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@188:25",
+          "callee" : "min",
+          "recv" : {
+            "name" : "Math",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "lit" : 5,
+            "type" : "int"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@188:42",
+            "callee" : "size",
+            "recv" : {
+              "name" : "routeList",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 189,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 189,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "name" : "size",
+            "ref" : "local"
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 190,
+          "target" : {
+            "name" : "minIndex",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        }, {
+          "op" : "assign",
+          "line" : 191,
+          "target" : {
+            "name" : "tempMinGap",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          }
+        }, {
+          "op" : "for",
+          "line" : 192,
+          "init" : [ {
+            "op" : "assign",
+            "line" : 192,
+            "target" : {
+              "name" : "j",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "lit" : 0,
+              "type" : "int"
+            }
+          } ],
+          "cond" : {
+            "bin" : "<",
+            "l" : {
+              "name" : "j",
+              "ref" : "local"
+            },
+            "r" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@192:41",
+              "callee" : "size",
+              "recv" : {
+                "name" : "gapList",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          },
+          "update" : [ {
+            "un" : "post++",
+            "e" : {
+              "name" : "j",
+              "ref" : "local"
+            }
+          } ],
+          "body" : [ {
+            "op" : "if",
+            "line" : 193,
+            "id" : "b193",
+            "cond" : {
+              "bin" : "<",
+              "l" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@193:29",
+                "callee" : "get",
+                "recv" : {
+                  "name" : "gapList",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "name" : "j",
+                  "ref" : "local"
+                } ]
+              },
+              "r" : {
+                "name" : "tempMinGap",
+                "ref" : "local"
+              }
+            },
+            "then" : [ {
+              "op" : "assign",
+              "line" : 194,
+              "target" : {
+                "name" : "tempMinGap",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@194:42",
+                "callee" : "get",
+                "recv" : {
+                  "name" : "gapList",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "name" : "j",
+                  "ref" : "local"
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 195,
+              "target" : {
+                "name" : "minIndex",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "name" : "j",
+                "ref" : "local"
+              }
+            } ],
+            "else" : [ ]
+          } ]
+        }, {
+          "op" : "expr",
+          "line" : 198,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@198:26",
+            "callee" : "add",
+            "recv" : {
+              "name" : "resultRoutes",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@198:54",
+              "callee" : "getId",
+              "recv" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@198:40",
+                "callee" : "get",
+                "recv" : {
+                  "name" : "routeList",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "name" : "minIndex",
+                  "ref" : "local"
+                } ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 199,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@199:23",
+            "callee" : "remove",
+            "recv" : {
+              "name" : "routeList",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "minIndex",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 200,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@200:21",
+            "callee" : "remove",
+            "recv" : {
+              "name" : "gapList",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "minIndex",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 203,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@203:25",
+          "args" : [ {
+            "name" : "resultRoutes",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 204,
+        "target" : {
+          "name" : "travel_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@204:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-travel-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 205,
+        "target" : {
+          "name" : "re2",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<ArrayList<Trip>>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@205:81",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "travel_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/travelservice/trips/routes",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<ArrayList<Trip>>>>",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@209:17",
+            "args" : [ ],
+            "anon" : "type:ts-route-plan-service:plan.service.RoutePlanServiceImpl$2"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 212,
+        "target" : {
+          "name" : "travelTrips",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<ArrayList<Trip>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@212:64",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@212:54",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re2",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 214,
+        "target" : {
+          "name" : "travel2_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@214:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-travel2-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 215,
+        "target" : {
+          "name" : "re2",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@215:28",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "travel2_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/travel2service/trips/routes",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<ArrayList<Trip>>>>",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@219:17",
+            "args" : [ ],
+            "anon" : "type:ts-route-plan-service:plan.service.RoutePlanServiceImpl$3"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 221,
+        "target" : {
+          "name" : "travel2Trips",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<ArrayList<Trip>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@221:65",
+          "callee" : "getData",
+          "recv" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@221:55",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re2",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 224,
+        "target" : {
+          "name" : "finalTripResult",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<ArrayList<Trip>>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@224:54",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 225,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 225,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@225:42",
+            "callee" : "size",
+            "recv" : {
+              "name" : "travel2Trips",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 226,
+          "target" : {
+            "name" : "tempList",
+            "ref" : "local"
+          },
+          "decl" : "ArrayList<Trip>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@226:53",
+            "callee" : "get",
+            "recv" : {
+              "name" : "travel2Trips",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "i",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 227,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@227:22",
+            "callee" : "addAll",
+            "recv" : {
+              "name" : "tempList",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@227:41",
+              "callee" : "get",
+              "recv" : {
+                "name" : "travelTrips",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "i",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 228,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@228:29",
+            "callee" : "add",
+            "recv" : {
+              "name" : "finalTripResult",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "tempList",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "expr",
+        "line" : 230,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@230:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[searchMinStopStations][Get train Information][Trips Num: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@230:123",
+            "callee" : "size",
+            "recv" : {
+              "name" : "finalTripResult",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 232,
+        "target" : {
+          "name" : "trips",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<Trip>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@232:33",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 233,
+        "id" : "f233:finalTripResult",
+        "var" : "tempTrips",
+        "var_type" : "ArrayList<Trip>",
+        "iter" : {
+          "name" : "finalTripResult",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "expr",
+          "line" : 234,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@234:19",
+            "callee" : "addAll",
+            "recv" : {
+              "name" : "trips",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "tempTrips",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 236,
+        "target" : {
+          "name" : "tripResponses",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<RoutePlanResultUnit>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@236:56",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 238,
+        "target" : {
+          "name" : "re3",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<TripAllDetail>>",
+        "operator" : "="
+      }, {
+        "op" : "foreach",
+        "line" : 239,
+        "id" : "f239:trips",
+        "var" : "trip",
+        "var_type" : "Trip",
+        "iter" : {
+          "name" : "trips",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "assign",
+          "line" : 240,
+          "target" : {
+            "name" : "tripResponse",
+            "ref" : "local"
+          },
+          "decl" : "TripResponse",
+          "operator" : "="
+        }, {
+          "op" : "assign",
+          "line" : 241,
+          "target" : {
+            "name" : "allDetailInfo",
+            "ref" : "local"
+          },
+          "decl" : "TripAllDetailInfo",
+          "operator" : "=",
+          "expr" : {
+            "new" : "TripAllDetailInfo",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@241:47",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 242,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@242:27",
+            "callee" : "setTripId",
+            "recv" : {
+              "name" : "allDetailInfo",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@242:54",
+              "callee" : "toString",
+              "recv" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@242:42",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "trip",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 243,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@243:27",
+            "callee" : "setTravelDate",
+            "recv" : {
+              "name" : "allDetailInfo",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@243:46",
+              "callee" : "getTravelDate",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 244,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@244:27",
+            "callee" : "setFrom",
+            "recv" : {
+              "name" : "allDetailInfo",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@244:40",
+              "callee" : "getStartStation",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 245,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@245:27",
+            "callee" : "setTo",
+            "recv" : {
+              "name" : "allDetailInfo",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@245:38",
+              "callee" : "getEndStation",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 246,
+          "target" : {
+            "name" : "requestEntity",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "new" : "HttpEntity",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@246:29",
+            "args" : [ {
+              "name" : "allDetailInfo",
+              "ref" : "local"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 247,
+          "target" : {
+            "name" : "requestUrl",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "lit" : "",
+            "type" : "string"
+          }
+        }, {
+          "op" : "if",
+          "line" : 248,
+          "id" : "b248",
+          "cond" : {
+            "bin" : "||",
+            "l" : {
+              "bin" : "==",
+              "l" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@248:45",
+                "callee" : "charAt",
+                "recv" : {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@248:34",
+                  "callee" : "toString",
+                  "recv" : {
+                    "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@248:22",
+                    "callee" : "getTripId",
+                    "recv" : {
+                      "name" : "trip",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : 0,
+                  "type" : "int"
+                } ]
+              },
+              "r" : {
+                "lit" : "D",
+                "type" : "char"
+              }
+            },
+            "r" : {
+              "bin" : "==",
+              "l" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@248:93",
+                "callee" : "charAt",
+                "recv" : {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@248:82",
+                  "callee" : "toString",
+                  "recv" : {
+                    "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@248:70",
+                    "callee" : "getTripId",
+                    "recv" : {
+                      "name" : "trip",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : 0,
+                  "type" : "int"
+                } ]
+              },
+              "r" : {
+                "lit" : "G",
+                "type" : "char"
+              }
+            }
+          },
+          "then" : [ {
+            "op" : "assign",
+            "line" : 249,
+            "target" : {
+              "name" : "requestUrl",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "travel_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/travelservice/trip_detail",
+                "type" : "string"
+              }
+            }
+          } ],
+          "else" : [ {
+            "op" : "assign",
+            "line" : 251,
+            "target" : {
+              "name" : "requestUrl",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "travel2_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/travel2service/trip_detail",
+                "type" : "string"
+              }
+            }
+          } ]
+        }, {
+          "op" : "assign",
+          "line" : 253,
+          "target" : {
+            "name" : "re3",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@253:32",
+            "callee" : "exchange",
+            "recv" : {
+              "name" : "restTemplate",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "requestUrl",
+              "ref" : "local"
+            }, {
+              "field" : "POST",
+              "of" : {
+                "name" : "HttpMethod",
+                "ref" : "type"
+              }
+            }, {
+              "name" : "requestEntity",
+              "ref" : "local"
+            }, {
+              "new" : "ParameterizedTypeReference<Response<TripAllDetail>>",
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@257:21",
+              "args" : [ ],
+              "anon" : "type:ts-route-plan-service:plan.service.RoutePlanServiceImpl$4"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 260,
+          "target" : {
+            "name" : "tripAllDetail",
+            "ref" : "local"
+          },
+          "decl" : "TripAllDetail",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@260:57",
+            "callee" : "getData",
+            "recv" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@260:47",
+              "callee" : "getBody",
+              "recv" : {
+                "name" : "re3",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 261,
+          "target" : {
+            "name" : "tripResponse",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@261:42",
+            "callee" : "getTripResponse",
+            "recv" : {
+              "name" : "tripAllDetail",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 264,
+          "target" : {
+            "name" : "unit",
+            "ref" : "local"
+          },
+          "decl" : "RoutePlanResultUnit",
+          "operator" : "=",
+          "expr" : {
+            "new" : "RoutePlanResultUnit",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@264:40",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 265,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@265:18",
+            "callee" : "setTripId",
+            "recv" : {
+              "name" : "unit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@265:45",
+              "callee" : "toString",
+              "recv" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@265:33",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "trip",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 266,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@266:18",
+            "callee" : "setTrainTypeName",
+            "recv" : {
+              "name" : "unit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@266:48",
+              "callee" : "getTrainTypeName",
+              "recv" : {
+                "name" : "tripResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 267,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@267:18",
+            "callee" : "setStartStation",
+            "recv" : {
+              "name" : "unit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@267:47",
+              "callee" : "getStartStation",
+              "recv" : {
+                "name" : "tripResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 268,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@268:18",
+            "callee" : "setEndStation",
+            "recv" : {
+              "name" : "unit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@268:45",
+              "callee" : "getTerminalStation",
+              "recv" : {
+                "name" : "tripResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 269,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@269:18",
+            "callee" : "setStartTime",
+            "recv" : {
+              "name" : "unit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@269:44",
+              "callee" : "getStartTime",
+              "recv" : {
+                "name" : "tripResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 270,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@270:18",
+            "callee" : "setEndTime",
+            "recv" : {
+              "name" : "unit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@270:42",
+              "callee" : "getEndTime",
+              "recv" : {
+                "name" : "tripResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 271,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@271:18",
+            "callee" : "setPriceForFirstClassSeat",
+            "recv" : {
+              "name" : "unit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@271:57",
+              "callee" : "getPriceForConfortClass",
+              "recv" : {
+                "name" : "tripResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 272,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@272:18",
+            "callee" : "setPriceForSecondClassSeat",
+            "recv" : {
+              "name" : "unit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@272:58",
+              "callee" : "getPriceForEconomyClass",
+              "recv" : {
+                "name" : "tripResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 274,
+          "target" : {
+            "name" : "routeId",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@274:35",
+            "callee" : "getRouteId",
+            "recv" : {
+              "name" : "trip",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 275,
+          "target" : {
+            "name" : "tripRoute",
+            "ref" : "local"
+          },
+          "decl" : "Route",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@275:31",
+            "callee" : "getRouteByRouteId",
+            "recv" : null,
+            "args" : [ {
+              "name" : "routeId",
+              "ref" : "local"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "if",
+          "line" : 276,
+          "id" : "b276",
+          "cond" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "tripRoute",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "then" : [ {
+            "op" : "expr",
+            "line" : 277,
+            "expr" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@277:22",
+              "callee" : "setStopStations",
+              "recv" : {
+                "name" : "unit",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@277:48",
+                "callee" : "getStations",
+                "recv" : {
+                  "name" : "tripRoute",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ],
+          "else" : [ ]
+        }, {
+          "op" : "expr",
+          "line" : 280,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@280:27",
+            "callee" : "add",
+            "recv" : {
+              "name" : "tripResponses",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "unit",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "expr",
+        "line" : 282,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@282:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "RoutePlanServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[searchMinStopStations][Trips Response Unit Num: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@282:112",
+            "callee" : "size",
+            "recv" : {
+              "name" : "tripResponses",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 283,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@283:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "Success.",
+            "type" : "string"
+          }, {
+            "name" : "tripResponses",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-route-plan-service/src/main/java/plan/service/RoutePlanServiceImpl.java",
+      "line" : 95,
+      "end" : 158,
+      "params" : [ {
+        "name" : "info",
+        "type" : "RoutePlanInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 99,
+        "target" : {
+          "name" : "queryInfo",
+          "ref" : "local"
+        },
+        "decl" : "TripInfo",
+        "operator" : "=",
+        "expr" : {
+          "new" : "TripInfo",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@99:30",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 100,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@100:19",
+          "callee" : "setStartPlace",
+          "recv" : {
+            "name" : "queryInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@100:38",
+            "callee" : "getStartStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 101,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@101:19",
+          "callee" : "setEndPlace",
+          "recv" : {
+            "name" : "queryInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@101:36",
+            "callee" : "getEndStation",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 102,
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@102:19",
+          "callee" : "setDepartureTime",
+          "recv" : {
+            "name" : "queryInfo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@102:41",
+            "callee" : "getTravelDate",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 104,
+        "target" : {
+          "name" : "highSpeed",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@104:45",
+          "callee" : "getTripFromHighSpeedTravelServive",
+          "recv" : null,
+          "args" : [ {
+            "name" : "queryInfo",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 105,
+        "target" : {
+          "name" : "normalTrain",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@105:47",
+          "callee" : "getTripFromNormalTrainTravelService",
+          "recv" : null,
+          "args" : [ {
+            "name" : "queryInfo",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 108,
+        "target" : {
+          "name" : "finalResult",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@108:47",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 110,
+        "id" : "f110:highSpeed",
+        "var" : "tr",
+        "var_type" : "TripResponse",
+        "iter" : {
+          "name" : "highSpeed",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "expr",
+          "line" : 111,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@111:25",
+            "callee" : "add",
+            "recv" : {
+              "name" : "finalResult",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "tr",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "foreach",
+        "line" : 113,
+        "id" : "f113:normalTrain",
+        "var" : "tr",
+        "var_type" : "TripResponse",
+        "iter" : {
+          "name" : "normalTrain",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "expr",
+          "line" : 114,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@114:25",
+            "callee" : "add",
+            "recv" : {
+              "name" : "finalResult",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "tr",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 117,
+        "target" : {
+          "name" : "minTime",
+          "ref" : "local"
+        },
+        "decl" : "long",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 118,
+        "target" : {
+          "name" : "minIndex",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "un" : "-",
+          "e" : {
+            "lit" : 1,
+            "type" : "int"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 119,
+        "target" : {
+          "name" : "size",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@119:25",
+          "callee" : "min",
+          "recv" : {
+            "name" : "Math",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@119:41",
+            "callee" : "size",
+            "recv" : {
+              "name" : "finalResult",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }, {
+            "lit" : 5,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 120,
+        "target" : {
+          "name" : "returnResult",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<TripResponse>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@120:48",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 121,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 121,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "name" : "size",
+            "ref" : "local"
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 123,
+          "target" : {
+            "name" : "minTime",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Long",
+              "ref" : "type"
+            }
+          }
+        }, {
+          "op" : "for",
+          "line" : 124,
+          "init" : [ {
+            "op" : "assign",
+            "line" : 124,
+            "target" : {
+              "name" : "j",
+              "ref" : "local"
+            },
+            "decl" : "int",
+            "operator" : "=",
+            "expr" : {
+              "lit" : 0,
+              "type" : "int"
+            }
+          } ],
+          "cond" : {
+            "bin" : "<",
+            "l" : {
+              "name" : "j",
+              "ref" : "local"
+            },
+            "r" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@124:45",
+              "callee" : "size",
+              "recv" : {
+                "name" : "finalResult",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          },
+          "update" : [ {
+            "un" : "post++",
+            "e" : {
+              "name" : "j",
+              "ref" : "local"
+            }
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 125,
+            "target" : {
+              "name" : "thisRes",
+              "ref" : "local"
+            },
+            "decl" : "TripResponse",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@125:52",
+              "callee" : "get",
+              "recv" : {
+                "name" : "finalResult",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "j",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 126,
+            "target" : {
+              "name" : "endTime",
+              "ref" : "local"
+            },
+            "decl" : "Date",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@126:44",
+              "callee" : "String2Date",
+              "recv" : {
+                "name" : "StringUtils",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@126:64",
+                "callee" : "getEndTime",
+                "recv" : {
+                  "name" : "thisRes",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "assign",
+            "line" : 127,
+            "target" : {
+              "name" : "startTime",
+              "ref" : "local"
+            },
+            "decl" : "Date",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@127:46",
+              "callee" : "String2Date",
+              "recv" : {
+                "name" : "StringUtils",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@127:66",
+                "callee" : "getStartTime",
+                "recv" : {
+                  "name" : "thisRes",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "if",
+            "line" : 128,
+            "id" : "b128",
+            "cond" : {
+              "bin" : "<",
+              "l" : {
+                "bin" : "-",
+                "l" : {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@128:29",
+                  "callee" : "getTime",
+                  "recv" : {
+                    "name" : "endTime",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "r" : {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@128:51",
+                  "callee" : "getTime",
+                  "recv" : {
+                    "name" : "startTime",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                }
+              },
+              "r" : {
+                "name" : "minTime",
+                "ref" : "local"
+              }
+            },
+            "then" : [ {
+              "op" : "assign",
+              "line" : 129,
+              "target" : {
+                "name" : "minTime",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "bin" : "-",
+                "l" : {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@129:39",
+                  "callee" : "getTime",
+                  "recv" : {
+                    "name" : "endTime",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "r" : {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@129:61",
+                  "callee" : "getTime",
+                  "recv" : {
+                    "name" : "startTime",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                }
+              }
+            }, {
+              "op" : "assign",
+              "line" : 130,
+              "target" : {
+                "name" : "minIndex",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "name" : "j",
+                "ref" : "local"
+              }
+            } ],
+            "else" : [ ]
+          } ]
+        }, {
+          "op" : "expr",
+          "line" : 133,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@133:26",
+            "callee" : "add",
+            "recv" : {
+              "name" : "returnResult",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@133:42",
+              "callee" : "get",
+              "recv" : {
+                "name" : "finalResult",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "minIndex",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 134,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@134:25",
+            "callee" : "remove",
+            "recv" : {
+              "name" : "finalResult",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "minIndex",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 139,
+        "target" : {
+          "name" : "units",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<RoutePlanResultUnit>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@139:48",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 140,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 140,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@140:42",
+            "callee" : "size",
+            "recv" : {
+              "name" : "returnResult",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 141,
+          "target" : {
+            "name" : "tempResponse",
+            "ref" : "local"
+          },
+          "decl" : "TripResponse",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@141:54",
+            "callee" : "get",
+            "recv" : {
+              "name" : "returnResult",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "i",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 143,
+          "target" : {
+            "name" : "tempUnit",
+            "ref" : "local"
+          },
+          "decl" : "RoutePlanResultUnit",
+          "operator" : "=",
+          "expr" : {
+            "new" : "RoutePlanResultUnit",
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@143:44",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 144,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@144:22",
+            "callee" : "setTripId",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@144:57",
+              "callee" : "toString",
+              "recv" : {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@144:45",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tempResponse",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 145,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@145:22",
+            "callee" : "setTrainTypeName",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@145:52",
+              "callee" : "getTrainTypeName",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 146,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@146:22",
+            "callee" : "setStartStation",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@146:51",
+              "callee" : "getStartStation",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 147,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@147:22",
+            "callee" : "setEndStation",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@147:49",
+              "callee" : "getTerminalStation",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 149,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@149:22",
+            "callee" : "setStopStations",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@149:38",
+              "callee" : "getStationList",
+              "recv" : null,
+              "args" : [ {
+                "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@149:78",
+                "callee" : "toString",
+                "recv" : {
+                  "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@149:66",
+                  "callee" : "getTripId",
+                  "recv" : {
+                    "name" : "tempResponse",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              }, {
+                "name" : "headers",
+                "ref" : "param"
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 151,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@151:22",
+            "callee" : "setPriceForSecondClassSeat",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@151:62",
+              "callee" : "getPriceForEconomyClass",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 152,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@152:22",
+            "callee" : "setPriceForFirstClassSeat",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@152:61",
+              "callee" : "getPriceForConfortClass",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 153,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@153:22",
+            "callee" : "setStartTime",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@153:48",
+              "callee" : "getStartTime",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 154,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@154:22",
+            "callee" : "setEndTime",
+            "recv" : {
+              "name" : "tempUnit",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@154:46",
+              "callee" : "getEndTime",
+              "recv" : {
+                "name" : "tempResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 155,
+          "expr" : {
+            "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@155:19",
+            "callee" : "add",
+            "recv" : {
+              "name" : "units",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "tempUnit",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 157,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-route-plan-service:plan.service.RoutePlanServiceImpl#searchQuickestResult(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)@157:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "Success",
+            "type" : "string"
+          }, {
+            "name" : "units",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    }
+  }
+}

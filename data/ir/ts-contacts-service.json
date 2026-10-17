@@ -1,0 +1,2601 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-contacts-service",
+  "methods" : {
+    "method:ts-contacts-service:contacts.ContactsApplication#main(java.lang.String[])" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/ContactsApplication.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.ContactsApplication#main(java.lang.String[])@27:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "ContactsApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.ContactsApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/ContactsApplication.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.ContactsApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@33:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:59",
+                      "callee" : "hasAnyRole",
+                      "recv" : {
+                        "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/contactservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "ADMIN",
+                        "type" : "string"
+                      }, {
+                        "lit" : "USER",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-contacts-service:contacts.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-contacts-service:contacts.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/controller/ContactsController.java",
+      "line" : 41,
+      "end" : 47,
+      "params" : [ {
+        "name" : "aci",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 45,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)@45:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ContactsController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[createNewContacts][VerifyLogin Success]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 46,
+        "expr" : {
+          "new" : "ResponseEntity<>",
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)@46:16",
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)@46:53",
+            "callee" : "create",
+            "recv" : {
+              "name" : "contactsService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "aci",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }, {
+            "field" : "CREATED",
+            "of" : {
+              "name" : "HttpStatus",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.controller.ContactsController#createNewContactsAdmin(contacts.entity.Contacts,?HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/controller/ContactsController.java",
+      "line" : 49,
+      "end" : 55,
+      "params" : [ {
+        "name" : "aci",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#createNewContactsAdmin(contacts.entity.Contacts,?HttpHeaders)@52:13",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "aci",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#createNewContactsAdmin(contacts.entity.Contacts,?HttpHeaders)@52:37",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#createNewContactsAdmin(contacts.entity.Contacts,?HttpHeaders)@52:24",
+              "callee" : "randomUUID",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#createNewContactsAdmin(contacts.entity.Contacts,?HttpHeaders)@53:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ContactsController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[createNewContactsAdmin][Create Contacts In Admin]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 54,
+        "expr" : {
+          "new" : "ResponseEntity<>",
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#createNewContactsAdmin(contacts.entity.Contacts,?HttpHeaders)@54:16",
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#createNewContactsAdmin(contacts.entity.Contacts,?HttpHeaders)@54:53",
+            "callee" : "createContacts",
+            "recv" : {
+              "name" : "contactsService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "aci",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }, {
+            "field" : "CREATED",
+            "of" : {
+              "name" : "HttpStatus",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.controller.ContactsController#deleteContacts(java.lang.String,?HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/controller/ContactsController.java",
+      "line" : 58,
+      "end" : 62,
+      "params" : [ {
+        "name" : "contactsId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 61,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#deleteContacts(java.lang.String,?HttpHeaders)@61:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#deleteContacts(java.lang.String,?HttpHeaders)@61:35",
+            "callee" : "delete",
+            "recv" : {
+              "name" : "contactsService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "contactsId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/controller/ContactsController.java",
+      "line" : 72,
+      "end" : 78,
+      "params" : [ {
+        "name" : "accountId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 75,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)@75:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ContactsController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findContactsByAccountId][Find Contacts By Account Id][accountId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "accountId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 76,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)@76:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ContactsController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[ContactsService][VerifyLogin Success]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 77,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)@77:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)@77:35",
+            "callee" : "findContactsByAccountId",
+            "recv" : {
+              "name" : "contactsService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "accountId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.controller.ContactsController#getAllContacts(?HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/controller/ContactsController.java",
+      "line" : 34,
+      "end" : 39,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#getAllContacts(?HttpHeaders)@37:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ContactsController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllContacts][Get All Contacts]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#getAllContacts(?HttpHeaders)@38:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#getAllContacts(?HttpHeaders)@38:35",
+            "callee" : "getAllContacts",
+            "recv" : {
+              "name" : "contactsService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.controller.ContactsController#getContactsByContactsId(java.lang.String,?HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/controller/ContactsController.java",
+      "line" : 80,
+      "end" : 86,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 83,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#getContactsByContactsId(java.lang.String,?HttpHeaders)@83:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ContactsController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[ContactsService][Contacts Id Print][id: {}]",
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 84,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#getContactsByContactsId(java.lang.String,?HttpHeaders)@84:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ContactsController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[ContactsService][VerifyLogin Success]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 85,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#getContactsByContactsId(java.lang.String,?HttpHeaders)@85:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#getContactsByContactsId(java.lang.String,?HttpHeaders)@85:35",
+            "callee" : "findContactsById",
+            "recv" : {
+              "name" : "contactsService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "id",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.controller.ContactsController#home()" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/controller/ContactsController.java",
+      "line" : 29,
+      "end" : 32,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 31,
+        "expr" : {
+          "lit" : "Welcome to [ Contacts Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.controller.ContactsController#modifyContacts(contacts.entity.Contacts,?HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/controller/ContactsController.java",
+      "line" : 65,
+      "end" : 70,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 68,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#modifyContacts(contacts.entity.Contacts,?HttpHeaders)@68:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ContactsController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[Contacts modifyContacts][Modify Contacts] ContactsId: {}",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#modifyContacts(contacts.entity.Contacts,?HttpHeaders)@68:106",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 69,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#modifyContacts(contacts.entity.Contacts,?HttpHeaders)@69:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.controller.ContactsController#modifyContacts(contacts.entity.Contacts,?HttpHeaders)@69:35",
+            "callee" : "modify",
+            "recv" : {
+              "name" : "contactsService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.entity.Contacts#<init>()" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/entity/Contacts.java",
+      "line" : 40,
+      "end" : 42,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/entity/Contacts.java",
+      "line" : 44,
+      "end" : 61,
+      "params" : [ {
+        "name" : "obj",
+        "type" : "Object"
+      } ],
+      "body" : [ {
+        "op" : "if",
+        "line" : 46,
+        "id" : "b46",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "this" : true
+          },
+          "r" : {
+            "name" : "obj",
+            "ref" : "param"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 47,
+          "expr" : {
+            "lit" : true,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 49,
+        "id" : "b49",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "obj",
+            "ref" : "param"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 50,
+          "expr" : {
+            "lit" : false,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 52,
+        "id" : "b52",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@52:13",
+            "callee" : "getClass",
+            "recv" : null,
+            "args" : [ ]
+          },
+          "r" : {
+            "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@52:31",
+            "callee" : "getClass",
+            "recv" : {
+              "name" : "obj",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 53,
+          "expr" : {
+            "lit" : false,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 55,
+        "target" : {
+          "name" : "other",
+          "ref" : "local"
+        },
+        "decl" : "Contacts",
+        "operator" : "=",
+        "expr" : {
+          "cast" : "Contacts",
+          "e" : {
+            "name" : "obj",
+            "ref" : "param"
+          }
+        }
+      }, {
+        "op" : "return",
+        "line" : 56,
+        "expr" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "&&",
+            "l" : {
+              "bin" : "&&",
+              "l" : {
+                "bin" : "&&",
+                "l" : {
+                  "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@56:21",
+                  "callee" : "equals",
+                  "recv" : {
+                    "name" : "name",
+                    "ref" : "field"
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@56:34",
+                    "callee" : "getName",
+                    "recv" : {
+                      "name" : "other",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  } ]
+                },
+                "r" : {
+                  "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@57:31",
+                  "callee" : "equals",
+                  "recv" : {
+                    "name" : "accountId",
+                    "ref" : "field"
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@57:45",
+                    "callee" : "getAccountId",
+                    "recv" : {
+                      "name" : "other",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  } ]
+                }
+              },
+              "r" : {
+                "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@58:35",
+                "callee" : "equals",
+                "recv" : {
+                  "name" : "documentNumber",
+                  "ref" : "field"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@58:48",
+                  "callee" : "getDocumentNumber",
+                  "recv" : {
+                    "name" : "other",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                } ]
+              }
+            },
+            "r" : {
+              "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@59:32",
+              "callee" : "equals",
+              "recv" : {
+                "name" : "phoneNumber",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@59:45",
+                "callee" : "getPhoneNumber",
+                "recv" : {
+                  "name" : "other",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          },
+          "r" : {
+            "bin" : "==",
+            "l" : {
+              "name" : "documentType",
+              "ref" : "field"
+            },
+            "r" : {
+              "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#equals(java.lang.Object)@60:42",
+              "callee" : "getDocumentType",
+              "recv" : {
+                "name" : "other",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.entity.Contacts#hashCode()" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/entity/Contacts.java",
+      "line" : 63,
+      "end" : 68,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 65,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "lit" : 17,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 66,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "bin" : "*",
+            "l" : {
+              "lit" : 31,
+              "type" : "int"
+            },
+            "r" : {
+              "name" : "result",
+              "ref" : "local"
+            }
+          },
+          "r" : {
+            "tern" : {
+              "bin" : "==",
+              "l" : {
+                "name" : "id",
+                "ref" : "field"
+              },
+              "r" : {
+                "lit" : null,
+                "type" : "null"
+              }
+            },
+            "then" : {
+              "lit" : 0,
+              "type" : "int"
+            },
+            "else" : {
+              "call" : "call:method:ts-contacts-service:contacts.entity.Contacts#hashCode()@66:53",
+              "callee" : "hashCode",
+              "recv" : {
+                "name" : "id",
+                "ref" : "field"
+              },
+              "args" : [ ]
+            }
+          }
+        }
+      }, {
+        "op" : "return",
+        "line" : 67,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.entity.DocumentType#<init>(int,java.lang.String)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/entity/DocumentType.java",
+      "line" : 28,
+      "end" : 31,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "field" : "code",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "code",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.entity.DocumentType#getCode()" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/entity/DocumentType.java",
+      "line" : 33,
+      "end" : 35,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 34,
+        "expr" : {
+          "name" : "code",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.entity.DocumentType#getName()" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/entity/DocumentType.java",
+      "line" : 37,
+      "end" : 39,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "name" : "name",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.entity.DocumentType#getNameByCode(int)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/entity/DocumentType.java",
+      "line" : 41,
+      "end" : 49,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "documentTypeSet",
+          "ref" : "local"
+        },
+        "decl" : "DocumentType[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.entity.DocumentType#getNameByCode(int)@42:55",
+          "callee" : "values",
+          "recv" : {
+            "name" : "DocumentType",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 43,
+        "id" : "f43:documentTypeSet",
+        "var" : "documentType",
+        "var_type" : "DocumentType",
+        "iter" : {
+          "name" : "documentTypeSet",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 44,
+          "id" : "b44",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-contacts-service:contacts.entity.DocumentType#getNameByCode(int)@44:29",
+              "callee" : "getCode",
+              "recv" : {
+                "name" : "documentType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "code",
+              "ref" : "param"
+            }
+          },
+          "then" : [ {
+            "op" : "return",
+            "line" : 45,
+            "expr" : {
+              "call" : "call:method:ts-contacts-service:contacts.entity.DocumentType#getNameByCode(int)@45:37",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "documentType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.entity.DocumentType#getNameByCode(int)@48:35",
+          "callee" : "getName",
+          "recv" : {
+            "index" : {
+              "lit" : 0,
+              "type" : "int"
+            },
+            "of" : {
+              "name" : "documentTypeSet",
+              "ref" : "local"
+            }
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/init/InitData.java",
+      "line" : 20,
+      "end" : 39,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 22,
+        "target" : {
+          "name" : "contactsOne",
+          "ref" : "local"
+        },
+        "decl" : "Contacts",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Contacts",
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@22:32",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 23,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@23:21",
+          "callee" : "setAccountId",
+          "recv" : {
+            "name" : "contactsOne",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@23:90",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@23:39",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@24:21",
+          "callee" : "setDocumentType",
+          "recv" : {
+            "name" : "contactsOne",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@24:58",
+            "callee" : "getCode",
+            "recv" : {
+              "enum" : "contacts.entity.DocumentType",
+              "constant" : "ID_CARD",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "ID Card",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 25,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@25:21",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "contactsOne",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Contacts_One",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 26,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@26:21",
+          "callee" : "setDocumentNumber",
+          "recv" : {
+            "name" : "contactsOne",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "DocumentNumber_One",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@27:21",
+          "callee" : "setPhoneNumber",
+          "recv" : {
+            "name" : "contactsOne",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "ContactsPhoneNum_One",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@28:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "contactsOne",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@28:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@28:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "4d2a46c7-71cb-4cf1-a5bb-b68406d9da6f",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@29:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "contactsOne",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "name" : "contactsTwo",
+          "ref" : "local"
+        },
+        "decl" : "Contacts",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Contacts",
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@31:32",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@32:21",
+          "callee" : "setAccountId",
+          "recv" : {
+            "name" : "contactsTwo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@32:90",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@32:39",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@33:21",
+          "callee" : "setDocumentType",
+          "recv" : {
+            "name" : "contactsTwo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@33:58",
+            "callee" : "getCode",
+            "recv" : {
+              "enum" : "contacts.entity.DocumentType",
+              "constant" : "ID_CARD",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "ID Card",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@34:21",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "contactsTwo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Contacts_Two",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@35:21",
+          "callee" : "setDocumentNumber",
+          "recv" : {
+            "name" : "contactsTwo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "DocumentNumber_Two",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 36,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@36:21",
+          "callee" : "setPhoneNumber",
+          "recv" : {
+            "name" : "contactsTwo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "ContactsPhoneNum_Two",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@37:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "contactsTwo",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@37:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@37:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "4d2546c7-71cb-4cf1-a5bb-b68406d9da6f",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.init.InitData#run(java.lang.String[])@38:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "contactsTwo",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+      "line" : 60,
+      "end" : 73,
+      "params" : [ {
+        "name" : "addContacts",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 63,
+        "target" : {
+          "name" : "c",
+          "ref" : "local"
+        },
+        "decl" : "Contacts",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@63:41",
+          "callee" : "findByAccountIdAndDocumentTypeAndDocumentType",
+          "recv" : {
+            "name" : "contactsRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@63:99",
+            "callee" : "getAccountId",
+            "recv" : {
+              "name" : "addContacts",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@63:127",
+            "callee" : "getDocumentNumber",
+            "recv" : {
+              "name" : "addContacts",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@63:160",
+            "callee" : "getDocumentType",
+            "recv" : {
+              "name" : "addContacts",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 65,
+        "id" : "b65",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "c",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 66,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@66:40",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "ContactsServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[Contacts-Add&Delete-Service.create][AddContacts][Fail.Contacts already exists][contactId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@66:155",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "addContacts",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 67,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@67:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Contacts already exists",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 69,
+          "target" : {
+            "name" : "contacts",
+            "ref" : "local"
+          },
+          "decl" : "Contacts",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@69:52",
+            "callee" : "save",
+            "recv" : {
+              "name" : "contactsRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "addContacts",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 70,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@70:40",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "ContactsServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[Contacts-Add&Delete-Service.create][AddContacts Success]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 71,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#create(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@71:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Create contacts success",
+              "type" : "string"
+            }, {
+              "name" : "contacts",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+      "line" : 48,
+      "end" : 58,
+      "params" : [ {
+        "name" : "contacts",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 50,
+        "target" : {
+          "name" : "contactsTemp",
+          "ref" : "local"
+        },
+        "decl" : "Contacts",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@50:52",
+          "callee" : "findByAccountIdAndDocumentTypeAndDocumentType",
+          "recv" : {
+            "name" : "contactsRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@50:107",
+            "callee" : "getAccountId",
+            "recv" : {
+              "name" : "contacts",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@50:132",
+            "callee" : "getDocumentNumber",
+            "recv" : {
+              "name" : "contacts",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@50:162",
+            "callee" : "getDocumentType",
+            "recv" : {
+              "name" : "contacts",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 51,
+        "id" : "b51",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "contactsTemp",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 52,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@52:40",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "ContactsServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[createContacts][Init Contacts, Already Exists][Id: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@52:113",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "contacts",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 53,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@53:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Already Exists",
+              "type" : "string"
+            }, {
+              "name" : "contactsTemp",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 55,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@55:32",
+            "callee" : "save",
+            "recv" : {
+              "name" : "contactsRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "contacts",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 56,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#createContacts(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@56:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Create Success",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-contacts-service:contacts.service.ContactsServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+      "line" : 75,
+      "end" : 86,
+      "params" : [ {
+        "name" : "contactsId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 77,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@77:28",
+          "callee" : "deleteById",
+          "recv" : {
+            "name" : "contactsRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "contactsId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 78,
+        "target" : {
+          "name" : "contacts",
+          "ref" : "local"
+        },
+        "decl" : "Contacts",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@78:69",
+          "callee" : "orElse",
+          "recv" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@78:48",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "contactsRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "contactsId",
+              "ref" : "param"
+            } ]
+          },
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 79,
+        "id" : "b79",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "contacts",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 80,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@80:40",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "ContactsServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[Contacts-Add&Delete-Service][DeleteContacts Success]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 81,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@81:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Delete success",
+              "type" : "string"
+            }, {
+              "name" : "contactsId",
+              "ref" : "param"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 83,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@83:40",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "ContactsServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[Contacts-Add&Delete-Service][DeleteContacts][Fail.Reason not clear][contactsId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "contactsId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 84,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@84:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Delete failed",
+              "type" : "string"
+            }, {
+              "name" : "contactsId",
+              "ref" : "param"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsByAccountId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+      "line" : 41,
+      "end" : 46,
+      "params" : [ {
+        "name" : "accountId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "name" : "arr",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<Contacts>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsByAccountId(java.lang.String,org.springframework.http.HttpHeaders)@43:54",
+          "callee" : "findByAccountId",
+          "recv" : {
+            "name" : "contactsRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "accountId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsByAccountId(java.lang.String,org.springframework.http.HttpHeaders)@44:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ContactsServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findContactsByAccountId][Query Contacts][Result Size: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsByAccountId(java.lang.String,org.springframework.http.HttpHeaders)@44:107",
+            "callee" : "size",
+            "recv" : {
+              "name" : "arr",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 45,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsByAccountId(java.lang.String,org.springframework.http.HttpHeaders)@45:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "name" : "success",
+            "ref" : "field"
+          }, {
+            "name" : "arr",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsById(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+      "line" : 29,
+      "end" : 39,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsById(java.lang.String,org.springframework.http.HttpHeaders)@31:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "lit" : "FIND CONTACTS BY ID: ",
+              "type" : "string"
+            },
+            "r" : {
+              "name" : "id",
+              "ref" : "param"
+            }
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 32,
+        "target" : {
+          "name" : "contacts",
+          "ref" : "local"
+        },
+        "decl" : "Contacts",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsById(java.lang.String,org.springframework.http.HttpHeaders)@32:61",
+          "callee" : "orElse",
+          "recv" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsById(java.lang.String,org.springframework.http.HttpHeaders)@32:48",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "contactsRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          },
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 33,
+        "id" : "b33",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "contacts",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 34,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsById(java.lang.String,org.springframework.http.HttpHeaders)@34:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "contacts",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 36,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsById(java.lang.String,org.springframework.http.HttpHeaders)@36:20",
+            "callee" : "error",
+            "recv" : {
+              "name" : "LOGGER",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[findContactsById][contactsRepository.findById][No contacts according to contactsId][contactsId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 37,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsById(java.lang.String,org.springframework.http.HttpHeaders)@37:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No contacts according to contacts id",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-contacts-service:contacts.service.ContactsServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+      "line" : 108,
+      "end" : 117,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 110,
+        "target" : {
+          "name" : "contacts",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<Contacts>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@110:59",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "contactsRepository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 111,
+        "id" : "b111",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "contacts",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@111:43",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "contacts",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 112,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@112:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "contacts",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 114,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@114:20",
+            "callee" : "error",
+            "recv" : {
+              "name" : "LOGGER",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[getAllContacts][contactsRepository.findAll][Get all contacts error][message: {}]",
+              "type" : "string"
+            }, {
+              "lit" : "No content",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 115,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@115:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No content",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+      "line" : 88,
+      "end" : 106,
+      "params" : [ {
+        "name" : "contacts",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 90,
+        "target" : {
+          "name" : "headers",
+          "ref" : "param"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 91,
+        "target" : {
+          "name" : "oldContactResponse",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@91:39",
+          "callee" : "findContactsById",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@91:65",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "contacts",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 92,
+        "expr" : {
+          "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@92:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@92:40",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "oldContactResponse",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 93,
+        "target" : {
+          "name" : "oldContacts",
+          "ref" : "local"
+        },
+        "decl" : "Contacts",
+        "operator" : "=",
+        "expr" : {
+          "cast" : "Contacts",
+          "e" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@93:62",
+            "callee" : "getData",
+            "recv" : {
+              "name" : "oldContactResponse",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }
+      }, {
+        "op" : "if",
+        "line" : 94,
+        "id" : "b94",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "oldContacts",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 95,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@95:40",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "ContactsServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[Contacts-Modify-Service.modify][ModifyContacts][Fail.Contacts not found][contactId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@95:147",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "contacts",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 96,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@96:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Contacts not found",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 98,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@98:25",
+            "callee" : "setName",
+            "recv" : {
+              "name" : "oldContacts",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@98:42",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "contacts",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 99,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@99:25",
+            "callee" : "setDocumentType",
+            "recv" : {
+              "name" : "oldContacts",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@99:50",
+              "callee" : "getDocumentType",
+              "recv" : {
+                "name" : "contacts",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 100,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@100:25",
+            "callee" : "setDocumentNumber",
+            "recv" : {
+              "name" : "oldContacts",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@100:52",
+              "callee" : "getDocumentNumber",
+              "recv" : {
+                "name" : "contacts",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 101,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@101:25",
+            "callee" : "setPhoneNumber",
+            "recv" : {
+              "name" : "oldContacts",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@101:49",
+              "callee" : "getPhoneNumber",
+              "recv" : {
+                "name" : "contacts",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 102,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@102:32",
+            "callee" : "save",
+            "recv" : {
+              "name" : "contactsRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "oldContacts",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 103,
+          "expr" : {
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@103:40",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "ContactsServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[Contacts-Modify-Service.modify][ModifyContacts Success]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 104,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-contacts-service:contacts.service.ContactsServiceImpl#modify(contacts.entity.Contacts,org.springframework.http.HttpHeaders)@104:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Modify success",
+              "type" : "string"
+            }, {
+              "name" : "oldContacts",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    }
+  }
+}

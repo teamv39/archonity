@@ -1,0 +1,2266 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-security-service",
+  "methods" : {
+    "method:ts-security-service:security.SecurityApplication#main(java.lang.String[])" : {
+      "file" : "ts-security-service/src/main/java/security/SecurityApplication.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.SecurityApplication#main(java.lang.String[])@27:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "SecurityApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.SecurityApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-security-service/src/main/java/security/SecurityApplication.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.SecurityApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@33:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-security-service/src/main/java/security/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:60",
+                      "callee" : "hasAnyRole",
+                      "recv" : {
+                        "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/securityservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "ADMIN",
+                        "type" : "string"
+                      }, {
+                        "lit" : "USER",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-security-service:security.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-security-service/src/main/java/security/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-security-service:security.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-security-service:security.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-security-service:security.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-security-service/src/main/java/security/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-security-service:security.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-security-service/src/main/java/security/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-security-service:security.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-security-service:security.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-security-service:security.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-security-service:security.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-security-service:security.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.controller.SecurityController#check(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/controller/SecurityController.java",
+      "line" : 59,
+      "end" : 64,
+      "params" : [ {
+        "name" : "accountId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 62,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#check(java.lang.String,org.springframework.http.HttpHeaders)@62:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[check][Check Security][Check Account Id: {}]",
+            "type" : "string"
+          }, {
+            "name" : "accountId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 63,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#check(java.lang.String,org.springframework.http.HttpHeaders)@63:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-security-service:security.controller.SecurityController#check(java.lang.String,org.springframework.http.HttpHeaders)@63:35",
+            "callee" : "check",
+            "recv" : {
+              "name" : "securityService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "accountId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.controller.SecurityController#create(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/controller/SecurityController.java",
+      "line" : 38,
+      "end" : 43,
+      "params" : [ {
+        "name" : "info",
+        "type" : "SecurityConfig"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#create(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@41:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[addNewSecurityConfig][Create][SecurityConfig Name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-security-service:security.controller.SecurityController#create(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@41:104",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 42,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#create(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@42:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-security-service:security.controller.SecurityController#create(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@42:35",
+            "callee" : "addNewSecurityConfig",
+            "recv" : {
+              "name" : "securityService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.controller.SecurityController#delete(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/controller/SecurityController.java",
+      "line" : 52,
+      "end" : 57,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#delete(java.lang.String,org.springframework.http.HttpHeaders)@55:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deleteSecurityConfig][Delete][SecurityConfig Id: {}]",
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 56,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#delete(java.lang.String,org.springframework.http.HttpHeaders)@56:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-security-service:security.controller.SecurityController#delete(java.lang.String,org.springframework.http.HttpHeaders)@56:35",
+            "callee" : "deleteSecurityConfig",
+            "recv" : {
+              "name" : "securityService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "id",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.controller.SecurityController#findAllSecurityConfig(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/controller/SecurityController.java",
+      "line" : 31,
+      "end" : 36,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#findAllSecurityConfig(org.springframework.http.HttpHeaders)@34:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findAllSecurityConfig][Find All]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#findAllSecurityConfig(org.springframework.http.HttpHeaders)@35:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-security-service:security.controller.SecurityController#findAllSecurityConfig(org.springframework.http.HttpHeaders)@35:35",
+            "callee" : "findAllSecurityConfig",
+            "recv" : {
+              "name" : "securityService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.controller.SecurityController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/controller/SecurityController.java",
+      "line" : 26,
+      "end" : 29,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 28,
+        "expr" : {
+          "lit" : "welcome to [Security Service]",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-security-service:security.controller.SecurityController#update(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/controller/SecurityController.java",
+      "line" : 45,
+      "end" : 50,
+      "params" : [ {
+        "name" : "info",
+        "type" : "SecurityConfig"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#update(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@48:35",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[modifySecurityConfig][Update][SecurityConfig Name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-security-service:security.controller.SecurityController#update(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@48:104",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 49,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.controller.SecurityController#update(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@49:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-security-service:security.controller.SecurityController#update(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@49:35",
+            "callee" : "modifySecurityConfig",
+            "recv" : {
+              "name" : "securityService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.entity.SecurityConfig#<init>()" : {
+      "file" : "ts-security-service/src/main/java/security/entity/SecurityConfig.java",
+      "line" : 34,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-security-service:security.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-security-service/src/main/java/security/init/InitData.java",
+      "line" : 18,
+      "end" : 32,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 22,
+        "target" : {
+          "name" : "info1",
+          "ref" : "local"
+        },
+        "decl" : "SecurityConfig",
+        "operator" : "=",
+        "expr" : {
+          "new" : "SecurityConfig",
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@22:32",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 23,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@23:15",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info1",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "max_order_1_hour",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@24:15",
+          "callee" : "setValue",
+          "recv" : {
+            "name" : "info1",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "field" : "MAX_VALUE",
+              "of" : {
+                "name" : "Integer",
+                "ref" : "type"
+              }
+            },
+            "r" : {
+              "lit" : "",
+              "type" : "string"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 25,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@25:15",
+          "callee" : "setDescription",
+          "recv" : {
+            "name" : "info1",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Max in 1 hour",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 26,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@26:25",
+          "callee" : "addNewSecurityConfig",
+          "recv" : {
+            "name" : "securityService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info1",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 27,
+        "target" : {
+          "name" : "info2",
+          "ref" : "local"
+        },
+        "decl" : "SecurityConfig",
+        "operator" : "=",
+        "expr" : {
+          "new" : "SecurityConfig",
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@27:32",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@28:15",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info2",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "max_order_not_use",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@29:15",
+          "callee" : "setValue",
+          "recv" : {
+            "name" : "info2",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "field" : "MAX_VALUE",
+              "of" : {
+                "name" : "Integer",
+                "ref" : "type"
+              }
+            },
+            "r" : {
+              "lit" : "",
+              "type" : "string"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@30:15",
+          "callee" : "setDescription",
+          "recv" : {
+            "name" : "info2",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Max not used",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.init.InitData#run(java.lang.String[])@31:25",
+          "callee" : "addNewSecurityConfig",
+          "recv" : {
+            "name" : "securityService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info2",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+      "line" : 62,
+      "end" : 77,
+      "params" : [ {
+        "name" : "info",
+        "type" : "SecurityConfig"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 64,
+        "target" : {
+          "name" : "sc",
+          "ref" : "local"
+        },
+        "decl" : "SecurityConfig",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@64:48",
+          "callee" : "findByName",
+          "recv" : {
+            "name" : "securityRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@64:64",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 65,
+        "id" : "b65",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "sc",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 66,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@66:40",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "SecurityServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[addNewSecurityConfig][Add new Security config warn][Security config already exist][SecurityConfigId: {},Name: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@66:165",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "sc",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@66:178",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 67,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@67:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Security Config Already Exist",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 69,
+          "target" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "decl" : "SecurityConfig",
+          "operator" : "=",
+          "expr" : {
+            "new" : "SecurityConfig",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@69:37",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 70,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@70:20",
+            "callee" : "setId",
+            "recv" : {
+              "name" : "config",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@70:44",
+              "callee" : "toString",
+              "recv" : {
+                "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@70:31",
+                "callee" : "randomUUID",
+                "recv" : {
+                  "name" : "UUID",
+                  "ref" : "type"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 71,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@71:20",
+            "callee" : "setName",
+            "recv" : {
+              "name" : "config",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@71:33",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 72,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@72:20",
+            "callee" : "setValue",
+            "recv" : {
+              "name" : "config",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@72:34",
+              "callee" : "getValue",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 73,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@73:20",
+            "callee" : "setDescription",
+            "recv" : {
+              "name" : "config",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@73:40",
+              "callee" : "getDescription",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 74,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@74:32",
+            "callee" : "save",
+            "recv" : {
+              "name" : "securityRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "config",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 75,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#addNewSecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@75:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "config",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+      "line" : 107,
+      "end" : 128,
+      "params" : [ {
+        "name" : "accountId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 110,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@110:36",
+          "callee" : "debug",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[check][Get Order Num Info]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 111,
+        "target" : {
+          "name" : "orderResult",
+          "ref" : "local"
+        },
+        "decl" : "OrderSecurity",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@111:37",
+          "callee" : "getSecurityOrderInfoFromOrder",
+          "recv" : null,
+          "args" : [ {
+            "new" : "Date",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@111:67",
+            "args" : [ ]
+          }, {
+            "name" : "accountId",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 112,
+        "target" : {
+          "name" : "orderOtherResult",
+          "ref" : "local"
+        },
+        "decl" : "OrderSecurity",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@112:42",
+          "callee" : "getSecurityOrderOtherInfoFromOrder",
+          "recv" : null,
+          "args" : [ {
+            "new" : "Date",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@112:77",
+            "args" : [ ]
+          }, {
+            "name" : "accountId",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 113,
+        "target" : {
+          "name" : "orderInOneHour",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@113:47",
+            "callee" : "getOrderNumInLastOneHour",
+            "recv" : {
+              "name" : "orderOtherResult",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@113:88",
+            "callee" : "getOrderNumInLastOneHour",
+            "recv" : {
+              "name" : "orderResult",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 114,
+        "target" : {
+          "name" : "totalValidOrder",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@114:48",
+            "callee" : "getOrderNumOfValidOrder",
+            "recv" : {
+              "name" : "orderOtherResult",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@114:88",
+            "callee" : "getOrderNumOfValidOrder",
+            "recv" : {
+              "name" : "orderResult",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }
+      }, {
+        "op" : "expr",
+        "line" : 116,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@116:36",
+          "callee" : "debug",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[check][Get Security Config Info]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 117,
+        "target" : {
+          "name" : "configMaxInHour",
+          "ref" : "local"
+        },
+        "decl" : "SecurityConfig",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@117:61",
+          "callee" : "findByName",
+          "recv" : {
+            "name" : "securityRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "max_order_1_hour",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 118,
+        "target" : {
+          "name" : "configMaxNotUse",
+          "ref" : "local"
+        },
+        "decl" : "SecurityConfig",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@118:61",
+          "callee" : "findByName",
+          "recv" : {
+            "name" : "securityRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "max_order_not_use",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 119,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@119:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[check][Max][Max In One Hour: {}  Max Not Use: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@119:111",
+            "callee" : "getValue",
+            "recv" : {
+              "name" : "configMaxInHour",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@119:139",
+            "callee" : "getValue",
+            "recv" : {
+              "name" : "configMaxNotUse",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 120,
+        "target" : {
+          "name" : "oneHourLine",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@120:35",
+          "callee" : "parseInt",
+          "recv" : {
+            "name" : "Integer",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@120:60",
+            "callee" : "getValue",
+            "recv" : {
+              "name" : "configMaxInHour",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 121,
+        "target" : {
+          "name" : "totalValidLine",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@121:38",
+          "callee" : "parseInt",
+          "recv" : {
+            "name" : "Integer",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@121:63",
+            "callee" : "getValue",
+            "recv" : {
+              "name" : "configMaxNotUse",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 122,
+        "id" : "b122",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : ">",
+            "l" : {
+              "name" : "orderInOneHour",
+              "ref" : "local"
+            },
+            "r" : {
+              "name" : "oneHourLine",
+              "ref" : "local"
+            }
+          },
+          "r" : {
+            "bin" : ">",
+            "l" : {
+              "name" : "totalValidOrder",
+              "ref" : "local"
+            },
+            "r" : {
+              "name" : "totalValidLine",
+              "ref" : "local"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 123,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@123:40",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "SecurityServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[check][Check Security config warn][Too much order in last one hour or too much valid order][AccountId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "accountId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 124,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@124:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Too much order in last one hour or too much valid order",
+              "type" : "string"
+            }, {
+              "name" : "accountId",
+              "ref" : "param"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 126,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#check(java.lang.String,org.springframework.http.HttpHeaders)@126:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Success.r",
+              "type" : "string"
+            }, {
+              "name" : "accountId",
+              "ref" : "param"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-security-service:security.service.SecurityServiceImpl#deleteSecurityConfig(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+      "line" : 94,
+      "end" : 105,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 97,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#deleteSecurityConfig(java.lang.String,org.springframework.http.HttpHeaders)@97:28",
+          "callee" : "deleteById",
+          "recv" : {
+            "name" : "securityRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "id",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 98,
+        "target" : {
+          "name" : "sc",
+          "ref" : "local"
+        },
+        "decl" : "SecurityConfig",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#deleteSecurityConfig(java.lang.String,org.springframework.http.HttpHeaders)@98:61",
+          "callee" : "orElse",
+          "recv" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#deleteSecurityConfig(java.lang.String,org.springframework.http.HttpHeaders)@98:48",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "securityRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          },
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 99,
+        "id" : "b99",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "sc",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 100,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#deleteSecurityConfig(java.lang.String,org.springframework.http.HttpHeaders)@100:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 102,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#deleteSecurityConfig(java.lang.String,org.springframework.http.HttpHeaders)@102:40",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "SecurityServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deleteSecurityConfig][Delete Security config error][Reason not clear][SecurityConfigId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 103,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#deleteSecurityConfig(java.lang.String,org.springframework.http.HttpHeaders)@103:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Reason Not clear",
+              "type" : "string"
+            }, {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-security-service:security.service.SecurityServiceImpl#findAllSecurityConfig(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+      "line" : 52,
+      "end" : 60,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 54,
+        "target" : {
+          "name" : "securityConfigs",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<SecurityConfig>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#findAllSecurityConfig(org.springframework.http.HttpHeaders)@54:72",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "securityRepository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 55,
+        "id" : "b55",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "securityConfigs",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#findAllSecurityConfig(org.springframework.http.HttpHeaders)@55:57",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "securityConfigs",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 56,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#findAllSecurityConfig(org.springframework.http.HttpHeaders)@56:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "securityConfigs",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 58,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#findAllSecurityConfig(org.springframework.http.HttpHeaders)@58:36",
+          "callee" : "warn",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findAllSecurityConfig][Find all security config warn][{}]",
+            "type" : "string"
+          }, {
+            "lit" : "No content",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 59,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#findAllSecurityConfig(org.springframework.http.HttpHeaders)@59:16",
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          }, {
+            "lit" : "No Content",
+            "type" : "string"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+      "line" : 130,
+      "end" : 143,
+      "params" : [ {
+        "name" : "checkDate",
+        "type" : "Date"
+      }, {
+        "name" : "accountId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 131,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@131:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 132,
+        "target" : {
+          "name" : "order_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@132:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-order-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 133,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<OrderSecurity>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@133:67",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "bin" : "+",
+                "l" : {
+                  "bin" : "+",
+                  "l" : {
+                    "name" : "order_service_url",
+                    "ref" : "local"
+                  },
+                  "r" : {
+                    "lit" : "/api/v1/orderservice/order/security/",
+                    "type" : "string"
+                  }
+                },
+                "r" : {
+                  "name" : "checkDate",
+                  "ref" : "param"
+                }
+              },
+              "r" : {
+                "lit" : "/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "accountId",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<OrderSecurity>>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@137:17",
+            "args" : [ ],
+            "anon" : "type:ts-security-service:security.service.SecurityServiceImpl$1"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 139,
+        "target" : {
+          "name" : "response",
+          "ref" : "local"
+        },
+        "decl" : "Response<OrderSecurity>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@139:47",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 140,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "OrderSecurity",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@140:42",
+          "callee" : "getData",
+          "recv" : {
+            "name" : "response",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 141,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@141:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getSecurityOrderInfoFromOrder][Get Order Info For Security][Last One Hour: {}  Total Valid Order: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@141:154",
+            "callee" : "getOrderNumInLastOneHour",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@141:189",
+            "callee" : "getOrderNumOfValidOrder",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 142,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+      "line" : 145,
+      "end" : 158,
+      "params" : [ {
+        "name" : "checkDate",
+        "type" : "Date"
+      }, {
+        "name" : "accountId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 146,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@146:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 147,
+        "target" : {
+          "name" : "order_other_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@147:42",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-order-other-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 148,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<OrderSecurity>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@148:67",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "bin" : "+",
+                "l" : {
+                  "bin" : "+",
+                  "l" : {
+                    "name" : "order_other_service_url",
+                    "ref" : "local"
+                  },
+                  "r" : {
+                    "lit" : "/api/v1/orderOtherService/orderOther/security/",
+                    "type" : "string"
+                  }
+                },
+                "r" : {
+                  "name" : "checkDate",
+                  "ref" : "param"
+                }
+              },
+              "r" : {
+                "lit" : "/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "accountId",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<OrderSecurity>>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@152:17",
+            "args" : [ ],
+            "anon" : "type:ts-security-service:security.service.SecurityServiceImpl$2"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 154,
+        "target" : {
+          "name" : "response",
+          "ref" : "local"
+        },
+        "decl" : "Response<OrderSecurity>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@154:47",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 155,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "OrderSecurity",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@155:42",
+          "callee" : "getData",
+          "recv" : {
+            "name" : "response",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 156,
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@156:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SecurityServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getSecurityOrderOtherInfoFromOrder][Get Order Other Info For Security][Last One Hour: {}  Total Valid Order: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@156:165",
+            "callee" : "getOrderNumInLastOneHour",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#getSecurityOrderOtherInfoFromOrder(java.util.Date,java.lang.String,org.springframework.http.HttpHeaders)@156:200",
+            "callee" : "getOrderNumOfValidOrder",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 157,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-security-service:security.service.SecurityServiceImpl#getServiceUrl(java.lang.String)" : {
+      "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+      "line" : 46,
+      "end" : 48,
+      "params" : [ {
+        "name" : "serviceName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 47,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "lit" : "http://",
+            "type" : "string"
+          },
+          "r" : {
+            "name" : "serviceName",
+            "ref" : "param"
+          }
+        }
+      } ]
+    },
+    "method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+      "line" : 79,
+      "end" : 92,
+      "params" : [ {
+        "name" : "info",
+        "type" : "SecurityConfig"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 81,
+        "target" : {
+          "name" : "sc",
+          "ref" : "local"
+        },
+        "decl" : "SecurityConfig",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@81:71",
+          "callee" : "orElse",
+          "recv" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@81:48",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "securityRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@81:62",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 82,
+        "id" : "b82",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "sc",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 83,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@83:40",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "SecurityServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[modifySecurityConfig][Modify Security config error][Security config not found][SecurityConfigId: {},Name: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@83:164",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@83:177",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 84,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@84:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Security Config Not Exist",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 86,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@86:16",
+            "callee" : "setName",
+            "recv" : {
+              "name" : "sc",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@86:29",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 87,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@87:16",
+            "callee" : "setValue",
+            "recv" : {
+              "name" : "sc",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@87:30",
+              "callee" : "getValue",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 88,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@88:16",
+            "callee" : "setDescription",
+            "recv" : {
+              "name" : "sc",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@88:36",
+              "callee" : "getDescription",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 89,
+          "expr" : {
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@89:32",
+            "callee" : "save",
+            "recv" : {
+              "name" : "securityRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "sc",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 90,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-security-service:security.service.SecurityServiceImpl#modifySecurityConfig(security.entity.SecurityConfig,org.springframework.http.HttpHeaders)@90:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "sc",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    }
+  }
+}

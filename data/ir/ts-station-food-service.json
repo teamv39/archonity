@@ -1,0 +1,1937 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-station-food-service",
+  "methods" : {
+    "method:ts-station-food-service:food.StationFoodApplication#main(java.lang.String[])" : {
+      "file" : "ts-station-food-service/src/main/java/food/StationFoodApplication.java",
+      "line" : 23,
+      "end" : 25,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.StationFoodApplication#main(java.lang.String[])@24:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "StationFoodApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.StationFoodApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-station-food-service/src/main/java/food/StationFoodApplication.java",
+      "line" : 27,
+      "end" : 31,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.StationFoodApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@30:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-station-food-service/src/main/java/food/config/SecurityConfig.java",
+      "line" : 55,
+      "end" : 73,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 57,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@65:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:63",
+                      "callee" : "permitAll",
+                      "recv" : {
+                        "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@63:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@62:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@61:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@61:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@59:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@59:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@57:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@57:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/stationfoodservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-station-food-service/src/main/java/food/config/SecurityConfig.java",
+      "line" : 39,
+      "end" : 52,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#corsConfigurer()@41:16",
+          "args" : [ ],
+          "anon" : "type:ts-station-food-service:food.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-station-food-service/src/main/java/food/config/SecurityConfig.java",
+      "line" : 26,
+      "end" : 29,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 28,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-station-food-service:food.config.SecurityConfig#passwordEncoder()@28:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-station-food-service/src/main/java/food/config/SecurityConfig.java",
+      "line" : 42,
+      "end" : 50,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@49:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-station-food-service:food.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@48:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-station-food-service:food.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@47:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-station-food-service:food.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@46:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-station-food-service:food.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@45:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-station-food-service:food.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@44:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.controller.StationFoodController#getAllFoodStores(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-food-service/src/main/java/food/controller/StationFoodController.java",
+      "line" : 29,
+      "end" : 34,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getAllFoodStores(org.springframework.http.HttpHeaders)@32:38",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationFoodController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[Food Map Service][Get All FoodStores]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getAllFoodStores(org.springframework.http.HttpHeaders)@33:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getAllFoodStores(org.springframework.http.HttpHeaders)@33:38",
+            "callee" : "listFoodStores",
+            "recv" : {
+              "name" : "stationFoodService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.controller.StationFoodController#getFoodListByStationFoodStoreId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-food-service/src/main/java/food/controller/StationFoodController.java",
+      "line" : 49,
+      "end" : 53,
+      "params" : [ {
+        "name" : "stationFoodStoreId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getFoodListByStationFoodStoreId(java.lang.String,org.springframework.http.HttpHeaders)@51:38",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationFoodController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[Food Map Service][Get Foodlist By stationFoodStoreId]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getFoodListByStationFoodStoreId(java.lang.String,org.springframework.http.HttpHeaders)@52:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getFoodListByStationFoodStoreId(java.lang.String,org.springframework.http.HttpHeaders)@52:38",
+            "callee" : "getStaionFoodStoreById",
+            "recv" : {
+              "name" : "stationFoodService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "stationFoodStoreId",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresByStationNames(java.util.List)" : {
+      "file" : "ts-station-food-service/src/main/java/food/controller/StationFoodController.java",
+      "line" : 43,
+      "end" : 48,
+      "params" : [ {
+        "name" : "stationNameList",
+        "type" : "List<String>"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 46,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresByStationNames(java.util.List)@46:38",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationFoodController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[Food Map Service][Get FoodStores By StationNames]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresByStationNames(java.util.List)@47:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresByStationNames(java.util.List)@47:38",
+            "callee" : "getFoodStoresByStationNames",
+            "recv" : {
+              "name" : "stationFoodService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "stationNameList",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-food-service/src/main/java/food/controller/StationFoodController.java",
+      "line" : 36,
+      "end" : 41,
+      "params" : [ {
+        "name" : "stationName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 39,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)@39:38",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationFoodController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[Food Map Service][Get FoodStores By StationName]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)@40:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)@40:38",
+            "callee" : "listFoodStoresByStationName",
+            "recv" : {
+              "name" : "stationFoodService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "stationName",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.controller.StationFoodController#home()" : {
+      "file" : "ts-station-food-service/src/main/java/food/controller/StationFoodController.java",
+      "line" : 24,
+      "end" : 27,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 26,
+        "expr" : {
+          "lit" : "Welcome to [ Food store Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.entity.StationFoodStore#<init>()" : {
+      "file" : "ts-station-food-service/src/main/java/food/entity/StationFoodStore.java",
+      "line" : 42,
+      "end" : 45,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 44,
+        "target" : {
+          "field" : "stationName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-station-food-service/src/main/java/food/init/InitData.java",
+      "line" : 27,
+      "end" : 87,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "name" : "br1",
+          "ref" : "local"
+        },
+        "decl" : "BufferedReader",
+        "operator" : "=",
+        "expr" : {
+          "new" : "BufferedReader",
+          "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@30:30",
+          "args" : [ {
+            "new" : "InputStreamReader",
+            "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@30:49",
+            "args" : [ {
+              "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@30:87",
+              "callee" : "getResourceAsStream",
+              "recv" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@30:76",
+                "callee" : "getClass",
+                "recv" : {
+                  "this" : true
+                },
+                "args" : [ ]
+              },
+              "args" : [ {
+                "lit" : "/foodstores.txt",
+                "type" : "string"
+              } ]
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "try",
+        "line" : 31,
+        "id" : "t31",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 32,
+          "target" : {
+            "name" : "line",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@32:31",
+            "callee" : "readLine",
+            "recv" : {
+              "name" : "br1",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "while",
+          "line" : 33,
+          "cond" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "line",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "body" : [ {
+            "op" : "if",
+            "line" : 34,
+            "id" : "b34",
+            "cond" : {
+              "un" : "!",
+              "e" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@34:34",
+                "callee" : "equals",
+                "recv" : {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@34:27",
+                  "callee" : "trim",
+                  "recv" : {
+                    "name" : "line",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "",
+                  "type" : "string"
+                } ]
+              }
+            },
+            "then" : [ {
+              "op" : "assign",
+              "line" : 35,
+              "target" : {
+                "name" : "fs",
+                "ref" : "local"
+              },
+              "decl" : "StationFoodStore",
+              "operator" : "=",
+              "expr" : {
+                "new" : "StationFoodStore",
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@35:43",
+                "args" : [ ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 36,
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@36:24",
+                "callee" : "setId",
+                "recv" : {
+                  "name" : "fs",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@36:48",
+                  "callee" : "toString",
+                  "recv" : {
+                    "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@36:35",
+                    "callee" : "randomUUID",
+                    "recv" : {
+                      "name" : "UUID",
+                      "ref" : "type"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 37,
+              "target" : {
+                "name" : "lineTemp",
+                "ref" : "local"
+              },
+              "decl" : "String[]",
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@37:53",
+                "callee" : "split",
+                "recv" : {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@37:46",
+                  "callee" : "trim",
+                  "recv" : {
+                    "name" : "line",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "=",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 38,
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@38:24",
+                "callee" : "setStationName",
+                "recv" : {
+                  "name" : "fs",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "index" : {
+                    "lit" : 1,
+                    "type" : "int"
+                  },
+                  "of" : {
+                    "name" : "lineTemp",
+                    "ref" : "local"
+                  }
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 40,
+              "target" : {
+                "name" : "lineTemp",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@40:54",
+                "callee" : "split",
+                "recv" : {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@40:47",
+                  "callee" : "trim",
+                  "recv" : {
+                    "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@40:36",
+                    "callee" : "readLine",
+                    "recv" : {
+                      "name" : "br1",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "=",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 41,
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@41:24",
+                "callee" : "setStoreName",
+                "recv" : {
+                  "name" : "fs",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "index" : {
+                    "lit" : 1,
+                    "type" : "int"
+                  },
+                  "of" : {
+                    "name" : "lineTemp",
+                    "ref" : "local"
+                  }
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 43,
+              "target" : {
+                "name" : "lineTemp",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@43:54",
+                "callee" : "split",
+                "recv" : {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@43:47",
+                  "callee" : "trim",
+                  "recv" : {
+                    "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@43:36",
+                    "callee" : "readLine",
+                    "recv" : {
+                      "name" : "br1",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "=",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 44,
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@44:24",
+                "callee" : "setTelephone",
+                "recv" : {
+                  "name" : "fs",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "index" : {
+                    "lit" : 1,
+                    "type" : "int"
+                  },
+                  "of" : {
+                    "name" : "lineTemp",
+                    "ref" : "local"
+                  }
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 46,
+              "target" : {
+                "name" : "lineTemp",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@46:54",
+                "callee" : "split",
+                "recv" : {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@46:47",
+                  "callee" : "trim",
+                  "recv" : {
+                    "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@46:36",
+                    "callee" : "readLine",
+                    "recv" : {
+                      "name" : "br1",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "=",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 47,
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@47:24",
+                "callee" : "setBusinessTime",
+                "recv" : {
+                  "name" : "fs",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "index" : {
+                    "lit" : 1,
+                    "type" : "int"
+                  },
+                  "of" : {
+                    "name" : "lineTemp",
+                    "ref" : "local"
+                  }
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 49,
+              "target" : {
+                "name" : "lineTemp",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@49:54",
+                "callee" : "split",
+                "recv" : {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@49:47",
+                  "callee" : "trim",
+                  "recv" : {
+                    "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@49:36",
+                    "callee" : "readLine",
+                    "recv" : {
+                      "name" : "br1",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "=",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 50,
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@50:24",
+                "callee" : "setDeliveryFee",
+                "recv" : {
+                  "name" : "fs",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@50:47",
+                  "callee" : "parseDouble",
+                  "recv" : {
+                    "name" : "Double",
+                    "ref" : "type"
+                  },
+                  "args" : [ {
+                    "index" : {
+                      "lit" : 1,
+                      "type" : "int"
+                    },
+                    "of" : {
+                      "name" : "lineTemp",
+                      "ref" : "local"
+                    }
+                  } ]
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 52,
+              "target" : {
+                "name" : "lineTemp",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@52:54",
+                "callee" : "split",
+                "recv" : {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@52:47",
+                  "callee" : "trim",
+                  "recv" : {
+                    "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@52:36",
+                    "callee" : "readLine",
+                    "recv" : {
+                      "name" : "br1",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "=",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 54,
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@54:24",
+                "callee" : "setFoodList",
+                "recv" : {
+                  "name" : "fs",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@54:36",
+                  "callee" : "toFoodList",
+                  "recv" : null,
+                  "args" : [ {
+                    "index" : {
+                      "lit" : 1,
+                      "type" : "int"
+                    },
+                    "of" : {
+                      "name" : "lineTemp",
+                      "ref" : "local"
+                    }
+                  } ]
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 55,
+              "expr" : {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@55:29",
+                "callee" : "createFoodStore",
+                "recv" : {
+                  "name" : "service",
+                  "ref" : "field"
+                },
+                "args" : [ {
+                  "name" : "fs",
+                  "ref" : "local"
+                }, {
+                  "lit" : null,
+                  "type" : "null"
+                } ]
+              }
+            } ],
+            "else" : [ ]
+          }, {
+            "op" : "assign",
+            "line" : 57,
+            "target" : {
+              "name" : "line",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@57:28",
+              "callee" : "readLine",
+              "recv" : {
+                "name" : "br1",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ]
+        } ],
+        "catches" : [ {
+          "types" : [ "Exception" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 61,
+            "expr" : {
+              "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@61:29",
+              "callee" : "info",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "InitData",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "the foodstores.txt has format error!",
+                "type" : "string"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 62,
+            "expr" : {
+              "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@62:29",
+              "callee" : "error",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "InitData",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@62:37",
+                "callee" : "getMessage",
+                "recv" : {
+                  "name" : "e",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 63,
+            "expr" : {
+              "call" : "call:method:ts-station-food-service:food.init.InitData#run(java.lang.String[])@63:20",
+              "callee" : "exit",
+              "recv" : {
+                "name" : "System",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      } ]
+    },
+    "method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)" : {
+      "file" : "ts-station-food-service/src/main/java/food/init/InitData.java",
+      "line" : 89,
+      "end" : 103,
+      "params" : [ {
+        "name" : "s",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 90,
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)@90:25",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "InitData",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "s= {}",
+            "type" : "string"
+          }, {
+            "name" : "s",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 91,
+        "target" : {
+          "name" : "foodstring",
+          "ref" : "local"
+        },
+        "decl" : "String[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)@91:33",
+          "callee" : "split",
+          "recv" : {
+            "name" : "s",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "lit" : "_",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 92,
+        "target" : {
+          "name" : "foodList",
+          "ref" : "local"
+        },
+        "decl" : "List<Food>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)@92:31",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 93,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 93,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "field" : "length",
+            "of" : {
+              "name" : "foodstring",
+              "ref" : "local"
+            }
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 94,
+          "target" : {
+            "name" : "foodTemp",
+            "ref" : "local"
+          },
+          "decl" : "String[]",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)@94:47",
+            "callee" : "split",
+            "recv" : {
+              "index" : {
+                "name" : "i",
+                "ref" : "local"
+              },
+              "of" : {
+                "name" : "foodstring",
+                "ref" : "local"
+              }
+            },
+            "args" : [ {
+              "lit" : ",",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 95,
+          "target" : {
+            "name" : "food",
+            "ref" : "local"
+          },
+          "decl" : "Food",
+          "operator" : "=",
+          "expr" : {
+            "new" : "Food",
+            "call" : "call:method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)@95:25",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 96,
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)@96:18",
+            "callee" : "setFoodName",
+            "recv" : {
+              "name" : "food",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "index" : {
+                "lit" : 0,
+                "type" : "int"
+              },
+              "of" : {
+                "name" : "foodTemp",
+                "ref" : "local"
+              }
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 98,
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)@98:18",
+            "callee" : "setPrice",
+            "recv" : {
+              "name" : "food",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)@98:34",
+              "callee" : "parseDouble",
+              "recv" : {
+                "name" : "Double",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "index" : {
+                  "lit" : 1,
+                  "type" : "int"
+                },
+                "of" : {
+                  "name" : "foodTemp",
+                  "ref" : "local"
+                }
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 100,
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.init.InitData#toFoodList(java.lang.String)@100:22",
+            "callee" : "add",
+            "recv" : {
+              "name" : "foodList",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "food",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 102,
+        "expr" : {
+          "name" : "foodList",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+      "line" : 29,
+      "end" : 43,
+      "params" : [ {
+        "name" : "fs",
+        "type" : "StationFoodStore"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "name" : "fsTemp",
+          "ref" : "local"
+        },
+        "decl" : "StationFoodStore",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@31:78",
+          "callee" : "orElse",
+          "recv" : {
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@31:57",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "stationFoodRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@31:69",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "fs",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 32,
+        "id" : "b32",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "fsTemp",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 33,
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@33:43",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationFoodServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[Init FoodStore] Already Exists Id: {}",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@33:94",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "fs",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 34,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@34:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Already Exists Id",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "try",
+          "line" : 36,
+          "id" : "t36",
+          "resources" : [ ],
+          "body" : [ {
+            "op" : "expr",
+            "line" : 37,
+            "expr" : {
+              "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@37:39",
+              "callee" : "save",
+              "recv" : {
+                "name" : "stationFoodRepository",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "name" : "fs",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "return",
+            "line" : 38,
+            "expr" : {
+              "new" : "Response<>",
+              "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@38:24",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "Save Success",
+                "type" : "string"
+              }, {
+                "name" : "fs",
+                "ref" : "param"
+              } ]
+            }
+          } ],
+          "catches" : [ {
+            "types" : [ "Exception" ],
+            "var" : "e",
+            "body" : [ {
+              "op" : "return",
+              "line" : 40,
+              "expr" : {
+                "new" : "Response<>",
+                "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@40:24",
+                "args" : [ {
+                  "lit" : 0,
+                  "type" : "int"
+                }, {
+                  "lit" : "Save failed",
+                  "type" : "string"
+                }, {
+                  "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#createFoodStore(food.entity.StationFoodStore,org.springframework.http.HttpHeaders)@40:59",
+                  "callee" : "getMessage",
+                  "recv" : {
+                    "name" : "e",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                } ]
+              }
+            } ]
+          } ],
+          "finally" : null
+        } ]
+      } ]
+    },
+    "method:ts-station-food-service:food.service.StationFoodServiceImpl#getFoodStoresByStationNames(java.util.List)" : {
+      "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+      "line" : 100,
+      "end" : 109,
+      "params" : [ {
+        "name" : "stationNames",
+        "type" : "List<String>"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 102,
+        "target" : {
+          "name" : "stationFoodStoreList",
+          "ref" : "local"
+        },
+        "decl" : "List<StationFoodStore>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#getFoodStoresByStationNames(java.util.List)@102:77",
+          "callee" : "findByStationNameIn",
+          "recv" : {
+            "name" : "stationFoodRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "stationNames",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 103,
+        "id" : "b103",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "stationFoodStoreList",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 104,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#getFoodStoresByStationNames(java.util.List)@104:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "stationFoodStoreList",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 106,
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#getFoodStoresByStationNames(java.util.List)@106:43",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationFoodServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "List food stores by station ids error: {}, stationName list: {}",
+              "type" : "string"
+            }, {
+              "lit" : "Food store is empty",
+              "type" : "string"
+            }, {
+              "name" : "stationNames",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 107,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#getFoodStoresByStationNames(java.util.List)@107:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "noContent",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-station-food-service:food.service.StationFoodServiceImpl#getStaionFoodStoreById(java.lang.String)" : {
+      "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+      "line" : 111,
+      "end" : 120,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 113,
+        "target" : {
+          "name" : "stationFoodStore",
+          "ref" : "local"
+        },
+        "decl" : "StationFoodStore",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#getStaionFoodStoreById(java.lang.String)@113:80",
+          "callee" : "orElse",
+          "recv" : {
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#getStaionFoodStoreById(java.lang.String)@113:67",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "stationFoodRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          },
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 114,
+        "id" : "b114",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "stationFoodStore",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 115,
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#getStaionFoodStoreById(java.lang.String)@115:20",
+            "callee" : "error",
+            "recv" : {
+              "name" : "LOGGER",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "no such staionFoodStoreId: {}",
+              "type" : "string"
+            }, {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 116,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#getStaionFoodStoreById(java.lang.String)@116:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "noContent",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 118,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#getStaionFoodStoreById(java.lang.String)@118:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "stationFoodStore",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStores(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+      "line" : 56,
+      "end" : 65,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 58,
+        "target" : {
+          "name" : "stationFoodStores",
+          "ref" : "local"
+        },
+        "decl" : "List<StationFoodStore>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStores(org.springframework.http.HttpHeaders)@58:74",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "stationFoodRepository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 59,
+        "id" : "b59",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "stationFoodStores",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStores(org.springframework.http.HttpHeaders)@59:61",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "stationFoodStores",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 60,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStores(org.springframework.http.HttpHeaders)@60:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "stationFoodStores",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 62,
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStores(org.springframework.http.HttpHeaders)@62:43",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationFoodServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "List food stores error: {}",
+              "type" : "string"
+            }, {
+              "lit" : "Food store is empty",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 63,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStores(org.springframework.http.HttpHeaders)@63:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Food store is empty",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStoresByStationName(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+      "line" : 78,
+      "end" : 87,
+      "params" : [ {
+        "name" : "stationName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 80,
+        "target" : {
+          "name" : "stationFoodStoreList",
+          "ref" : "local"
+        },
+        "decl" : "List<StationFoodStore>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStoresByStationName(java.lang.String,org.springframework.http.HttpHeaders)@80:77",
+          "callee" : "findByStationName",
+          "recv" : {
+            "name" : "stationFoodRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "stationName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 81,
+        "id" : "b81",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "stationFoodStoreList",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStoresByStationName(java.lang.String,org.springframework.http.HttpHeaders)@81:67",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "stationFoodStoreList",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 82,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStoresByStationName(java.lang.String,org.springframework.http.HttpHeaders)@82:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "stationFoodStoreList",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 84,
+          "expr" : {
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStoresByStationName(java.lang.String,org.springframework.http.HttpHeaders)@84:43",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationFoodServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "List food stores by station id error: {}, stationName: {}",
+              "type" : "string"
+            }, {
+              "lit" : "Food store is empty",
+              "type" : "string"
+            }, {
+              "name" : "stationName",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 85,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-station-food-service:food.service.StationFoodServiceImpl#listFoodStoresByStationName(java.lang.String,org.springframework.http.HttpHeaders)@85:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Food store is empty",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    }
+  }
+}

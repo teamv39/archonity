@@ -242,8 +242,11 @@ public class AstAnalyzer {
     static int skeletonCol(Node node) {
         Optional<com.github.javaparser.Position> pos = node.getBegin();
         if (pos.isEmpty()) return 0;
-        int line = pos.get().line;
-        int col = pos.get().column;
+        return skeletonCol(node, pos.get().line, pos.get().column);
+    }
+
+    /** То же для произвольной позиции (строка, колонка в символах) в файле узла. */
+    static int skeletonCol(Node node, int line, int col) {
         Optional<Path> path = node.findCompilationUnit().flatMap(CompilationUnit::getStorage).map(s -> s.getPath());
         if (path.isEmpty()) return col;
         List<String> lines = LINE_CACHE.computeIfAbsent(path.get(), pth -> {

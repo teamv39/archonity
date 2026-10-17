@@ -1,0 +1,1451 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-consign-price-service",
+  "methods" : {
+    "method:ts-consign-price-service:consignprice.ConsignPriceApplication#main(java.lang.String[])" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/ConsignPriceApplication.java",
+      "line" : 32,
+      "end" : 35,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.ConsignPriceApplication#main(java.lang.String[])@33:40",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ConsignPriceApplication",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[ConsignPriceApplication.main][launch date: {}]",
+            "type" : "string"
+          }, {
+            "new" : "Date",
+            "call" : "call:method:ts-consign-price-service:consignprice.ConsignPriceApplication#main(java.lang.String[])@33:96",
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.ConsignPriceApplication#main(java.lang.String[])@34:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "ConsignPriceApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.ConsignPriceApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/ConsignPriceApplication.java",
+      "line" : 37,
+      "end" : 41,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.ConsignPriceApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@40:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:64",
+                      "callee" : "hasAnyRole",
+                      "recv" : {
+                        "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/consignpriceservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "ADMIN",
+                        "type" : "string"
+                      }, {
+                        "lit" : "USER",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-consign-price-service:consignprice.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/controller/ConsignPriceController.java",
+      "line" : 31,
+      "end" : 37,
+      "params" : [ {
+        "name" : "weight",
+        "type" : "String"
+      }, {
+        "name" : "isWithinRegion",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@34:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[getPriceByWeightAndRegion][Get price by weight and region][weight: {}, region: {}]",
+            "type" : "string"
+          }, {
+            "name" : "weight",
+            "ref" : "param"
+          }, {
+            "name" : "isWithinRegion",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@35:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@35:27",
+            "callee" : "getPriceByWeightAndRegion",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@35:60",
+              "callee" : "parseDouble",
+              "recv" : {
+                "name" : "Double",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "name" : "weight",
+                "ref" : "param"
+              } ]
+            }, {
+              "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@36:25",
+              "callee" : "parseBoolean",
+              "recv" : {
+                "name" : "Boolean",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "name" : "isWithinRegion",
+                "ref" : "param"
+              } ]
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceConfig(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/controller/ConsignPriceController.java",
+      "line" : 45,
+      "end" : 49,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceConfig(org.springframework.http.HttpHeaders)@47:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[getPriceConfig][Get price config]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceConfig(org.springframework.http.HttpHeaders)@48:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceConfig(org.springframework.http.HttpHeaders)@48:27",
+            "callee" : "getPriceConfig",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceInfo(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/controller/ConsignPriceController.java",
+      "line" : 39,
+      "end" : 43,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceInfo(org.springframework.http.HttpHeaders)@41:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[getPriceInfo][Get price info]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 42,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceInfo(org.springframework.http.HttpHeaders)@42:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceInfo(org.springframework.http.HttpHeaders)@42:27",
+            "callee" : "queryPriceInformation",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/controller/ConsignPriceController.java",
+      "line" : 26,
+      "end" : 29,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 28,
+        "expr" : {
+          "lit" : "Welcome to [ ConsignPrice Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#modifyPriceConfig(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/controller/ConsignPriceController.java",
+      "line" : 51,
+      "end" : 56,
+      "params" : [ {
+        "name" : "priceConfig",
+        "type" : "ConsignPrice"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 54,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#modifyPriceConfig(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@54:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[modifyPriceConfig][Create and modify price][config: {}]",
+            "type" : "string"
+          }, {
+            "name" : "priceConfig",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#modifyPriceConfig(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@55:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.controller.ConsignPriceController#modifyPriceConfig(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@55:27",
+            "callee" : "createAndModifyPrice",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "priceConfig",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.entity.ConsignPrice#<init>()" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/entity/ConsignPrice.java",
+      "line" : 35,
+      "end" : 37,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/init/InitData.java",
+      "line" : 23,
+      "end" : 35,
+      "params" : [ {
+        "name" : "strings",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 25,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@25:25",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "InitData",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[InitData.run][Consign price service][Init data operation]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 26,
+        "target" : {
+          "name" : "config",
+          "ref" : "local"
+        },
+        "decl" : "ConsignPrice",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ConsignPrice",
+          "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@26:31",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@27:16",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@27:40",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@27:27",
+              "callee" : "randomUUID",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@28:16",
+          "callee" : "setIndex",
+          "recv" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@29:16",
+          "callee" : "setInitialPrice",
+          "recv" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 8,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@30:16",
+          "callee" : "setInitialWeight",
+          "recv" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@31:16",
+          "callee" : "setWithinPrice",
+          "recv" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 2,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@32:16",
+          "callee" : "setBeyondPrice",
+          "recv" : {
+            "name" : "config",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 4,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@34:17",
+          "callee" : "createAndModifyPrice",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "config",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+      "line" : 59,
+      "end" : 77,
+      "params" : [ {
+        "name" : "config",
+        "type" : "ConsignPrice"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 61,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@61:40",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "ConsignPriceServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[createAndModifyPrice][Create New Price Config]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 63,
+        "target" : {
+          "name" : "originalConfig",
+          "ref" : "local"
+        },
+        "decl" : "ConsignPrice",
+        "operator" : "="
+      }, {
+        "op" : "if",
+        "line" : 64,
+        "id" : "b64",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@64:24",
+            "callee" : "findByIndex",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            } ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 65,
+          "target" : {
+            "name" : "originalConfig",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@65:41",
+            "callee" : "findByIndex",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 67,
+          "target" : {
+            "name" : "originalConfig",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "new" : "ConsignPrice",
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@67:30",
+            "args" : [ ]
+          }
+        } ]
+      }, {
+        "op" : "expr",
+        "line" : 69,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@69:24",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "originalConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@69:37",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "config",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 70,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@70:24",
+          "callee" : "setIndex",
+          "recv" : {
+            "name" : "originalConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 71,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@71:24",
+          "callee" : "setInitialPrice",
+          "recv" : {
+            "name" : "originalConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@71:47",
+            "callee" : "getInitialPrice",
+            "recv" : {
+              "name" : "config",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@72:24",
+          "callee" : "setInitialWeight",
+          "recv" : {
+            "name" : "originalConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@72:48",
+            "callee" : "getInitialWeight",
+            "recv" : {
+              "name" : "config",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 73,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@73:24",
+          "callee" : "setWithinPrice",
+          "recv" : {
+            "name" : "originalConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@73:46",
+            "callee" : "getWithinPrice",
+            "recv" : {
+              "name" : "config",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 74,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@74:24",
+          "callee" : "setBeyondPrice",
+          "recv" : {
+            "name" : "originalConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@74:46",
+            "callee" : "getBeyondPrice",
+            "recv" : {
+              "name" : "config",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 75,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@75:20",
+          "callee" : "save",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "originalConfig",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 76,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@76:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "name" : "success",
+            "ref" : "field"
+          }, {
+            "name" : "originalConfig",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+      "line" : 25,
+      "end" : 41,
+      "params" : [ {
+        "name" : "weight",
+        "type" : "double"
+      }, {
+        "name" : "isWithinRegion",
+        "type" : "boolean"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 27,
+        "target" : {
+          "name" : "priceConfig",
+          "ref" : "local"
+        },
+        "decl" : "ConsignPrice",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)@27:47",
+          "callee" : "findByIndex",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 28,
+        "target" : {
+          "name" : "price",
+          "ref" : "local"
+        },
+        "decl" : "double",
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "name" : "initialPrice",
+          "ref" : "local"
+        },
+        "decl" : "double",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)@29:43",
+          "callee" : "getInitialPrice",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 30,
+        "id" : "b30",
+        "cond" : {
+          "bin" : "<=",
+          "l" : {
+            "name" : "weight",
+            "ref" : "param"
+          },
+          "r" : {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)@30:35",
+            "callee" : "getInitialWeight",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 31,
+          "target" : {
+            "name" : "price",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "name" : "initialPrice",
+            "ref" : "local"
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 33,
+          "target" : {
+            "name" : "extraWeight",
+            "ref" : "local"
+          },
+          "decl" : "double",
+          "operator" : "=",
+          "expr" : {
+            "bin" : "-",
+            "l" : {
+              "name" : "weight",
+              "ref" : "param"
+            },
+            "r" : {
+              "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)@33:55",
+              "callee" : "getInitialWeight",
+              "recv" : {
+                "name" : "priceConfig",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        }, {
+          "op" : "if",
+          "line" : 34,
+          "id" : "b34",
+          "cond" : {
+            "name" : "isWithinRegion",
+            "ref" : "param"
+          },
+          "then" : [ {
+            "op" : "assign",
+            "line" : 35,
+            "target" : {
+              "name" : "price",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "initialPrice",
+                "ref" : "local"
+              },
+              "r" : {
+                "bin" : "*",
+                "l" : {
+                  "name" : "extraWeight",
+                  "ref" : "local"
+                },
+                "r" : {
+                  "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)@35:66",
+                  "callee" : "getWithinPrice",
+                  "recv" : {
+                    "name" : "priceConfig",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                }
+              }
+            }
+          } ],
+          "else" : [ {
+            "op" : "assign",
+            "line" : 37,
+            "target" : {
+              "name" : "price",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "initialPrice",
+                "ref" : "local"
+              },
+              "r" : {
+                "bin" : "*",
+                "l" : {
+                  "name" : "extraWeight",
+                  "ref" : "local"
+                },
+                "r" : {
+                  "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)@37:66",
+                  "callee" : "getBeyondPrice",
+                  "recv" : {
+                    "name" : "priceConfig",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                }
+              }
+            }
+          } ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 40,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)@40:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "name" : "success",
+            "ref" : "field"
+          }, {
+            "name" : "price",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceConfig(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+      "line" : 79,
+      "end" : 82,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 81,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceConfig(org.springframework.http.HttpHeaders)@81:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "name" : "success",
+            "ref" : "field"
+          }, {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceConfig(org.springframework.http.HttpHeaders)@81:54",
+            "callee" : "findByIndex",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+      "line" : 43,
+      "end" : 57,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 45,
+        "target" : {
+          "name" : "sb",
+          "ref" : "local"
+        },
+        "decl" : "StringBuilder",
+        "operator" : "=",
+        "expr" : {
+          "new" : "StringBuilder",
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@45:28",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 46,
+        "target" : {
+          "name" : "price",
+          "ref" : "local"
+        },
+        "decl" : "ConsignPrice",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@46:41",
+          "callee" : "findByIndex",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@47:12",
+          "callee" : "append",
+          "recv" : {
+            "name" : "sb",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "The price of weight within ",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@48:12",
+          "callee" : "append",
+          "recv" : {
+            "name" : "sb",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@48:25",
+            "callee" : "getInitialWeight",
+            "recv" : {
+              "name" : "price",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 49,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@49:12",
+          "callee" : "append",
+          "recv" : {
+            "name" : "sb",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : " is ",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 50,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@50:12",
+          "callee" : "append",
+          "recv" : {
+            "name" : "sb",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@50:25",
+            "callee" : "getInitialPrice",
+            "recv" : {
+              "name" : "price",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@51:12",
+          "callee" : "append",
+          "recv" : {
+            "name" : "sb",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : ". The price of extra weight within the region is ",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@52:12",
+          "callee" : "append",
+          "recv" : {
+            "name" : "sb",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@52:25",
+            "callee" : "getWithinPrice",
+            "recv" : {
+              "name" : "price",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@53:12",
+          "callee" : "append",
+          "recv" : {
+            "name" : "sb",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : " and beyond the region is ",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 54,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@54:12",
+          "callee" : "append",
+          "recv" : {
+            "name" : "sb",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@54:25",
+            "callee" : "getBeyondPrice",
+            "recv" : {
+              "name" : "price",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@55:12",
+          "callee" : "append",
+          "recv" : {
+            "name" : "sb",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "\n",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 56,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@56:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "name" : "success",
+            "ref" : "field"
+          }, {
+            "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@56:46",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "sb",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      } ]
+    }
+  }
+}

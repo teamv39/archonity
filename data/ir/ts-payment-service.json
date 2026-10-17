@@ -1,0 +1,1241 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-payment-service",
+  "methods" : {
+    "method:ts-payment-service:com.trainticket.PaymentApplication#main(java.lang.String[])" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/PaymentApplication.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.PaymentApplication#main(java.lang.String[])@27:21",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "PaymentApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.PaymentApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/PaymentApplication.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.PaymentApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@33:18",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:59",
+                      "callee" : "hasAnyRole",
+                      "recv" : {
+                        "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/paymentservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "ADMIN",
+                        "type" : "string"
+                      }, {
+                        "lit" : "USER",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-payment-service:com.trainticket.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.controller.PaymentController#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/controller/PaymentController.java",
+      "line" : 38,
+      "end" : 42,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Payment"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@40:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PaymentController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[addMoney][Add money][PaymentId: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@40:84",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@41:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@41:27",
+            "callee" : "addMoney",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.controller.PaymentController#home()" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/controller/PaymentController.java",
+      "line" : 27,
+      "end" : 30,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 29,
+        "expr" : {
+          "lit" : "Welcome to [ Payment Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.controller.PaymentController#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/controller/PaymentController.java",
+      "line" : 32,
+      "end" : 36,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Payment"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@34:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PaymentController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[pay][Pay][PaymentId: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@34:73",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@35:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@35:27",
+            "callee" : "pay",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.controller.PaymentController#query(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/controller/PaymentController.java",
+      "line" : 44,
+      "end" : 48,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 46,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#query(org.springframework.http.HttpHeaders)@46:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PaymentController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[query][Query payment]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#query(org.springframework.http.HttpHeaders)@47:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-payment-service:com.trainticket.controller.PaymentController#query(org.springframework.http.HttpHeaders)@47:27",
+            "callee" : "query",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.entity.Payment#<init>()" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/entity/Payment.java",
+      "line" : 42,
+      "end" : 47,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "field" : "id",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.entity.Payment#<init>()@43:37",
+          "callee" : "toString",
+          "recv" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.entity.Payment#<init>()@43:24",
+            "callee" : "randomUUID",
+            "recv" : {
+              "name" : "UUID",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 44,
+        "target" : {
+          "field" : "orderId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 45,
+        "target" : {
+          "field" : "userId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 46,
+        "target" : {
+          "field" : "price",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/init/InitData.java",
+      "line" : 24,
+      "end" : 62,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 27,
+        "target" : {
+          "name" : "payment",
+          "ref" : "local"
+        },
+        "decl" : "Payment",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Payment",
+          "call" : "call:method:ts-payment-service:com.trainticket.init.InitData#run(java.lang.String[])@27:27",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.init.InitData#run(java.lang.String[])@28:17",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "payment",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "5ad7750ba68b49c0a8c035276b067701",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.init.InitData#run(java.lang.String[])@29:17",
+          "callee" : "setOrderId",
+          "recv" : {
+            "name" : "payment",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "5ad7750b-a68b-49c0-a8c0-32776b067701",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.init.InitData#run(java.lang.String[])@30:17",
+          "callee" : "setPrice",
+          "recv" : {
+            "name" : "payment",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "10000.0",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.init.InitData#run(java.lang.String[])@31:17",
+          "callee" : "setUserId",
+          "recv" : {
+            "name" : "payment",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.init.InitData#run(java.lang.String[])@32:17",
+          "callee" : "initPayment",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "payment",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+      "line" : 48,
+      "end" : 55,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Payment"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 50,
+        "target" : {
+          "name" : "addMoney",
+          "ref" : "local"
+        },
+        "decl" : "Money",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Money",
+          "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@50:26",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@51:18",
+          "callee" : "setUserId",
+          "recv" : {
+            "name" : "addMoney",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@51:33",
+            "callee" : "getUserId",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@52:18",
+          "callee" : "setMoney",
+          "recv" : {
+            "name" : "addMoney",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@52:32",
+            "callee" : "getPrice",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@53:28",
+          "callee" : "save",
+          "recv" : {
+            "name" : "addMoneyRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "addMoney",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 54,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@54:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "Add Money Success",
+            "type" : "string"
+          }, {
+            "name" : "addMoney",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#initPayment(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+      "line" : 69,
+      "end" : 78,
+      "params" : [ {
+        "name" : "payment",
+        "type" : "Payment"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 71,
+        "target" : {
+          "name" : "paymentTemp",
+          "ref" : "local"
+        },
+        "decl" : "Optional<Payment>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#initPayment(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@71:59",
+          "callee" : "findById",
+          "recv" : {
+            "name" : "paymentRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#initPayment(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@71:76",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "payment",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 72,
+        "id" : "b72",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#initPayment(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@72:25",
+            "callee" : "isPresent",
+            "recv" : {
+              "name" : "paymentTemp",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 73,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#initPayment(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@73:31",
+            "callee" : "save",
+            "recv" : {
+              "name" : "paymentRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "payment",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 74,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#initPayment(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@74:39",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PaymentServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[initPayment][Init payment error][Payment not found][PaymentId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#initPayment(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@74:123",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "payment",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 76,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#initPayment(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@76:39",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PaymentServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[initPayment][Init Payment Already Exists][PaymentId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#initPayment(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@76:113",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "payment",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+      "line" : 32,
+      "end" : 46,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Payment"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "if",
+        "line" : 35,
+        "id" : "b35",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@35:30",
+            "callee" : "findByOrderId",
+            "recv" : {
+              "name" : "paymentRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@35:49",
+              "callee" : "getOrderId",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 36,
+          "target" : {
+            "name" : "payment",
+            "ref" : "local"
+          },
+          "decl" : "Payment",
+          "operator" : "=",
+          "expr" : {
+            "new" : "Payment",
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@36:31",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 37,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@37:21",
+            "callee" : "setOrderId",
+            "recv" : {
+              "name" : "payment",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@37:37",
+              "callee" : "getOrderId",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 38,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@38:21",
+            "callee" : "setPrice",
+            "recv" : {
+              "name" : "payment",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@38:35",
+              "callee" : "getPrice",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 39,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@39:21",
+            "callee" : "setUserId",
+            "recv" : {
+              "name" : "payment",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@39:36",
+              "callee" : "getUserId",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 40,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@40:31",
+            "callee" : "save",
+            "recv" : {
+              "name" : "paymentRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "payment",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 41,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@41:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Pay Success",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 43,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@43:39",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PaymentServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[pay][Pay Failed][Order not found with order id][PaymentId: {}, OrderId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@43:128",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@43:141",
+              "callee" : "getOrderId",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 44,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@44:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "bin" : "+",
+              "l" : {
+                "lit" : "Pay Failed, order not found with order id",
+                "type" : "string"
+              },
+              "r" : {
+                "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@44:88",
+                "callee" : "getOrderId",
+                "recv" : {
+                  "name" : "info",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              }
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+      "line" : 57,
+      "end" : 67,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 59,
+        "target" : {
+          "name" : "payments",
+          "ref" : "local"
+        },
+        "decl" : "List<Payment>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)@59:52",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "paymentRepository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 60,
+        "id" : "b60",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "payments",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)@60:41",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "payments",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 61,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)@61:39",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PaymentServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[query][Find all payment Success][size:{}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)@61:98",
+              "callee" : "size",
+              "recv" : {
+                "name" : "payments",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 62,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)@62:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Query Success",
+              "type" : "string"
+            }, {
+              "name" : "payments",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 64,
+          "expr" : {
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)@64:39",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PaymentServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[query][Find all payment warn][{}]",
+              "type" : "string"
+            }, {
+              "lit" : "No content",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 65,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)@65:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No Content",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    }
+  }
+}

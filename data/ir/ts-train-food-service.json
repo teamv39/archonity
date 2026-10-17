@@ -1,0 +1,1372 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-train-food-service",
+  "methods" : {
+    "method:ts-train-food-service:trainFood.TrainFoodApplication#main(java.lang.String[])" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/TrainFoodApplication.java",
+      "line" : 23,
+      "end" : 25,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.TrainFoodApplication#main(java.lang.String[])@24:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "TrainFoodApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.TrainFoodApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/TrainFoodApplication.java",
+      "line" : 26,
+      "end" : 30,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.TrainFoodApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@29:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/config/SecurityConfig.java",
+      "line" : 55,
+      "end" : 73,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 57,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@65:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:61",
+                      "callee" : "permitAll",
+                      "recv" : {
+                        "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@63:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@62:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@61:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@61:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@59:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@59:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@57:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@57:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/trainfoodservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/config/SecurityConfig.java",
+      "line" : 39,
+      "end" : 52,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#corsConfigurer()@41:16",
+          "args" : [ ],
+          "anon" : "type:ts-train-food-service:trainFood.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/config/SecurityConfig.java",
+      "line" : 26,
+      "end" : 29,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 28,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig#passwordEncoder()@28:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/config/SecurityConfig.java",
+      "line" : 42,
+      "end" : 50,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@49:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@48:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@47:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@46:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@45:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-train-food-service:trainFood.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@44:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.controller.TrainFoodController#getAllTrainFood(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/controller/TrainFoodController.java",
+      "line" : 27,
+      "end" : 32,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.controller.TrainFoodController#getAllTrainFood(org.springframework.http.HttpHeaders)@30:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TrainFoodController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[Food Map Service][Get All TrainFoods]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.controller.TrainFoodController#getAllTrainFood(org.springframework.http.HttpHeaders)@31:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-train-food-service:trainFood.controller.TrainFoodController#getAllTrainFood(org.springframework.http.HttpHeaders)@31:36",
+            "callee" : "listTrainFood",
+            "recv" : {
+              "name" : "trainFoodService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.controller.TrainFoodController#getTrainFoodOfTrip(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/controller/TrainFoodController.java",
+      "line" : 34,
+      "end" : 39,
+      "params" : [ {
+        "name" : "tripId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.controller.TrainFoodController#getTrainFoodOfTrip(java.lang.String,org.springframework.http.HttpHeaders)@37:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TrainFoodController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[Food Map Service][Get TrainFoods By TripId]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.controller.TrainFoodController#getTrainFoodOfTrip(java.lang.String,org.springframework.http.HttpHeaders)@38:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-train-food-service:trainFood.controller.TrainFoodController#getTrainFoodOfTrip(java.lang.String,org.springframework.http.HttpHeaders)@38:36",
+            "callee" : "listTrainFoodByTripId",
+            "recv" : {
+              "name" : "trainFoodService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "tripId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.controller.TrainFoodController#home()" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/controller/TrainFoodController.java",
+      "line" : 22,
+      "end" : 25,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 24,
+        "expr" : {
+          "lit" : "Welcome to [ Train Food Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.entity.TrainFood#<init>()" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/entity/TrainFood.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "field" : "tripId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/init/InitData.java",
+      "line" : 27,
+      "end" : 50,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "name" : "br2",
+          "ref" : "local"
+        },
+        "decl" : "BufferedReader",
+        "operator" : "=",
+        "expr" : {
+          "new" : "BufferedReader",
+          "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@29:30",
+          "args" : [ {
+            "new" : "InputStreamReader",
+            "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@29:49",
+            "args" : [ {
+              "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@29:87",
+              "callee" : "getResourceAsStream",
+              "recv" : {
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@29:76",
+                "callee" : "getClass",
+                "recv" : {
+                  "this" : true
+                },
+                "args" : [ ]
+              },
+              "args" : [ {
+                "lit" : "/trainfood.txt",
+                "type" : "string"
+              } ]
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "try",
+        "line" : 30,
+        "id" : "t30",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 31,
+          "target" : {
+            "name" : "line2",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@31:32",
+            "callee" : "readLine",
+            "recv" : {
+              "name" : "br2",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "while",
+          "line" : 32,
+          "cond" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "line2",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "body" : [ {
+            "op" : "if",
+            "line" : 33,
+            "id" : "b33",
+            "cond" : {
+              "un" : "!",
+              "e" : {
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@33:35",
+                "callee" : "equals",
+                "recv" : {
+                  "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@33:28",
+                  "callee" : "trim",
+                  "recv" : {
+                    "name" : "line2",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "",
+                  "type" : "string"
+                } ]
+              }
+            },
+            "then" : [ {
+              "op" : "assign",
+              "line" : 34,
+              "target" : {
+                "name" : "tf",
+                "ref" : "local"
+              },
+              "decl" : "TrainFood",
+              "operator" : "=",
+              "expr" : {
+                "new" : "TrainFood",
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@34:36",
+                "args" : [ ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 35,
+              "expr" : {
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@35:24",
+                "callee" : "setId",
+                "recv" : {
+                  "name" : "tf",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@35:48",
+                  "callee" : "toString",
+                  "recv" : {
+                    "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@35:35",
+                    "callee" : "randomUUID",
+                    "recv" : {
+                      "name" : "UUID",
+                      "ref" : "type"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 36,
+              "target" : {
+                "name" : "lineTemp",
+                "ref" : "local"
+              },
+              "decl" : "String[]",
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@36:54",
+                "callee" : "split",
+                "recv" : {
+                  "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@36:47",
+                  "callee" : "trim",
+                  "recv" : {
+                    "name" : "line2",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "=",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 37,
+              "expr" : {
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@37:24",
+                "callee" : "setTripId",
+                "recv" : {
+                  "name" : "tf",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "index" : {
+                    "lit" : 1,
+                    "type" : "int"
+                  },
+                  "of" : {
+                    "name" : "lineTemp",
+                    "ref" : "local"
+                  }
+                } ]
+              }
+            }, {
+              "op" : "assign",
+              "line" : 38,
+              "target" : {
+                "name" : "lineTemp",
+                "ref" : "local"
+              },
+              "operator" : "=",
+              "expr" : {
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@38:54",
+                "callee" : "split",
+                "recv" : {
+                  "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@38:47",
+                  "callee" : "trim",
+                  "recv" : {
+                    "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@38:36",
+                    "callee" : "readLine",
+                    "recv" : {
+                      "name" : "br2",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ {
+                  "lit" : "=",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 39,
+              "expr" : {
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@39:24",
+                "callee" : "setFoodList",
+                "recv" : {
+                  "name" : "tf",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@39:36",
+                  "callee" : "toFoodList",
+                  "recv" : null,
+                  "args" : [ {
+                    "index" : {
+                      "lit" : 1,
+                      "type" : "int"
+                    },
+                    "of" : {
+                      "name" : "lineTemp",
+                      "ref" : "local"
+                    }
+                  } ]
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 40,
+              "expr" : {
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@40:38",
+                "callee" : "createTrainFood",
+                "recv" : {
+                  "name" : "trainFoodService",
+                  "ref" : "field"
+                },
+                "args" : [ {
+                  "name" : "tf",
+                  "ref" : "local"
+                }, {
+                  "lit" : null,
+                  "type" : "null"
+                } ]
+              }
+            } ],
+            "else" : [ ]
+          }, {
+            "op" : "assign",
+            "line" : 42,
+            "target" : {
+              "name" : "line2",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@42:29",
+              "callee" : "readLine",
+              "recv" : {
+                "name" : "br2",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ]
+        } ],
+        "catches" : [ {
+          "types" : [ "Exception" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 46,
+            "expr" : {
+              "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@46:29",
+              "callee" : "info",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "InitData",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "the trainfood.txt has format error!",
+                "type" : "string"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 47,
+            "expr" : {
+              "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@47:29",
+              "callee" : "error",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "InitData",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@47:37",
+                "callee" : "getMessage",
+                "recv" : {
+                  "name" : "e",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 48,
+            "expr" : {
+              "call" : "call:method:ts-train-food-service:trainFood.init.InitData#run(java.lang.String[])@48:20",
+              "callee" : "exit",
+              "recv" : {
+                "name" : "System",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/init/InitData.java",
+      "line" : 52,
+      "end" : 66,
+      "params" : [ {
+        "name" : "s",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)@53:25",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "InitData",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "s= {}",
+            "type" : "string"
+          }, {
+            "name" : "s",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 54,
+        "target" : {
+          "name" : "foodstring",
+          "ref" : "local"
+        },
+        "decl" : "String[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)@54:33",
+          "callee" : "split",
+          "recv" : {
+            "name" : "s",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "lit" : "_",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 55,
+        "target" : {
+          "name" : "foodList",
+          "ref" : "local"
+        },
+        "decl" : "List<Food>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)@55:31",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 56,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 56,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "field" : "length",
+            "of" : {
+              "name" : "foodstring",
+              "ref" : "local"
+            }
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 57,
+          "target" : {
+            "name" : "foodTemp",
+            "ref" : "local"
+          },
+          "decl" : "String[]",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)@57:47",
+            "callee" : "split",
+            "recv" : {
+              "index" : {
+                "name" : "i",
+                "ref" : "local"
+              },
+              "of" : {
+                "name" : "foodstring",
+                "ref" : "local"
+              }
+            },
+            "args" : [ {
+              "lit" : ",",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 58,
+          "target" : {
+            "name" : "food",
+            "ref" : "local"
+          },
+          "decl" : "Food",
+          "operator" : "=",
+          "expr" : {
+            "new" : "Food",
+            "call" : "call:method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)@58:25",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 59,
+          "expr" : {
+            "call" : "call:method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)@59:18",
+            "callee" : "setFoodName",
+            "recv" : {
+              "name" : "food",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "index" : {
+                "lit" : 0,
+                "type" : "int"
+              },
+              "of" : {
+                "name" : "foodTemp",
+                "ref" : "local"
+              }
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 61,
+          "expr" : {
+            "call" : "call:method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)@61:18",
+            "callee" : "setPrice",
+            "recv" : {
+              "name" : "food",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)@61:34",
+              "callee" : "parseDouble",
+              "recv" : {
+                "name" : "Double",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "index" : {
+                  "lit" : 1,
+                  "type" : "int"
+                },
+                "of" : {
+                  "name" : "foodTemp",
+                  "ref" : "local"
+                }
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 63,
+          "expr" : {
+            "call" : "call:method:ts-train-food-service:trainFood.init.InitData#toFoodList(java.lang.String)@63:22",
+            "callee" : "add",
+            "recv" : {
+              "name" : "foodList",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "food",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 65,
+        "expr" : {
+          "name" : "foodList",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
+      "line" : 25,
+      "end" : 39,
+      "params" : [ {
+        "name" : "tf",
+        "type" : "TrainFood"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 27,
+        "target" : {
+          "name" : "tfTemp",
+          "ref" : "local"
+        },
+        "decl" : "TrainFood",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@27:48",
+          "callee" : "findByTripId",
+          "recv" : {
+            "name" : "trainFoodRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@27:64",
+            "callee" : "getTripId",
+            "recv" : {
+              "name" : "tf",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 28,
+        "id" : "b28",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "tfTemp",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "if",
+          "line" : 29,
+          "id" : "b29",
+          "cond" : {
+            "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@29:37",
+            "callee" : "equals",
+            "recv" : {
+              "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@29:23",
+              "callee" : "getFoodList",
+              "recv" : {
+                "name" : "tfTemp",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@29:47",
+              "callee" : "getFoodList",
+              "recv" : {
+                "name" : "tf",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "then" : [ {
+            "op" : "expr",
+            "line" : 30,
+            "expr" : {
+              "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@30:45",
+              "callee" : "error",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "TrainFoodServiceImpl",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "[Init TrainFood] Already Exists TripId: {}",
+                "type" : "string"
+              }, {
+                "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@30:100",
+                "callee" : "getTripId",
+                "recv" : {
+                  "name" : "tf",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ],
+          "else" : [ {
+            "op" : "expr",
+            "line" : 32,
+            "expr" : {
+              "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@32:24",
+              "callee" : "setFoodList",
+              "recv" : {
+                "name" : "tfTemp",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@32:39",
+                "callee" : "getFoodList",
+                "recv" : {
+                  "name" : "tf",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 33,
+            "expr" : {
+              "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@33:37",
+              "callee" : "save",
+              "recv" : {
+                "name" : "trainFoodRepository",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "name" : "tfTemp",
+                "ref" : "local"
+              } ]
+            }
+          } ]
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 36,
+          "expr" : {
+            "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#createTrainFood(trainFood.entity.TrainFood,org.springframework.http.HttpHeaders)@36:33",
+            "callee" : "save",
+            "recv" : {
+              "name" : "trainFoodRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "tf",
+              "ref" : "param"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "name" : "tf",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFood(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
+      "line" : 41,
+      "end" : 50,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "name" : "trainFoodList",
+          "ref" : "local"
+        },
+        "decl" : "List<TrainFood>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFood(org.springframework.http.HttpHeaders)@43:61",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "trainFoodRepository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 44,
+        "id" : "b44",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "trainFoodList",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFood(org.springframework.http.HttpHeaders)@44:53",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "trainFoodList",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 45,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFood(org.springframework.http.HttpHeaders)@45:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "trainFoodList",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 47,
+          "expr" : {
+            "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFood(org.springframework.http.HttpHeaders)@47:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TrainFoodServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "List train food error: {}",
+              "type" : "string"
+            }, {
+              "name" : "noContent",
+              "ref" : "field"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 48,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFood(org.springframework.http.HttpHeaders)@48:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "noContent",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFoodByTripId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
+      "line" : 52,
+      "end" : 60,
+      "params" : [ {
+        "name" : "tripId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 54,
+        "target" : {
+          "name" : "tf",
+          "ref" : "local"
+        },
+        "decl" : "TrainFood",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFoodByTripId(java.lang.String,org.springframework.http.HttpHeaders)@54:44",
+          "callee" : "findByTripId",
+          "recv" : {
+            "name" : "trainFoodRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "tripId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 55,
+        "id" : "b55",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "tf",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 56,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFoodByTripId(java.lang.String,org.springframework.http.HttpHeaders)@56:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "noContent",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 58,
+          "expr" : {
+            "new" : "Response<>",
+            "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFoodByTripId(java.lang.String,org.springframework.http.HttpHeaders)@58:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "call" : "call:method:ts-train-food-service:trainFood.service.TrainFoodServiceImpl#listTrainFoodByTripId(java.lang.String,org.springframework.http.HttpHeaders)@58:50",
+              "callee" : "getFoodList",
+              "recv" : {
+                "name" : "tf",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ]
+      } ]
+    }
+  }
+}

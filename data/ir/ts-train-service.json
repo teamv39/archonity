@@ -1,0 +1,2759 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-train-service",
+  "methods" : {
+    "method:ts-train-service:train.TrainApplication#main(java.lang.String[])" : {
+      "file" : "ts-train-service/src/main/java/train/TrainApplication.java",
+      "line" : 23,
+      "end" : 25,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.TrainApplication#main(java.lang.String[])@24:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "TrainApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-train-service:train.TrainApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-train-service/src/main/java/train/TrainApplication.java",
+      "line" : 27,
+      "end" : 31,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.TrainApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@30:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-train-service/src/main/java/train/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 83,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:82",
+                      "callee" : "hasAnyRole",
+                      "recv" : {
+                        "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:77",
+                          "callee" : "hasAnyRole",
+                          "recv" : {
+                            "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:18",
+                            "callee" : "antMatchers",
+                            "recv" : {
+                              "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:78",
+                              "callee" : "hasAnyRole",
+                              "recv" : {
+                                "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                                "callee" : "antMatchers",
+                                "recv" : {
+                                  "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:57",
+                                  "callee" : "permitAll",
+                                  "recv" : {
+                                    "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                                    "callee" : "antMatchers",
+                                    "recv" : {
+                                      "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                                      "callee" : "authorizeRequests",
+                                      "recv" : {
+                                        "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                                        "callee" : "and",
+                                        "recv" : {
+                                          "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                                          "callee" : "sessionCreationPolicy",
+                                          "recv" : {
+                                            "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                            "callee" : "sessionManagement",
+                                            "recv" : {
+                                              "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                              "callee" : "disable",
+                                              "recv" : {
+                                                "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                                "callee" : "csrf",
+                                                "recv" : {
+                                                  "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                                  "callee" : "disable",
+                                                  "recv" : {
+                                                    "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                                    "callee" : "httpBasic",
+                                                    "recv" : {
+                                                      "name" : "httpSecurity",
+                                                      "ref" : "param"
+                                                    },
+                                                    "args" : [ ]
+                                                  },
+                                                  "args" : [ ]
+                                                },
+                                                "args" : [ ]
+                                              },
+                                              "args" : [ ]
+                                            },
+                                            "args" : [ ]
+                                          },
+                                          "args" : [ {
+                                            "field" : "STATELESS",
+                                            "of" : {
+                                              "name" : "SessionCreationPolicy",
+                                              "ref" : "type"
+                                            }
+                                          } ]
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ {
+                                      "lit" : "/api/v1/trainservice/**",
+                                      "type" : "string"
+                                    } ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ {
+                                  "field" : "POST",
+                                  "of" : {
+                                    "name" : "HttpMethod",
+                                    "ref" : "type"
+                                  }
+                                }, {
+                                  "lit" : "/api/v1/trainservice/trains",
+                                  "type" : "string"
+                                } ]
+                              },
+                              "args" : [ {
+                                "name" : "admin",
+                                "ref" : "field"
+                              } ]
+                            },
+                            "args" : [ {
+                              "field" : "PUT",
+                              "of" : {
+                                "name" : "HttpMethod",
+                                "ref" : "type"
+                              }
+                            }, {
+                              "lit" : "/api/v1/trainservice/trains",
+                              "type" : "string"
+                            } ]
+                          },
+                          "args" : [ {
+                            "name" : "admin",
+                            "ref" : "field"
+                          } ]
+                        },
+                        "args" : [ {
+                          "field" : "DELETE",
+                          "of" : {
+                            "name" : "HttpMethod",
+                            "ref" : "type"
+                          }
+                        }, {
+                          "lit" : "/api/v1/trainservice/trains/*",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "name" : "admin",
+                        "ref" : "field"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 82,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-train-service:train.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-train-service/src/main/java/train/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-train-service:train.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-train-service:train.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-train-service:train.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-train-service/src/main/java/train/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-train-service:train.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-train-service:train.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-train-service/src/main/java/train/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-train-service:train.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-train-service:train.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-train-service:train.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-train-service:train.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-train-service:train.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/controller/TrainController.java",
+      "line" : 33,
+      "end" : 43,
+      "params" : [ {
+        "name" : "trainType",
+        "type" : "TrainType"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 36,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@36:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TrainController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[create][Create train][TrainTypeId: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@36:89",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "trainType",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 37,
+        "target" : {
+          "name" : "isCreateSuccess",
+          "ref" : "local"
+        },
+        "decl" : "boolean",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@37:48",
+          "callee" : "create",
+          "recv" : {
+            "name" : "trainService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "trainType",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 38,
+        "id" : "b38",
+        "cond" : {
+          "name" : "isCreateSuccess",
+          "ref" : "local"
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 39,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@39:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@39:23",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "create success",
+                "type" : "string"
+              }, {
+                "lit" : null,
+                "type" : "null"
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 41,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@41:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@41:23",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "lit" : "train type already exist",
+                "type" : "string"
+              }, {
+                "name" : "trainType",
+                "ref" : "param"
+              } ]
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.controller.TrainController#delete(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/controller/TrainController.java",
+      "line" : 93,
+      "end" : 103,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 96,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#delete(java.lang.String,org.springframework.http.HttpHeaders)@96:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TrainController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[delete][Delete train][TrainTypeId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 97,
+        "target" : {
+          "name" : "isDeleteSuccess",
+          "ref" : "local"
+        },
+        "decl" : "boolean",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#delete(java.lang.String,org.springframework.http.HttpHeaders)@97:48",
+          "callee" : "delete",
+          "recv" : {
+            "name" : "trainService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "id",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 98,
+        "id" : "b98",
+        "cond" : {
+          "name" : "isDeleteSuccess",
+          "ref" : "local"
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 99,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#delete(java.lang.String,org.springframework.http.HttpHeaders)@99:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#delete(java.lang.String,org.springframework.http.HttpHeaders)@99:23",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "delete success",
+                "type" : "string"
+              }, {
+                "name" : "isDeleteSuccess",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 101,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#delete(java.lang.String,org.springframework.http.HttpHeaders)@101:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#delete(java.lang.String,org.springframework.http.HttpHeaders)@101:23",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "lit" : "there is no train according to id",
+                "type" : "string"
+              }, {
+                "lit" : null,
+                "type" : "null"
+              } ]
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.controller.TrainController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/controller/TrainController.java",
+      "line" : 28,
+      "end" : 31,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 30,
+        "expr" : {
+          "lit" : "Welcome to [ Train Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/controller/TrainController.java",
+      "line" : 105,
+      "end" : 115,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 108,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)@108:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TrainController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[query][Query train]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 109,
+        "target" : {
+          "name" : "trainTypes",
+          "ref" : "local"
+        },
+        "decl" : "List<TrainType>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)@109:51",
+          "callee" : "query",
+          "recv" : {
+            "name" : "trainService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 110,
+        "id" : "b110",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "trainTypes",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)@110:47",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "trainTypes",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 111,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)@111:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)@111:23",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "success",
+                "type" : "string"
+              }, {
+                "name" : "trainTypes",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 113,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)@113:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)@113:23",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "lit" : "no content",
+                "type" : "string"
+              }, {
+                "name" : "trainTypes",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.controller.TrainController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/controller/TrainController.java",
+      "line" : 45,
+      "end" : 55,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@48:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TrainController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[retrieve][Retrieve train][TrainTypeId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 49,
+        "target" : {
+          "name" : "trainType",
+          "ref" : "local"
+        },
+        "decl" : "TrainType",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@49:44",
+          "callee" : "retrieve",
+          "recv" : {
+            "name" : "trainService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "id",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 50,
+        "id" : "b50",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "trainType",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 51,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@51:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@51:23",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "bin" : "+",
+                "l" : {
+                  "lit" : "here is no TrainType with the trainType id: ",
+                  "type" : "string"
+                },
+                "r" : {
+                  "name" : "id",
+                  "ref" : "param"
+                }
+              }, {
+                "lit" : null,
+                "type" : "null"
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 53,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@53:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@53:23",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "success",
+                "type" : "string"
+              }, {
+                "name" : "trainType",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.controller.TrainController#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/controller/TrainController.java",
+      "line" : 57,
+      "end" : 67,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 60,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@60:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TrainController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[retrieveByName][Retrieve train][TrainTypeName: {}]",
+            "type" : "string"
+          }, {
+            "name" : "name",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 61,
+        "target" : {
+          "name" : "trainType",
+          "ref" : "local"
+        },
+        "decl" : "TrainType",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@61:44",
+          "callee" : "retrieveByName",
+          "recv" : {
+            "name" : "trainService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "name",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 62,
+        "id" : "b62",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "trainType",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 63,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@63:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@63:23",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "bin" : "+",
+                "l" : {
+                  "lit" : "here is no TrainType with the trainType name: ",
+                  "type" : "string"
+                },
+                "r" : {
+                  "name" : "name",
+                  "ref" : "param"
+                }
+              }, {
+                "lit" : null,
+                "type" : "null"
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 65,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@65:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@65:23",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "success",
+                "type" : "string"
+              }, {
+                "name" : "trainType",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.controller.TrainController#retrieveByName(java.util.List,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/controller/TrainController.java",
+      "line" : 69,
+      "end" : 79,
+      "params" : [ {
+        "name" : "names",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.util.List,org.springframework.http.HttpHeaders)@72:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TrainController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[retrieveByNames][Retrieve train][TrainTypeNames: {}]",
+            "type" : "string"
+          }, {
+            "name" : "names",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 73,
+        "target" : {
+          "name" : "trainTypes",
+          "ref" : "local"
+        },
+        "decl" : "List<TrainType>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.util.List,org.springframework.http.HttpHeaders)@73:51",
+          "callee" : "retrieveByNames",
+          "recv" : {
+            "name" : "trainService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "names",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 74,
+        "id" : "b74",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "trainTypes",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 75,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.util.List,org.springframework.http.HttpHeaders)@75:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.util.List,org.springframework.http.HttpHeaders)@75:23",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "bin" : "+",
+                "l" : {
+                  "lit" : "here is no TrainTypes with the trainType names: ",
+                  "type" : "string"
+                },
+                "r" : {
+                  "name" : "names",
+                  "ref" : "param"
+                }
+              }, {
+                "lit" : null,
+                "type" : "null"
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 77,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.util.List,org.springframework.http.HttpHeaders)@77:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.util.List,org.springframework.http.HttpHeaders)@77:23",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "success",
+                "type" : "string"
+              }, {
+                "name" : "trainTypes",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/controller/TrainController.java",
+      "line" : 81,
+      "end" : 91,
+      "params" : [ {
+        "name" : "trainType",
+        "type" : "TrainType"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 84,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@84:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "TrainController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[update][Update train][TrainTypeId: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@84:89",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "trainType",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 85,
+        "target" : {
+          "name" : "isUpdateSuccess",
+          "ref" : "local"
+        },
+        "decl" : "boolean",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@85:48",
+          "callee" : "update",
+          "recv" : {
+            "name" : "trainService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "trainType",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 86,
+        "id" : "b86",
+        "cond" : {
+          "name" : "isUpdateSuccess",
+          "ref" : "local"
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 87,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@87:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@87:23",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "update success",
+                "type" : "string"
+              }, {
+                "name" : "isUpdateSuccess",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 89,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@89:20",
+            "callee" : "ok",
+            "recv" : null,
+            "args" : [ {
+              "new" : "Response",
+              "call" : "call:method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@89:23",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "lit" : "there is no trainType with the trainType id",
+                "type" : "string"
+              }, {
+                "name" : "isUpdateSuccess",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.entity.TrainType#<init>()" : {
+      "file" : "ts-train-service/src/main/java/train/entity/TrainType.java",
+      "line" : 38,
+      "end" : 40,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-train-service:train.entity.TrainType#<init>(java.lang.String,int,int)" : {
+      "file" : "ts-train-service/src/main/java/train/entity/TrainType.java",
+      "line" : 42,
+      "end" : 46,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "economyClass",
+        "type" : "int"
+      }, {
+        "name" : "confortClass",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 44,
+        "target" : {
+          "field" : "economyClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "economyClass",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 45,
+        "target" : {
+          "field" : "confortClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "confortClass",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-train-service:train.entity.TrainType#<init>(java.lang.String,int,int,int)" : {
+      "file" : "ts-train-service/src/main/java/train/entity/TrainType.java",
+      "line" : 48,
+      "end" : 53,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "economyClass",
+        "type" : "int"
+      }, {
+        "name" : "confortClass",
+        "type" : "int"
+      }, {
+        "name" : "averageSpeed",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 49,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 50,
+        "target" : {
+          "field" : "economyClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "economyClass",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 51,
+        "target" : {
+          "field" : "confortClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "confortClass",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 52,
+        "target" : {
+          "field" : "averageSpeed",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "averageSpeed",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-train-service:train.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-train-service/src/main/java/train/init/InitData.java",
+      "line" : 16,
+      "end" : 60,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 18,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "decl" : "TrainType",
+        "operator" : "=",
+        "expr" : {
+          "new" : "TrainType",
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@18:26",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 20,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@20:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "GaoTieOne",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 21,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@21:14",
+          "callee" : "setConfortClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 22,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@22:14",
+          "callee" : "setEconomyClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 23,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@23:14",
+          "callee" : "setAverageSpeed",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 250,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@24:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 26,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "TrainType",
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@26:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@27:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "GaoTieTwo",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@28:14",
+          "callee" : "setConfortClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@29:14",
+          "callee" : "setEconomyClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@30:14",
+          "callee" : "setAverageSpeed",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 200,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@31:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 33,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "TrainType",
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@33:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@34:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "DongCheOne",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@35:14",
+          "callee" : "setConfortClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 36,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@36:14",
+          "callee" : "setEconomyClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@37:14",
+          "callee" : "setAverageSpeed",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 180,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@38:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 40,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "TrainType",
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@40:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@41:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "ZhiDa",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 42,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@42:14",
+          "callee" : "setConfortClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@43:14",
+          "callee" : "setEconomyClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@44:14",
+          "callee" : "setAverageSpeed",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 120,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 45,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@45:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 47,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "TrainType",
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@47:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@48:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "TeKuai",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 49,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@49:14",
+          "callee" : "setConfortClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 50,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@50:14",
+          "callee" : "setEconomyClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@51:14",
+          "callee" : "setAverageSpeed",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 120,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@52:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 54,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "TrainType",
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@54:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@55:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "KuaiSu",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 56,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@56:14",
+          "callee" : "setConfortClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 57,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@57:14",
+          "callee" : "setEconomyClass",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "MAX_VALUE",
+            "of" : {
+              "name" : "Integer",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 58,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@58:14",
+          "callee" : "setAverageSpeed",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 90,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 59,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@59:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+      "line" : 22,
+      "end" : 39,
+      "params" : [ {
+        "name" : "trainType",
+        "type" : "TrainType"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 24,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "boolean",
+        "operator" : "=",
+        "expr" : {
+          "lit" : false,
+          "type" : "boolean"
+        }
+      }, {
+        "op" : "if",
+        "line" : 25,
+        "id" : "b25",
+        "cond" : {
+          "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@25:32",
+          "callee" : "isEmpty",
+          "recv" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@25:22",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "trainType",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 26,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@26:37",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TrainServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[create][Create train error][Train Type name not specified]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 27,
+          "expr" : {
+            "name" : "result",
+            "ref" : "local"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 29,
+        "id" : "b29",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@29:24",
+            "callee" : "findByName",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@29:45",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 30,
+          "target" : {
+            "name" : "type",
+            "ref" : "local"
+          },
+          "decl" : "TrainType",
+          "operator" : "=",
+          "expr" : {
+            "new" : "TrainType",
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@30:30",
+            "args" : [ {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@30:54",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@30:75",
+              "callee" : "getEconomyClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@30:104",
+              "callee" : "getConfortClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 31,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@31:18",
+            "callee" : "setAverageSpeed",
+            "recv" : {
+              "name" : "type",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@31:44",
+              "callee" : "getAverageSpeed",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 32,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@32:24",
+            "callee" : "save",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "type",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 33,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "lit" : true,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 36,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@36:37",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TrainServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[create][Create train error][Train already exists][TrainTypeId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@36:123",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-train-service:train.service.TrainServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+      "line" : 89,
+      "end" : 100,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 91,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "boolean",
+        "operator" : "=",
+        "expr" : {
+          "lit" : false,
+          "type" : "boolean"
+        }
+      }, {
+        "op" : "if",
+        "line" : 92,
+        "id" : "b92",
+        "cond" : {
+          "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@92:37",
+          "callee" : "isPresent",
+          "recv" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@92:24",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          },
+          "args" : [ ]
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 93,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@93:24",
+            "callee" : "deleteById",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 94,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "lit" : true,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 97,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@97:37",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TrainServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[delete][Delete train error][Train not found][TrainTypeId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 99,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-train-service:train.service.TrainServiceImpl#query(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+      "line" : 102,
+      "end" : 105,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 104,
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#query(org.springframework.http.HttpHeaders)@104:27",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-train-service:train.service.TrainServiceImpl#retrieve(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+      "line" : 41,
+      "end" : 49,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "if",
+        "line" : 43,
+        "id" : "b43",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@43:38",
+            "callee" : "isPresent",
+            "recv" : {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@43:25",
+              "callee" : "findById",
+              "recv" : {
+                "name" : "repository",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "name" : "id",
+                "ref" : "param"
+              } ]
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 44,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@44:37",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TrainServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[retrieve][Retrieve train error][Train not found][TrainTypeId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 45,
+          "expr" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 47,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@47:44",
+            "callee" : "get",
+            "recv" : {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@47:31",
+              "callee" : "findById",
+              "recv" : {
+                "name" : "repository",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "name" : "id",
+                "ref" : "param"
+              } ]
+            },
+            "args" : [ ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.service.TrainServiceImpl#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+      "line" : 51,
+      "end" : 60,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 53,
+        "target" : {
+          "name" : "tt",
+          "ref" : "local"
+        },
+        "decl" : "TrainType",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@53:35",
+          "callee" : "findByName",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "name",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 54,
+        "id" : "b54",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "tt",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 55,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@55:37",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TrainServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[retrieveByName][RetrieveByName error][Train not found][TrainTypeName: {}]",
+              "type" : "string"
+            }, {
+              "name" : "name",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 56,
+          "expr" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 58,
+          "expr" : {
+            "name" : "tt",
+            "ref" : "local"
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.service.TrainServiceImpl#retrieveByNames(java.util.List,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+      "line" : 62,
+      "end" : 71,
+      "params" : [ {
+        "name" : "names",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 64,
+        "target" : {
+          "name" : "tt",
+          "ref" : "local"
+        },
+        "decl" : "List<TrainType>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieveByNames(java.util.List,org.springframework.http.HttpHeaders)@64:41",
+          "callee" : "findByNames",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "names",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 65,
+        "id" : "b65",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "name" : "tt",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieveByNames(java.util.List,org.springframework.http.HttpHeaders)@65:30",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "tt",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 66,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#retrieveByNames(java.util.List,org.springframework.http.HttpHeaders)@66:37",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TrainServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[retrieveByNames][RetrieveByNames error][Train not found][TrainTypeNames: {}]",
+              "type" : "string"
+            }, {
+              "name" : "names",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 67,
+          "expr" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 69,
+          "expr" : {
+            "name" : "tt",
+            "ref" : "local"
+          }
+        } ]
+      } ]
+    },
+    "method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+      "line" : 73,
+      "end" : 87,
+      "params" : [ {
+        "name" : "trainType",
+        "type" : "TrainType"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 76,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "boolean",
+        "operator" : "=",
+        "expr" : {
+          "lit" : false,
+          "type" : "boolean"
+        }
+      }, {
+        "op" : "if",
+        "line" : 77,
+        "id" : "b77",
+        "cond" : {
+          "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@77:52",
+          "callee" : "isPresent",
+          "recv" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@77:24",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@77:43",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "args" : [ ]
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 78,
+          "target" : {
+            "name" : "type",
+            "ref" : "local"
+          },
+          "decl" : "TrainType",
+          "operator" : "=",
+          "expr" : {
+            "new" : "TrainType",
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@78:30",
+            "args" : [ {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@78:54",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@78:75",
+              "callee" : "getEconomyClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@78:104",
+              "callee" : "getConfortClass",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@78:133",
+              "callee" : "getAverageSpeed",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 79,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@79:18",
+            "callee" : "setId",
+            "recv" : {
+              "name" : "type",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@79:34",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 80,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@80:24",
+            "callee" : "save",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "type",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 81,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "lit" : true,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 84,
+          "expr" : {
+            "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@84:37",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "TrainServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[update][Update train error][Train not found][TrainTypeId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@84:118",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "trainType",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 86,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    }
+  }
+}

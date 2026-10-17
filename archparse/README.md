@@ -174,6 +174,90 @@ if (orderResult.getStatus() == 1) {
 
 Проверка: все 273 вызова репозиториев находят `call_site` скелета, и все `call_site` с `data_access` покрыты (`tests/test_entities.py`, `EntityScannerTest`).
 
+### 3.6. IR тел всех методов (M2): `data/ir/<module>.json`
+
+Контракт M2 из ADR-005 для исполнителя M4. Режим `--mode bodies`, запуск: `& .\gradlew.bat run --args="--mode bodies"`. Покрывает все методы скелета с телом (1196 из 1538: остальные абстрактные), включая конструкторы (`#<init>`) и методы анонимных классов (`Foo$1#bar`). `pool_ir.json` и `entity_ir.json` не меняются, движок их читает как раньше.
+
+Файл на модуль:
+
+```json
+{
+  "schema": "method_ir/1",
+  "module": "ts-cancel-service",
+  "methods": {
+    "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)": {
+      "file": "ts-cancel-service/src/main/java/cancel/service/CancelServiceImpl.java",
+      "line": 45, "end": 141,
+      "params": [{"name": "orderId", "type": "String"}, {"name": "loginId", "type": "String"}, {"name": "headers", "type": "HttpHeaders"}],
+      "body": [
+        {"op": "assign", "line": 48, "target": {"name": "orderResult", "ref": "local"}, "decl": "Response<Order>", "operator": "=",
+         "expr": {"call": "call:method:ts-cancel-service:...#cancelOrder(...)@48:39", "callee": "getOrderByIdFromOrder",
+                  "recv": null, "args": [{"name": "orderId", "ref": "param"}, {"name": "headers", "ref": "param"}]}},
+        {"op": "if", "line": 49, "id": "b49",
+         "cond": {"bin": "==", "l": {"call": "call:...@49:25", "callee": "getStatus", "recv": {"name": "orderResult", "ref": "local"}, "args": []},
+                  "r": {"lit": 1, "type": "int"}},
+         "then": [{"op": "expr", "line": 50, "expr": {"call": "call:...@50:38", "callee": "info",
+                   "recv": {"field": "LOGGER", "of": {"name": "CancelServiceImpl", "ref": "type"}}, "args": ["..."]}}, "..."],
+         "else": ["..."]}
+      ]
+    }
+  }
+}
+```
+
+Ключ `methods` — ID узла скелета, дословно. Методы матчатся со скелетом по файлу, имени, числу параметров и строке объявления.
+
+Операторы (`op`, у каждого `line`):
+
+| `op` | Поля |
+|---|---|
+| `assign` | `target` (выражение), `expr` (нет у объявления без инициализатора), `decl` (тип, если это объявление), `operator` (`=`, `+=` и т. п.) |
+| `expr` | `expr` |
+| `if` | `id` (`b<строка>`, как в `pool_ir.json`), `cond`, `then`, `else` (`else if` — вложенный `if` в `else`) |
+| `switch` | `selector`, `cases`: `[{"labels": [выражения], "body": [...]}]`, пустой `labels` — `default` |
+| `while`, `do` | `cond`, `body` |
+| `for` | `init` (операторы), `cond`, `update` (выражения), `body` |
+| `foreach` | `id` (`f<строка>:<коллекция>`), `var`, `var_type`, `iter`, `body` |
+| `try` | `id` (`t<строка>`), `resources` (операторы), `body`, `catches`: `[{"types": [...], "var": "e", "body": [...]}]`, `finally` |
+| `return` | `expr` (может не быть) |
+| `throw` | `expr` |
+| `break`, `continue` | `label` (может не быть) |
+| `block` | `body`: блок `synchronized` (`lock`), метка (`label`) или вложенный `{}` |
+| `unsupported` | `text`: локальный класс, `assert` и прочее, чего нет в Train Ticket на путях сценариев |
+
+Выражения (объект, вид определяется ключом):
+
+| Ключ | Поля | Пример |
+|---|---|---|
+| `lit` | `type`: `int`, `long`, `double`, `char`, `string`, `boolean`, `null` | `{"lit": 1, "type": "int"}` |
+| `name` | `ref`: `local`, `param`, `field`, `type` (имя класса, `StringUtils`), `static` (статический импорт не из проекта, `ALL`), `unknown` (переменная внешнего метода в анонимном классе) | `{"name": "order", "ref": "local"}` |
+| `field` | `of` (выражение) | `order.status` |
+| `enum` | `constant`, `args` (литералы аргументов константы в объявлении enum) | `{"enum": "edu.fudan.common.entity.OrderStatus", "constant": "PAID", "args": [{"lit": 1, ...}, {"lit": "Paid & Not Collected", ...}]}` |
+| `const` | `value` (литерал): `static final` поле с литералом | `{"const": "edu.fudan.common.util.Constant.X", "value": {...}}` |
+| `call` | `callee`, `recv` (выражение или `null`), `args`, `target` (если вызова нет в скелете, но цель найдена) | см. выше |
+| `new` | `type`, `args`, `call` (call_site конструктора, если есть), `anon` (ID узла анонимного типа скелета; тело — отдельные методы `Foo$1#...`) | |
+| `new_array` | `type`, `dims`, `init` | |
+| `bin` | `l`, `r`: `+ - * / % == != < <= > >= && \|\| & \| ^ << >> >>>` | |
+| `un` | `e`: `! - + ~ ++pre --pre post++ post--` | |
+| `assign` | значение — оператор (`=`, `+=`), `target`, `expr`: присваивание внутри выражения | `x = y = 0` |
+| `tern` | `then`, `else` (значение `tern` — условие) | |
+| `cast`, `instanceof` | `e` (значение ключа — тип) | |
+| `index` | `of` | `arr[i]` |
+| `lambda` | `line`, `params`, `body` (операторы; тело-выражение — `[{"op": "return", ...}]`) | отложенный блок, R16 |
+| `method_ref` | `call` (call_site скелета с `method_ref: true`, если есть) | `Foo::bar` |
+| `this`, `super`, `class` | | `Foo.class` |
+| `text` | — | выражение, которое не разобрано (страховка) |
+
+Правила:
+
+- `call` — ID call_site скелета по `(file, line, col)` (колонка в байтах UTF-8, раздел 3.2; у ссылки на метод — имя после `::`, у `::new` — начало выражения). В скелете есть call_site почти у всех вызовов, включая геттеры Lombok и вызовы на enum-константах. Если call_site нет, ID свой: `ircall:<method_id>@<строка>:<колонка>`, и `target` заполняется, когда цель однозначна (метод того же класса, enum, статический метод класса проекта). Сейчас таких вызовов 4: `super(...)` в конструкторах исключений.
+- Куда ведёт вызов со skeleton-ID, IR не повторяет: цели, `runtime_dispatch`, `remote_call` и `data_access` берутся из скелета по ID call_site.
+- `enum` и `const` вычисляются по всем исходникам проекта: 12 enum-типов, `static final` поля с литералом. Тип enum ищется по импорту, затем в том же модуле, затем в `ts-common`.
+- `ref` у имени — по области видимости в методе: параметр, локальная переменная (включая переменные цикла, `catch` и параметры лямбды), поле класса, имя класса (с заглавной буквы и не переменная).
+- Внутрь тела анонимного класса не заходим: у его методов свои записи с ID скелета.
+
+Проверка: все 1196 методов скелета с телом найдены, все 8961 call_site скелета встречаются в IR ровно один раз и в своём методе, неразобранных выражений нет (`MethodIrWriterTest`). Объём: 42 файла, около 5.4 МБ.
+
 ## 4. Задачи на сегодня (по порядку)
 
 1. **(10 мин, не archparse)** Поправить `rules.py`: убрать баг из 0.1 (`getOrderByIdFromOrder(`/`executeOrder(`-пробник не должен быть в списке исключений для `regular_only`). Прогнать `run_eval.py` на S0, убедиться, что ничего не сломалось (в S0 это не задействовано — login/contacts/orders/consign, cancel/execute не участвуют, так что тест только на регрессию, не на улучшение S0).
@@ -189,4 +273,4 @@ if (orderResult.getStatus() == 1) {
 
 - Подключение `pool_ir.json` к `engine/graph/builder.py`/`rules.py` как источник условий вместо части `ScenarioProfile`-флагов — отдельная задача, зависит от того, появятся ли у M1 конкретные параметры шага (`assurance`, `foodType`, `tripId`...) — сейчас `engine/resolver.py` даёт только ID обработчика, не значения полей запроса. Без этого даже идеальный `pool_ir.json` не даст движку автоматически вычислить ветку — п. 7 выше (текстовая памятка) существует именно потому, что автоматическая интеграция не успеет сегодня.
 - Расширение пула на `TokenServiceImpl.getToken` (verifyCode-гейт), `UserServiceImpl.saveUser/createDefaultAuthUser` (S4), `AdminOrderServiceImpl.getAllOrders` (S6) — после того, как формат пройдёт обкатку на первой пятёрке.
-- Полный IR по ADR-005 (`ir/<module>.json`, все операторы, lambda-блоки, try/catch) — после хакатона или если Day 1 пул даст заметный прирост и останется время.
+- Полный IR по ADR-005 сделан 17.10: `data/ir/<module>.json`, раздел 3.6.

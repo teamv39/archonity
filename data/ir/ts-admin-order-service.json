@@ -1,0 +1,1950 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-admin-order-service",
+  "methods" : {
+    "method:ts-admin-order-service:adminorder.AdminOrderApplication#main(java.lang.String[])" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/AdminOrderApplication.java",
+      "line" : 25,
+      "end" : 27,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 26,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.AdminOrderApplication#main(java.lang.String[])@26:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "AdminOrderApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.AdminOrderApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/AdminOrderApplication.java",
+      "line" : 29,
+      "end" : 33,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.AdminOrderApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@32:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:62",
+                      "callee" : "hasRole",
+                      "recv" : {
+                        "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/adminorderservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "ADMIN",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-admin-order-service:adminorder.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.controller.AdminOrderController#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/controller/AdminOrderController.java",
+      "line" : 38,
+      "end" : 42,
+      "params" : [ {
+        "name" : "request",
+        "type" : "Order"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@40:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[addOrder][Add new order][AccountID: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@40:73",
+            "callee" : "getAccountId",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@41:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@41:37",
+            "callee" : "addOrder",
+            "recv" : {
+              "name" : "adminOrderService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "request",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.controller.AdminOrderController#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/controller/AdminOrderController.java",
+      "line" : 50,
+      "end" : 54,
+      "params" : [ {
+        "name" : "orderId",
+        "type" : "String"
+      }, {
+        "name" : "trainNumber",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@52:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[deleteOrder][Delete order][OrderId: {}, TrainNumber: {}]",
+            "type" : "string"
+          }, {
+            "name" : "orderId",
+            "ref" : "param"
+          }, {
+            "name" : "trainNumber",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@53:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@53:37",
+            "callee" : "deleteOrder",
+            "recv" : {
+              "name" : "adminOrderService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "orderId",
+              "ref" : "param"
+            }, {
+              "name" : "trainNumber",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/controller/AdminOrderController.java",
+      "line" : 31,
+      "end" : 36,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)@34:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[getAllOrders][Get all orders][getAllOrders]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)@35:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)@35:37",
+            "callee" : "getAllOrders",
+            "recv" : {
+              "name" : "adminOrderService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.controller.AdminOrderController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/controller/AdminOrderController.java",
+      "line" : 26,
+      "end" : 29,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 28,
+        "expr" : {
+          "lit" : "Welcome to [Admin Order Service] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.controller.AdminOrderController#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/controller/AdminOrderController.java",
+      "line" : 44,
+      "end" : 48,
+      "params" : [ {
+        "name" : "request",
+        "type" : "Order"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 46,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@46:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[updateOrder][Update order][AccountID: {}, OrderId: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@46:88",
+            "callee" : "getAccountId",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@46:112",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@47:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-order-service:adminorder.controller.AdminOrderController#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@47:37",
+            "callee" : "updateOrder",
+            "recv" : {
+              "name" : "adminOrderService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "request",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+      "line" : 148,
+      "end" : 178,
+      "params" : [ {
+        "name" : "request",
+        "type" : "Order"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 151,
+        "target" : {
+          "name" : "addOrderResult",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "expr",
+        "line" : 152,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@152:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[addOrder][ADD ORDER][request info: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@152:72",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 153,
+        "id" : "b153",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@153:38",
+            "callee" : "startsWith",
+            "recv" : {
+              "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@153:21",
+              "callee" : "getTrainNumber",
+              "recv" : {
+                "name" : "request",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "lit" : "G",
+              "type" : "string"
+            } ]
+          },
+          "r" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@153:82",
+            "callee" : "startsWith",
+            "recv" : {
+              "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@153:65",
+              "callee" : "getTrainNumber",
+              "recv" : {
+                "name" : "request",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "lit" : "D",
+              "type" : "string"
+            } ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 154,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@154:42",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[addOrder][Add New Order][trainNumber starts With G or D]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 155,
+          "target" : {
+            "name" : "requestEntity",
+            "ref" : "local"
+          },
+          "decl" : "HttpEntity",
+          "operator" : "=",
+          "expr" : {
+            "new" : "HttpEntity",
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@155:40",
+            "args" : [ {
+              "name" : "request",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 156,
+          "target" : {
+            "name" : "order_service_url",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@156:40",
+            "callee" : "getServiceUrl",
+            "recv" : null,
+            "args" : [ {
+              "lit" : "ts-order-service",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 157,
+          "target" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "decl" : "ResponseEntity<Response>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@157:56",
+            "callee" : "exchange",
+            "recv" : {
+              "name" : "restTemplate",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "bin" : "+",
+              "l" : {
+                "name" : "order_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/orderservice/order/admin",
+                "type" : "string"
+              }
+            }, {
+              "field" : "POST",
+              "of" : {
+                "name" : "HttpMethod",
+                "ref" : "type"
+              }
+            }, {
+              "name" : "requestEntity",
+              "ref" : "local"
+            }, {
+              "class" : "Response"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 162,
+          "target" : {
+            "name" : "addOrderResult",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@162:33",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 165,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@165:42",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[addOrder][Add New Order Other][trainNumber doesn't starts With G or D]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 166,
+          "target" : {
+            "name" : "requestEntity",
+            "ref" : "local"
+          },
+          "decl" : "HttpEntity",
+          "operator" : "=",
+          "expr" : {
+            "new" : "HttpEntity",
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@166:40",
+            "args" : [ {
+              "name" : "request",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 167,
+          "target" : {
+            "name" : "order_other_service_url",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@167:46",
+            "callee" : "getServiceUrl",
+            "recv" : null,
+            "args" : [ {
+              "lit" : "ts-order-other-service",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 168,
+          "target" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "decl" : "ResponseEntity<Response>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@168:56",
+            "callee" : "exchange",
+            "recv" : {
+              "name" : "restTemplate",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "bin" : "+",
+              "l" : {
+                "name" : "order_other_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/orderOtherService/orderOther/admin",
+                "type" : "string"
+              }
+            }, {
+              "field" : "POST",
+              "of" : {
+                "name" : "HttpMethod",
+                "ref" : "type"
+              }
+            }, {
+              "name" : "requestEntity",
+              "ref" : "local"
+            }, {
+              "class" : "Response"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 173,
+          "target" : {
+            "name" : "addOrderResult",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@173:33",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 176,
+        "expr" : {
+          "name" : "addOrderResult",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+      "line" : 86,
+      "end" : 114,
+      "params" : [ {
+        "name" : "orderId",
+        "type" : "String"
+      }, {
+        "name" : "trainNumber",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 88,
+        "target" : {
+          "name" : "deleteOrderResult",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "if",
+        "line" : 89,
+        "id" : "b89",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@89:25",
+            "callee" : "startsWith",
+            "recv" : {
+              "name" : "trainNumber",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "lit" : "G",
+              "type" : "string"
+            } ]
+          },
+          "r" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@89:56",
+            "callee" : "startsWith",
+            "recv" : {
+              "name" : "trainNumber",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "lit" : "D",
+              "type" : "string"
+            } ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 90,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@90:42",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deleteOrder][Delete Order][orderId: {}, trainNumber: {}]",
+              "type" : "string"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            }, {
+              "name" : "trainNumber",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 91,
+          "target" : {
+            "name" : "requestEntity",
+            "ref" : "local"
+          },
+          "decl" : "HttpEntity",
+          "operator" : "=",
+          "expr" : {
+            "new" : "HttpEntity",
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@91:40",
+            "args" : [ {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 92,
+          "target" : {
+            "name" : "order_service_url",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@92:40",
+            "callee" : "getServiceUrl",
+            "recv" : null,
+            "args" : [ {
+              "lit" : "ts-order-service",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 93,
+          "target" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "decl" : "ResponseEntity<Response>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@93:56",
+            "callee" : "exchange",
+            "recv" : {
+              "name" : "restTemplate",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "bin" : "+",
+              "l" : {
+                "bin" : "+",
+                "l" : {
+                  "name" : "order_service_url",
+                  "ref" : "local"
+                },
+                "r" : {
+                  "lit" : "/api/v1/orderservice/order/",
+                  "type" : "string"
+                }
+              },
+              "r" : {
+                "name" : "orderId",
+                "ref" : "param"
+              }
+            }, {
+              "field" : "DELETE",
+              "of" : {
+                "name" : "HttpMethod",
+                "ref" : "type"
+              }
+            }, {
+              "name" : "requestEntity",
+              "ref" : "local"
+            }, {
+              "class" : "Response"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 98,
+          "target" : {
+            "name" : "deleteOrderResult",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@98:36",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 101,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@101:42",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deleteOrder][Delete Order Other][trainNumber doesn't starts With G or D]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 102,
+          "target" : {
+            "name" : "requestEntity",
+            "ref" : "local"
+          },
+          "decl" : "HttpEntity",
+          "operator" : "=",
+          "expr" : {
+            "new" : "HttpEntity",
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@102:40",
+            "args" : [ {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 103,
+          "target" : {
+            "name" : "order_other_service_url",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@103:46",
+            "callee" : "getServiceUrl",
+            "recv" : null,
+            "args" : [ {
+              "lit" : "ts-order-other-service",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 104,
+          "target" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "decl" : "ResponseEntity<Response>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@104:56",
+            "callee" : "exchange",
+            "recv" : {
+              "name" : "restTemplate",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "bin" : "+",
+              "l" : {
+                "bin" : "+",
+                "l" : {
+                  "name" : "order_other_service_url",
+                  "ref" : "local"
+                },
+                "r" : {
+                  "lit" : "/api/v1/orderOtherService/orderOther/",
+                  "type" : "string"
+                }
+              },
+              "r" : {
+                "name" : "orderId",
+                "ref" : "param"
+              }
+            }, {
+              "field" : "DELETE",
+              "of" : {
+                "name" : "HttpMethod",
+                "ref" : "type"
+              }
+            }, {
+              "name" : "requestEntity",
+              "ref" : "local"
+            }, {
+              "class" : "Response"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 109,
+          "target" : {
+            "name" : "deleteOrderResult",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@109:36",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 112,
+        "expr" : {
+          "name" : "deleteOrderResult",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+      "line" : 38,
+      "end" : 84,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@41:38",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminOrderServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllOrders][Get All Orders: Generate Reponse Begin]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "name" : "orders",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<Order>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@43:35",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 45,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@45:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 47,
+        "target" : {
+          "name" : "order_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@47:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-order-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 48,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<Order>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@48:70",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "order_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/orderservice/order",
+              "type" : "string"
+            }
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<Order>>>",
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@52:17",
+            "args" : [ ],
+            "anon" : "type:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl$1"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 54,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response<ArrayList<Order>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@54:48",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 56,
+        "id" : "b56",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@56:20",
+            "callee" : "getStatus",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : 1,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 57,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@57:42",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getAllOrders][Get Orders From ts-order-service successfully!]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 58,
+          "target" : {
+            "name" : "orders1",
+            "ref" : "local"
+          },
+          "decl" : "ArrayList<Order>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@58:47",
+            "callee" : "getData",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 59,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@59:20",
+            "callee" : "addAll",
+            "recv" : {
+              "name" : "orders",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "orders1",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 61,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@61:42",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getAllOrders][receive response][Get Orders From ts-order-service fail!]",
+              "type" : "string"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 64,
+        "target" : {
+          "name" : "requestEntity2",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@64:37",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 65,
+        "target" : {
+          "name" : "order_other_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@65:42",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-order-other-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 66,
+        "target" : {
+          "name" : "re2",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<ArrayList<Order>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@66:71",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "order_other_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/orderOtherService/orderOther",
+              "type" : "string"
+            }
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity2",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<ArrayList<Order>>>",
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@70:17",
+            "args" : [ ],
+            "anon" : "type:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl$2"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 72,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@72:22",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re2",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 74,
+        "id" : "b74",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@74:20",
+            "callee" : "getStatus",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : 1,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 75,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@75:42",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getAllOrders][Get Orders From ts-order-other-service successfully!]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 76,
+          "target" : {
+            "name" : "orders1",
+            "ref" : "local"
+          },
+          "decl" : "ArrayList<Order>",
+          "operator" : "=",
+          "expr" : {
+            "cast" : "ArrayList<Order>",
+            "e" : {
+              "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@76:66",
+              "callee" : "getData",
+              "recv" : {
+                "name" : "result",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        }, {
+          "op" : "expr",
+          "line" : 77,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@77:20",
+            "callee" : "addAll",
+            "recv" : {
+              "name" : "orders",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "orders1",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 79,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@79:42",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getAllOrders][receive response][Get Orders From ts-order-other-service fail!]",
+              "type" : "string"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 82,
+        "expr" : {
+          "new" : "Response<>",
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@82:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "Get the orders successfully!",
+            "type" : "string"
+          }, {
+            "name" : "orders",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getServiceUrl(java.lang.String)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+      "line" : 34,
+      "end" : 36,
+      "params" : [ {
+        "name" : "serviceName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "lit" : "http://",
+            "type" : "string"
+          },
+          "r" : {
+            "name" : "serviceName",
+            "ref" : "param"
+          }
+        }
+      } ]
+    },
+    "method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-order-service/src/main/java/adminorder/service/AdminOrderServiceImpl.java",
+      "line" : 116,
+      "end" : 146,
+      "params" : [ {
+        "name" : "request",
+        "type" : "Order"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 119,
+        "target" : {
+          "name" : "updateOrderResult",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "expr",
+        "line" : 120,
+        "expr" : {
+          "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@120:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[updateOrder][UPDATE ORDER INFO][request info: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@120:83",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 121,
+        "id" : "b121",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@121:38",
+            "callee" : "startsWith",
+            "recv" : {
+              "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@121:21",
+              "callee" : "getTrainNumber",
+              "recv" : {
+                "name" : "request",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "lit" : "G",
+              "type" : "string"
+            } ]
+          },
+          "r" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@121:82",
+            "callee" : "startsWith",
+            "recv" : {
+              "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@121:65",
+              "callee" : "getTrainNumber",
+              "recv" : {
+                "name" : "request",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "lit" : "D",
+              "type" : "string"
+            } ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 123,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@123:42",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[updateOrder][Update Order][trainNumber starts With G or D]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 124,
+          "target" : {
+            "name" : "requestEntity",
+            "ref" : "local"
+          },
+          "decl" : "HttpEntity",
+          "operator" : "=",
+          "expr" : {
+            "new" : "HttpEntity",
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@124:40",
+            "args" : [ {
+              "name" : "request",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 125,
+          "target" : {
+            "name" : "order_service_url",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@125:40",
+            "callee" : "getServiceUrl",
+            "recv" : null,
+            "args" : [ {
+              "lit" : "ts-order-service",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 126,
+          "target" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "decl" : "ResponseEntity<Response>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@126:56",
+            "callee" : "exchange",
+            "recv" : {
+              "name" : "restTemplate",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "bin" : "+",
+              "l" : {
+                "name" : "order_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/orderservice/order/admin",
+                "type" : "string"
+              }
+            }, {
+              "field" : "PUT",
+              "of" : {
+                "name" : "HttpMethod",
+                "ref" : "type"
+              }
+            }, {
+              "name" : "requestEntity",
+              "ref" : "local"
+            }, {
+              "class" : "Response"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 131,
+          "target" : {
+            "name" : "updateOrderResult",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@131:36",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 134,
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@134:42",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminOrderServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[updateOrder][Add New Order Other][trainNumber doesn't starts With G or D]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 135,
+          "target" : {
+            "name" : "requestEntity",
+            "ref" : "local"
+          },
+          "decl" : "HttpEntity",
+          "operator" : "=",
+          "expr" : {
+            "new" : "HttpEntity",
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@135:40",
+            "args" : [ {
+              "name" : "request",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 136,
+          "target" : {
+            "name" : "order_other_service_url",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@136:46",
+            "callee" : "getServiceUrl",
+            "recv" : null,
+            "args" : [ {
+              "lit" : "ts-order-other-service",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 137,
+          "target" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "decl" : "ResponseEntity<Response>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@137:56",
+            "callee" : "exchange",
+            "recv" : {
+              "name" : "restTemplate",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "bin" : "+",
+              "l" : {
+                "name" : "order_other_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/orderOtherService/orderOther/admin",
+                "type" : "string"
+              }
+            }, {
+              "field" : "PUT",
+              "of" : {
+                "name" : "HttpMethod",
+                "ref" : "type"
+              }
+            }, {
+              "name" : "requestEntity",
+              "ref" : "local"
+            }, {
+              "class" : "Response"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 142,
+          "target" : {
+            "name" : "updateOrderResult",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@142:36",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 145,
+        "expr" : {
+          "name" : "updateOrderResult",
+          "ref" : "local"
+        }
+      } ]
+    }
+  }
+}
