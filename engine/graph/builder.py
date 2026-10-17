@@ -90,9 +90,8 @@ class GraphBuilder:
                     # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                     if hasattr(self.index, "edge_guards"):
                         guards = self.index.edge_guards.get((m, "calls", x)) or self.index.edge_guards.get((m, "calls", t))
-                        if guards:
-                            if not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
-                                continue
+                        if guards and not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
+                            continue
 
                     # Исключаем вызовы конструкторов ошибок в штатных успешных сценариях
                     if "Exception#<init>" in x:
@@ -118,9 +117,8 @@ class GraphBuilder:
                         self.index.edge_guards.get((m, "remote_call", t))
                         or self.index.edge_guards.get((m, "message_delivery", t))
                     )
-                    if guards:
-                        if not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
-                            continue
+                    if guards and not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
+                        continue
 
                 edges_remote.add((m, t))
                 stack.append((t, self.index.unit_of(t)))
@@ -134,9 +132,8 @@ class GraphBuilder:
                 # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                 if hasattr(self.index, "edge_guards"):
                     guards = self.index.edge_guards.get((m, "data_access", t))
-                    if guards:
-                        if not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
-                            continue
+                    if guards and not any(self.index.pool_ir.evaluate_guard(m, g, profile, scenario_state) for g in guards):
+                        continue
 
                 edges_data.add((m, t))
 
@@ -210,10 +207,29 @@ class GraphBuilder:
 
         # ts-order-service.orders
         if any("ts-order-service.orders" in t for t in table_targets):
-            order_init = "method:ts-order-service:order.entity.Order#<init>()"
-            if order_init in self.index.N:
-                active_methods.add(order_init)
-                self._add_order_constructor_calls(order_init, active_methods, edges_calls)
+            has_gt_orders = True
+            is_new = False
+            if scenario_state is not None:
+                is_new = scenario_state.is_new_user
+            if profile is not None and not is_new:
+                is_new = getattr(profile, "is_new_user", False)
+
+            if is_new:
+                if scenario_state is not None:
+                    has_gt_orders = any(
+                        getattr(o.get("train_type", None), "name", str(o.get("train_type", ""))) in ("GaoTie", "DongChe")
+                        or o.get("train_type") == TrainType.GaoTie
+                        or o.get("train_type") == "GaoTie"
+                        for o in scenario_state.orders
+                    )
+                else:
+                    has_gt_orders = False
+
+            if has_gt_orders:
+                order_init = "method:ts-order-service:order.entity.Order#<init>()"
+                if order_init in self.index.N:
+                    active_methods.add(order_init)
+                    self._add_order_constructor_calls(order_init, active_methods, edges_calls)
 
         # ts-order-other-service.orders_other
         if any("ts-order-other-service.orders_other" in t for t in table_targets):
@@ -221,7 +237,7 @@ class GraphBuilder:
             is_new = False
             if scenario_state is not None:
                 is_new = scenario_state.is_new_user
-            elif profile is not None:
+            if profile is not None and not is_new:
                 is_new = getattr(profile, "is_new_user", False)
 
             if is_new:
