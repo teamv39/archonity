@@ -224,13 +224,13 @@ class SubmissionAdapter:
     def save(self, output_path: str | Path) -> None:
         p = Path(output_path)
         p.parent.mkdir(parents=True, exist_ok=True)
-        with open(p, "w", encoding="utf-8") as f:
+        with open(p, "w", encoding="utf-8", newline="\n") as f:
             json.dump(self.to_dict(), f, ensure_ascii=False, indent=1)
 
     def save_canonical_graph(self, output_path: str | Path) -> None:
         p = Path(output_path)
         p.parent.mkdir(parents=True, exist_ok=True)
-        with open(p, "w", encoding="utf-8") as f:
+        with open(p, "w", encoding="utf-8", newline="\n") as f:
             json.dump(self.to_canonical_graph(), f, ensure_ascii=False, indent=2)
 
     def save_evidence_log(self, output_path: str | Path) -> None:
