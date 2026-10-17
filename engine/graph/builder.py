@@ -155,10 +155,12 @@ class GraphBuilder:
                         ledger.include("calls", m, x, source_type, rule)
 
             # 2. Межсервисные вызовы (remote_call + message_delivery)
-            remote_targets = (
-                self.index.wiring["remote_call"].get(m, set())
-                | self.index.wiring["message_delivery"].get(m, set())
-            )
+            remote_targets = set(self.index.wiring["remote_call"].get(m, set()))
+            if getattr(self.rules, "rabbitmq_delivery", "on") != "off":
+                remote_targets |= self.index.wiring["message_delivery"].get(m, set())
+            elif ledger:
+                for tgt in self.index.wiring["message_delivery"].get(m, set()):
+                    ledger.prune("remote", m, tgt, "DEFAULT_RULE", "ablate_rabbitmq_delivery")
             for t in remote_targets:
                 if self.rules.is_dead_code_method(t, profile=profile, is_admin_scenario=is_admin_scenario):
                     self._prune_by_rule(self.rules.is_dead_code_method, "remote", m, t, profile, is_admin_scenario)
@@ -195,6 +197,27 @@ class GraphBuilder:
             for t in self.index.wiring["data_access"].get(m, set()):
                 if self.rules.is_dead_code_edge(m, "data", t, profile=profile, is_admin_scenario=is_admin_scenario):
                     self._prune_by_rule(self.rules.is_dead_code_edge, "data", m, t, profile, is_admin_scenario)
+                    continue
+
+                # Таблица коллекции блюд station_food_list: шаг 4 в S2/S3 (listFoodStoresByStationName) читает
+                # только информацию о магазинах без позиций блюд, в отличие от шагов с просмотром меню в S1/S4.
+                sf_mode = getattr(self.rules, "station_food_collection", "step4_store_only")
+                if "station_food_list" in t:
+                    if sf_mode == "off" or (sf_mode == "step4_store_only" and "listFoodStoresByStationName" in m):
+                        if ledger:
+                            ledger.prune("data", m, t, "FRAMEWORK_RULE", "station_store_browse_no_food_list")
+                        continue
+
+                # Зондирующий SELECT в S2 (шаги 9 и 10): в сценариях обычных поездов (regular_only)
+                # заказ находится в ts-order-other-service, запрос в ts-order-service возвращает 0 строк
+                if (
+                    getattr(self.rules, "probe_orders_data", "on") == "off"
+                    and getattr(profile, "train_mode", "") == "regular_only"
+                    and "OrderServiceImpl#getOrderById" in m
+                    and "ts-order-service.orders" in t
+                ):
+                    if ledger:
+                        ledger.prune("data", m, t, "STATE", "regular_train_probe_empty_orders")
                     continue
 
                 # Проверка активности вызова по AST Guard из IR (M2 -> M4)
