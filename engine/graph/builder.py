@@ -252,7 +252,8 @@ class GraphBuilder:
         Возвращает [(конструктор, правило, ребро data, через которое он исполнился)].
         """
         entities = getattr(self.index, "entities", None)
-        if entities is None:
+        mode = getattr(self.rules, "entity_constructors_on_load", "body")
+        if entities is None or mode == "off":
             return []
         out: list[tuple[str, str, str]] = []
         for call in entities.calls_by_method.get(m, ()):
@@ -265,7 +266,8 @@ class GraphBuilder:
                 if not active:
                     continue
             is_new_user = bool(getattr(scenario_state, "is_new_user", False) or getattr(profile, "is_new_user", False))
-            decision = hydration(call, scenario_state, self.index.table_resource_to_db, is_new_user)
+            decision = hydration(call, scenario_state, self.index.table_resource_to_db, is_new_user,
+                                 allowed=entities.allowed_ctors(mode))
             via = f"data|{m}|{call.main_table or table}"
             if decision.ctors:
                 out.extend((ctor, decision.rule, via) for ctor in decision.ctors)
