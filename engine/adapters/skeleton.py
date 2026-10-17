@@ -135,6 +135,12 @@ class SkeletonIndex:
         self.wiring: dict[str, dict[str, set[str]]] = collections.defaultdict(
             lambda: collections.defaultdict(set)
         )
+        self.call_dispatch: dict[str, dict[str, set[str]]] = collections.defaultdict(
+            lambda: collections.defaultdict(set)
+        )
+
+        cs_calls = collections.defaultdict(set)
+        cs_dispatch = collections.defaultdict(set)
 
         for e in skeleton_dict.get("edges", []):
             etype = e["type"]
@@ -143,11 +149,14 @@ class SkeletonIndex:
             if etype == "calls":
                 caller = self.cs_method.get(src, src)
                 self.calls[caller].add(tgt)
+                cs_calls[src].add(tgt)
             elif etype == "overrides":
                 self.over[tgt].add(src)
             elif etype in ("remote_call", "message_delivery", "runtime_dispatch", "data_access"):
                 caller = self.cs_method.get(src, src)
                 self.wiring[etype][caller].add(tgt)
+                if etype == "runtime_dispatch":
+                    cs_dispatch[src].add(tgt)
 
             # Сопоставление call_site скелета с AST CallIR для извлечения guard
             if etype in ("calls", "remote_call", "message_delivery", "runtime_dispatch", "data_access"):
@@ -160,6 +169,13 @@ class SkeletonIndex:
                         c_ir = self.pool_ir.calls_by_mid_line_col.get((caller_m, line, col))
                         if c_ir is not None:
                             self.edge_guards[(caller_m, etype, tgt)].append(c_ir.guard)
+
+        # Построение точного соответствия (caller, interface_call) -> runtime_dispatch (правило R2)
+        for cs, dispatches in cs_dispatch.items():
+            caller = self.cs_method.get(cs)
+            if caller and cs in cs_calls:
+                for c in cs_calls[cs]:
+                    self.call_dispatch[caller][c].update(dispatches)
 
         self.module = {
             nid: n.get("module") for nid, n in self.N.items() if n.get("kind") == "method"

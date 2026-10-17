@@ -71,11 +71,15 @@ class GraphBuilder:
                             seen_methods.add((enum_target, self.index.unit_of(enum_target)))
             # 1. Внутрисервисные вызовы (calls + overrides/CHA + runtime_dispatch)
             for t in self.index.calls.get(m, ()):
-                dispatch_targets = (
-                    {t}
-                    | self.index.cha(t)
-                    | self.index.wiring["runtime_dispatch"].get(m, set())
-                )
+                # Правило R2: если у вызова есть точный runtime_dispatch в скелете,
+                # в граф идет конкретная реализация. Иначе используем {t} и CHA.
+                dispatches = getattr(self.index, "call_dispatch", {}).get(m, {}).get(t)
+                if dispatches:
+                    dispatch_targets = set(dispatches)
+                elif self.index.N.get(t, {}).get("abstract"):
+                    dispatch_targets = self.index.cha(t)
+                else:
+                    dispatch_targets = {t} | self.index.cha(t)
                 for x in dispatch_targets:
                     if self.index.N.get(x, {}).get("abstract"):
                         continue
