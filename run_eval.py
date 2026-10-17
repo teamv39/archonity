@@ -109,6 +109,12 @@ def parse_args() -> argparse.Namespace:
         help="Вызовы методов перечисления AssuranceType (Гипотеза 3.1): on — учитывать вызовы геттеров перечисления в getAllAssuranceTypes (по умолчанию), off — абляция (исключить на шаге 15 в S3)",
     )
     parser.add_argument(
+        "--trip-food-query",
+        choices=("cascade", "direct_train_food"),
+        default="cascade",
+        help="Режим запроса еды поездки в getAllFood (Гипотеза 1.1 / 4.1): cascade — опрашивать станционную еду (по умолчанию), direct_train_food — абляция (только поездное меню в S1/S4)",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -233,6 +239,7 @@ def main() -> None:
         station_food_collection=args.station_food_collection,
         probe_orders_data=args.probe_orders_data,
         enum_member_calls=args.enum_member_calls,
+        trip_food_query=args.trip_food_query,
         grounder=args.grounder,
         m1_options=m1_options,
     )

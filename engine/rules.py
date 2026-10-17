@@ -266,6 +266,11 @@ class RuntimeRules:
     # off — абляция (исключить вызовы геттеров перечисления на шаге 15 в S3).
     ENUM_MEMBER_CALLS_MODES = ("on", "off")
 
+    # Режим запроса еды поездки в getAllFood (Гипотеза 1.1 / 4.1):
+    # cascade (по умолчанию) — опрашивать станционную еду по маршруту следования поезда;
+    # direct_train_food — абляция (пассажир запрашивает только поездное меню в S1/S4).
+    TRIP_FOOD_QUERY_MODES = ("cascade", "direct_train_food")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -276,6 +281,7 @@ class RuntimeRules:
         station_food_collection: str = "step4_store_only",
         probe_orders_data: str = "on",
         enum_member_calls: str = "on",
+        trip_food_query: str = "cascade",
     ) -> None:
         if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
             raise ValueError(
@@ -298,12 +304,15 @@ class RuntimeRules:
             raise ValueError(f"probe_orders_data: {probe_orders_data!r}, ожидается одно из {self.PROBE_ORDERS_DATA_MODES}")
         if enum_member_calls not in self.ENUM_MEMBER_CALLS_MODES:
             raise ValueError(f"enum_member_calls: {enum_member_calls!r}, ожидается одно из {self.ENUM_MEMBER_CALLS_MODES}")
+        if trip_food_query not in self.TRIP_FOOD_QUERY_MODES:
+            raise ValueError(f"trip_food_query: {trip_food_query!r}, ожидается одно из {self.TRIP_FOOD_QUERY_MODES}")
         self.collection_tables_on_read = collection_tables_on_read
         self.element_callbacks = element_callbacks
         self.rabbitmq_delivery = rabbitmq_delivery
         self.station_food_collection = station_food_collection
         self.probe_orders_data = probe_orders_data
         self.enum_member_calls = enum_member_calls
+        self.trip_food_query = trip_food_query
         self.rules_path = Path(rules_path) if rules_path else self.DEFAULT_RULES_PATH
         self.data: dict[str, Any] = {}
         self.admin_services: set[str] = set()

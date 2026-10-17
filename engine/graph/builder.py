@@ -180,6 +180,17 @@ class GraphBuilder:
                     self._prune_by_rule(self.rules.is_dead_code_edge, "remote", m, t, profile, is_admin_scenario)
                     continue
 
+                # Каскадный запрос станционной еды из getAllFood (Гипотеза 1.1 / 4.1):
+                # direct_train_food — пассажир запрашивает только поездное меню в S1/S4
+                if (
+                    getattr(self.rules, "trip_food_query", "cascade") == "direct_train_food"
+                    and "FoodServiceImpl#getAllFood" in m
+                    and "StationFoodController#getFoodStoresByStationNames" in t
+                ):
+                    if ledger:
+                        ledger.prune("remote", m, t, "DEFAULT_RULE", "trip_food_no_station_cascade")
+                    continue
+
                 # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                 source_type, rule = "SKELETON", "reachability"
                 if hasattr(self.index, "edge_guards"):
