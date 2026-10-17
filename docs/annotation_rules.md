@@ -85,6 +85,9 @@ call:method:ts-inside-payment-service:inside_payment.service.InsidePaymentServic
 - `JWTFilter#doFilterInternal` (`ts-common`) исполняется на запросах, ребра от фильтра к обработчику нет.
 - Методы `UserDetails` у `auth.entity.User` (`getAuthorities`, `isAccountNonExpired`, `isAccountNonLocked`, `isCredentialsNonExpired`, `isEnabled`) вызывает Spring Security внутри `authenticationManager.authenticate(...)` — есть в `executes`, нет в `calls`.
 - `UserDetailsServiceImpl#loadUserByUsername` вызывается из `authenticate` — `executes` и `data`, без `calls`.
+- Подтверждено платформой 17.10.2026 (0.91827 против 0.91709): рукописный `equals` сущности, который вызывает библиотека коллекций. `OrderServiceImpl#create` и `OrderOtherServiceImpl#create` проверяют `accountOrders.contains(order)`, `ArrayList` вызывает `order.equals(элемент)` обычным вызовом, не через отражение. Исполняется, только если у владельца уже есть заказы: S1, S2, S3, S5, S6, S7, но не S4 (новый пользователь). `equals` вызывает только геттеры Lombok, так что это одно ребро `executes`. Факты — archparse (`element_callbacks` в `entity_ir.json`), режим `RuntimeRules(element_callbacks=...)` или `run_eval.py --element-callbacks on|off`.
+
+Другие механизмы, которые вызывает фреймворк, разобраны 17.10 (блок 8 плана archparse) и новых рёбер не дают: слушатели RabbitMQ уже идут по R13, `MyCallable#call` (пул потоков travel-service) и `@Async` не исполняются на путях сценариев, `@ExceptionHandler` — только при ошибке входа, колбэков JPA (`@PrePersist`, `@PostLoad`) и `Comparable` в проекте нет, неявного `toString` у `TripId`/`LeftTicketInfo` на путях не найдено.
 
 ### R6. Совпадение имени у ближайшего проектного кадра
 

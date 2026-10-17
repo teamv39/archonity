@@ -212,3 +212,31 @@ class TestLazyCollections:
     def test_unknown_mode_rejected(self) -> None:
         with pytest.raises(ValueError):
             RuntimeRules(collection_tables_on_read="maybe")
+
+
+ORDER_EQUALS = "method:ts-order-service:order.entity.Order#equals(java.lang.Object)"
+ORDER_CREATE_ENTRY = "method:ts-order-service:order.controller.OrderController#createNewOrder(order.entity.Order,org.springframework.http.HttpHeaders)"
+
+
+class TestElementCallbacks:
+    """Блок 8: list.contains(x) на результате чтения вызывает рукописный x.equals(элемент)."""
+
+    def test_fact_bound_to_create(self, index: SkeletonIndex) -> None:
+        call = _calls(index, "OrderServiceImpl#create(", "findByAccountId")[0]
+        assert call.element_callbacks == ((ORDER_EQUALS, "contains"),)
+
+    @pytest.mark.parametrize("mode,has_rows,expected", [("on", True, True), ("on", False, False), ("off", True, False)])
+    def test_equals_executes_only_when_rows(self, index: SkeletonIndex, mode: str, has_rows: bool, expected: bool) -> None:
+        if ORDER_CREATE_ENTRY not in index.N:
+            pytest.skip("нет обработчика создания заказа в скелете")
+        builder = GraphBuilder(index, RuntimeRules(element_callbacks=mode))
+        state = ScenarioState.create_initial(db_state=index.db_state.fork())
+        if not has_rows:
+            state.account_id = "new-user-without-orders"
+        methods, calls, _, _ = builder.traverse([ORDER_CREATE_ENTRY], scenario_state=state)
+        assert (ORDER_EQUALS in methods) == expected
+        assert not any(t == ORDER_EQUALS for _, t in calls)
+
+    def test_unknown_mode_rejected(self) -> None:
+        with pytest.raises(ValueError):
+            RuntimeRules(element_callbacks="maybe")

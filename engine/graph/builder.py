@@ -15,7 +15,7 @@ from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex
 from engine.decisions import DecisionLedger, rules_return_line
-from engine.entities import hydration
+from engine.entities import RepositoryCall, hydration, rows_exist
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
 
@@ -229,6 +229,12 @@ class GraphBuilder:
                 reached_via.setdefault(ctor, ("STATE", rule, via))
                 stack.append((ctor, u))
 
+            # 5. Методы сущности, которые библиотека коллекций вызывает на загруженных строках
+            #    (list.contains(x) -> x.equals(элемент)); ребра calls нет: вызывает библиотека
+            for cb, rule, via in self._element_callbacks(m, edges_data, profile, scenario_state):
+                reached_via.setdefault(cb, ("STATE", rule, via))
+                stack.append((cb, u))
+
         active_methods = {m for m, _ in seen_methods}
         if ledger:
             for m in sorted(active_methods):
@@ -272,16 +278,8 @@ class GraphBuilder:
         if entities is None or mode == "off":
             return []
         out: list[tuple[str, str, str]] = []
-        for call in entities.calls_by_method.get(m, ()):
-            table = next((t for t in sorted(call.tables) if (m, t) in edges_data), None)
-            if table is None:
-                continue
-            c_ir = self.index.pool_ir.calls_by_mid_line_col.get((m, call.line, call.col))
-            if c_ir is not None and c_ir.guard:
-                active, _ = self._eval_guards(m, [c_ir.guard], profile, scenario_state)
-                if not active:
-                    continue
-            is_new_user = bool(getattr(scenario_state, "is_new_user", False) or getattr(profile, "is_new_user", False))
+        is_new_user = self._is_new_user(profile, scenario_state)
+        for call, table in self._executed_repository_calls(m, edges_data, profile, scenario_state):
             decision = hydration(call, scenario_state, self.index.table_resource_to_db, is_new_user,
                                  allowed=entities.allowed_ctors(mode))
             via = f"data|{m}|{call.main_table or table}"
@@ -290,6 +288,63 @@ class GraphBuilder:
             elif self._ledger and call.entity and call.entity.no_arg_ctor and call.entity.ctor_statements > 0:
                 self._ledger.prune("executes", f"scenario:{self._ledger.scenario_id}", call.entity.no_arg_ctor,
                                    "STATE", decision.rule, via=via, line=call.line, col=call.col)
+        return out
+
+    def _executed_repository_calls(
+        self,
+        m: str,
+        edges_data: set[tuple[str, str]],
+        profile: ScenarioProfile | None,
+        scenario_state: ScenarioState | None,
+    ) -> list[tuple[RepositoryCall, str]]:
+        """Вызовы репозитория в методе m, которые исполнились: в ответ вошло ребро data к одной из таблиц
+        вызова, и guard вызова из IR (если метод в пуле) активен. Возвращает [(вызов, таблица)]."""
+        entities = getattr(self.index, "entities", None)
+        out: list[tuple[RepositoryCall, str]] = []
+        for call in entities.calls_by_method.get(m, ()) if entities is not None else ():
+            table = next((t for t in sorted(call.tables) if (m, t) in edges_data), None)
+            if table is None:
+                continue
+            c_ir = self.index.pool_ir.calls_by_mid_line_col.get((m, call.line, call.col))
+            if c_ir is not None and c_ir.guard:
+                active, _ = self._eval_guards(m, [c_ir.guard], profile, scenario_state)
+                if not active:
+                    continue
+            out.append((call, table))
+        return out
+
+    @staticmethod
+    def _is_new_user(profile: ScenarioProfile | None, scenario_state: ScenarioState | None) -> bool:
+        return bool(getattr(scenario_state, "is_new_user", False) or getattr(profile, "is_new_user", False))
+
+    def _element_callbacks(
+        self,
+        m: str,
+        edges_data: set[tuple[str, str]],
+        profile: ScenarioProfile | None,
+        scenario_state: ScenarioState | None,
+    ) -> list[tuple[str, str, str]]:
+        """equals сущности из list.contains(x) на результате чтения: исполняется, если чтение вернуло строки.
+
+        Библиотека коллекций вызывает x.equals(элемент) обычным виртуальным вызовом, не через отражение,
+        поэтому исключение REFERENCE («вызванные библиотекой лишь через отражение») сюда не относится.
+        Возвращает [(метод, правило, ребро data вызова)].
+        """
+        if getattr(self.rules, "element_callbacks", "on") == "off":
+            return []
+        out: list[tuple[str, str, str]] = []
+        is_new_user = self._is_new_user(profile, scenario_state)
+        for call, table in self._executed_repository_calls(m, edges_data, profile, scenario_state):
+            if not call.element_callbacks:
+                continue
+            via = f"data|{m}|{call.main_table or table}"
+            has_rows, why = rows_exist(call, scenario_state, self.index.table_resource_to_db, is_new_user)
+            for cb, lookup in call.element_callbacks:
+                if has_rows:
+                    out.append((cb, f"ELEMENT_CALLBACK:{lookup}({why})", via))
+                elif self._ledger:
+                    self._ledger.prune("executes", f"scenario:{self._ledger.scenario_id}", cb, "STATE",
+                                       f"ELEMENT_CALLBACK:no_rows({why})", via=via)
         return out
 
     def _eval_guards(

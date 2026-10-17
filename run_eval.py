@@ -78,6 +78,13 @@ def parse_args() -> argparse.Namespace:
              "(по умолчанию), all — все таблицы data_access исполненного вызова (поведение до 17.10)",
     )
     parser.add_argument(
+        "--element-callbacks",
+        choices=("on", "off"),
+        default="on",
+        help="equals сущности из list.contains(x) на результате чтения (блок 8): on — исполняется, если чтение "
+             "вернуло строки (по умолчанию), off — не учитывать (поведение до 17.10)",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -197,6 +204,7 @@ def main() -> None:
         ir_path=pool_ir_path,
         entity_constructors_on_load=args.entity_ctors,
         collection_tables_on_read=args.collection_tables,
+        element_callbacks=args.element_callbacks,
         grounder=args.grounder,
         m1_options=m1_options,
     )

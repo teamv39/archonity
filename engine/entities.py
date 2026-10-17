@@ -14,6 +14,9 @@ archparse (`--mode entities`) пишет `data/entity_ir.json`: сущности
 
 Таблица ленивой коллекции при чтении (правило R10) идёт в ответ, только если метод загрузил коллекцию сам
 (`collection_table_loaded`).
+
+`list.contains(x)` на результате чтения вызывает рукописный `x.equals(элемент)` сущности (блок 8 плана archparse):
+исполняется, если чтение вернуло строки (`element_callbacks`, решение в `GraphBuilder._element_callbacks`).
 """
 from __future__ import annotations
 
@@ -68,6 +71,8 @@ class RepositoryCall:
     # Для READ: поля ленивых коллекций, которые метод загрузил сам (None — archparse не определил)
     collections_loaded: tuple[str, ...] | None = None
     collections_loaded_reason: tuple[str, ...] = field(default=())
+    # Для READ: (метод сущности, вызов библиотеки) — list.contains(x) вызывает x.equals(элемент)
+    element_callbacks: tuple[tuple[str, str], ...] = field(default=())
 
 
 @dataclass(frozen=True)
@@ -173,6 +178,9 @@ class EntityFacts:
                 lazy_tables=lazy_tables,
                 collections_loaded=None if loaded is None else tuple(loaded),
                 collections_loaded_reason=tuple(d.get("collections_loaded_reason") or ()),
+                element_callbacks=tuple(
+                    (cb["method"], cb.get("via", "")) for cb in d.get("element_callbacks") or () if cb.get("method") in nodes
+                ),
             )
             self.calls_by_method.setdefault(method, []).append(call)
         if unmatched:
