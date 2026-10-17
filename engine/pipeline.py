@@ -32,6 +32,7 @@ class ArchonityPipeline:
         collection_tables_on_read: str = "loaded",
         element_callbacks: str = "on",
         rabbitmq_delivery: str = "on",
+        station_food_collection: str = "step4_store_only",
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
     ) -> None:
@@ -58,6 +59,7 @@ class ArchonityPipeline:
             collection_tables_on_read=collection_tables_on_read,
             element_callbacks=element_callbacks,
             rabbitmq_delivery=rabbitmq_delivery,
+            station_food_collection=station_food_collection,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)

@@ -91,6 +91,12 @@ def parse_args() -> argparse.Namespace:
         help="Асинхронная доставка RabbitMQ (правило R13): on — учитывать межсервисное ребро к потребителю (по умолчанию), off — абляция (исключить потребителя)",
     )
     parser.add_argument(
+        "--station-food-collection",
+        choices=("step4_store_only", "all", "off"),
+        default="step4_store_only",
+        help="Таблица коллекции блюд station_food_list: step4_store_only — на шаге 4 в S2/S3 только магазины (по умолчанию), all — учитывать везде, off — исключить везде",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -212,6 +218,7 @@ def main() -> None:
         collection_tables_on_read=args.collection_tables,
         element_callbacks=args.element_callbacks,
         rabbitmq_delivery=args.rabbitmq_delivery,
+        station_food_collection=args.station_food_collection,
         grounder=args.grounder,
         m1_options=m1_options,
     )

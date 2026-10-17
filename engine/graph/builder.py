@@ -199,6 +199,15 @@ class GraphBuilder:
                     self._prune_by_rule(self.rules.is_dead_code_edge, "data", m, t, profile, is_admin_scenario)
                     continue
 
+                # Таблица коллекции блюд station_food_list: шаг 4 в S2/S3 (listFoodStoresByStationName) читает
+                # только информацию о магазинах без позиций блюд, в отличие от шагов с просмотром меню в S1/S4.
+                sf_mode = getattr(self.rules, "station_food_collection", "step4_store_only")
+                if "station_food_list" in t:
+                    if sf_mode == "off" or (sf_mode == "step4_store_only" and "listFoodStoresByStationName" in m):
+                        if ledger:
+                            ledger.prune("data", m, t, "FRAMEWORK_RULE", "station_store_browse_no_food_list")
+                        continue
+
                 # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                 source_type, rule = "SKELETON", "reachability"
                 if hasattr(self.index, "edge_guards"):
