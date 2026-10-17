@@ -115,6 +115,12 @@ def parse_args() -> argparse.Namespace:
         help="Режим запроса еды поездки в getAllFood (Гипотеза 1.1 / 4.1): cascade — опрашивать станционную еду (по умолчанию), direct_train_food — абляция (только поездное меню в S1/S4)",
     )
     parser.add_argument(
+        "--route-distances-collection",
+        choices=("pruned", "included"),
+        default="pruned",
+        help="Таблица коллекции route_distances (Гипотеза 5.1): pruned — отсекать при getRouteByStartAndEnd (по умолчанию), included — абляция (включать в S5)",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -240,6 +246,7 @@ def main() -> None:
         probe_orders_data=args.probe_orders_data,
         enum_member_calls=args.enum_member_calls,
         trip_food_query=args.trip_food_query,
+        route_distances_collection=args.route_distances_collection,
         grounder=args.grounder,
         m1_options=m1_options,
     )

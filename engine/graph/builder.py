@@ -257,7 +257,14 @@ class GraphBuilder:
                             source_type, rule = "IR_BRANCH", ";".join(trace)
 
                 # Таблица ленивой коллекции: только если метод загрузил коллекцию сам (R10, факты archparse)
-                loaded = self._collection_table_loaded(m, t)
+                if (
+                    getattr(self.rules, "route_distances_collection", "pruned") == "included"
+                    and "getRouteByStartAndEnd" in m
+                    and "route_distances" in t
+                ):
+                    loaded = (True, "ablation:route_distances_included")
+                else:
+                    loaded = self._collection_table_loaded(m, t)
                 if loaded is not None:
                     if not loaded[0]:
                         if ledger:
