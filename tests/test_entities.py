@@ -160,3 +160,55 @@ class TestAblationModes:
     def test_unknown_mode_rejected(self) -> None:
         with pytest.raises(ValueError):
             RuntimeRules(entity_constructors_on_load="maybe")
+
+
+ROUTE_STATIONS = "res:table:ts-route-service.route_stations"
+ROUTE_DISTANCES = "res:table:ts-route-service.route_distances"
+ROUTE_BY_ID = "method:ts-route-service:route.service.RouteServiceImpl#getRouteById(java.lang.String,org.springframework.http.HttpHeaders)"
+ROUTE_BY_START_END = (
+    "method:ts-route-service:route.service.RouteServiceImpl#getRouteByStartAndEnd("
+    "java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+)
+
+
+class TestLazyCollections:
+    """R10: таблица ленивой коллекции при чтении — только если метод загрузил коллекцию сам."""
+
+    def test_returned_entity_does_not_load_collections(self, index: SkeletonIndex) -> None:
+        loaded, rule = index.entities.collection_table_loaded(ROUTE_BY_ID, ROUTE_STATIONS)
+        assert not loaded
+        assert rule.startswith("R10:lazy_not_loaded")
+
+    def test_accessed_collection_loaded(self, index: SkeletonIndex) -> None:
+        assert index.entities.collection_table_loaded(ROUTE_BY_START_END, ROUTE_STATIONS)[0]
+        assert not index.entities.collection_table_loaded(ROUTE_BY_START_END, ROUTE_DISTANCES)[0]
+
+    def test_main_table_and_eager_collection_not_decided(self, index: SkeletonIndex) -> None:
+        assert index.entities.collection_table_loaded(ROUTE_BY_ID, "res:table:ts-route-service.route") is None
+        store = next(m for m in index.entities.calls_by_method if "StationFoodServiceImpl#getFoodStoresByStationNames" in m)
+        assert index.entities.collection_table_loaded(store, "res:table:ts-station-food-service.station_food_list") is None
+
+    def test_save_writes_collection(self, index: SkeletonIndex) -> None:
+        create = next(m for m in index.entities.calls_by_method if "RouteServiceImpl#createAndModify" in m)
+        loaded, rule = index.entities.collection_table_loaded(create, ROUTE_STATIONS)
+        assert loaded and "save_writes_collection" in rule
+
+    @pytest.mark.parametrize("mode,expected", [("loaded", False), ("all", True)])
+    def test_traversal_respects_mode(self, index: SkeletonIndex, mode: str, expected: bool) -> None:
+        builder = GraphBuilder(index, RuntimeRules(collection_tables_on_read=mode))
+        entry = ["method:ts-route-service:route.controller.RouteController#queryById(java.lang.String,org.springframework.http.HttpHeaders)"]
+        state = ScenarioState.create_initial(db_state=index.db_state.fork())
+        _, _, _, data = builder.traverse(entry, scenario_state=state)
+        assert (ROUTE_BY_ID, "res:table:ts-route-service.route") in data
+        assert ((ROUTE_BY_ID, ROUTE_STATIONS) in data) == expected
+
+    def test_s0_user_roles_kept_on_get_token(self) -> None:
+        """getToken передаёт пользователя в createToken, тот кладёт роли в токен: коллекция грузится на стеке."""
+        pipeline = ArchonityPipeline(skeleton_path=SKELETON_PATH, targets_root=TARGETS_ROOT)
+        _, _, _, data = pipeline.run_scenario(load_json(SCENARIOS / "S0.json"))
+        roles = {s for s, t in data if t == "res:table:ts-auth-service.user_roles"}
+        assert len(roles) == 1 and "TokenServiceImpl#getToken" in next(iter(roles))
+
+    def test_unknown_mode_rejected(self) -> None:
+        with pytest.raises(ValueError):
+            RuntimeRules(collection_tables_on_read="maybe")

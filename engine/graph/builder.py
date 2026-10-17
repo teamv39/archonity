@@ -211,6 +211,15 @@ class GraphBuilder:
                         if trace:
                             source_type, rule = "IR_BRANCH", ";".join(trace)
 
+                # Таблица ленивой коллекции: только если метод загрузил коллекцию сам (R10, факты archparse)
+                loaded = self._collection_table_loaded(m, t)
+                if loaded is not None:
+                    if not loaded[0]:
+                        if ledger:
+                            ledger.prune("data", m, t, "STATE", loaded[1])
+                        continue
+                    source_type, rule = "STATE", loaded[1]
+
                 edges_data.add((m, t))
                 if ledger:
                     ledger.include("data", m, t, source_type, rule)
@@ -237,6 +246,13 @@ class GraphBuilder:
         )
 
         return active_methods, edges_calls, edges_remote, edges_data
+
+    def _collection_table_loaded(self, m: str, t: str) -> tuple[bool, str] | None:
+        """Решение R10 по таблице коллекции; None — правило не применяется (режим all или не коллекция)."""
+        entities = getattr(self.index, "entities", None)
+        if entities is None or getattr(self.rules, "collection_tables_on_read", "loaded") == "all":
+            return None
+        return entities.collection_table_loaded(m, t)
 
     def _hydrated_constructors(
         self,

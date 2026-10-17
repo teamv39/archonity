@@ -71,6 +71,13 @@ def parse_args() -> argparse.Namespace:
              "с вызовом проектного метода (по умолчанию), body — любое непустое тело (опровергнуто платформой), off — выключено",
     )
     parser.add_argument(
+        "--collection-tables",
+        choices=("loaded", "all"),
+        default="loaded",
+        help="Таблицы ленивых коллекций при чтении (R10): loaded — только коллекции, которые метод загрузил сам "
+             "(по умолчанию), all — все таблицы data_access исполненного вызова (поведение до 17.10)",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -189,6 +196,7 @@ def main() -> None:
         rules_path=args.rules,
         ir_path=pool_ir_path,
         entity_constructors_on_load=args.entity_ctors,
+        collection_tables_on_read=args.collection_tables,
         grounder=args.grounder,
         m1_options=m1_options,
     )
