@@ -198,6 +198,6 @@ class EvidenceLogger:
         """Сохранение evidence.json на диск."""
         p = Path(output_path)
         p.parent.mkdir(parents=True, exist_ok=True)
-        with open(p, "w", encoding="utf-8") as f:
+        with open(p, "w", encoding="utf-8", newline="\n") as f:
             json.dump(self.to_dict(), f, ensure_ascii=False, indent=2)
 
