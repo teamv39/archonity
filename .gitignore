@@ -80,6 +80,7 @@ models/
 !/data/demo_graph.json
 !/data/llm_judge_dossiers_and_traps.json
 !/data/runtime_and_topology_rules.json
+!/data/branch_rules.json
 !/data/pool_ir.json
 !archparse/out/pool_ir.json
 datasets/

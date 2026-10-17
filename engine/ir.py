@@ -17,6 +17,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+from engine.branch_rules import BranchRulesRegistry
 from engine.rules import ScenarioProfile
 from engine.state import ScenarioState
 
@@ -190,8 +191,13 @@ def ensure_pool_ir(
 class MethodPoolIR:
     """Индекс IR тел методов пула (список в archparse TargetPool)."""
 
-    def __init__(self, methods: dict[str, MethodIR]) -> None:
+    def __init__(
+        self,
+        methods: dict[str, MethodIR],
+        branch_rules: BranchRulesRegistry | None = None,
+    ) -> None:
         self.methods = methods
+        self.branch_rules = branch_rules or BranchRulesRegistry.load()
         # Индекс вызовов по геометрии: (caller_method_id, line, col) -> CallIR
         self.calls_by_mid_line_col: dict[tuple[str, int, int], CallIR] = {}
         # Индекс вызовов по геометрии файла: (rel_file, line, col) -> CallIR
@@ -215,7 +221,12 @@ class MethodPoolIR:
             self.enum_calls_by_method[mid] = enum_list
 
     @classmethod
-    def load(cls, ir_path: str | Path | None = None, safe: bool = True) -> MethodPoolIR:
+    def load(
+        cls,
+        ir_path: str | Path | None = None,
+        safe: bool = True,
+        branch_rules: BranchRulesRegistry | None = None,
+    ) -> MethodPoolIR:
         """Загрузка pool_ir.json из файла с безопасным fallback при отсутствии."""
         try:
             path = Path(ir_path) if ir_path else ensure_pool_ir()
@@ -226,11 +237,11 @@ class MethodPoolIR:
             for item in data:
                 mir = MethodIR.from_dict(item)
                 methods[mir.method_id] = mir
-            return cls(methods)
+            return cls(methods, branch_rules=branch_rules)
         except Exception as e:
             if safe:
                 LOGGER.warning("Не удалось загрузить pool_ir.json, используется пустой индекс IR: %s", e)
-                return cls({})
+                return cls({}, branch_rules=branch_rules)
             raise
 
     def has_method(self, method_id: str) -> bool:
@@ -265,6 +276,7 @@ class MethodPoolIR:
 
         Если все предикаты guard истинны в контексте текущего сценария,
         вызов считается активным.
+        Разрешение ветвей выполняется через декларативный BranchRulesRegistry (data/branch_rules.json).
         """
         if not guard:
             return True
@@ -301,150 +313,19 @@ class MethodPoolIR:
 
             cond = branch.condition_text
 
-            # 1. CancelServiceImpl / ExecuteServiceImpl: поезд G/D vs Regular
-            # Regular ветка:
-            # - в ts-cancel: b105, b178 (orderOtherResult.getStatus() == 1)
-            # - в ts-execute: b65, b113 (resultFromOrder.getStatus() == 1 на втором вызове)
-            if 'orderOtherResult' in cond or ("ExecuteServiceImpl" in method_id and bid in ("b65", "b113")):
-                if profile.train_mode == "regular_only":
-                    val = True
-                elif profile.train_mode == "high_speed_only":
-                    val = False
-                else:
-                    val = True
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-            # High-speed ветка:
-            # - в ts-cancel: b49, b160 (orderResult.getStatus() == 1)
-            # - в ts-execute: b47, b95 (resultFromOrder.getStatus() == 1 на первом вызове)
-            elif 'getStatus() == 1' in cond and ('orderResult' in cond or ("ExecuteServiceImpl" in method_id and bid in ("b47", "b95"))):
-                if profile.train_mode == "regular_only":
-                    # Для regular-поездов заказ в ts-order-service не найден (status != 1)
-                    val = False
-                elif profile.train_mode == "high_speed_only":
-                    # Для скоростных поездов найден в ts-order-service
-                    val = True
-                else:
-                    val = True
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
+            # Оценка ветвления через BranchRulesRegistry
+            val, matched_rule = self.branch_rules.evaluate_branch(
+                method_id=method_id,
+                bid=bid,
+                arm=arm,
+                cond=cond,
+                profile=profile,
+                state=scenario_state,
+            )
 
-            # 2. InsidePaymentServiceImpl#pay: G/D диспатч
-            # info.getTripId().startsWith("G") || info.getTripId().startsWith("D")
-            if 'tripGD' in cond and '&&' in cond:
-                # RebookServiceImpl#updateOrder: (G/D && G/D) || (!G/D && !G/D) - перебронирование внутри одного семейства.
-                # Ни один сценарий не меняет тип поезда при перебронировании (S2: тот же обычный поезд).
-                val = True
+            if matched_rule is not None:
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
-            elif 'startsWith("G")' in cond or 'startsWith("D")' in cond or 'tripGD' in cond:
-                if profile.train_mode == "regular_only":
-                    val = False
-                elif profile.train_mode == "high_speed_only":
-                    val = True
-                else:
-                    val = True
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 3. InsidePaymentServiceImpl#pay: Внешний платеж vs Баланс
-            # totalExpand.compareTo(money) > 0
-            if 'totalExpand.compareTo(money) > 0' in cond:
-                val = getattr(profile, "has_external_payment", False)
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 4. CancelServiceImpl: проверка статуса заказа перед отменой/расчётом возврата
-            if 'OrderStatus.NOTPAID.getCode()' in cond and 'cancel' in method_id.lower():
-                if 'OrderStatus.PAID.getCode()' in cond:
-                    # Общий гейт NOTPAID || PAID || CHANGE: пропускает всё, кроме собранного/использованного заказа
-                    val = not profile.has_refused_cancel
-                else:
-                    # Одиночная проверка order.getStatus() == NOTPAID (ветка "возврат 0"):
-                    # возврат и отмена в сценариях запрашиваются для оплаченного заказа
-                    val = False
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 5. Refused Rebook: статус собранного билета не позволяет перебронирование
-            # queryOrderResult.getData().getStatus() != 1
-            if 'getStatus() != 1' in cond and 'rebook' in method_id.lower():
-                if profile.has_refused_rebook:
-                    val = True  #!= 1 истинно при статусе COLLECTED (2) -> ранний выход
-                else:
-                    val = False
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 6. PreserveServiceImpl: опция страховки
-            # oti.getAssurance() == 0
-            if 'getAssurance() == 0' in cond:
-                val = not profile.has_assurance
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 7. PreserveServiceImpl: опция питания
-            # oti.getFoodType() != 0
-            if 'getFoodType() != 0' in cond:
-                val = profile.has_food
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 8. PreserveServiceImpl: опция багажа
-            # null != oti.getConsigneeName() && !"".equals(oti.getConsigneeName())
-            if 'getConsigneeName()' in cond:
-                val = profile.has_consign
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 9. ConsignServiceImpl: сменился ли вес багажа
-            # originalRecord.getWeight() != consignRequest.getWeight()
-            if 'getWeight()' in cond:
-                val = getattr(profile, "has_consign_weight_change", False)
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 10. TokenServiceImpl#getToken: проверка кода подтверждения (verifyCode)
-            # !StringUtils.isEmpty(verifyCode)
-            if 'verifyCode' in cond:
-                val = getattr(profile, "has_verification_code", False)
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 11. UserServiceImpl#saveUser: новый пользователь vs уже существующий
-            # user1 == null
-            if 'user1 == null' in cond:
-                val = getattr(profile, "is_new_user", False)
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 12. ConsignServiceImpl#updateConsignRecord: при обновлении запись уже существует
-            # !repository.findById(consignRequest.getId()).isPresent()
-            if 'consignRequest.getId()).isPresent()' in cond or ('findById' in cond and 'isPresent' in cond):
-                val = False  # Консигнация существует, поэтому !isPresent == False
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 13. RebookServiceImpl#rebook: разница в цене при перебронировании (S2)
-            # priceOld.compareTo(priceNew) > 0
-            if 'priceOld.compareTo(priceNew) > 0' in cond:
-                val = True  # В S2 билет дешевле (second class), разница возвращается
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 14. OrderServiceImpl#queryOrders / OrderOtherServiceImpl#queryOrders: фильтрация заказов (b131, b148)
-            # qi.isEnableStateQuery() || qi.isEnableBoughtDateQuery() || qi.isEnableTravelDateQuery()
-            if 'isEnableStateQuery()' in cond and 'isEnableBoughtDateQuery()' in cond:
-                val = getattr(profile, "has_order_filter", False)
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
-            # 15. OrderServiceImpl#queryOrders / OrderOtherServiceImpl#queryOrders: фильтрация по статусу (b138, b155)
-            # qi.isEnableStateQuery()
-            if cond.strip() == 'qi.isEnableStateQuery()':
-                val = getattr(profile, "has_status_filter", False)
-                if (arm == "then" and not val) or (arm == "else" and val):
-                    return False
-
 
         return True
+
