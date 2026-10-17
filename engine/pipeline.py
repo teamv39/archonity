@@ -40,6 +40,7 @@ class ArchonityPipeline:
             db_dump_path=db_dump_path,
             pool_ir=pool_ir,
             ir_path=ir_path,
+            entity_ir_path=entity_ir_path,
         )
 
         # 2. Логгер доказательств (Evidence Log)

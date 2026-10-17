@@ -98,3 +98,23 @@
 2. **Блок 2:** Пул методов для S3 (`PreserveServiceImpl` опции, `AssuranceServiceImpl`, `ConsignServiceImpl`).
 3. **Блок 4:** Таблица правил `branch_rules.json` вместо хардкода в `engine/ir.py`.
 
+---
+
+## 4. Конструкторы сущностей при загрузке из БД (17.10.2026)
+
+* **Артефакт:** `data/entity_ir.json`, режим `--mode entities` (контракт — README, раздел 3.5): 28 сущностей, 273 вызова репозиториев (100% совпадение с `call_site` скелета в обе стороны), 25 IR конструкторов без аргументов.
+* **Что нашли.** Hibernate вызывает конструктор без аргументов у каждой загруженной строки. Движок учитывал это только для `Order` (хардкод в `builder.py`). В проекте ещё 10 сущностей с непустым конструктором без аргументов. По эталону S0: `Order#<init>()` есть, пустого `Contacts#<init>()` нет, хотя контакты загружаются. Правило «непустое тело» сходится с обоими случаями.
+* **Что сделано.** Хардкод `Order` удалён. Решение принимает `engine/entities.py` по фактам archparse: вид операции, ожидание успешного пути (`EMPTY` у проверок «уже существует»), id при `save` (merge), строки по состоянию и дампу.
+* **Эффект на выдачу** (только новые `executes`, ни одного удалённого ребра, S0 = 1.0000):
+
+| Сценарий | Добавлено | Конструкторы |
+|---|---:|---|
+| S1 | 10 | Assurance, Config, Money, PriceConfig, Route, StationFoodStore, Station, TrainFood, travel.Trip, user.User |
+| S2 | 7 | Config, PriceConfig, Route, StationFoodStore, Station, travel2.Trip, user.User |
+| S3 | 9 | Assurance, Config, Money, PriceConfig, Route, StationFoodStore, Station, travel.Trip, user.User |
+| S4 | 9 | Assurance, Config, PriceConfig, Route, StationFoodStore, Station, TrainFood, travel.Trip, user.User |
+| S5 | 8 | Config, Money, PriceConfig, Route, Station, travel.Trip, travel2.Trip, user.User |
+| S6 | 5 | Config, Money, Station, travel.Trip, user.User |
+| S7 | 7 | Config, Money, PriceConfig, Route, Station, travel.Trip, user.User |
+
+* **Риск.** Обобщение опирается на два случая S0. Если платформа покажет падение во всех сценариях сразу, гипотеза «непустое тело» неверна: откат — несуществующий `entity_ir_path` в `ArchonityPipeline`, при этом `Order` тоже пропадёт, и его надо будет вернуть отдельным правилом.

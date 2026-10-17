@@ -1,0 +1,3853 @@
+{
+  "schema" : "entity_ir/1",
+  "entities" : [ {
+    "type" : "assurance.entity.Assurance",
+    "module" : "ts-assurance-service",
+    "file" : "ts-assurance-service/src/main/java/assurance/entity/Assurance.java",
+    "kind" : "Entity",
+    "table" : "assurance",
+    "id_field" : "id",
+    "id_generated" : false,
+    "no_arg_ctor" : "method:ts-assurance-service:assurance.entity.Assurance#<init>()",
+    "ctor_statements" : 1,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "auth.entity.User",
+    "module" : "ts-auth-service",
+    "file" : "ts-auth-service/src/main/java/auth/entity/User.java",
+    "kind" : "Entity",
+    "table" : "auth_user",
+    "id_field" : "userId",
+    "id_generated" : false,
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "com.trainticket.entity.Money",
+    "module" : "ts-payment-service",
+    "file" : "ts-payment-service/src/main/java/com/trainticket/entity/Money.java",
+    "kind" : "Entity",
+    "table" : "money",
+    "id_field" : "id",
+    "id_generated" : true,
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "com.trainticket.entity.Payment",
+    "module" : "ts-payment-service",
+    "file" : "ts-payment-service/src/main/java/com/trainticket/entity/Payment.java",
+    "kind" : "Entity",
+    "table" : "payment",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-payment-service:com.trainticket.entity.Payment#<init>()",
+    "ctor_statements" : 4,
+    "ctor_assigns_id" : true,
+    "embedded" : [ ]
+  }, {
+    "type" : "config.entity.Config",
+    "module" : "ts-config-service",
+    "file" : "ts-config-service/src/main/java/config/entity/Config.java",
+    "kind" : "Entity",
+    "table" : "config",
+    "id_field" : "name",
+    "id_generated" : false,
+    "no_arg_ctor" : "method:ts-config-service:config.entity.Config#<init>()",
+    "ctor_statements" : 2,
+    "ctor_assigns_id" : true,
+    "embedded" : [ ]
+  }, {
+    "type" : "consign.entity.ConsignRecord",
+    "module" : "ts-consign-service",
+    "file" : "ts-consign-service/src/main/java/consign/entity/ConsignRecord.java",
+    "kind" : "Entity",
+    "table" : "consign_record",
+    "id_field" : "id",
+    "id_generated" : false,
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "consignprice.entity.ConsignPrice",
+    "module" : "ts-consign-price-service",
+    "file" : "ts-consign-price-service/src/main/java/consignprice/entity/ConsignPrice.java",
+    "kind" : "Entity",
+    "table" : "consign_price",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-consign-price-service:consignprice.entity.ConsignPrice#<init>()",
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "contacts.entity.Contacts",
+    "module" : "ts-contacts-service",
+    "file" : "ts-contacts-service/src/main/java/contacts/entity/Contacts.java",
+    "kind" : "Entity",
+    "table" : "contacts",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-contacts-service:contacts.entity.Contacts#<init>()",
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "delivery.entity.Delivery",
+    "module" : "ts-delivery-service",
+    "file" : "ts-delivery-service/src/main/java/delivery/entity/Delivery.java",
+    "kind" : "Entity",
+    "table" : "delivery",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-delivery-service:delivery.entity.Delivery#<init>()",
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "edu.fudan.common.entity.Food",
+    "module" : "ts-common",
+    "file" : "ts-common/src/main/java/edu/fudan/common/entity/Food.java",
+    "kind" : "Embeddable",
+    "id_generated" : false,
+    "no_arg_ctor" : "method:ts-common:edu.fudan.common.entity.Food#<init>()",
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "fdse.microservice.entity.Station",
+    "module" : "ts-station-service",
+    "file" : "ts-station-service/src/main/java/fdse/microservice/entity/Station.java",
+    "kind" : "Entity",
+    "table" : "station",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-station-service:fdse.microservice.entity.Station#<init>()",
+    "ctor_statements" : 1,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "food.entity.StationFoodStore",
+    "module" : "ts-station-food-service",
+    "file" : "ts-station-food-service/src/main/java/food/entity/StationFoodStore.java",
+    "kind" : "Entity",
+    "table" : "station_food_store",
+    "id_field" : "id",
+    "id_generated" : false,
+    "no_arg_ctor" : "method:ts-station-food-service:food.entity.StationFoodStore#<init>()",
+    "ctor_statements" : 1,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "food_delivery.entity.FoodDeliveryOrder",
+    "module" : "ts-food-delivery-service",
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/entity/FoodDeliveryOrder.java",
+    "kind" : "Entity",
+    "table" : "food_delivery_order",
+    "id_field" : "id",
+    "id_generated" : true,
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "foodsearch.entity.FoodOrder",
+    "module" : "ts-food-service",
+    "file" : "ts-food-service/src/main/java/foodsearch/entity/FoodOrder.java",
+    "kind" : "Entity",
+    "table" : "food_order",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-food-service:foodsearch.entity.FoodOrder#<init>()",
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "inside_payment.entity.Money",
+    "module" : "ts-inside-payment-service",
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/entity/Money.java",
+    "kind" : "Entity",
+    "table" : "inside_money",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-inside-payment-service:inside_payment.entity.Money#<init>()",
+    "ctor_statements" : 2,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "inside_payment.entity.Payment",
+    "module" : "ts-inside-payment-service",
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/entity/Payment.java",
+    "kind" : "Entity",
+    "table" : "inside_payment",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-inside-payment-service:inside_payment.entity.Payment#<init>()",
+    "ctor_statements" : 3,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "notification.entity.NotifyInfo",
+    "module" : "ts-notification-service",
+    "file" : "ts-notification-service/src/main/java/notification/entity/NotifyInfo.java",
+    "kind" : "Entity",
+    "table" : "notify_info",
+    "id_field" : "id",
+    "id_generated" : false,
+    "no_arg_ctor" : "method:ts-notification-service:notification.entity.NotifyInfo#<init>()",
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "order.entity.Order",
+    "module" : "ts-order-service",
+    "file" : "ts-order-service/src/main/java/order/entity/Order.java",
+    "kind" : "Entity",
+    "table" : "orders",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-order-service:order.entity.Order#<init>()",
+    "ctor_statements" : 10,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "other.entity.Order",
+    "module" : "ts-order-other-service",
+    "file" : "ts-order-other-service/src/main/java/other/entity/Order.java",
+    "kind" : "Entity",
+    "table" : "orders_other",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-order-other-service:other.entity.Order#<init>()",
+    "ctor_statements" : 10,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "price.entity.PriceConfig",
+    "module" : "ts-price-service",
+    "file" : "ts-price-service/src/main/java/price/entity/PriceConfig.java",
+    "kind" : "Entity",
+    "table" : "price_config",
+    "id_field" : "id",
+    "id_generated" : false,
+    "no_arg_ctor" : "method:ts-price-service:price.entity.PriceConfig#<init>()",
+    "ctor_statements" : 1,
+    "ctor_assigns_id" : true,
+    "embedded" : [ ]
+  }, {
+    "type" : "route.entity.Route",
+    "module" : "ts-route-service",
+    "file" : "ts-route-service/src/main/java/route/entity/Route.java",
+    "kind" : "Entity",
+    "table" : "route",
+    "id_field" : "id",
+    "id_generated" : false,
+    "no_arg_ctor" : "method:ts-route-service:route.entity.Route#<init>()",
+    "ctor_statements" : 1,
+    "ctor_assigns_id" : true,
+    "embedded" : [ ]
+  }, {
+    "type" : "security.entity.SecurityConfig",
+    "module" : "ts-security-service",
+    "file" : "ts-security-service/src/main/java/security/entity/SecurityConfig.java",
+    "kind" : "Entity",
+    "table" : "security_config",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-security-service:security.entity.SecurityConfig#<init>()",
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "train.entity.TrainType",
+    "module" : "ts-train-service",
+    "file" : "ts-train-service/src/main/java/train/entity/TrainType.java",
+    "kind" : "Entity",
+    "table" : "train_type",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-train-service:train.entity.TrainType#<init>()",
+    "ctor_statements" : 0,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "trainFood.entity.TrainFood",
+    "module" : "ts-train-food-service",
+    "file" : "ts-train-food-service/src/main/java/trainFood/entity/TrainFood.java",
+    "kind" : "Entity",
+    "table" : "train_food",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-train-food-service:trainFood.entity.TrainFood#<init>()",
+    "ctor_statements" : 1,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  }, {
+    "type" : "travel.entity.Trip",
+    "module" : "ts-travel-service",
+    "file" : "ts-travel-service/src/main/java/travel/entity/Trip.java",
+    "kind" : "Entity",
+    "table" : "trip",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-travel-service:travel.entity.Trip#<init>()",
+    "ctor_statements" : 5,
+    "ctor_assigns_id" : false,
+    "embedded" : [ "edu.fudan.common.entity.TripId" ]
+  }, {
+    "type" : "travel2.entity.Trip",
+    "module" : "ts-travel2-service",
+    "file" : "ts-travel2-service/src/main/java/travel2/entity/Trip.java",
+    "kind" : "Entity",
+    "table" : "trip2",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-travel2-service:travel2.entity.Trip#<init>()",
+    "ctor_statements" : 5,
+    "ctor_assigns_id" : false,
+    "embedded" : [ "edu.fudan.common.entity.TripId" ]
+  }, {
+    "type" : "user.entity.User",
+    "module" : "ts-user-service",
+    "file" : "ts-user-service/src/main/java/user/entity/User.java",
+    "kind" : "Entity",
+    "table" : "user",
+    "id_field" : "userId",
+    "id_generated" : false,
+    "no_arg_ctor" : "method:ts-user-service:user.entity.User#<init>()",
+    "ctor_statements" : 1,
+    "ctor_assigns_id" : true,
+    "embedded" : [ ]
+  }, {
+    "type" : "waitorder.entity.WaitListOrder",
+    "module" : "ts-wait-order-service",
+    "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+    "kind" : "Entity",
+    "table" : "wait_list_order",
+    "id_field" : "id",
+    "id_generated" : true,
+    "no_arg_ctor" : "method:ts-wait-order-service:waitorder.entity.WaitListOrder#<init>()",
+    "ctor_statements" : 7,
+    "ctor_assigns_id" : false,
+    "embedded" : [ ]
+  } ],
+  "repository_calls" : [ {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 30,
+    "col" : 61,
+    "callee" : "findById",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 31: if (assurance == null): absent arm fails"
+  }, {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 42,
+    "col" : 51,
+    "callee" : "findByOrderId",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 43: if (assurance == null): absent arm fails"
+  }, {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 54,
+    "col" : 43,
+    "callee" : "findByOrderId",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 56: if (a != null): found arm fails"
+  }, {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 64,
+    "col" : 33,
+    "callee" : "save",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 63: new Assurance(UUID.randomUUID().toString(), UUID.fromString(orderId).toString(), at)"
+  }, {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 72,
+    "col" : 29,
+    "callee" : "deleteById",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 73,
+    "col" : 53,
+    "callee" : "findById",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 74: if (a == null): found arm fails"
+  }, {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 85,
+    "col" : 29,
+    "callee" : "removeAssuranceByOrderId",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 86,
+    "col" : 57,
+    "callee" : "findByOrderId",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 87: if (isExistAssurace == null): found arm fails"
+  }, {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 107,
+    "col" : 37,
+    "callee" : "save",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+    "line" : 119,
+    "col" : 50,
+    "callee" : "findAll",
+    "repository" : "AssuranceRepository",
+    "entity" : "assurance.entity.Assurance",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 120: if (as != null && !as.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-auth-service/src/main/java/auth/init/InitUser.java",
+    "line" : 29,
+    "col" : 48,
+    "callee" : "findByUsername",
+    "repository" : "UserRepository",
+    "entity" : "auth.entity.User",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable whetherExistUser not checked"
+  }, {
+    "file" : "ts-auth-service/src/main/java/auth/init/InitUser.java",
+    "line" : 37,
+    "col" : 28,
+    "callee" : "save",
+    "repository" : "UserRepository",
+    "entity" : "auth.entity.User",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "builder sets userId"
+  }, {
+    "file" : "ts-auth-service/src/main/java/auth/init/InitUser.java",
+    "line" : 40,
+    "col" : 49,
+    "callee" : "findByUsername",
+    "repository" : "UserRepository",
+    "entity" : "auth.entity.User",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable whetherExistAdmin not checked"
+  }, {
+    "file" : "ts-auth-service/src/main/java/auth/init/InitUser.java",
+    "line" : 48,
+    "col" : 28,
+    "callee" : "save",
+    "repository" : "UserRepository",
+    "entity" : "auth.entity.User",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "builder sets userId"
+  }, {
+    "file" : "ts-auth-service/src/main/java/auth/security/UserDetailsServiceImpl.java",
+    "line" : 29,
+    "col" : 31,
+    "callee" : "findByUsername",
+    "repository" : "UserRepository",
+    "entity" : "auth.entity.User",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 29: .orElseThrow()"
+  }, {
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+    "line" : 90,
+    "col" : 36,
+    "callee" : "findByUsername",
+    "repository" : "UserRepository",
+    "entity" : "auth.entity.User",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 90: .orElseThrow()"
+  }, {
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
+    "line" : 42,
+    "col" : 44,
+    "callee" : "findAll",
+    "repository" : "UserRepository",
+    "entity" : "auth.entity.User",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "result not checked"
+  }, {
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
+    "line" : 65,
+    "col" : 31,
+    "callee" : "save",
+    "repository" : "UserRepository",
+    "entity" : "auth.entity.User",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "builder sets userId"
+  }, {
+    "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
+    "line" : 72,
+    "col" : 24,
+    "callee" : "deleteByUserId",
+    "repository" : "UserRepository",
+    "entity" : "auth.entity.User",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+    "line" : 31,
+    "col" : 24,
+    "callee" : "findByName",
+    "repository" : "ConfigRepository",
+    "entity" : "config.entity.Config",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 31: if (repository.findByName(info.getName()) != null): found arm fails"
+  }, {
+    "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+    "line" : 37,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "ConfigRepository",
+    "entity" : "config.entity.Config",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 36: new Config(info.getName(), info.getValue(), info.getDescription())"
+  }, {
+    "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+    "line" : 45,
+    "col" : 24,
+    "callee" : "findByName",
+    "repository" : "ConfigRepository",
+    "entity" : "config.entity.Config",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 45: if (repository.findByName(info.getName()) == null): absent arm fails"
+  }, {
+    "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+    "line" : 51,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "ConfigRepository",
+    "entity" : "config.entity.Config",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 50: new Config(info.getName(), info.getValue(), info.getDescription())"
+  }, {
+    "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+    "line" : 60,
+    "col" : 36,
+    "callee" : "findByName",
+    "repository" : "ConfigRepository",
+    "entity" : "config.entity.Config",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 61: if (config == null): absent arm fails"
+  }, {
+    "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+    "line" : 73,
+    "col" : 36,
+    "callee" : "findByName",
+    "repository" : "ConfigRepository",
+    "entity" : "config.entity.Config",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 74: if (config == null): absent arm fails"
+  }, {
+    "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+    "line" : 79,
+    "col" : 24,
+    "callee" : "deleteByName",
+    "repository" : "ConfigRepository",
+    "entity" : "config.entity.Config",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-config-service/src/main/java/config/service/ConfigServiceImpl.java",
+    "line" : 87,
+    "col" : 46,
+    "callee" : "findAll",
+    "repository" : "ConfigRepository",
+    "entity" : "config.entity.Config",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 89: if (configList != null && !configList.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+    "line" : 27,
+    "col" : 47,
+    "callee" : "findByIndex",
+    "repository" : "ConsignPriceConfigRepository",
+    "entity" : "consignprice.entity.ConsignPrice",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable priceConfig not checked"
+  }, {
+    "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+    "line" : 46,
+    "col" : 41,
+    "callee" : "findByIndex",
+    "repository" : "ConsignPriceConfigRepository",
+    "entity" : "consignprice.entity.ConsignPrice",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable price not checked"
+  }, {
+    "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+    "line" : 64,
+    "col" : 24,
+    "callee" : "findByIndex",
+    "repository" : "ConsignPriceConfigRepository",
+    "entity" : "consignprice.entity.ConsignPrice",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 64: if (repository.findByIndex(0) != null): no failing arm"
+  }, {
+    "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+    "line" : 65,
+    "col" : 41,
+    "callee" : "findByIndex",
+    "repository" : "ConsignPriceConfigRepository",
+    "entity" : "consignprice.entity.ConsignPrice",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable originalConfig not checked"
+  }, {
+    "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+    "line" : 75,
+    "col" : 20,
+    "callee" : "save",
+    "repository" : "ConsignPriceConfigRepository",
+    "entity" : "consignprice.entity.ConsignPrice",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 69: originalConfig.setId(config.getId())"
+  }, {
+    "file" : "ts-consign-price-service/src/main/java/consignprice/service/ConsignPriceServiceImpl.java",
+    "line" : 81,
+    "col" : 54,
+    "callee" : "findByIndex",
+    "repository" : "ConsignPriceConfigRepository",
+    "entity" : "consignprice.entity.ConsignPrice",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "result not checked"
+  }, {
+    "file" : "ts-consign-service/src/main/java/consign/service/ConsignServiceImpl.java",
+    "line" : 76,
+    "col" : 43,
+    "callee" : "save",
+    "repository" : "ConsignRepository",
+    "entity" : "consign.entity.ConsignRecord",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 52: consignRecord.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-consign-service/src/main/java/consign/service/ConsignServiceImpl.java",
+    "line" : 85,
+    "col" : 25,
+    "callee" : "findById",
+    "repository" : "ConsignRepository",
+    "entity" : "consign.entity.ConsignRecord",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 85: if (!repository.findById(consignRequest.getId()).isPresent()): no failing arm"
+  }, {
+    "file" : "ts-consign-service/src/main/java/consign/service/ConsignServiceImpl.java",
+    "line" : 88,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "ConsignRepository",
+    "entity" : "consign.entity.ConsignRecord",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 88: .get()"
+  }, {
+    "file" : "ts-consign-service/src/main/java/consign/service/ConsignServiceImpl.java",
+    "line" : 114,
+    "col" : 20,
+    "callee" : "save",
+    "repository" : "ConsignRepository",
+    "entity" : "consign.entity.ConsignRecord",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-consign-service/src/main/java/consign/service/ConsignServiceImpl.java",
+    "line" : 120,
+    "col" : 57,
+    "callee" : "findByAccountId",
+    "repository" : "ConsignRepository",
+    "entity" : "consign.entity.ConsignRecord",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 121: if (consignRecords != null && !consignRecords.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-consign-service/src/main/java/consign/service/ConsignServiceImpl.java",
+    "line" : 131,
+    "col" : 51,
+    "callee" : "findByOrderId",
+    "repository" : "ConsignRepository",
+    "entity" : "consign.entity.ConsignRecord",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 132: if (consignRecords != null): absent arm fails"
+  }, {
+    "file" : "ts-consign-service/src/main/java/consign/service/ConsignServiceImpl.java",
+    "line" : 142,
+    "col" : 57,
+    "callee" : "findByConsignee",
+    "repository" : "ConsignRepository",
+    "entity" : "consign.entity.ConsignRecord",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 143: if (consignRecords != null && !consignRecords.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 32,
+    "col" : 48,
+    "callee" : "findById",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 33: if (contacts != null): absent arm fails"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 43,
+    "col" : 54,
+    "callee" : "findByAccountId",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable arr not checked"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 50,
+    "col" : 52,
+    "callee" : "findByAccountIdAndDocumentTypeAndDocumentType",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 51: if (contactsTemp != null): found arm fails"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 55,
+    "col" : 32,
+    "callee" : "save",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 63,
+    "col" : 41,
+    "callee" : "findByAccountIdAndDocumentTypeAndDocumentType",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 65: if (c != null): found arm fails"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 69,
+    "col" : 52,
+    "callee" : "save",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 77,
+    "col" : 28,
+    "callee" : "deleteById",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 78,
+    "col" : 48,
+    "callee" : "findById",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 79: if (contacts == null): found arm fails"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 102,
+    "col" : 32,
+    "callee" : "save",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-contacts-service/src/main/java/contacts/service/ContactsServiceImpl.java",
+    "line" : 110,
+    "col" : 59,
+    "callee" : "findAll",
+    "repository" : "ContactsRepository",
+    "entity" : "contacts.entity.Contacts",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 111: if (contacts != null && !contacts.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-delivery-service/src/main/java/delivery/mq/RabbitReceive.java",
+    "line" : 50,
+    "col" : 32,
+    "callee" : "save",
+    "repository" : "DeliveryRepository",
+    "entity" : "delivery.entity.Delivery",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 46: delivery.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 72,
+    "col" : 61,
+    "callee" : "save",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 78,
+    "col" : 59,
+    "callee" : "findById",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 79: if (t == null): absent arm fails"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 83,
+    "col" : 41,
+    "callee" : "deleteById",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 91,
+    "col" : 59,
+    "callee" : "findById",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 92: if (t == null): absent arm fails"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 103,
+    "col" : 82,
+    "callee" : "findAll",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 104: if (foodDeliveryOrders == null): absent arm fails"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 115,
+    "col" : 82,
+    "callee" : "findByStationFoodStoreId",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 116: if (foodDeliveryOrders == null): absent arm fails"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 129,
+    "col" : 59,
+    "callee" : "findById",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 130: if (t == null): absent arm fails"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 135,
+    "col" : 41,
+    "callee" : "save",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 145,
+    "col" : 59,
+    "callee" : "findById",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 146: if (t == null): absent arm fails"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 151,
+    "col" : 41,
+    "callee" : "save",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 161,
+    "col" : 59,
+    "callee" : "findById",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 162: if (t == null): absent arm fails"
+  }, {
+    "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
+    "line" : 167,
+    "col" : 41,
+    "callee" : "save",
+    "repository" : "FoodDeliveryOrderRepository",
+    "entity" : "food_delivery.entity.FoodDeliveryOrder",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 63,
+    "col" : 48,
+    "callee" : "findByOrderId",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 64: if (fo != null): found arm fails"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 87,
+    "col" : 33,
+    "callee" : "save",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 78: fo.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 116,
+    "col" : 44,
+    "callee" : "findByOrderId",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 117: if (fo != null): found arm fails"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 131,
+    "col" : 33,
+    "callee" : "save",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 122: fo.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 155,
+    "col" : 51,
+    "callee" : "findByOrderId",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 156: if (foodOrder == null): absent arm fails"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 161,
+    "col" : 33,
+    "callee" : "deleteFoodOrderByOrderId",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 169,
+    "col" : 58,
+    "callee" : "findAll",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 170: if (foodOrders != null && !foodOrders.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 181,
+    "col" : 44,
+    "callee" : "findById",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 182: if (fo == null): absent arm fails"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 193,
+    "col" : 33,
+    "callee" : "save",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
+    "line" : 201,
+    "col" : 44,
+    "callee" : "findByOrderId",
+    "repository" : "FoodOrderRepository",
+    "entity" : "foodsearch.entity.FoodOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 202: if (fo != null): absent arm fails"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 81,
+    "col" : 56,
+    "callee" : "findByUserId",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable payments not checked"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 82,
+    "col" : 56,
+    "callee" : "findByUserId",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable addMonies not checked"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 120,
+    "col" : 39,
+    "callee" : "save",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "no-arg ctor leaves id null"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 130,
+    "col" : 35,
+    "callee" : "save",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "no-arg ctor leaves id null"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 143,
+    "col" : 47,
+    "callee" : "findByUserId",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 144: if (list.isEmpty()): found arm fails"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 149,
+    "col" : 32,
+    "callee" : "save",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "no-arg ctor leaves id null"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 159,
+    "col" : 32,
+    "callee" : "findByUserId",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 159: if (addMoneyRepository.findByUserId(userId) != null): absent arm fails"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 164,
+    "col" : 32,
+    "callee" : "save",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "no-arg ctor leaves id null"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 175,
+    "col" : 47,
+    "callee" : "findAll",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable list not checked"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 194,
+    "col" : 56,
+    "callee" : "findByUserId",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable payments not checked"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 213,
+    "col" : 52,
+    "callee" : "findByUserId",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable payments not checked"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 214,
+    "col" : 52,
+    "callee" : "findByUserId",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable addMonies not checked"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 235,
+    "col" : 52,
+    "callee" : "findAll",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 236: if (payments != null && !payments.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 246,
+    "col" : 32,
+    "callee" : "findByUserId",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 246: if (addMoneyRepository.findByUserId(userId) != null): absent arm fails"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 251,
+    "col" : 32,
+    "callee" : "save",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "no-arg ctor leaves id null"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 270,
+    "col" : 52,
+    "callee" : "findByUserId",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable payments not checked"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 271,
+    "col" : 52,
+    "callee" : "findByUserId",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable addMonies not checked"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 306,
+    "col" : 35,
+    "callee" : "save",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "no-arg ctor leaves id null"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 314,
+    "col" : 31,
+    "callee" : "save",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "no-arg ctor leaves id null"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 321,
+    "col" : 49,
+    "callee" : "findAll",
+    "repository" : "AddMoneyRepository",
+    "entity" : "inside_payment.entity.Money",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 322: if (monies != null && !monies.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 362,
+    "col" : 59,
+    "callee" : "findById",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 363: if (paymentTemp == null): found arm fails"
+  }, {
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 364,
+    "col" : 31,
+    "callee" : "save",
+    "repository" : "PaymentRepository",
+    "entity" : "inside_payment.entity.Payment",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-notification-service/src/main/java/notification/mq/RabbitReceive.java",
+    "line" : 90,
+    "col" : 26,
+    "callee" : "save",
+    "repository" : "NotifyRepository",
+    "entity" : "notification.entity.NotifyInfo",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 88: info.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 53,
+    "col" : 54,
+    "callee" : "findByTravelDateAndTrainNumber",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 55: if (list != null && !list.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 79,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 80: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 93,
+    "col" : 63,
+    "callee" : "findByAccountId",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable accountOrders not checked"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 99,
+    "col" : 40,
+    "callee" : "save",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 98: order.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 107,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 108: if (!op.isPresent()): found arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 109,
+    "col" : 34,
+    "callee" : "save",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 123,
+    "col" : 35,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 123: if (!orderOtherRepository.findById(oldOrderId).isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 127,
+    "col" : 47,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 127: .get()"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 145,
+    "col" : 54,
+    "callee" : "findByAccountId",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable list not checked"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 239,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 240: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 262,
+    "col" : 34,
+    "callee" : "save",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 271,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 272: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 278,
+    "col" : 34,
+    "callee" : "save",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 286,
+    "col" : 56,
+    "callee" : "findByTravelDateAndTrainNumber",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable orders not checked"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 322,
+    "col" : 56,
+    "callee" : "findAll",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 323: if (orders == null): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 334,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 335: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 341,
+    "col" : 34,
+    "callee" : "save",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 349,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 350: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 362,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 363: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 369,
+    "col" : 34,
+    "callee" : "save",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 377,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 379: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 392,
+    "col" : 56,
+    "callee" : "findByAccountId",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable orders not checked"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 418,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 419: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 424,
+    "col" : 34,
+    "callee" : "deleteById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 433,
+    "col" : 63,
+    "callee" : "findByAccountId",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable accountOrders not checked"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 439,
+    "col" : 34,
+    "callee" : "save",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 438: order.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 449,
+    "col" : 51,
+    "callee" : "findById",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 450: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 471,
+    "col" : 34,
+    "callee" : "save",
+    "repository" : "OrderOtherRepository",
+    "entity" : "other.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 55,
+    "col" : 49,
+    "callee" : "findByTravelDateAndTrainNumber",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 57: if (list != null && !list.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 75,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 76: if (!op.isPresent()): no failing arm"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 89,
+    "col" : 58,
+    "callee" : "findByAccountId",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable accountOrders not checked"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 95,
+    "col" : 35,
+    "callee" : "save",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 94: order.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 105,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 106: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 128,
+    "col" : 49,
+    "callee" : "findByAccountId",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable list not checked"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 224,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 225: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 245,
+    "col" : 29,
+    "callee" : "save",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 253,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 254: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 260,
+    "col" : 29,
+    "callee" : "save",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 268,
+    "col" : 51,
+    "callee" : "findByTravelDateAndTrainNumber",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable orders not checked"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 304,
+    "col" : 51,
+    "callee" : "findAll",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 305: if (orders != null && !orders.isEmpty()): no failing arm"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 316,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 317: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 323,
+    "col" : 29,
+    "callee" : "save",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 331,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 332: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 344,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 345: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 351,
+    "col" : 29,
+    "callee" : "save",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 359,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 360: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 372,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 373: if (!op.isPresent()): found arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 374,
+    "col" : 29,
+    "callee" : "save",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 385,
+    "col" : 51,
+    "callee" : "findByAccountId",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable orders not checked"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 412,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 413: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 418,
+    "col" : 29,
+    "callee" : "deleteById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 427,
+    "col" : 58,
+    "callee" : "findByAccountId",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable accountOrders not checked"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 433,
+    "col" : 29,
+    "callee" : "save",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 432: order.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 442,
+    "col" : 46,
+    "callee" : "findById",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 443: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
+    "line" : 464,
+    "col" : 29,
+    "callee" : "save",
+    "repository" : "OrderRepository",
+    "entity" : "order.entity.Order",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+    "line" : 35,
+    "col" : 30,
+    "callee" : "findByOrderId",
+    "repository" : "PaymentRepository",
+    "entity" : "com.trainticket.entity.Payment",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 35: if (paymentRepository.findByOrderId(info.getOrderId()) == null): found arm fails"
+  }, {
+    "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+    "line" : 40,
+    "col" : 31,
+    "callee" : "save",
+    "repository" : "PaymentRepository",
+    "entity" : "com.trainticket.entity.Payment",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "no-arg ctor assigns id"
+  }, {
+    "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+    "line" : 53,
+    "col" : 28,
+    "callee" : "save",
+    "repository" : "AddMoneyRepository",
+    "entity" : "com.trainticket.entity.Money",
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "no-arg ctor leaves id null"
+  }, {
+    "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+    "line" : 59,
+    "col" : 52,
+    "callee" : "findAll",
+    "repository" : "PaymentRepository",
+    "entity" : "com.trainticket.entity.Payment",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 60: if (payments != null && !payments.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+    "line" : 71,
+    "col" : 59,
+    "callee" : "findById",
+    "repository" : "PaymentRepository",
+    "entity" : "com.trainticket.entity.Payment",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 72: if (!paymentTemp.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-payment-service/src/main/java/com/trainticket/service/PaymentServiceImpl.java",
+    "line" : 73,
+    "col" : 31,
+    "callee" : "save",
+    "repository" : "PaymentRepository",
+    "entity" : "com.trainticket.entity.Payment",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 40,
+    "col" : 35,
+    "callee" : "save",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 35: priceConfig.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 43,
+    "col" : 62,
+    "callee" : "findById",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 44: if (!op.isPresent()): no failing arm"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 54,
+    "col" : 35,
+    "callee" : "save",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 35: priceConfig.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 62,
+    "col" : 58,
+    "callee" : "findById",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 63: if (op.isPresent()): no failing arm"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 72,
+    "col" : 57,
+    "callee" : "findByRouteIdAndTrainType",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 75: if (priceConfig == null): absent arm fails"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 92,
+    "col" : 55,
+    "callee" : "findByRouteIdsAndTrainTypes",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable pcs not checked"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 111,
+    "col" : 56,
+    "callee" : "findAll",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 112: if (list == null): no failing arm"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 127,
+    "col" : 58,
+    "callee" : "findById",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 128: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 133,
+    "col" : 35,
+    "callee" : "delete",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 140,
+    "col" : 58,
+    "callee" : "findById",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 141: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+    "line" : 151,
+    "col" : 35,
+    "callee" : "save",
+    "repository" : "PriceConfigRepository",
+    "entity" : "price.entity.PriceConfig",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 146: priceConfig.setId(c.getId())"
+  }, {
+    "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
+    "line" : 52,
+    "col" : 56,
+    "callee" : "findById",
+    "repository" : "RouteRepository",
+    "entity" : "route.entity.Route",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 53: if (routeOld.isPresent()): no failing arm"
+  }, {
+    "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
+    "line" : 63,
+    "col" : 25,
+    "callee" : "save",
+    "repository" : "RouteRepository",
+    "entity" : "route.entity.Route",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 50: route.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
+    "line" : 70,
+    "col" : 25,
+    "callee" : "removeRouteById",
+    "repository" : "RouteRepository",
+    "entity" : "route.entity.Route",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
+    "line" : 71,
+    "col" : 49,
+    "callee" : "findById",
+    "repository" : "RouteRepository",
+    "entity" : "route.entity.Route",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 72: if (!route.isPresent()): found arm fails"
+  }, {
+    "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
+    "line" : 82,
+    "col" : 49,
+    "callee" : "findById",
+    "repository" : "RouteRepository",
+    "entity" : "route.entity.Route",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 83: if (!route.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
+    "line" : 94,
+    "col" : 46,
+    "callee" : "findByIds",
+    "repository" : "RouteRepository",
+    "entity" : "route.entity.Route",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 95: if (routes == null || routes.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
+    "line" : 105,
+    "col" : 51,
+    "callee" : "findAll",
+    "repository" : "RouteRepository",
+    "entity" : "route.entity.Route",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable routes not checked"
+  }, {
+    "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
+    "line" : 125,
+    "col" : 51,
+    "callee" : "findAll",
+    "repository" : "RouteRepository",
+    "entity" : "route.entity.Route",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 126: if (routes != null && !routes.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+    "line" : 54,
+    "col" : 72,
+    "callee" : "findAll",
+    "repository" : "SecurityRepository",
+    "entity" : "security.entity.SecurityConfig",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 55: if (securityConfigs != null && !securityConfigs.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+    "line" : 64,
+    "col" : 48,
+    "callee" : "findByName",
+    "repository" : "SecurityRepository",
+    "entity" : "security.entity.SecurityConfig",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 65: if (sc != null): found arm fails"
+  }, {
+    "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+    "line" : 74,
+    "col" : 32,
+    "callee" : "save",
+    "repository" : "SecurityRepository",
+    "entity" : "security.entity.SecurityConfig",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 70: config.setId(UUID.randomUUID().toString())"
+  }, {
+    "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+    "line" : 81,
+    "col" : 48,
+    "callee" : "findById",
+    "repository" : "SecurityRepository",
+    "entity" : "security.entity.SecurityConfig",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 82: if (sc == null): absent arm fails"
+  }, {
+    "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+    "line" : 89,
+    "col" : 32,
+    "callee" : "save",
+    "repository" : "SecurityRepository",
+    "entity" : "security.entity.SecurityConfig",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+    "line" : 97,
+    "col" : 28,
+    "callee" : "deleteById",
+    "repository" : "SecurityRepository",
+    "entity" : "security.entity.SecurityConfig",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+    "line" : 98,
+    "col" : 48,
+    "callee" : "findById",
+    "repository" : "SecurityRepository",
+    "entity" : "security.entity.SecurityConfig",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 99: if (sc == null): found arm fails"
+  }, {
+    "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+    "line" : 117,
+    "col" : 61,
+    "callee" : "findByName",
+    "repository" : "SecurityRepository",
+    "entity" : "security.entity.SecurityConfig",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable configMaxInHour not checked"
+  }, {
+    "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
+    "line" : 118,
+    "col" : 61,
+    "callee" : "findByName",
+    "repository" : "SecurityRepository",
+    "entity" : "security.entity.SecurityConfig",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable configMaxNotUse not checked"
+  }, {
+    "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+    "line" : 31,
+    "col" : 57,
+    "callee" : "findById",
+    "repository" : "StationFoodRepository",
+    "entity" : "food.entity.StationFoodStore",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 32: if (fsTemp != null): found arm fails"
+  }, {
+    "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+    "line" : 37,
+    "col" : 39,
+    "callee" : "save",
+    "repository" : "StationFoodRepository",
+    "entity" : "food.entity.StationFoodStore",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+    "line" : 58,
+    "col" : 74,
+    "callee" : "findAll",
+    "repository" : "StationFoodRepository",
+    "entity" : "food.entity.StationFoodStore",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 59: if (stationFoodStores != null && !stationFoodStores.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+    "line" : 80,
+    "col" : 77,
+    "callee" : "findByStationName",
+    "repository" : "StationFoodRepository",
+    "entity" : "food.entity.StationFoodStore",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 81: if (stationFoodStoreList != null && !stationFoodStoreList.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+    "line" : 102,
+    "col" : 77,
+    "callee" : "findByStationNameIn",
+    "repository" : "StationFoodRepository",
+    "entity" : "food.entity.StationFoodStore",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 103: if (stationFoodStoreList != null): absent arm fails"
+  }, {
+    "file" : "ts-station-food-service/src/main/java/food/service/StationFoodServiceImpl.java",
+    "line" : 113,
+    "col" : 67,
+    "callee" : "findById",
+    "repository" : "StationFoodRepository",
+    "entity" : "food.entity.StationFoodStore",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 114: if (stationFoodStore == null): absent arm fails"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 31,
+    "col" : 24,
+    "callee" : "findByName",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 31: if (repository.findByName(station.getName()) == null): found arm fails"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 33,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 44,
+    "col" : 24,
+    "callee" : "findByName",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 44: if (repository.findByName(stationName) != null): no failing arm"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 53,
+    "col" : 43,
+    "callee" : "findById",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 54: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 61,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 68,
+    "col" : 43,
+    "callee" : "findById",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 69: if (op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 71,
+    "col" : 24,
+    "callee" : "delete",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 80,
+    "col" : 45,
+    "callee" : "findAll",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 81: if (stations != null && !stations.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 91,
+    "col" : 38,
+    "callee" : "findByName",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 93: if (station != null): absent arm fails"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 105,
+    "col" : 45,
+    "callee" : "findByNames",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable stations not checked"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 126,
+    "col" : 48,
+    "callee" : "findById",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 127: if (station.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+    "line" : 139,
+    "col" : 55,
+    "callee" : "findById",
+    "repository" : "StationRepository",
+    "entity" : "fdse.microservice.entity.Station",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 140: if (stationOld.isPresent()): no failing arm"
+  }, {
+    "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
+    "line" : 27,
+    "col" : 48,
+    "callee" : "findByTripId",
+    "repository" : "TrainFoodRepository",
+    "entity" : "trainFood.entity.TrainFood",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 28: if (tfTemp != null): no failing arm"
+  }, {
+    "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
+    "line" : 33,
+    "col" : 37,
+    "callee" : "save",
+    "repository" : "TrainFoodRepository",
+    "entity" : "trainFood.entity.TrainFood",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
+    "line" : 36,
+    "col" : 33,
+    "callee" : "save",
+    "repository" : "TrainFoodRepository",
+    "entity" : "trainFood.entity.TrainFood",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
+    "line" : 43,
+    "col" : 61,
+    "callee" : "findAll",
+    "repository" : "TrainFoodRepository",
+    "entity" : "trainFood.entity.TrainFood",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 44: if (trainFoodList != null && !trainFoodList.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
+    "line" : 54,
+    "col" : 44,
+    "callee" : "findByTripId",
+    "repository" : "TrainFoodRepository",
+    "entity" : "trainFood.entity.TrainFood",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 55: if (tf == null): absent arm fails"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 29,
+    "col" : 24,
+    "callee" : "findByName",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 29: if (repository.findByName(trainType.getName()) == null): found arm fails"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 32,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 43,
+    "col" : 25,
+    "callee" : "findById",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 43: if (!repository.findById(id).isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 47,
+    "col" : 31,
+    "callee" : "findById",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 47: .get()"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 53,
+    "col" : 35,
+    "callee" : "findByName",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 54: if (tt == null): absent arm fails"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 64,
+    "col" : 41,
+    "callee" : "findByNames",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 65: if (tt == null || tt.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 77,
+    "col" : 24,
+    "callee" : "findById",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 77: if (repository.findById(trainType.getId()).isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 80,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 79: type.setId(trainType.getId())"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 92,
+    "col" : 24,
+    "callee" : "findById",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 92: if (repository.findById(id).isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 93,
+    "col" : 24,
+    "callee" : "deleteById",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
+    "line" : 104,
+    "col" : 27,
+    "callee" : "findAll",
+    "repository" : "TrainTypeRepository",
+    "entity" : "train.entity.TrainType",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "result not checked"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 61,
+    "col" : 24,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 61: if (repository.findByTripId(ti) == null): found arm fails"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 65,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 78,
+    "col" : 36,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 79: if (trip != null): absent arm fails"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 97,
+    "col" : 32,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 98: if (trip != null): absent arm fails"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 115,
+    "col" : 55,
+    "callee" : "findByRouteId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 116: if (tempTripList == null): no failing arm"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 133,
+    "col" : 32,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 134: if (trip != null): absent arm fails"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 145,
+    "col" : 29,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 146: if (t != null): absent arm fails"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 154,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 166,
+    "col" : 24,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 166: if (repository.findByTripId(ti) != null): absent arm fails"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 167,
+    "col" : 24,
+    "callee" : "deleteByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 186,
+    "col" : 45,
+    "callee" : "findAll",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 187: if (allTripList != null): no failing arm"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 214,
+    "col" : 45,
+    "callee" : "findAll",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable allTripList not checked"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 266,
+    "col" : 45,
+    "callee" : "findAll",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 269: if (allTripList != null): no failing arm"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 299,
+    "col" : 32,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 300: if (trip == null): absent arm fails"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 316,
+    "col" : 41,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "result not checked"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 469,
+    "col" : 42,
+    "callee" : "findAll",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 470: if (tripList != null && !tripList.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
+    "line" : 565,
+    "col" : 39,
+    "callee" : "findAll",
+    "repository" : "TripRepository",
+    "entity" : "travel.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 567: if (trips != null): no failing arm"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 56,
+    "col" : 32,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 57: if (trip == null): absent arm fails"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 77,
+    "col" : 32,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 78: if (trip != null): absent arm fails"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 96,
+    "col" : 55,
+    "callee" : "findByRouteId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 97: if (tempTripList == null): no failing arm"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 113,
+    "col" : 24,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 113: if (repository.findByTripId(ti) == null): found arm fails"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 117,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 128,
+    "col" : 32,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 129: if (trip != null): absent arm fails"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 140,
+    "col" : 29,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 141: if (t != null): absent arm fails"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 149,
+    "col" : 24,
+    "callee" : "save",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 161,
+    "col" : 24,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 161: if (repository.findByTripId(ti) != null): absent arm fails"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 162,
+    "col" : 24,
+    "callee" : "deleteByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 181,
+    "col" : 45,
+    "callee" : "findAll",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable allTripList not checked"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 197,
+    "col" : 50,
+    "callee" : "findAll",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 198: if (allTripList != null): no failing arm"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 216,
+    "col" : 32,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 217: if (trip == null): absent arm fails"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 233,
+    "col" : 41,
+    "callee" : "findByTripId",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "result not checked"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 384,
+    "col" : 42,
+    "callee" : "findAll",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 385: if (tripList != null && !tripList.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 476,
+    "col" : 39,
+    "callee" : "findAll",
+    "repository" : "TripRepository",
+    "entity" : "travel2.entity.Trip",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 478: if (trips != null): no failing arm"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/init/InitUser.java",
+    "line" : 31,
+    "col" : 48,
+    "callee" : "findByUserName",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 41: if (whetherExistUser == null): no failing arm"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/init/InitUser.java",
+    "line" : 42,
+    "col" : 28,
+    "callee" : "save",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 40: user.setUserId(\"4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f\")"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 63,
+    "col" : 37,
+    "callee" : "findByUserName",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "READ",
+    "expects" : "EMPTY",
+    "expects_reason" : "line 64: if (user1 == null): found arm fails"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 70,
+    "col" : 50,
+    "callee" : "save",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "builder sets userId"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 104,
+    "col" : 43,
+    "callee" : "findAll",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 105: if (users != null && !users.isEmpty()): absent arm fails"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 114,
+    "col" : 36,
+    "callee" : "findByUserName",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 115: if (user != null): absent arm fails"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 124,
+    "col" : 36,
+    "callee" : "findByUserId",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 125: if (user != null): absent arm fails"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 136,
+    "col" : 36,
+    "callee" : "findByUserId",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 137: if (user != null): absent arm fails"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 141,
+    "col" : 28,
+    "callee" : "deleteByUserId",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 154,
+    "col" : 39,
+    "callee" : "findByUserId",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 155: if (oldUser != null): absent arm fails"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 163,
+    "col" : 28,
+    "callee" : "deleteByUserId",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "DELETE"
+  }, {
+    "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+    "line" : 164,
+    "col" : 28,
+    "callee" : "save",
+    "repository" : "UserRepository",
+    "entity" : "user.entity.User",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "builder sets userId"
+  }, {
+    "file" : "ts-wait-order-service/src/main/java/waitorder/service/Impl/WaitListOrderServiceImpl.java",
+    "line" : 41,
+    "col" : 62,
+    "callee" : "findById",
+    "repository" : "WaitListOrderRepository",
+    "entity" : "waitorder.entity.WaitListOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 42: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-wait-order-service/src/main/java/waitorder/service/Impl/WaitListOrderServiceImpl.java",
+    "line" : 68,
+    "col" : 64,
+    "callee" : "findAll",
+    "repository" : "WaitListOrderRepository",
+    "entity" : "waitorder.entity.WaitListOrder",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 69: if (orderList != null && !orderList.isEmpty()): no failing arm"
+  }, {
+    "file" : "ts-wait-order-service/src/main/java/waitorder/service/Impl/WaitListOrderServiceImpl.java",
+    "line" : 80,
+    "col" : 64,
+    "callee" : "findAll",
+    "repository" : "WaitListOrderRepository",
+    "entity" : "waitorder.entity.WaitListOrder",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 81: if (orderList != null && !orderList.isEmpty()): no failing arm"
+  }, {
+    "file" : "ts-wait-order-service/src/main/java/waitorder/service/Impl/WaitListOrderServiceImpl.java",
+    "line" : 101,
+    "col" : 62,
+    "callee" : "findById",
+    "repository" : "WaitListOrderRepository",
+    "entity" : "waitorder.entity.WaitListOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 102: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-wait-order-service/src/main/java/waitorder/service/Impl/WaitListOrderServiceImpl.java",
+    "line" : 108,
+    "col" : 37,
+    "callee" : "save",
+    "repository" : "WaitListOrderRepository",
+    "entity" : "waitorder.entity.WaitListOrder",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-wait-order-service/src/main/java/waitorder/service/Impl/WaitListOrderServiceImpl.java",
+    "line" : 118,
+    "col" : 62,
+    "callee" : "findById",
+    "repository" : "WaitListOrderRepository",
+    "entity" : "waitorder.entity.WaitListOrder",
+    "operation" : "READ",
+    "expects" : "ROWS",
+    "expects_reason" : "line 119: if (!op.isPresent()): absent arm fails"
+  }, {
+    "file" : "ts-wait-order-service/src/main/java/waitorder/service/Impl/WaitListOrderServiceImpl.java",
+    "line" : 125,
+    "col" : 37,
+    "callee" : "save",
+    "repository" : "WaitListOrderRepository",
+    "entity" : "waitorder.entity.WaitListOrder",
+    "operation" : "SAVE"
+  }, {
+    "file" : "ts-wait-order-service/src/main/java/waitorder/service/Impl/WaitListOrderServiceImpl.java",
+    "line" : 132,
+    "col" : 73,
+    "callee" : "findByAccountId",
+    "repository" : "WaitListOrderRepository",
+    "entity" : "waitorder.entity.WaitListOrder",
+    "operation" : "READ",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "variable accountOrders not checked"
+  }, {
+    "file" : "ts-wait-order-service/src/main/java/waitorder/service/Impl/WaitListOrderServiceImpl.java",
+    "line" : 142,
+    "col" : 37,
+    "callee" : "save",
+    "repository" : "WaitListOrderRepository",
+    "entity" : "waitorder.entity.WaitListOrder",
+    "operation" : "SAVE",
+    "id_assigned" : true,
+    "id_assigned_reason" : "line 139: newWaitListOrder.setId(UUID.randomUUID().toString())"
+  } ],
+  "no_arg_ctor_statements" : {
+    "method:old-docs:org.myproject.ms.monitoring.Item#<init>()" : 1,
+    "method:old-docs:org.myproject.ms.monitoring.Item$SpanBuilder#<init>()" : 0,
+    "method:old-docs:org.myproject.ms.monitoring.antn.SleuthAdvisorConfig$AnnotationClassOrMethodOrArgsPointcut#<init>()" : 1,
+    "method:old-docs:org.myproject.ms.monitoring.instrument.msg.TMHead#<init>()" : 0,
+    "method:old-docs:org.myproject.ms.monitoring.instrument.web.TRAttr#<init>()" : 0,
+    "method:old-docs:org.myproject.ms.monitoring.util.ExceptionUtils#<init>()" : 1,
+    "method:old-docs:org.myproject.ms.monitoring.util.TextMapUtil#<init>()" : 0,
+    "method:ts-assurance-service:assurance.entity.Assurance#<init>()" : 1,
+    "method:ts-assurance-service:assurance.entity.PlainAssurance#<init>()" : 0,
+    "method:ts-auth-service:auth.constant.AuthConstant#<init>()" : 1,
+    "method:ts-auth-service:auth.constant.InfoConstant#<init>()" : 1,
+    "method:ts-cancel-service:cancel.entity.GetAccountByIdInfo#<init>()" : 0,
+    "method:ts-cancel-service:cancel.entity.GetAccountByIdResult#<init>()" : 0,
+    "method:ts-cancel-service:cancel.entity.GetOrderByIdInfo#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.Account#<init>()" : 6,
+    "method:ts-common:edu.fudan.common.entity.AdminTrip#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.Assurance#<init>()" : 1,
+    "method:ts-common:edu.fudan.common.entity.Food#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.FoodOrder#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.LeftTicketInfo#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.NotifyInfo#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.Order#<init>()" : 11,
+    "method:ts-common:edu.fudan.common.entity.OrderAlterInfo#<init>()" : 1,
+    "method:ts-common:edu.fudan.common.entity.OrderSecurity#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.PaymentDifferenceInfo#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.PriceConfig#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.Route#<init>()" : 1,
+    "method:ts-common:edu.fudan.common.entity.RoutePlanInfo#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.Seat#<init>()" : 7,
+    "method:ts-common:edu.fudan.common.entity.SoldTicket#<init>()" : 9,
+    "method:ts-common:edu.fudan.common.entity.Station#<init>()" : 1,
+    "method:ts-common:edu.fudan.common.entity.StationFoodStore#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.Ticket#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.TrainFood#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.TrainType#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.Travel#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.TravelResult#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.Trip#<init>()" : 5,
+    "method:ts-common:edu.fudan.common.entity.TripAllDetailInfo#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.TripId#<init>()" : 0,
+    "method:ts-common:edu.fudan.common.entity.TripInfo#<init>()" : 3,
+    "method:ts-common:edu.fudan.common.entity.TripResponse#<init>()" : 9,
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil#<init>()" : 1,
+    "method:ts-common:edu.fudan.common.util.JsonUtils#<init>()" : 1,
+    "method:ts-common:rebook.entity.VerifyResult#<init>()" : 0,
+    "method:ts-config-service:config.entity.Config#<init>()" : 2,
+    "method:ts-consign-price-service:consignprice.entity.ConsignPrice#<init>()" : 0,
+    "method:ts-consign-service:consign.entity.GetPriceDomain#<init>()" : 0,
+    "method:ts-consign-service:consign.entity.InsertConsignRecordResult#<init>()" : 0,
+    "method:ts-contacts-service:contacts.entity.Contacts#<init>()" : 0,
+    "method:ts-delivery-service:delivery.entity.Delivery#<init>()" : 0,
+    "method:ts-food-service:foodsearch.entity.AllTripFood#<init>()" : 0,
+    "method:ts-food-service:foodsearch.entity.Delivery#<init>()" : 0,
+    "method:ts-food-service:foodsearch.entity.FoodOrder#<init>()" : 0,
+    "method:ts-inside-payment-service:inside_payment.entity.AccountInfo#<init>()" : 0,
+    "method:ts-inside-payment-service:inside_payment.entity.Balance#<init>()" : 2,
+    "method:ts-inside-payment-service:inside_payment.entity.Money#<init>()" : 2,
+    "method:ts-inside-payment-service:inside_payment.entity.OutsidePaymentInfo#<init>()" : 0,
+    "method:ts-inside-payment-service:inside_payment.entity.Payment#<init>()" : 3,
+    "method:ts-inside-payment-service:inside_payment.entity.PaymentInfo#<init>()" : 0,
+    "method:ts-inside-payment-service:inside_payment.util.CookieUtil#<init>()" : 1,
+    "method:ts-notification-service:notification.entity.Mail#<init>()" : 1,
+    "method:ts-notification-service:notification.entity.NotifyInfo#<init>()" : 0,
+    "method:ts-order-other-service:other.entity.Order#<init>()" : 10,
+    "method:ts-order-other-service:other.entity.OrderAlterInfo#<init>()" : 1,
+    "method:ts-order-other-service:other.entity.QueryInfo#<init>()" : 0,
+    "method:ts-order-service:order.entity.Order#<init>()" : 10,
+    "method:ts-order-service:order.entity.OrderAlterInfo#<init>()" : 1,
+    "method:ts-order-service:order.entity.OrderInfo#<init>()" : 0,
+    "method:ts-payment-service:com.trainticket.entity.Payment#<init>()" : 4,
+    "method:ts-price-service:price.entity.PriceConfig#<init>()" : 1,
+    "method:ts-rebook-service:rebook.entity.RebookInfo#<init>()" : 6,
+    "method:ts-route-service:route.entity.Route#<init>()" : 1,
+    "method:ts-security-service:security.entity.SecurityConfig#<init>()" : 0,
+    "method:ts-station-food-service:food.entity.StationFoodStore#<init>()" : 1,
+    "method:ts-station-service:fdse.microservice.entity.Station#<init>()" : 1,
+    "method:ts-train-food-service:trainFood.entity.TrainFood#<init>()" : 1,
+    "method:ts-train-service:train.entity.TrainType#<init>()" : 0,
+    "method:ts-travel-plan-service:travelplan.entity.TransferTravelInfo#<init>()" : 0,
+    "method:ts-travel-plan-service:travelplan.entity.TransferTravelResult#<init>()" : 0,
+    "method:ts-travel-plan-service:travelplan.entity.TravelAdvanceResultUnit#<init>()" : 0,
+    "method:ts-travel-service:travel.entity.AdminTrip#<init>()" : 0,
+    "method:ts-travel-service:travel.entity.Travel#<init>()" : 0,
+    "method:ts-travel-service:travel.entity.Trip#<init>()" : 5,
+    "method:ts-travel-service:travel.entity.TripAllDetail#<init>()" : 0,
+    "method:ts-travel2-service:travel2.entity.AdminTrip#<init>()" : 0,
+    "method:ts-travel2-service:travel2.entity.Travel#<init>()" : 0,
+    "method:ts-travel2-service:travel2.entity.Trip#<init>()" : 5,
+    "method:ts-user-service:user.entity.User#<init>()" : 1,
+    "method:ts-verification-code-service:verifycode.util.CookieUtil#<init>()" : 1,
+    "method:ts-wait-order-service:waitorder.entity.WaitListOrder#<init>()" : 7
+  },
+  "constructors" : [ {
+    "method_id" : "method:old-docs:org.myproject.ms.monitoring.Item#<init>()",
+    "file" : "old-docs/Lib/ms-monitoring-core/src/main/java/org/myproject/ms/monitoring/Item.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "old-docs/Lib/ms-monitoring-core/src/main/java/org/myproject/ms/monitoring/Item.java",
+      "line" : 95,
+      "col" : 46,
+      "callee" : "emptyList",
+      "receiver" : "Collections",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:old-docs:org.myproject.ms.monitoring.antn.SleuthAdvisorConfig$AnnotationClassOrMethodOrArgsPointcut#<init>()",
+    "file" : "old-docs/Lib/ms-monitoring-core/src/main/java/org/myproject/ms/monitoring/antn/SleuthAdvisorConfig.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "old-docs/Lib/ms-monitoring-core/src/main/java/org/myproject/ms/monitoring/antn/SleuthAdvisorConfig.java",
+      "line" : 99,
+      "col" : 26,
+      "callee" : "<init>",
+      "receiver" : "DynamicMethodMatcherPointcut",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:old-docs:org.myproject.ms.monitoring.util.ExceptionUtils#<init>()",
+    "file" : "old-docs/Lib/ms-monitoring-core/src/main/java/org/myproject/ms/monitoring/util/ExceptionUtils.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "old-docs/Lib/ms-monitoring-core/src/main/java/org/myproject/ms/monitoring/util/ExceptionUtils.java",
+      "line" : 15,
+      "col" : 9,
+      "callee" : "<init>",
+      "receiver" : "IllegalStateException",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-assurance-service:assurance.entity.Assurance#<init>()",
+    "file" : "ts-assurance-service/src/main/java/assurance/entity/Assurance.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/Assurance.java",
+      "line" : 37,
+      "col" : 29,
+      "callee" : "randomUUID",
+      "receiver" : "UUID",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/Assurance.java",
+      "line" : 37,
+      "col" : 42,
+      "callee" : "toString",
+      "receiver" : "UUID.randomUUID()",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-auth-service:auth.constant.AuthConstant#<init>()",
+    "file" : "ts-auth-service/src/main/java/auth/constant/AuthConstant.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-auth-service/src/main/java/auth/constant/AuthConstant.java",
+      "line" : 9,
+      "col" : 15,
+      "callee" : "<init>",
+      "receiver" : "IllegalStateException",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-auth-service:auth.constant.InfoConstant#<init>()",
+    "file" : "ts-auth-service/src/main/java/auth/constant/InfoConstant.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-auth-service/src/main/java/auth/constant/InfoConstant.java",
+      "line" : 9,
+      "col" : 15,
+      "callee" : "<init>",
+      "receiver" : "IllegalStateException",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-common:edu.fudan.common.entity.Account#<init>()",
+    "file" : "ts-common/src/main/java/edu/fudan/common/entity/Account.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Account.java",
+      "line" : 33,
+      "col" : 31,
+      "callee" : "getCode",
+      "receiver" : "Gender.OTHER",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Account.java",
+      "line" : 36,
+      "col" : 42,
+      "callee" : "getCode",
+      "receiver" : "DocumentType.NONE",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-common:edu.fudan.common.entity.Assurance#<init>()",
+    "file" : "ts-common/src/main/java/edu/fudan/common/entity/Assurance.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Assurance.java",
+      "line" : 30,
+      "col" : 29,
+      "callee" : "randomUUID",
+      "receiver" : "UUID",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-common:edu.fudan.common.entity.Order#<init>()",
+    "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 62,
+      "col" : 34,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 62,
+      "col" : 46,
+      "callee" : "<init>",
+      "receiver" : "Date",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 62,
+      "col" : 62,
+      "callee" : "currentTimeMillis",
+      "receiver" : "System",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 63,
+      "col" : 34,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 63,
+      "col" : 46,
+      "callee" : "<init>",
+      "receiver" : "Date",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 66,
+      "col" : 42,
+      "callee" : "getCode",
+      "receiver" : "SeatClass.FIRSTCLASS",
+      "kind" : "ENUM",
+      "arg_count" : 0,
+      "guard" : [ ],
+      "enum_constant" : {
+        "type" : "edu.fudan.common.entity.SeatClass",
+        "constant" : "FIRSTCLASS"
+      }
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 70,
+      "col" : 35,
+      "callee" : "getCode",
+      "receiver" : "OrderStatus.PAID",
+      "kind" : "ENUM",
+      "arg_count" : 0,
+      "guard" : [ ],
+      "enum_constant" : {
+        "type" : "edu.fudan.common.entity.OrderStatus",
+        "constant" : "PAID"
+      }
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-common:edu.fudan.common.entity.OrderAlterInfo#<init>()",
+    "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderAlterInfo.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderAlterInfo.java",
+      "line" : 22,
+      "col" : 24,
+      "callee" : "<init>",
+      "receiver" : "Order",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-common:edu.fudan.common.entity.Route#<init>()",
+    "file" : "ts-common/src/main/java/edu/fudan/common/entity/Route.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Route.java",
+      "line" : 27,
+      "col" : 24,
+      "callee" : "randomUUID",
+      "receiver" : "UUID",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Route.java",
+      "line" : 27,
+      "col" : 37,
+      "callee" : "toString",
+      "receiver" : "UUID.randomUUID()",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-common:edu.fudan.common.security.jwt.JWTUtil#<init>()",
+    "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 27,
+      "col" : 15,
+      "callee" : "<init>",
+      "receiver" : "IllegalStateException",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-common:edu.fudan.common.util.JsonUtils#<init>()",
+    "file" : "ts-common/src/main/java/edu/fudan/common/util/JsonUtils.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/JsonUtils.java",
+      "line" : 18,
+      "col" : 15,
+      "callee" : "<init>",
+      "receiver" : "IllegalStateException",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-inside-payment-service:inside_payment.util.CookieUtil#<init>()",
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/util/CookieUtil.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-inside-payment-service/src/main/java/inside_payment/util/CookieUtil.java",
+      "line" : 15,
+      "col" : 15,
+      "callee" : "<init>",
+      "receiver" : "IllegalStateException",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-order-other-service:other.entity.Order#<init>()",
+    "file" : "ts-order-other-service/src/main/java/other/entity/Order.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-other-service/src/main/java/other/entity/Order.java",
+      "line" : 71,
+      "col" : 34,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-other-service/src/main/java/other/entity/Order.java",
+      "line" : 71,
+      "col" : 46,
+      "callee" : "<init>",
+      "receiver" : "Date",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-other-service/src/main/java/other/entity/Order.java",
+      "line" : 71,
+      "col" : 62,
+      "callee" : "currentTimeMillis",
+      "receiver" : "System",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-other-service/src/main/java/other/entity/Order.java",
+      "line" : 72,
+      "col" : 34,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-other-service/src/main/java/other/entity/Order.java",
+      "line" : 72,
+      "col" : 46,
+      "callee" : "<init>",
+      "receiver" : "Date",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-other-service/src/main/java/other/entity/Order.java",
+      "line" : 75,
+      "col" : 42,
+      "callee" : "getCode",
+      "receiver" : "SeatClass.FIRSTCLASS",
+      "kind" : "ENUM",
+      "arg_count" : 0,
+      "guard" : [ ],
+      "enum_constant" : {
+        "type" : "edu.fudan.common.entity.SeatClass",
+        "constant" : "FIRSTCLASS"
+      }
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-other-service/src/main/java/other/entity/Order.java",
+      "line" : 79,
+      "col" : 35,
+      "callee" : "getCode",
+      "receiver" : "OrderStatus.PAID",
+      "kind" : "ENUM",
+      "arg_count" : 0,
+      "guard" : [ ],
+      "enum_constant" : {
+        "type" : "edu.fudan.common.entity.OrderStatus",
+        "constant" : "PAID"
+      }
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-order-other-service:other.entity.OrderAlterInfo#<init>()",
+    "file" : "ts-order-other-service/src/main/java/other/entity/OrderAlterInfo.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-other-service/src/main/java/other/entity/OrderAlterInfo.java",
+      "line" : 32,
+      "col" : 24,
+      "callee" : "<init>",
+      "receiver" : "Order",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-order-service:order.entity.Order#<init>()",
+    "file" : "ts-order-service/src/main/java/order/entity/Order.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-service/src/main/java/order/entity/Order.java",
+      "line" : 76,
+      "col" : 34,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-service/src/main/java/order/entity/Order.java",
+      "line" : 76,
+      "col" : 46,
+      "callee" : "<init>",
+      "receiver" : "Date",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-service/src/main/java/order/entity/Order.java",
+      "line" : 76,
+      "col" : 62,
+      "callee" : "currentTimeMillis",
+      "receiver" : "System",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-service/src/main/java/order/entity/Order.java",
+      "line" : 77,
+      "col" : 34,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-service/src/main/java/order/entity/Order.java",
+      "line" : 77,
+      "col" : 46,
+      "callee" : "<init>",
+      "receiver" : "Date",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-service/src/main/java/order/entity/Order.java",
+      "line" : 80,
+      "col" : 42,
+      "callee" : "getCode",
+      "receiver" : "SeatClass.FIRSTCLASS",
+      "kind" : "ENUM",
+      "arg_count" : 0,
+      "guard" : [ ],
+      "enum_constant" : {
+        "type" : "edu.fudan.common.entity.SeatClass",
+        "constant" : "FIRSTCLASS"
+      }
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-service/src/main/java/order/entity/Order.java",
+      "line" : 84,
+      "col" : 35,
+      "callee" : "getCode",
+      "receiver" : "OrderStatus.PAID",
+      "kind" : "ENUM",
+      "arg_count" : 0,
+      "guard" : [ ],
+      "enum_constant" : {
+        "type" : "edu.fudan.common.entity.OrderStatus",
+        "constant" : "PAID"
+      }
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-order-service:order.entity.OrderAlterInfo#<init>()",
+    "file" : "ts-order-service/src/main/java/order/entity/OrderAlterInfo.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-order-service/src/main/java/order/entity/OrderAlterInfo.java",
+      "line" : 32,
+      "col" : 24,
+      "callee" : "<init>",
+      "receiver" : "Order",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-payment-service:com.trainticket.entity.Payment#<init>()",
+    "file" : "ts-payment-service/src/main/java/com/trainticket/entity/Payment.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-payment-service/src/main/java/com/trainticket/entity/Payment.java",
+      "line" : 43,
+      "col" : 24,
+      "callee" : "randomUUID",
+      "receiver" : "UUID",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-payment-service/src/main/java/com/trainticket/entity/Payment.java",
+      "line" : 43,
+      "col" : 37,
+      "callee" : "toString",
+      "receiver" : "UUID.randomUUID()",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-price-service:price.entity.PriceConfig#<init>()",
+    "file" : "ts-price-service/src/main/java/price/entity/PriceConfig.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-price-service/src/main/java/price/entity/PriceConfig.java",
+      "line" : 37,
+      "col" : 24,
+      "callee" : "randomUUID",
+      "receiver" : "UUID",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-price-service/src/main/java/price/entity/PriceConfig.java",
+      "line" : 37,
+      "col" : 37,
+      "callee" : "toString",
+      "receiver" : "UUID.randomUUID()",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-rebook-service:rebook.entity.RebookInfo#<init>()",
+    "file" : "ts-rebook-service/src/main/java/rebook/entity/RebookInfo.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-rebook-service/src/main/java/rebook/entity/RebookInfo.java",
+      "line" : 47,
+      "col" : 33,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-rebook-service/src/main/java/rebook/entity/RebookInfo.java",
+      "line" : 47,
+      "col" : 45,
+      "callee" : "<init>",
+      "receiver" : "Date",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-route-service:route.entity.Route#<init>()",
+    "file" : "ts-route-service/src/main/java/route/entity/Route.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-route-service/src/main/java/route/entity/Route.java",
+      "line" : 41,
+      "col" : 24,
+      "callee" : "randomUUID",
+      "receiver" : "UUID",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-route-service/src/main/java/route/entity/Route.java",
+      "line" : 41,
+      "col" : 37,
+      "callee" : "toString",
+      "receiver" : "UUID.randomUUID()",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-user-service:user.entity.User#<init>()",
+    "file" : "ts-user-service/src/main/java/user/entity/User.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-user-service/src/main/java/user/entity/User.java",
+      "line" : 41,
+      "col" : 28,
+      "callee" : "randomUUID",
+      "receiver" : "UUID",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-user-service/src/main/java/user/entity/User.java",
+      "line" : 41,
+      "col" : 41,
+      "callee" : "toString",
+      "receiver" : "UUID.randomUUID()",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-verification-code-service:verifycode.util.CookieUtil#<init>()",
+    "file" : "ts-verification-code-service/src/main/java/verifycode/util/CookieUtil.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-verification-code-service/src/main/java/verifycode/util/CookieUtil.java",
+      "line" : 15,
+      "col" : 15,
+      "callee" : "<init>",
+      "receiver" : "IllegalStateException",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  }, {
+    "method_id" : "method:ts-wait-order-service:waitorder.entity.WaitListOrder#<init>()",
+    "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+    "branches" : [ ],
+    "calls" : [ {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 47,
+      "col" : 35,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 47,
+      "col" : 47,
+      "callee" : "<init>",
+      "receiver" : "Date",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 47,
+      "col" : 63,
+      "callee" : "currentTimeMillis",
+      "receiver" : "System",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 55,
+      "col" : 31,
+      "callee" : "getInstance",
+      "receiver" : "Calendar",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 56,
+      "col" : 11,
+      "callee" : "setTime",
+      "receiver" : "c",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 56,
+      "col" : 19,
+      "callee" : "<init>",
+      "receiver" : "Date",
+      "kind" : "CONSTRUCTOR",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 56,
+      "col" : 35,
+      "callee" : "currentTimeMillis",
+      "receiver" : "System",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 57,
+      "col" : 11,
+      "callee" : "add",
+      "receiver" : "c",
+      "kind" : "OTHER",
+      "arg_count" : 2,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 58,
+      "col" : 36,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 58,
+      "col" : 50,
+      "callee" : "getTime",
+      "receiver" : "c",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 59,
+      "col" : 32,
+      "callee" : "Date2String",
+      "receiver" : "StringUtils",
+      "kind" : "OTHER",
+      "arg_count" : 1,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 59,
+      "col" : 46,
+      "callee" : "getTime",
+      "receiver" : "c",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    }, {
+      "call_site_id_guess" : null,
+      "file" : "ts-wait-order-service/src/main/java/waitorder/entity/WaitListOrder.java",
+      "line" : 60,
+      "col" : 45,
+      "callee" : "getCode",
+      "receiver" : "WaitListOrderStatus.NOTPAID",
+      "kind" : "OTHER",
+      "arg_count" : 0,
+      "guard" : [ ]
+    } ],
+    "unsupported" : [ ]
+  } ]
+}

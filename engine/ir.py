@@ -238,6 +238,20 @@ class MethodPoolIR:
                 return cls({}, branch_rules=branch_rules)
             raise
 
+    def add_methods(self, items: list[dict[str, Any]]) -> None:
+        """Добавление IR методов из другого артефакта archparse (конструкторы из entity_ir.json).
+
+        Методы, которые уже есть в пуле, не перезаписываются.
+        """
+        added = False
+        for item in items:
+            mir = MethodIR.from_dict(item)
+            if mir.method_id and mir.method_id not in self.methods:
+                self.methods[mir.method_id] = mir
+                added = True
+        if added:
+            self._build_indexes()
+
     def has_method(self, method_id: str) -> bool:
         return method_id in self.methods
 
