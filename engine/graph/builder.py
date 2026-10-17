@@ -128,6 +128,17 @@ class GraphBuilder:
                         self._prune_by_rule(self.rules.is_dead_code_edge, "calls", m, x, profile, is_admin_scenario)
                         continue
 
+                    # Вызовы методов перечисления AssuranceType (Гипотеза 3.1):
+                    # off — исключить вызовы геттеров AssuranceType из getAllAssuranceTypes на шаге 15 в S3
+                    if (
+                        getattr(self.rules, "enum_member_calls", "on") == "off"
+                        and "getAllAssuranceTypes" in m
+                        and "AssuranceType#" in x
+                    ):
+                        if ledger:
+                            ledger.prune("calls", m, x, "DEFAULT_RULE", "enum_member_getter_ablation")
+                        continue
+
                     # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                     source_type, rule = "SKELETON", "reachability"
                     if hasattr(self.index, "edge_guards"):
