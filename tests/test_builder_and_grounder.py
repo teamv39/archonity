@@ -75,8 +75,23 @@ class TestGraphBuilder:
         ]
         methods, calls, remote, data = builder.traverse(entry)
 
-        # Должен вызваться конструктор Order#<init>()
+        # Должен вызваться конструктор Order#<init>() при train_mode='both' по умолчанию
         assert any("order.entity.Order#<init>()" in m for m in methods)
+
+    def test_order_hydration_new_user_prunes_unbooked_order_other_service(self, skeleton_index: SkeletonIndex, rules: RuntimeRules) -> None:
+        from engine.rules import ScenarioProfile
+        from engine.state import ScenarioState, TrainType
+        builder = GraphBuilder(skeleton_index, rules)
+        entry = [
+            "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+        ]
+        # Для нового пользователя без заказов Other (как в S4) конструктор OrderOther не гидрируется
+        prof_new = ScenarioProfile(id="S4", is_admin=False, has_assurance=False, has_consign=False, has_food=False, train_mode="high_speed_only", is_new_user=True)
+        st_new = ScenarioState.create_initial(scenario_profile=prof_new)
+        # Добавляем только заказ GaoTie
+        st_new.orders.append({"train_type": TrainType.GaoTie, "status": 0, "price": 100.0})
+        methods, calls, remote, data = builder.traverse(entry, profile=prof_new, scenario_state=st_new)
+        assert not any("other.entity.Order#<init>()" in m for m in methods)
 
     def test_r7_seat_class_enum_calls_in_travel_and_rebook(self, skeleton_index: SkeletonIndex, rules: RuntimeRules) -> None:
         builder = GraphBuilder(skeleton_index, rules)
