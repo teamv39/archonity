@@ -134,3 +134,29 @@ class TestTraversal:
 def test_db_dump_has_reference_rows() -> None:
     db = load_db_dump(DB_DUMP)
     assert db.get_table("route") and db.get_columns("inside_money")
+
+
+class TestAblationModes:
+    """Режимы RuntimeRules.entity_constructors_on_load для абляции на платформе."""
+
+    def test_project_calls_mode_keeps_only_order(self, index: SkeletonIndex) -> None:
+        allowed = index.entities.allowed_ctors("project_calls")
+        assert ORDER_OTHER_CTOR in allowed
+        assert ROUTE_CTOR not in allowed  # только UUID.randomUUID(): библиотека, не проект
+        route = _calls(index, "RouteServiceImpl#getRouteById", "findById")[0]
+        state = ScenarioState.create_initial(db_state=index.db_state.fork())
+        h = hydration(route, state, index.table_resource_to_db, allowed=allowed)
+        assert h.ctors == ()
+        assert h.rule == "R7:mode_excludes_ctor"
+
+    @pytest.mark.parametrize("mode,route_expected", [("body", True), ("project_calls", False), ("off", False)])
+    def test_traversal_respects_mode(self, index: SkeletonIndex, mode: str, route_expected: bool) -> None:
+        builder = GraphBuilder(index, RuntimeRules(entity_constructors_on_load=mode))
+        entry = ["method:ts-route-service:route.controller.RouteController#queryById(java.lang.String,org.springframework.http.HttpHeaders)"]
+        state = ScenarioState.create_initial(db_state=index.db_state.fork())
+        methods, _, _, _ = builder.traverse(entry, scenario_state=state)
+        assert (ROUTE_CTOR in methods) == route_expected
+
+    def test_unknown_mode_rejected(self) -> None:
+        with pytest.raises(ValueError):
+            RuntimeRules(entity_constructors_on_load="maybe")

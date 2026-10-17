@@ -28,6 +28,7 @@ class ArchonityPipeline:
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
         entity_ir_path: str | Path | None = None,
+        entity_constructors_on_load: str = "body",
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
     ) -> None:
@@ -48,7 +49,7 @@ class ArchonityPipeline:
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
 
         # 3. Загрузка правил
-        self.rules = RuntimeRules(rules_path)
+        self.rules = RuntimeRules(rules_path, entity_constructors_on_load=entity_constructors_on_load)
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
         self.grounder_mode = grounder
