@@ -71,3 +71,39 @@
 * **Что в `rules.py` / `graph/builder.py` сейчас:**
   - Ранее в скелете `receiver_type=None` для этих вызовов приводил к потере рёбер `calls`/`executes` на метод `getCode()`.
   - В `builder.py` существовал только частичный хардкод для конструктора `Order#<init>()`. Теперь M4 имеет полную карту всех статусных проверок для добавления рёбер R7.
+
+---
+
+## 3. Расширение пула (17.10.2026, Блоки 0 и 1 пп. 1–2 плана S2/S3)
+
+* **Артефакт:** `pool_ir.json` (52 метода, 1980 вызовов, 100% совпадение со скелетом через `verify_pool_ir.py`).
+* **Инструмент измерения (Блок 0):** `scripts/decision_log.py`.
+  - Классифицирует исходящие связи исполненных методов сценария по решающему правилу (`IR_PASS`, `IR_PRUNED`, `RULE_PRUNED` [список риска], `DEFAULT_INCLUDED`, `DEFAULT_PRUNED`).
+  - Результаты по S2:
+    - Исполнено методов: 181. Методов в IR-пуле: **33** (было 16).
+    - Рёбер проверено: 389.
+    - `IR_PASS` (включено по AST): **126** (было 74).
+    - `IR_PRUNED` (отсечено по AST): 18.
+    - `DEFAULT_INCLUDED`: 170 (сократилось с 222, 52 ребра перешли под контроль AST).
+    - `RULE_PRUNED` (список риска): сократился до 5 рёбер.
+  - Результаты по S3:
+    - Исполнено методов: 169. Методов в IR-пуле: **12** (было 9).
+    - `IR_PASS`: **56** (было 48).
+    - `RULE_PRUNED` (список риска): 3 ребра.
+
+### 3.1. Реализованный пул методов (Блок 1, пп. 1 и 2)
+1. **Диспатч обычный / скоростной поезд:**
+   - `SeatServiceImpl`: `distributeSeat`, `getLeftTicketOfInterval`.
+   - `TravelServiceImpl` (ts-travel2-service): `getTripAllDetailInfo`, `getTickets`, `getTicketsByBatch`, `getRouteByTripId`.
+   - `OrderOtherServiceImpl`: `create`, `getSoldTickets`, `modifyOrder`, `queryOrdersForRefresh`.
+2. **Перебронирование:**
+   - `RebookServiceImpl`: `getOrderByRebookInfo`, `getTripAllDetailInformation`, `dipatchSeat`, `drawBackMoney`, `queryTrainTypeByName`, `getRouteByRouteId`, `checkTime`.
+   - `InsidePaymentServiceImpl`: `drawBack`.
+
+### 3.2. Что осталось на будущее
+1. **Блок 1, пункты 3 и 4 (хелперы):**
+   - Хелперы отмены `CancelServiceImpl`: `getOrderByIdFromOrder`, `getOrderByIdFromOrderOther`, `drawbackMoney`.
+   - Хелперы `PreserveOtherServiceImpl`: `dipatchSeat`, `createOrder`, `getAccount`, `getContactsById`, `checkSecurity`, `createFoodOrder`.
+2. **Блок 2:** Пул методов для S3 (`PreserveServiceImpl` опции, `AssuranceServiceImpl`, `ConsignServiceImpl`).
+3. **Блок 4:** Таблица правил `branch_rules.json` вместо хардкода в `engine/ir.py`.
+

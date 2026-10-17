@@ -185,6 +185,89 @@ public class TargetPool {
             ));
         }
 
+        // 12. Диспатч скоростной vs обычный поезд (SeatServiceImpl, TravelServiceImpl/travel2, OrderOtherServiceImpl)
+        String seatFile = "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java";
+        list.add(new TargetMethod(
+                "method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)",
+                seatFile, "distributeSeat", "Seat", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-seat-service:seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)",
+                seatFile, "getLeftTicketOfInterval", "Seat", "HttpHeaders"
+        ));
+
+        String travel2File = "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java";
+        list.add(new TargetMethod(
+                "method:ts-travel2-service:travel2.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
+                travel2File, "getTripAllDetailInfo", "TripAllDetailInfo", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-travel2-service:travel2.service.TravelServiceImpl#getTickets(travel2.entity.Trip,edu.fudan.common.entity.Route,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+                travel2File, "getTickets", "Trip", "Route", "String", "String", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-travel2-service:travel2.service.TravelServiceImpl#getTicketsByBatch(java.util.List,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+                travel2File, "getTicketsByBatch", "List", "String", "String", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-travel2-service:travel2.service.TravelServiceImpl#getRouteByTripId(java.lang.String,org.springframework.http.HttpHeaders)",
+                travel2File, "getRouteByTripId", "String", "HttpHeaders"
+        ));
+
+        list.add(new TargetMethod(
+                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#create(other.entity.Order,org.springframework.http.HttpHeaders)",
+                orderOtherFile, "create", "Order", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#getSoldTickets(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)",
+                orderOtherFile, "getSoldTickets", "Seat", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#modifyOrder(java.lang.String,int,org.springframework.http.HttpHeaders)",
+                orderOtherFile, "modifyOrder", "String", "int", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrdersForRefresh(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+                orderOtherFile, "queryOrdersForRefresh", "QueryInfo", "String", "HttpHeaders"
+        ));
+
+        // 13. Перебронирование (RebookServiceImpl хелперы, InsidePaymentServiceImpl#drawBack)
+        String rebookFile = "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java";
+        String payFile = "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java";
+        list.add(new TargetMethod(
+                "method:ts-rebook-service:rebook.service.RebookServiceImpl#getOrderByRebookInfo(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
+                rebookFile, "getOrderByRebookInfo", "RebookInfo", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-rebook-service:rebook.service.RebookServiceImpl#getTripAllDetailInformation(edu.fudan.common.entity.TripAllDetailInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+                rebookFile, "getTripAllDetailInformation", "TripAllDetailInfo", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-rebook-service:rebook.service.RebookServiceImpl#dipatchSeat(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)",
+                rebookFile, "dipatchSeat", "String", "String", "String", "String", "int", "int", "List", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-rebook-service:rebook.service.RebookServiceImpl#drawBackMoney(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+                rebookFile, "drawBackMoney", "String", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-rebook-service:rebook.service.RebookServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)",
+                rebookFile, "queryTrainTypeByName", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-rebook-service:rebook.service.RebookServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)",
+                rebookFile, "getRouteByRouteId", "String", "HttpHeaders"
+        ));
+        list.add(new TargetMethod(
+                "method:ts-rebook-service:rebook.service.RebookServiceImpl#checkTime(java.lang.String,java.lang.String)",
+                rebookFile, "checkTime", "String", "String"
+        ));
+
+        list.add(new TargetMethod(
+                "method:ts-inside-payment-service:inside_payment.service.InsidePaymentServiceImpl#drawBack(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+                payFile, "drawBack", "String", "String", "HttpHeaders"
+        ));
+
         return Collections.unmodifiableList(list);
     }
 }

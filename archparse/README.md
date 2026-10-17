@@ -54,7 +54,9 @@ if (orderResult.getStatus() == 1) {
 | 9 | `UserServiceImpl#saveUser`, `#createDefaultAuthUser` | `ts-user-service/.../user/service/impl/UserServiceImpl.java` | ветка `user1 == null` — активация регистрации нового пользователя и удалённого вызова к `ts-auth-service` | S4 |
 | 10 | `AdminOrderServiceImpl#getAllOrders`, `#deleteOrder`, `#updateOrder`, `#addOrder` | `ts-admin-order-service/.../adminorder/service/AdminOrderServiceImpl.java` | G/D-диспатч админки (`startsWith("G") || startsWith("D")`) и безусловные вызовы в оба order-сервиса | S6 |
 
-Если за день успеваешь только половину — бери 1–4 (пять методов, три сервиса): они закрывают G/D-диспатч и status-гейты, которые размножены по cancel/execute/rebook/payment и чаще всего дают parallel FP/FN.
+| 11 | `SeatServiceImpl`, `TravelServiceImpl` (travel2), `OrderOtherServiceImpl`, `RebookServiceImpl` (helpers), `InsidePaymentServiceImpl#drawBack` | Сервисы seat, travel2, order-other, rebook, inside-payment | Расширение пула под S2 (Блок 1, пп. 1–2): диспатч скоростной/обычный поезд и перебронирование (18 новых методов, всего в пуле 52 метода, 1980 вызовов) | S2, S3 |
+
+---
 
 ## 3. Контракт вывода (узкий, только для пула)
 
