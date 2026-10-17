@@ -290,6 +290,11 @@ class GraphBuilder:
             ):
                 edges_calls.discard((query_orders, string2date))
 
+        # ts-common:edu.fudan.common.entity.Order#<init>()
+        common_order_init = "method:ts-common:edu.fudan.common.entity.Order#<init>()"
+        if common_order_init in active_methods:
+            self._add_order_constructor_calls(common_order_init, active_methods, edges_calls)
+
     def _add_order_constructor_calls(
         self,
         order_init_method: str,
