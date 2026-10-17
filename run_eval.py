@@ -64,6 +64,13 @@ def parse_args() -> argparse.Namespace:
         help="Путь к файлу правил отсева мертвого кода",
     )
     parser.add_argument(
+        "--entity-ctors",
+        choices=("body", "project_calls", "off"),
+        default="body",
+        help="Режим правила R7 (конструкторы сущностей при загрузке из БД): body — непустое тело, "
+             "project_calls — только конструкторы с вызовом проектного метода (выдача до обобщения R7), off — выключено",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -161,6 +168,7 @@ def main() -> None:
         targets_root=args.targets,
         rules_path=args.rules,
         ir_path=pool_ir_path,
+        entity_constructors_on_load=args.entity_ctors,
     )
 
     print("Генерация графов для сценариев...")
@@ -174,6 +182,11 @@ def main() -> None:
     evidence_out = args.out.parent / "evidence.json"
     adapter.save_evidence_log(evidence_out)
     print(f"Evidence Log сохранен в: {evidence_out}")
+
+    decisions_out = args.out.parent / "decisions.json"
+    with open(decisions_out, "w", encoding="utf-8") as f:
+        json.dump(pipeline.ledger.to_dict(), f, ensure_ascii=False, indent=1)
+    print(f"Журнал решений (evidence v2) сохранен в: {decisions_out}")
 
     # Синхронизация с visualizer/public/data/
     vis_data_dir = ROOT_DIR / "visualizer" / "public" / "data"

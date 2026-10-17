@@ -6,6 +6,7 @@ from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex, load_json
 from engine.adapters.submission import SubmissionAdapter
+from engine.decisions import DecisionLedger
 from engine.evidence import EvidenceLogger
 from engine.graph.builder import GraphBuilder
 from engine.resolver import ScenarioGrounder
@@ -25,6 +26,8 @@ class ArchonityPipeline:
         db_dump_path: str | Path | None = None,
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
+        entity_ir_path: str | Path | None = None,
+        entity_constructors_on_load: str = "body",
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -36,19 +39,23 @@ class ArchonityPipeline:
             db_dump_path=db_dump_path,
             pool_ir=pool_ir,
             ir_path=ir_path,
+            entity_ir_path=entity_ir_path,
         )
 
         # 2. Логгер доказательств (Evidence Log)
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
 
         # 3. Загрузка правил
-        self.rules = RuntimeRules(rules_path)
+        self.rules = RuntimeRules(rules_path, entity_constructors_on_load=entity_constructors_on_load)
 
         # 4. Инициализация резолвера шагов
         self.grounder = ScenarioGrounder(self.index, self.targets_root)
 
         # 5. Инициализация графового строителя
         self.builder = GraphBuilder(self.index, self.rules)
+
+        # 6. Журнал решений по рёбрам (evidence.json v2): пишет сам builder
+        self.ledger = DecisionLedger()
 
     def run_scenario(
         self,
@@ -58,6 +65,7 @@ class ArchonityPipeline:
         """Обработка одного сценария: пошаговый grounding + state tracking + graph traversal + filtering."""
         sid = scenario_dict.get("id", "S?")
         profile = ScenarioProfile.from_scenario(scenario_dict)
+        self.ledger.begin_scenario(sid)
 
         # Шаг 1: Инициализация изолированного состояния сценария (M3)
         if scenario_state is None:
@@ -84,6 +92,7 @@ class ArchonityPipeline:
 
         # Шаг 2: Пошаговый обход графа (Step-by-step Execution)
         for st in scenario_dict.get("steps") or []:
+            self.ledger.begin_step(st.get("n"))
             step_profile = profile.for_step(st)
             step_entries, prev_files = self.grounder.ground_step(
                 st,
@@ -101,6 +110,7 @@ class ArchonityPipeline:
                 scenario_meta=scenario_meta,
                 profile=step_profile,
                 scenario_state=scenario_state,
+                ledger=self.ledger,
             )
             all_methods |= m
             all_calls |= c
@@ -111,7 +121,11 @@ class ArchonityPipeline:
             scenario_state.apply_step(st, scenario_dict=scenario_dict)
 
         # Гарантия правила R19: каждый метод из связей calls/remote/data входит в executes
-        all_methods |= {s for s, _ in all_calls | all_remote | all_data} | {t for _, t in all_calls | all_remote}
+        r19 = {s for s, _ in all_calls | all_remote | all_data} | {t for _, t in all_calls | all_remote}
+        self.ledger.begin_step(None)
+        for m in sorted(r19 - all_methods):
+            self.ledger.execute(m, "DEFAULT_RULE", "R19")
+        all_methods |= r19
 
         return all_methods, all_calls, all_remote, all_data
 

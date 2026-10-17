@@ -89,6 +89,24 @@ class TestPipelineE2E:
             missing = touched - methods
             assert not missing, f"Scenario {sid} has methods in edges missing from executes: {missing}"
 
+    def test_decision_ledger_matches_answer(self, pipeline: ArchonityPipeline) -> None:
+        """Инвариант журнала решений: рёбра, включённые по журналу, ровно совпадают с ответом сценария."""
+        scenario_files = sorted((ROOT / "hackaton" / "tt-challenge" / "scenarios").glob("*.json"))
+        for sp in scenario_files:
+            s_dict = load_json(sp)
+            sid = s_dict["id"]
+            methods, calls, remote, data = pipeline.run_scenario(s_dict)
+            answer = {("executes", f"scenario:{sid}", m) for m in methods}
+            answer |= {("calls", s, t) for s, t in calls}
+            answer |= {("remote", s, t) for s, t in remote}
+            answer |= {("data", s, t) for s, t in data}
+            assert pipeline.ledger.final_edges(sid) == answer, f"Scenario {sid}: ledger diverges from answer"
+
+            # У каждого ребра ответа есть обоснование
+            for key, entry in pipeline.ledger.scenario_dict(sid).items():
+                if entry["included"]:
+                    assert entry["source_type"] and entry["rule"], f"{sid}: no reason for {key}"
+
     def test_no_intra_service_remote_calls(self, pipeline: ArchonityPipeline) -> None:
         """Инвариант remote: межсервисные вызовы допустимы ТОЛЬКО между разными сервисами."""
         scenario_files = sorted((ROOT / "hackaton" / "tt-challenge" / "scenarios").glob("*.json"))

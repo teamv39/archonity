@@ -3822,6 +3822,115 @@
   } ],
   "unsupported" : [ ]
 }, {
+  "method_id" : "method:ts-inside-payment-service:inside_payment.service.InsidePaymentServiceImpl#drawBack(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+  "branches" : [ {
+    "id" : "b246",
+    "line" : 246,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "addMoneyRepository.findByUserId(userId) != null",
+    "refers_to" : [ "field:InsidePaymentServiceImpl.addMoneyRepository", "local:userId" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : true
+    },
+    "then_calls" : [ "cs:247:30", "cs:248:22", "cs:249:22", "cs:250:22", "cs:251:32", "cs:252:20" ],
+    "else_calls" : [ "cs:254:20", "cs:255:20" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 246,
+    "col" : 32,
+    "callee" : "findByUserId",
+    "receiver" : "addMoneyRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 247,
+    "col" : 30,
+    "callee" : "<init>",
+    "receiver" : "Money",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ "b246:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 248,
+    "col" : 22,
+    "callee" : "setUserId",
+    "receiver" : "addMoney",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b246:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 249,
+    "col" : 22,
+    "callee" : "setMoney",
+    "receiver" : "addMoney",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b246:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 250,
+    "col" : 22,
+    "callee" : "setType",
+    "receiver" : "addMoney",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b246:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 251,
+    "col" : 32,
+    "callee" : "save",
+    "receiver" : "addMoneyRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b246:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 252,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b246:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 254,
+    "col" : 20,
+    "callee" : "error",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b246:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
+    "line" : 255,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b246:else" ]
+  } ],
+  "unsupported" : [ ]
+}, {
   "method_id" : "method:ts-rebook-service:rebook.service.RebookServiceImpl#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
   "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
   "branches" : [ {
@@ -5853,6 +5962,1051 @@
     "kind" : "CONSTRUCTOR",
     "arg_count" : 3,
     "guard" : [ "b220:else" ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-rebook-service:rebook.service.RebookServiceImpl#getOrderByRebookInfo(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
+  "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+  "branches" : [ {
+    "id" : "b386",
+    "line" : 386,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "info.getOldTripId().startsWith(\"G\") || info.getOldTripId().startsWith(\"D\")",
+    "refers_to" : [ "field:RebookInfo.oldTripId", "local:info" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:387:83" ],
+    "else_calls" : [ "cs:389:99" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 384,
+    "col" : 36,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 385,
+    "col" : 42,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 386,
+    "col" : 18,
+    "callee" : "getOldTripId",
+    "receiver" : "info",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 386,
+    "col" : 33,
+    "callee" : "startsWith",
+    "receiver" : "info.getOldTripId()",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 386,
+    "col" : 57,
+    "callee" : "getOldTripId",
+    "receiver" : "info",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 386,
+    "col" : 72,
+    "callee" : "startsWith",
+    "receiver" : "info.getOldTripId()",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 387,
+    "col" : 83,
+    "callee" : "getOrderId",
+    "receiver" : "info",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b386:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 389,
+    "col" : 99,
+    "callee" : "getOrderId",
+    "receiver" : "info",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b386:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 391,
+    "col" : 34,
+    "callee" : "getAuthorizationHeadersFrom",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 392,
+    "col" : 56,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 393,
+    "col" : 79,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 397,
+    "col" : 17,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<Order>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 400,
+    "col" : 51,
+    "callee" : "getBody",
+    "receiver" : "reGetOrderByRebookInfo",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-rebook-service:rebook.service.RebookServiceImpl#getTripAllDetailInformation(edu.fudan.common.entity.TripAllDetailInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+  "branches" : [ {
+    "id" : "b300",
+    "line" : 300,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "tripId.startsWith(\"G\") || tripId.startsWith(\"D\")",
+    "refers_to" : [ "local:tripId" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 298,
+    "col" : 37,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 299,
+    "col" : 38,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 300,
+    "col" : 20,
+    "callee" : "startsWith",
+    "receiver" : "tripId",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 300,
+    "col" : 46,
+    "callee" : "startsWith",
+    "receiver" : "tripId",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 307,
+    "col" : 34,
+    "callee" : "getAuthorizationHeadersFrom",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 308,
+    "col" : 52,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 309,
+    "col" : 89,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 313,
+    "col" : 17,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<TripAllDetail>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 315,
+    "col" : 41,
+    "callee" : "getBody",
+    "receiver" : "reGetTripAllDetailResult",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-rebook-service:rebook.service.RebookServiceImpl#dipatchSeat(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)",
+  "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+  "branches" : [ ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 239,
+    "col" : 28,
+    "callee" : "<init>",
+    "receiver" : "Seat",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 240,
+    "col" : 21,
+    "callee" : "setTravelDate",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 241,
+    "col" : 21,
+    "callee" : "setTrainNumber",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 242,
+    "col" : 21,
+    "callee" : "setSeatType",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 243,
+    "col" : 21,
+    "callee" : "setStartStation",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 244,
+    "col" : 21,
+    "callee" : "setDestStation",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 245,
+    "col" : 21,
+    "callee" : "setTotalNum",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 246,
+    "col" : 21,
+    "callee" : "setStations",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 248,
+    "col" : 34,
+    "callee" : "getAuthorizationHeadersFrom",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 249,
+    "col" : 42,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 250,
+    "col" : 35,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 251,
+    "col" : 66,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 255,
+    "col" : 17,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<Ticket>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 257,
+    "col" : 25,
+    "callee" : "getBody",
+    "receiver" : "reTicket",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 257,
+    "col" : 35,
+    "callee" : "getData",
+    "receiver" : "reTicket.getBody()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-rebook-service:rebook.service.RebookServiceImpl#drawBackMoney(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+  "branches" : [ ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 456,
+    "col" : 34,
+    "callee" : "getAuthorizationHeadersFrom",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 457,
+    "col" : 49,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 458,
+    "col" : 45,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 459,
+    "col" : 65,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 464,
+    "col" : 43,
+    "callee" : "getBody",
+    "receiver" : "reDrawBackMoney",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 465,
+    "col" : 23,
+    "callee" : "getStatus",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-rebook-service:rebook.service.RebookServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+  "branches" : [ ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 405,
+    "col" : 36,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 406,
+    "col" : 34,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 407,
+    "col" : 52,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 412,
+    "col" : 33,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 414,
+    "col" : 26,
+    "callee" : "conveterObject",
+    "receiver" : "JsonUtils",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 414,
+    "col" : 50,
+    "callee" : "getData",
+    "receiver" : "response",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-rebook-service:rebook.service.RebookServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+  "branches" : [ {
+    "id" : "b426",
+    "line" : 426,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "result.getStatus() == 0",
+    "refers_to" : [ "field:Response.status", "local:result" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : true
+    },
+    "then_calls" : [ "cs:427:20", "cs:427:93" ],
+    "else_calls" : [ "cs:430:20", "cs:431:30", "cs:431:52" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 418,
+    "col" : 36,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 419,
+    "col" : 34,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 420,
+    "col" : 52,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 425,
+    "col" : 30,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 426,
+    "col" : 21,
+    "callee" : "getStatus",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 427,
+    "col" : 20,
+    "callee" : "warn",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b426:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 427,
+    "col" : 93,
+    "callee" : "getMsg",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b426:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 430,
+    "col" : 20,
+    "callee" : "info",
+    "receiver" : "LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b426:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 431,
+    "col" : 30,
+    "callee" : "conveterObject",
+    "receiver" : "JsonUtils",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b426:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 431,
+    "col" : 52,
+    "callee" : "getData",
+    "receiver" : "result",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b426:else" ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-rebook-service:rebook.service.RebookServiceImpl#checkTime(java.lang.String,java.lang.String)",
+  "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+  "branches" : [ {
+    "id" : "b274",
+    "line" : 274,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "calDateA.get(Calendar.YEAR) > calDateB.get(Calendar.YEAR)",
+    "refers_to" : [ "local:calDateA", "local:calDateB" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b276",
+    "line" : 276,
+    "guard" : [ "b274:else" ],
+    "kind" : "else-if",
+    "condition_text" : "calDateA.get(Calendar.YEAR) == calDateB.get(Calendar.YEAR)",
+    "refers_to" : [ "local:calDateA", "local:calDateB" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b277",
+    "line" : 277,
+    "guard" : [ "b274:else", "b276:then" ],
+    "kind" : "if",
+    "condition_text" : "calDateA.get(Calendar.MONTH) > calDateB.get(Calendar.MONTH)",
+    "refers_to" : [ "local:calDateA", "local:calDateB" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b279",
+    "line" : 279,
+    "guard" : [ "b274:else", "b276:then", "b277:else" ],
+    "kind" : "else-if",
+    "condition_text" : "calDateA.get(Calendar.MONTH) == calDateB.get(Calendar.MONTH)",
+    "refers_to" : [ "local:calDateA", "local:calDateB" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b280",
+    "line" : 280,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then" ],
+    "kind" : "if",
+    "condition_text" : "calDateA.get(Calendar.DAY_OF_MONTH) > calDateB.get(Calendar.DAY_OF_MONTH)",
+    "refers_to" : [ "local:calDateA", "local:calDateB" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b282",
+    "line" : 282,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else" ],
+    "kind" : "else-if",
+    "condition_text" : "calDateA.get(Calendar.DAY_OF_MONTH) == calDateB.get(Calendar.DAY_OF_MONTH)",
+    "refers_to" : [ "local:calDateA", "local:calDateB" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b283",
+    "line" : 283,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else", "b282:then" ],
+    "kind" : "if",
+    "condition_text" : "calDateA.get(Calendar.HOUR_OF_DAY) > calDateC.get(Calendar.HOUR_OF_DAY) + 2",
+    "refers_to" : [ "local:calDateA", "local:calDateC" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b285",
+    "line" : 285,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else", "b282:then", "b283:else" ],
+    "kind" : "else-if",
+    "condition_text" : "calDateA.get(Calendar.HOUR_OF_DAY) == (calDateC.get(Calendar.HOUR_OF_DAY) + 2) && calDateA.get(Calendar.MINUTE) > calDateC.get(Calendar.MINUTE)",
+    "refers_to" : [ "local:calDateA", "local:calDateC" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 267,
+    "col" : 38,
+    "callee" : "getInstance",
+    "receiver" : "Calendar",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 268,
+    "col" : 22,
+    "callee" : "<init>",
+    "receiver" : "Date",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 269,
+    "col" : 18,
+    "callee" : "setTime",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 270,
+    "col" : 38,
+    "callee" : "getInstance",
+    "receiver" : "Calendar",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 271,
+    "col" : 18,
+    "callee" : "setTime",
+    "receiver" : "calDateB",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 271,
+    "col" : 38,
+    "callee" : "String2Date",
+    "receiver" : "StringUtils",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 272,
+    "col" : 38,
+    "callee" : "getInstance",
+    "receiver" : "Calendar",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 273,
+    "col" : 18,
+    "callee" : "setTime",
+    "receiver" : "calDateC",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 273,
+    "col" : 38,
+    "callee" : "String2Date",
+    "receiver" : "StringUtils",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 274,
+    "col" : 22,
+    "callee" : "get",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 274,
+    "col" : 52,
+    "callee" : "get",
+    "receiver" : "calDateB",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 276,
+    "col" : 29,
+    "callee" : "get",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 276,
+    "col" : 60,
+    "callee" : "get",
+    "receiver" : "calDateB",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 277,
+    "col" : 26,
+    "callee" : "get",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 277,
+    "col" : 57,
+    "callee" : "get",
+    "receiver" : "calDateB",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 279,
+    "col" : 33,
+    "callee" : "get",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 279,
+    "col" : 65,
+    "callee" : "get",
+    "receiver" : "calDateB",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 280,
+    "col" : 30,
+    "callee" : "get",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 280,
+    "col" : 68,
+    "callee" : "get",
+    "receiver" : "calDateB",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 282,
+    "col" : 37,
+    "callee" : "get",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 282,
+    "col" : 76,
+    "callee" : "get",
+    "receiver" : "calDateB",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 283,
+    "col" : 34,
+    "callee" : "get",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else", "b282:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 283,
+    "col" : 71,
+    "callee" : "get",
+    "receiver" : "calDateC",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else", "b282:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 285,
+    "col" : 41,
+    "callee" : "get",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else", "b282:then", "b283:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 285,
+    "col" : 80,
+    "callee" : "get",
+    "receiver" : "calDateC",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else", "b282:then", "b283:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 285,
+    "col" : 123,
+    "callee" : "get",
+    "receiver" : "calDateA",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else", "b282:then", "b283:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-rebook-service/src/main/java/rebook/service/RebookServiceImpl.java",
+    "line" : 285,
+    "col" : 155,
+    "callee" : "get",
+    "receiver" : "calDateC",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b274:else", "b276:then", "b277:else", "b279:then", "b280:else", "b282:then", "b283:else" ]
   } ],
   "unsupported" : [ ]
 }, {
@@ -14402,6 +15556,689 @@
   } ],
   "unsupported" : [ "line 399: foreach body guarded as f399:orders (assumed non-empty unless state says otherwise)" ]
 }, {
+  "method_id" : "method:ts-order-other-service:other.service.OrderOtherServiceImpl#create(other.entity.Order,org.springframework.http.HttpHeaders)",
+  "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+  "branches" : [ {
+    "id" : "b94",
+    "line" : 94,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "accountOrders.contains(order)",
+    "refers_to" : [ "local:accountOrders", "local:order" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : true
+    },
+    "then_calls" : [ "cs:95:42", "cs:95:120", "cs:96:20" ],
+    "else_calls" : [ "cs:98:19", "cs:98:43", "cs:98:30", "cs:99:40", "cs:100:42", "cs:100:108", "cs:100:122", "cs:101:20" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 92,
+    "col" : 38,
+    "callee" : "info",
+    "receiver" : "OrderOtherServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 93,
+    "col" : 63,
+    "callee" : "findByAccountId",
+    "receiver" : "orderOtherRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 93,
+    "col" : 85,
+    "callee" : "getAccountId",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 94,
+    "col" : 27,
+    "callee" : "contains",
+    "receiver" : "accountOrders",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 95,
+    "col" : 42,
+    "callee" : "error",
+    "receiver" : "OrderOtherServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b94:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 95,
+    "col" : 120,
+    "callee" : "getId",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b94:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 96,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b94:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 98,
+    "col" : 19,
+    "callee" : "setId",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b94:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 98,
+    "col" : 30,
+    "callee" : "randomUUID",
+    "receiver" : "UUID",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b94:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 98,
+    "col" : 43,
+    "callee" : "toString",
+    "receiver" : "UUID.randomUUID()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b94:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 99,
+    "col" : 40,
+    "callee" : "save",
+    "receiver" : "orderOtherRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b94:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 100,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "OrderOtherServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 3,
+    "guard" : [ "b94:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 100,
+    "col" : 108,
+    "callee" : "getId",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b94:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 100,
+    "col" : 122,
+    "callee" : "getPrice",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b94:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 101,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b94:else" ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-order-other-service:other.service.OrderOtherServiceImpl#getSoldTickets(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)",
+  "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+  "branches" : [ {
+    "id" : "b55",
+    "line" : 55,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "list != null && !list.isEmpty()",
+    "refers_to" : [ "local:list", "field:ArrayList.empty" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : true
+    },
+    "then_calls" : [ "cs:56:29", "cs:58:33", "cs:59:24", "cs:59:42", "cs:59:61", "cs:60:24", "cs:60:50", "cs:61:24", "cs:61:49", "cs:62:27", "cs:65:45", "cs:66:28", "cs:67:42", "cs:67:113", "cs:69:20" ],
+    "else_calls" : [ "cs:72:42", "cs:72:133", "cs:72:161", "cs:73:20" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 53,
+    "col" : 54,
+    "callee" : "findByTravelDateAndTrainNumber",
+    "receiver" : "orderOtherRepository",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 53,
+    "col" : 97,
+    "callee" : "getTravelDate",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 54,
+    "col" : 29,
+    "callee" : "getTrainNumber",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 55,
+    "col" : 35,
+    "callee" : "isEmpty",
+    "receiver" : "list",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 56,
+    "col" : 29,
+    "callee" : "<init>",
+    "receiver" : "HashSet",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ "b55:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 58,
+    "col" : 33,
+    "callee" : "<init>",
+    "receiver" : "Ticket",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ "b55:then", "f57:list" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 59,
+    "col" : 24,
+    "callee" : "setSeatNo",
+    "receiver" : "ticket",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b55:then", "f57:list" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 59,
+    "col" : 42,
+    "callee" : "parseInt",
+    "receiver" : "Integer",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b55:then", "f57:list" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 59,
+    "col" : 61,
+    "callee" : "getSeatNumber",
+    "receiver" : "tempOrder",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b55:then", "f57:list" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 60,
+    "col" : 24,
+    "callee" : "setStartStation",
+    "receiver" : "ticket",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b55:then", "f57:list" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 60,
+    "col" : 50,
+    "callee" : "getFrom",
+    "receiver" : "tempOrder",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b55:then", "f57:list" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 61,
+    "col" : 24,
+    "callee" : "setDestStation",
+    "receiver" : "ticket",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b55:then", "f57:list" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 61,
+    "col" : 49,
+    "callee" : "getTo",
+    "receiver" : "tempOrder",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b55:then", "f57:list" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 62,
+    "col" : 27,
+    "callee" : "add",
+    "receiver" : "ticketSet",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b55:then", "f57:list" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 65,
+    "col" : 45,
+    "callee" : "<init>",
+    "receiver" : "LeftTicketInfo",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ "b55:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 66,
+    "col" : 28,
+    "callee" : "setSoldTickets",
+    "receiver" : "leftTicketInfo",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b55:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 67,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "OrderOtherServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b55:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 67,
+    "col" : 113,
+    "callee" : "toString",
+    "receiver" : "leftTicketInfo",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b55:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 69,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b55:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 72,
+    "col" : 42,
+    "callee" : "warn",
+    "receiver" : "OrderOtherServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 3,
+    "guard" : [ "b55:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 72,
+    "col" : 133,
+    "callee" : "getTravelDate",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b55:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 72,
+    "col" : 161,
+    "callee" : "getTrainNumber",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b55:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 73,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b55:else" ]
+  } ],
+  "unsupported" : [ "line 57: foreach body guarded as f57:list (assumed non-empty unless state says otherwise)" ]
+}, {
+  "method_id" : "method:ts-order-other-service:other.service.OrderOtherServiceImpl#modifyOrder(java.lang.String,int,org.springframework.http.HttpHeaders)",
+  "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+  "branches" : [ {
+    "id" : "b335",
+    "line" : 335,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "!op.isPresent()",
+    "refers_to" : [ "field:Optional.present", "local:op" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : true
+    },
+    "then_calls" : [ "cs:336:42", "cs:337:20" ],
+    "else_calls" : [ "cs:339:30", "cs:340:19", "cs:341:34", "cs:342:42", "cs:343:20" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 334,
+    "col" : 51,
+    "callee" : "findById",
+    "receiver" : "orderOtherRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 335,
+    "col" : 17,
+    "callee" : "isPresent",
+    "receiver" : "op",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 336,
+    "col" : 42,
+    "callee" : "error",
+    "receiver" : "OrderOtherServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b335:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 337,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b335:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 339,
+    "col" : 30,
+    "callee" : "get",
+    "receiver" : "op",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b335:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 340,
+    "col" : 19,
+    "callee" : "setStatus",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b335:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 341,
+    "col" : 34,
+    "callee" : "save",
+    "receiver" : "orderOtherRepository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b335:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 342,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "OrderOtherServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b335:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 343,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b335:else" ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrdersForRefresh(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+  "branches" : [ ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 210,
+    "col" : 35,
+    "callee" : "queryOrders",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 3,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 210,
+    "col" : 71,
+    "callee" : "getData",
+    "receiver" : "queryOrders(qi, accountId, headers)",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 211,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "ArrayList<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 213,
+    "col" : 24,
+    "callee" : "add",
+    "receiver" : "stationIds",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f212:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 213,
+    "col" : 34,
+    "callee" : "getFrom",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f212:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 214,
+    "col" : 24,
+    "callee" : "add",
+    "receiver" : "stationIds",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f212:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 214,
+    "col" : 34,
+    "callee" : "getTo",
+    "receiver" : "order",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f212:orders" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 216,
+    "col" : 36,
+    "callee" : "size",
+    "receiver" : "orders",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 217,
+    "col" : 20,
+    "callee" : "get",
+    "receiver" : "orders",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 217,
+    "col" : 27,
+    "callee" : "setFrom",
+    "receiver" : "orders.get(i)",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 217,
+    "col" : 46,
+    "callee" : "get",
+    "receiver" : "stationIds",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 218,
+    "col" : 20,
+    "callee" : "get",
+    "receiver" : "orders",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 218,
+    "col" : 27,
+    "callee" : "setTo",
+    "receiver" : "orders.get(i)",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 218,
+    "col" : 44,
+    "callee" : "get",
+    "receiver" : "stationIds",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
+    "line" : 220,
+    "col" : 16,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ "line 212: foreach body guarded as f212:orders (assumed non-empty unless state says otherwise)", "line 216: for loop not modeled (R17)" ]
+}, {
   "method_id" : "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
   "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
   "branches" : [ {
@@ -16855,6 +18692,1034 @@
   } ],
   "unsupported" : [ ]
 }, {
+  "method_id" : "method:ts-travel2-service:travel2.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
+  "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+  "branches" : [ {
+    "id" : "b217",
+    "line" : 217,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "trip == null",
+    "refers_to" : [ "local:trip" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : false
+    },
+    "then_calls" : [ "cs:218:18", "cs:219:18", "cs:220:38", "cs:220:125", "cs:221:20" ],
+    "else_calls" : [ "cs:223:40", "cs:224:42", "cs:225:41", "cs:225:69", "cs:225:85", "cs:225:99" ]
+  }, {
+    "id" : "b226",
+    "line" : 226,
+    "guard" : [ "b217:else" ],
+    "kind" : "if",
+    "condition_text" : "tripResponse == null",
+    "refers_to" : [ "local:tripResponse" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : false
+    },
+    "then_calls" : [ "cs:227:22", "cs:228:22", "cs:229:42", "cs:229:134", "cs:229:148", "cs:230:24" ],
+    "else_calls" : [ "cs:232:22", "cs:233:22", "cs:233:41", "cs:233:54", "cs:233:70" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 214,
+    "col" : 30,
+    "callee" : "<init>",
+    "receiver" : "TripAllDetail",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 215,
+    "col" : 34,
+    "callee" : "debug",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 215,
+    "col" : 86,
+    "callee" : "toString",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 216,
+    "col" : 32,
+    "callee" : "findByTripId",
+    "receiver" : "repository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 216,
+    "col" : 45,
+    "callee" : "<init>",
+    "receiver" : "TripId",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 216,
+    "col" : 61,
+    "callee" : "getTripId",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 218,
+    "col" : 18,
+    "callee" : "setTripResponse",
+    "receiver" : "gtdr",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b217:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 219,
+    "col" : 18,
+    "callee" : "setTrip",
+    "receiver" : "gtdr",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b217:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 220,
+    "col" : 38,
+    "callee" : "error",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b217:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 220,
+    "col" : 125,
+    "callee" : "getTripId",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b217:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 221,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b217:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 223,
+    "col" : 40,
+    "callee" : "getTo",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b217:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 224,
+    "col" : 42,
+    "callee" : "getFrom",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b217:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 225,
+    "col" : 41,
+    "callee" : "getTickets",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 6,
+    "guard" : [ "b217:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 225,
+    "col" : 69,
+    "callee" : "getFrom",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b217:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 225,
+    "col" : 85,
+    "callee" : "getTo",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b217:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 225,
+    "col" : 99,
+    "callee" : "getTravelDate",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b217:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 227,
+    "col" : 22,
+    "callee" : "setTrip",
+    "receiver" : "gtdr",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b217:else", "b226:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 228,
+    "col" : 22,
+    "callee" : "setTripResponse",
+    "receiver" : "gtdr",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b217:else", "b226:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 229,
+    "col" : 42,
+    "callee" : "warn",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 3,
+    "guard" : [ "b217:else", "b226:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 229,
+    "col" : 134,
+    "callee" : "getTo",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b217:else", "b226:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 229,
+    "col" : 148,
+    "callee" : "getFrom",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b217:else", "b226:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 230,
+    "col" : 24,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b217:else", "b226:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 232,
+    "col" : 22,
+    "callee" : "setTripResponse",
+    "receiver" : "gtdr",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b217:else", "b226:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 233,
+    "col" : 22,
+    "callee" : "setTrip",
+    "receiver" : "gtdr",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b217:else", "b226:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 233,
+    "col" : 41,
+    "callee" : "findByTripId",
+    "receiver" : "repository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b217:else", "b226:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 233,
+    "col" : 54,
+    "callee" : "<init>",
+    "receiver" : "TripId",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ "b217:else", "b226:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 233,
+    "col" : 70,
+    "callee" : "getTripId",
+    "receiver" : "gtdi",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b217:else", "b226:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 236,
+    "col" : 16,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-travel2-service:travel2.service.TravelServiceImpl#getTickets(travel2.entity.Trip,edu.fudan.common.entity.Route,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+  "branches" : [ {
+    "id" : "b300",
+    "line" : 300,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "!afterToday(departureTime)",
+    "refers_to" : [ "local:departureTime" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b319",
+    "line" : 319,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "r.getStatus() == 0",
+    "refers_to" : [ "field:Response.status", "local:r" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : false
+    },
+    "then_calls" : [ "cs:320:38" ],
+    "else_calls" : [ ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 300,
+    "col" : 14,
+    "callee" : "afterToday",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 304,
+    "col" : 24,
+    "callee" : "<init>",
+    "receiver" : "Travel",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 305,
+    "col" : 15,
+    "callee" : "setTrip",
+    "receiver" : "query",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 306,
+    "col" : 15,
+    "callee" : "setStartPlace",
+    "receiver" : "query",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 307,
+    "col" : 15,
+    "callee" : "setEndPlace",
+    "receiver" : "query",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 308,
+    "col" : 15,
+    "callee" : "setDepartureTime",
+    "receiver" : "query",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 310,
+    "col" : 36,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 311,
+    "col" : 36,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 312,
+    "col" : 66,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 316,
+    "col" : 17,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<edu.fudan.common.entity.TravelResult>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 318,
+    "col" : 25,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 319,
+    "col" : 14,
+    "callee" : "getStatus",
+    "receiver" : "r",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 320,
+    "col" : 38,
+    "callee" : "info",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b319:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 323,
+    "col" : 44,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 323,
+    "col" : 54,
+    "callee" : "getData",
+    "receiver" : "re.getBody()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 326,
+    "col" : 16,
+    "callee" : "setResponse",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 6,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ ]
+}, {
+  "method_id" : "method:ts-travel2-service:travel2.service.TravelServiceImpl#getTicketsByBatch(java.util.List,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+  "branches" : [ {
+    "id" : "b242",
+    "line" : 242,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "!afterToday(departureTime)",
+    "refers_to" : [ "local:departureTime" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : false
+    },
+    "then_calls" : [ "cs:243:38" ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b271",
+    "line" : 271,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "r.getStatus() == 0",
+    "refers_to" : [ "field:Response.status", "local:r" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : false
+    },
+    "then_calls" : [ "cs:272:38" ],
+    "else_calls" : [ ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 240,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "ArrayList<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 242,
+    "col" : 14,
+    "callee" : "afterToday",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 243,
+    "col" : 38,
+    "callee" : "info",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b242:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 247,
+    "col" : 30,
+    "callee" : "<init>",
+    "receiver" : "ArrayList<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 248,
+    "col" : 37,
+    "callee" : "<init>",
+    "receiver" : "HashMap<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 250,
+    "col" : 28,
+    "callee" : "<init>",
+    "receiver" : "Travel",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ "f249:trips" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 251,
+    "col" : 19,
+    "callee" : "setTrip",
+    "receiver" : "query",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f249:trips" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 252,
+    "col" : 19,
+    "callee" : "setStartPlace",
+    "receiver" : "query",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f249:trips" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 253,
+    "col" : 19,
+    "callee" : "setEndPlace",
+    "receiver" : "query",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f249:trips" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 254,
+    "col" : 19,
+    "callee" : "setDepartureTime",
+    "receiver" : "query",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f249:trips" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 256,
+    "col" : 19,
+    "callee" : "add",
+    "receiver" : "infos",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f249:trips" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 257,
+    "col" : 21,
+    "callee" : "put",
+    "receiver" : "tripMap",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "f249:trips" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 257,
+    "col" : 30,
+    "callee" : "getTripId",
+    "receiver" : "trip",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f249:trips" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 257,
+    "col" : 42,
+    "callee" : "toString",
+    "receiver" : "trip.getTripId()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f249:trips" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 260,
+    "col" : 34,
+    "callee" : "info",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 262,
+    "col" : 36,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 263,
+    "col" : 36,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 264,
+    "col" : 52,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 270,
+    "col" : 25,
+    "callee" : "getBody",
+    "receiver" : "re",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 271,
+    "col" : 14,
+    "callee" : "getStatus",
+    "receiver" : "r",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 272,
+    "col" : 38,
+    "callee" : "info",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b271:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 276,
+    "col" : 31,
+    "callee" : "<init>",
+    "receiver" : "ObjectMapper",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 278,
+    "col" : 28,
+    "callee" : "readValue",
+    "receiver" : "mapper",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 278,
+    "col" : 48,
+    "callee" : "object2Json",
+    "receiver" : "JsonUtils",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 278,
+    "col" : 62,
+    "callee" : "getData",
+    "receiver" : "r",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 278,
+    "col" : 74,
+    "callee" : "<init>",
+    "receiver" : "TypeReference<Map<String,TravelResult>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 280,
+    "col" : 38,
+    "callee" : "warn",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "t277:catch" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 280,
+    "col" : 120,
+    "callee" : "getMessage",
+    "receiver" : "e",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "t277:catch" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 284,
+    "col" : 60,
+    "callee" : "entrySet",
+    "receiver" : "trMap",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 286,
+    "col" : 41,
+    "callee" : "getKey",
+    "receiver" : "trEntry",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f284:trMap.entrySet()" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 287,
+    "col" : 39,
+    "callee" : "getValue",
+    "receiver" : "trEntry",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "f284:trMap.entrySet()" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 288,
+    "col" : 33,
+    "callee" : "get",
+    "receiver" : "tripMap",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f284:trMap.entrySet()" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 290,
+    "col" : 37,
+    "callee" : "setResponse",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 6,
+    "guard" : [ "f284:trMap.entrySet()" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 291,
+    "col" : 23,
+    "callee" : "add",
+    "receiver" : "responses",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "f284:trMap.entrySet()" ]
+  } ],
+  "unsupported" : [ "line 249: foreach body guarded as f249:trips (assumed non-empty unless state says otherwise)", "line 284: foreach body guarded as f284:trMap.entrySet() (assumed non-empty unless state says otherwise)" ]
+}, {
+  "method_id" : "method:ts-travel2-service:travel2.service.TravelServiceImpl#getRouteByTripId(java.lang.String,org.springframework.http.HttpHeaders)",
+  "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+  "branches" : [ {
+    "id" : "b57",
+    "line" : 57,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "trip == null",
+    "refers_to" : [ "local:trip" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : true
+    },
+    "then_calls" : [ "cs:58:38", "cs:59:20" ],
+    "else_calls" : [ "cs:61:27", "cs:61:50" ]
+  }, {
+    "id" : "b62",
+    "line" : 62,
+    "guard" : [ "b57:else" ],
+    "kind" : "if",
+    "condition_text" : "route == null",
+    "refers_to" : [ "local:route" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : true
+    },
+    "then_calls" : [ "cs:63:42", "cs:63:132", "cs:64:24" ],
+    "else_calls" : [ "cs:66:42", "cs:67:24" ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 54,
+    "col" : 26,
+    "callee" : "<init>",
+    "receiver" : "TripId",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 56,
+    "col" : 32,
+    "callee" : "findByTripId",
+    "receiver" : "repository",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 58,
+    "col" : 38,
+    "callee" : "error",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b57:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 59,
+    "col" : 20,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b57:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 61,
+    "col" : 27,
+    "callee" : "getRouteByRouteId",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 2,
+    "guard" : [ "b57:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 61,
+    "col" : 50,
+    "callee" : "getRouteId",
+    "receiver" : "trip",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b57:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 63,
+    "col" : 42,
+    "callee" : "error",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b57:else", "b62:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 63,
+    "col" : 132,
+    "callee" : "getRouteId",
+    "receiver" : "trip",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b57:else", "b62:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 64,
+    "col" : 24,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b57:else", "b62:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 66,
+    "col" : 42,
+    "callee" : "info",
+    "receiver" : "TravelServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b57:else", "b62:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
+    "line" : 67,
+    "col" : 24,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b57:else", "b62:else" ]
+  } ],
+  "unsupported" : [ ]
+}, {
   "method_id" : "method:ts-travel-plan-service:travelplan.service.TravelPlanServiceImpl#getCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
   "file" : "ts-travel-plan-service/src/main/java/travelplan/service/TravelPlanServiceImpl.java",
   "branches" : [ {
@@ -18615,4 +21480,987 @@
     "guard" : [ "b191:else" ]
   } ],
   "unsupported" : [ "line 194: for loop not modeled (R17)" ]
+}, {
+  "method_id" : "method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)",
+  "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+  "branches" : [ {
+    "id" : "b53",
+    "line" : 53,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "trainNumber.startsWith(\"G\") || trainNumber.startsWith(\"D\")",
+    "refers_to" : [ "local:trainNumber" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:54:36", "cs:56:40", "cs:58:29", "cs:59:38", "cs:60:32", "cs:64:21", "cs:66:36", "cs:66:107", "cs:66:97", "cs:67:44", "cs:67:34" ],
+    "else_calls" : [ "cs:69:36", "cs:71:40", "cs:72:44", "cs:73:32", "cs:77:21", "cs:79:36", "cs:79:107", "cs:79:97", "cs:80:44", "cs:80:34" ]
+  }, {
+    "id" : "b97",
+    "line" : 97,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "leftTicketInfo != null",
+    "refers_to" : [ "local:leftTicketInfo" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:98:54", "cs:101:59", "cs:109:20", "cs:110:29" ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b103",
+    "line" : 103,
+    "guard" : [ "b97:then", "f100:soldTickets" ],
+    "kind" : "if",
+    "condition_text" : "stationList.indexOf(soldTicketDestStation) < stationList.indexOf(startStation)",
+    "refers_to" : [ "local:stationList", "local:soldTicketDestStation", "local:startStation" ],
+    "early_exit" : {
+      "then" : true,
+      "else" : false
+    },
+    "then_calls" : [ "cs:104:28", "cs:104:49", "cs:105:44", "cs:105:158", "cs:106:28" ],
+    "else_calls" : [ ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 51,
+    "col" : 42,
+    "callee" : "getTrainNumber",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 53,
+    "col" : 25,
+    "callee" : "startsWith",
+    "receiver" : "trainNumber",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 53,
+    "col" : 56,
+    "callee" : "startsWith",
+    "receiver" : "trainNumber",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 54,
+    "col" : 36,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 56,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 58,
+    "col" : 29,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 59,
+    "col" : 38,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 60,
+    "col" : 32,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 64,
+    "col" : 21,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<LeftTicketInfo>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 66,
+    "col" : 36,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 66,
+    "col" : 97,
+    "callee" : "getBody",
+    "receiver" : "re3",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 66,
+    "col" : 107,
+    "callee" : "toString",
+    "receiver" : "re3.getBody()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 67,
+    "col" : 34,
+    "callee" : "getBody",
+    "receiver" : "re3",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 67,
+    "col" : 44,
+    "callee" : "getData",
+    "receiver" : "re3.getBody()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b53:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 69,
+    "col" : 36,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 71,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 72,
+    "col" : 44,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 73,
+    "col" : 32,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 77,
+    "col" : 21,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<LeftTicketInfo>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 79,
+    "col" : 36,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 79,
+    "col" : 97,
+    "callee" : "getBody",
+    "receiver" : "re3",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 79,
+    "col" : 107,
+    "callee" : "toString",
+    "receiver" : "re3.getBody()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 80,
+    "col" : 34,
+    "callee" : "getBody",
+    "receiver" : "re3",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 80,
+    "col" : 44,
+    "callee" : "getData",
+    "receiver" : "re3.getBody()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b53:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 84,
+    "col" : 48,
+    "callee" : "getStations",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 86,
+    "col" : 40,
+    "callee" : "getTotalNum",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 87,
+    "col" : 43,
+    "callee" : "getStartStation",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 88,
+    "col" : 25,
+    "callee" : "<init>",
+    "receiver" : "Ticket",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 89,
+    "col" : 16,
+    "callee" : "setStartStation",
+    "receiver" : "ticket",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 90,
+    "col" : 16,
+    "callee" : "setDestStation",
+    "receiver" : "ticket",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 90,
+    "col" : 43,
+    "callee" : "getDestStation",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 93,
+    "col" : 23,
+    "callee" : "<init>",
+    "receiver" : "Random",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 95,
+    "col" : 25,
+    "callee" : "nextInt",
+    "receiver" : "rand",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 98,
+    "col" : 54,
+    "callee" : "getSoldTickets",
+    "receiver" : "leftTicketInfo",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b97:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 101,
+    "col" : 59,
+    "callee" : "getDestStation",
+    "receiver" : "soldTicket",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b97:then", "f100:soldTickets" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 103,
+    "col" : 33,
+    "callee" : "indexOf",
+    "receiver" : "stationList",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b97:then", "f100:soldTickets" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 103,
+    "col" : 78,
+    "callee" : "indexOf",
+    "receiver" : "stationList",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b97:then", "f100:soldTickets" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 104,
+    "col" : 28,
+    "callee" : "setSeatNo",
+    "receiver" : "ticket",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b97:then", "f100:soldTickets", "b103:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 104,
+    "col" : 49,
+    "callee" : "getSeatNo",
+    "receiver" : "soldTicket",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b97:then", "f100:soldTickets", "b103:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 105,
+    "col" : 44,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b97:then", "f100:soldTickets", "b103:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 105,
+    "col" : 158,
+    "callee" : "getSeatNo",
+    "receiver" : "soldTicket",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b97:then", "f100:soldTickets", "b103:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 106,
+    "col" : 28,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ "b97:then", "f100:soldTickets", "b103:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 109,
+    "col" : 20,
+    "callee" : "isContained",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 2,
+    "guard" : [ "b97:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 110,
+    "col" : 29,
+    "callee" : "nextInt",
+    "receiver" : "rand",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b97:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 113,
+    "col" : 16,
+    "callee" : "setSeatNo",
+    "receiver" : "ticket",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 114,
+    "col" : 32,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 115,
+    "col" : 16,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ "line 100: foreach body guarded as f100:soldTickets (assumed non-empty unless state says otherwise)", "line 109: while loop not modeled (R17)" ]
+}, {
+  "method_id" : "method:ts-seat-service:seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)",
+  "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+  "branches" : [ {
+    "id" : "b138",
+    "line" : 138,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "trainNumber.startsWith(\"G\") || trainNumber.startsWith(\"D\")",
+    "refers_to" : [ "local:trainNumber" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:139:36", "cs:142:40", "cs:143:38", "cs:144:32", "cs:148:21", "cs:151:36", "cs:152:44", "cs:152:34" ],
+    "else_calls" : [ "cs:154:36", "cs:156:40", "cs:158:29", "cs:159:44", "cs:160:32", "cs:164:21", "cs:166:36", "cs:167:44", "cs:167:34" ]
+  }, {
+    "id" : "b174",
+    "line" : 174,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "leftTicketInfo != null",
+    "refers_to" : [ "local:leftTicketInfo" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:175:47", "cs:176:54", "cs:177:43", "cs:180:59" ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b182",
+    "line" : 182,
+    "guard" : [ "b174:then", "f179:soldTickets" ],
+    "kind" : "if",
+    "condition_text" : "stationList.indexOf(soldTicketDestStation) < stationList.indexOf(startStation)",
+    "refers_to" : [ "local:stationList", "local:soldTicketDestStation", "local:startStation" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ "cs:183:44", "cs:183:167" ],
+    "else_calls" : [ ]
+  }, {
+    "id" : "b192",
+    "line" : 192,
+    "guard" : [ ],
+    "kind" : "if",
+    "condition_text" : "stationList.get(0).equals(seatRequest.getStartStation()) && stationList.get(stationList.size() - 1).equals(seatRequest.getDestStation())",
+    "refers_to" : [ "local:stationList", "field:Seat.startStation", "local:seatRequest", "field:Seat.destStation" ],
+    "early_exit" : {
+      "then" : false,
+      "else" : false
+    },
+    "then_calls" : [ ],
+    "else_calls" : [ ]
+  } ],
+  "calls" : [ {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 136,
+    "col" : 42,
+    "callee" : "getTrainNumber",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 137,
+    "col" : 32,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 137,
+    "col" : 104,
+    "callee" : "toString",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 138,
+    "col" : 25,
+    "callee" : "startsWith",
+    "receiver" : "trainNumber",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 138,
+    "col" : 56,
+    "callee" : "startsWith",
+    "receiver" : "trainNumber",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 139,
+    "col" : 36,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b138:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 142,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ "b138:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 143,
+    "col" : 38,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b138:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 144,
+    "col" : 32,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b138:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 148,
+    "col" : 21,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<LeftTicketInfo>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ "b138:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 151,
+    "col" : 36,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b138:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 152,
+    "col" : 34,
+    "callee" : "getBody",
+    "receiver" : "re3",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b138:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 152,
+    "col" : 44,
+    "callee" : "getData",
+    "receiver" : "re3.getBody()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b138:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 154,
+    "col" : 36,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b138:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 156,
+    "col" : 40,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 1,
+    "guard" : [ "b138:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 158,
+    "col" : 29,
+    "callee" : "<init>",
+    "receiver" : "HttpEntity",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 2,
+    "guard" : [ "b138:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 159,
+    "col" : 44,
+    "callee" : "getServiceUrl",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ "b138:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 160,
+    "col" : 32,
+    "callee" : "exchange",
+    "receiver" : "restTemplate",
+    "kind" : "OTHER",
+    "arg_count" : 4,
+    "guard" : [ "b138:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 164,
+    "col" : 21,
+    "callee" : "<init>",
+    "receiver" : "ParameterizedTypeReference<Response<LeftTicketInfo>>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 0,
+    "guard" : [ "b138:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 166,
+    "col" : 36,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b138:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 167,
+    "col" : 34,
+    "callee" : "getBody",
+    "receiver" : "re3",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b138:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 167,
+    "col" : 44,
+    "callee" : "getData",
+    "receiver" : "re3.getBody()",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b138:else" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 171,
+    "col" : 48,
+    "callee" : "getStations",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 172,
+    "col" : 40,
+    "callee" : "getTotalNum",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 175,
+    "col" : 47,
+    "callee" : "getStartStation",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b174:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 176,
+    "col" : 54,
+    "callee" : "getSoldTickets",
+    "receiver" : "leftTicketInfo",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b174:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 177,
+    "col" : 43,
+    "callee" : "size",
+    "receiver" : "soldTickets",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b174:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 180,
+    "col" : 59,
+    "callee" : "getDestStation",
+    "receiver" : "soldTicket",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b174:then", "f179:soldTickets" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 182,
+    "col" : 33,
+    "callee" : "indexOf",
+    "receiver" : "stationList",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b174:then", "f179:soldTickets" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 182,
+    "col" : 78,
+    "callee" : "indexOf",
+    "receiver" : "stationList",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ "b174:then", "f179:soldTickets" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 183,
+    "col" : 44,
+    "callee" : "info",
+    "receiver" : "SeatServiceImpl.LOGGER",
+    "kind" : "OTHER",
+    "arg_count" : 2,
+    "guard" : [ "b174:then", "f179:soldTickets", "b182:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 183,
+    "col" : 167,
+    "callee" : "getSeatNo",
+    "receiver" : "soldTicket",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ "b174:then", "f179:soldTickets", "b182:then" ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 190,
+    "col" : 29,
+    "callee" : "getDirectProportion",
+    "receiver" : "this",
+    "kind" : "SAME_CLASS",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 192,
+    "col" : 25,
+    "callee" : "get",
+    "receiver" : "stationList",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 192,
+    "col" : 32,
+    "callee" : "equals",
+    "receiver" : "stationList.get(0)",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 192,
+    "col" : 51,
+    "callee" : "getStartStation",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 193,
+    "col" : 29,
+    "callee" : "get",
+    "receiver" : "stationList",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 193,
+    "col" : 45,
+    "callee" : "size",
+    "receiver" : "stationList",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 193,
+    "col" : 57,
+    "callee" : "equals",
+    "receiver" : "stationList.get(stationList.size() - 1)",
+    "kind" : "OTHER",
+    "arg_count" : 1,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 193,
+    "col" : 76,
+    "callee" : "getDestStation",
+    "receiver" : "seatRequest",
+    "kind" : "OTHER",
+    "arg_count" : 0,
+    "guard" : [ ]
+  }, {
+    "call_site_id_guess" : null,
+    "file" : "ts-seat-service/src/main/java/seat/service/SeatServiceImpl.java",
+    "line" : 202,
+    "col" : 16,
+    "callee" : "<init>",
+    "receiver" : "Response<>",
+    "kind" : "CONSTRUCTOR",
+    "arg_count" : 3,
+    "guard" : [ ]
+  } ],
+  "unsupported" : [ "line 179: foreach body guarded as f179:soldTickets (assumed non-empty unless state says otherwise)" ]
 } ]

@@ -8,7 +8,9 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.v39a.config.TargetMethod;
 import com.v39a.config.TargetPool;
+import com.v39a.model.EntityReportIR;
 import com.v39a.model.MethodIR;
+import com.v39a.parser.EntityScanner;
 import com.v39a.parser.AstAnalyzer;
 import com.v39a.parser.TypeIndex;
 
@@ -24,6 +26,7 @@ public class Main {
         String repoRootStr = null;
         String outputPathStr = null;
         String poolType = "initial"; // 1-4 или "all" (1-7)
+        String mode = "pool"; // pool: IR тел методов пула; entities: сущности и вызовы репозиториев
 
         for (int i = 0; i < args.length; i++) {
             if ("--targets-dir".equals(args[i]) || "--repo-root".equals(args[i])) {
@@ -32,11 +35,29 @@ public class Main {
                 if (i + 1 < args.length) outputPathStr = args[++i];
             } else if ("--pool".equals(args[i])) {
                 if (i + 1 < args.length) poolType = args[++i];
+            } else if ("--mode".equals(args[i])) {
+                if (i + 1 < args.length) mode = args[++i];
             }
         }
 
         Path targetsDir = resolveTargetsDir(repoRootStr);
-        Path outputFile = resolveOutputFile(outputPathStr);
+
+        if ("entities".equalsIgnoreCase(mode)) {
+            Path outputFile = resolveOutputFile(outputPathStr, "entity_ir.json");
+            System.out.println("archparse: Scanning entities and repository calls");
+            System.out.println("Targets directory: " + targetsDir.toAbsolutePath());
+            EntityReportIR report = new EntityScanner(targetsDir).scan();
+            if (outputFile.getParent() != null) {
+                Files.createDirectories(outputFile.getParent());
+            }
+            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValue(outputFile.toFile(), report);
+            System.out.printf("Finished! %d entities, %d repository calls, %d constructors saved to %s%n",
+                    report.entities.size(), report.repositoryCalls.size(), report.constructors.size(),
+                    outputFile.toAbsolutePath());
+            return;
+        }
+
+        Path outputFile = resolveOutputFile(outputPathStr, "pool_ir.json");
 
         System.out.println("archparse: Starting method body analysis");
         System.out.println("Targets directory: " + targetsDir.toAbsolutePath());
@@ -167,16 +188,17 @@ public class Main {
         return Paths.get("hackaton/tt-challenge/targets/trainticket");
     }
 
-    private static Path resolveOutputFile(String explicit) {
+    private static Path resolveOutputFile(String explicit, String defaultName) {
         if (explicit != null) {
             return Paths.get(explicit);
         }
 
+        // Артефакты archparse, которые читает движок: data/pool_ir.json и data/entity_ir.json.
         // Если запускается из archparse/
         if (Files.exists(Paths.get("build.gradle"))) {
-            return Paths.get("out/pool_ir.json");
+            return Paths.get("../data/" + defaultName);
         }
 
-        return Paths.get("archparse/out/pool_ir.json");
+        return Paths.get("data/" + defaultName);
     }
 }

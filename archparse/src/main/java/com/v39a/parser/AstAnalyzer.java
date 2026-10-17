@@ -3,6 +3,7 @@ package com.v39a.parser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
@@ -22,17 +23,23 @@ import java.util.*;
 public class AstAnalyzer {
 
     public static MethodIR analyze(TargetMethod target, MethodDeclaration md, CompilationUnit cu, TypeIndex typeIndex) {
-        MethodIR methodIR = new MethodIR(target.methodId(), target.relativeFile());
-
         if (md.getBody().isEmpty()) {
-            return methodIR;
+            return new MethodIR(target.methodId(), target.relativeFile());
         }
+        return analyzeBody(target.methodId(), target.relativeFile(), md, md.getBody().get(), cu, typeIndex);
+    }
 
-        BlockStmt body = md.getBody().get();
+    /** Разбор тела конструктора (конструкторы без аргументов сущностей, R7). */
+    public static MethodIR analyzeConstructor(String methodId, String relFile, ConstructorDeclaration cd, CompilationUnit cu, TypeIndex typeIndex) {
+        return analyzeBody(methodId, relFile, cd, cd.getBody(), cu, typeIndex);
+    }
+
+    private static MethodIR analyzeBody(String methodId, String relFile, Node declaration, BlockStmt body, CompilationUnit cu, TypeIndex typeIndex) {
+        MethodIR methodIR = new MethodIR(methodId, relFile);
 
         // 1. Собираем известные имена методов текущего класса для точного определения SAME_CLASS
         Set<String> classMethodNames = new HashSet<>();
-        md.findAncestor(ClassOrInterfaceDeclaration.class).ifPresent(cid -> {
+        declaration.findAncestor(ClassOrInterfaceDeclaration.class).ifPresent(cid -> {
             for (MethodDeclaration m : cid.getMethods()) {
                 classMethodNames.add(m.getNameAsString());
             }
@@ -40,7 +47,7 @@ public class AstAnalyzer {
 
         // 2. Извлекаем все вызовы с расчетом guard, kind, arg_count
         List<CallIR> calls = new ArrayList<>();
-        extractCallsWithGuard(body, new ArrayList<>(), target.relativeFile(), cu, typeIndex, classMethodNames, calls);
+        extractCallsWithGuard(body, new ArrayList<>(), relFile, cu, typeIndex, classMethodNames, calls);
 
         // Сортируем вызовы по строке, затем по колонке
         calls.sort(Comparator.comparingInt(CallIR::getLine).thenComparingInt(CallIR::getCol));

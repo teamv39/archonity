@@ -143,15 +143,15 @@ def ensure_pool_ir(
     reparse: bool = False,
     project_root: str | Path | None = None,
 ) -> Path:
-    """Гарантирует наличие артефакта pool_ir.json. При необходимости запускает gradle."""
-    root = Path(project_root) if project_root else Path(__file__).resolve().parent.parent
-    primary_ir = root / "archparse" / "out" / "pool_ir.json"
-    fallback_ir = root / "data" / "pool_ir.json"
+    """Гарантирует наличие артефакта pool_ir.json. При необходимости запускает gradle.
 
-    if not reparse and primary_ir.is_file():
-        return primary_ir
-    if not reparse and fallback_ir.is_file():
-        return fallback_ir
+    Единственный источник IR — data/pool_ir.json: archparse пишет туда же, движок и скрипты читают только его.
+    """
+    root = Path(project_root) if project_root else Path(__file__).resolve().parent.parent
+    pool_ir_path = root / "data" / "pool_ir.json"
+
+    if not reparse and pool_ir_path.is_file():
+        return pool_ir_path
 
     # Попытка запуска Java-парсера archparse
     jdk_home = find_jdk_home()
@@ -163,28 +163,22 @@ def ensure_pool_ir(
             env["PATH"] = f"{jdk_home}/bin:" + env.get("PATH", "")
             LOGGER.info("Запуск archparse gradlew для генерации pool_ir.json...")
             subprocess.run(
-                [str(gradlew), "run", "--args=--pool all"],
+                [str(gradlew), "run", f"--args=--pool all -o {pool_ir_path}"],
                 cwd=root / "archparse",
                 env=env,
                 check=True,
                 capture_output=True,
                 text=True,
             )
-            if primary_ir.is_file():
-                # Синхронизируем с data/pool_ir.json для воспроизводимости
-                fallback_ir.write_bytes(primary_ir.read_bytes())
-                return primary_ir
         except Exception as e:
             LOGGER.warning("Не удалось запустить archparse gradle: %s", e)
 
-    if fallback_ir.is_file():
-        return fallback_ir
-    if primary_ir.is_file():
-        return primary_ir
+    if pool_ir_path.is_file():
+        return pool_ir_path
 
     raise FileNotFoundError(
-        f"pool_ir.json не найден ни в {primary_ir}, ни в {fallback_ir}. "
-        "Убедитесь, что archparse скомпилирован или скопирован в data/."
+        f"pool_ir.json не найден в {pool_ir_path}. "
+        "Сгенерируйте его archparse: gradlew run --args=\"--pool all\"."
     )
 
 
@@ -244,6 +238,20 @@ class MethodPoolIR:
                 return cls({}, branch_rules=branch_rules)
             raise
 
+    def add_methods(self, items: list[dict[str, Any]]) -> None:
+        """Добавление IR методов из другого артефакта archparse (конструкторы из entity_ir.json).
+
+        Методы, которые уже есть в пуле, не перезаписываются.
+        """
+        added = False
+        for item in items:
+            mir = MethodIR.from_dict(item)
+            if mir.method_id and mir.method_id not in self.methods:
+                self.methods[mir.method_id] = mir
+                added = True
+        if added:
+            self._build_indexes()
+
     def has_method(self, method_id: str) -> bool:
         return method_id in self.methods
 
@@ -271,12 +279,15 @@ class MethodPoolIR:
         guard: tuple[str, ...],
         profile: ScenarioProfile | None,
         scenario_state: ScenarioState | None = None,
+        trace: list[str] | None = None,
     ) -> bool:
         """Оценка предикатов активации вызова (Call Guard).
 
         Если все предикаты guard истинны в контексте текущего сценария,
         вызов считается активным.
         Разрешение ветвей выполняется через декларативный BranchRulesRegistry (data/branch_rules.json).
+        В trace (если передан) пишется, каким правилом решён каждый предикат: "<правило>@<предикат>".
+        Предикаты без правила не пишутся: они проходят по умолчанию.
         """
         if not guard:
             return True
@@ -292,11 +303,15 @@ class MethodPoolIR:
 
             # Плечо catch выполняется только при исключении: на штатном пути не активно (R15)
             if arm == "catch":
+                if trace is not None:
+                    trace.append(f"R15@{pred}")
                 return False
             # Тело лямбды выполняется, только если хост-метод её вызывает (R16):
             # orElseThrow/orElseGet вызывают supplier лишь для пустого Optional
             if bid[:1] == "l" and bid[1:].isdigit():
                 if arm in LAZY_LAMBDA_HOSTS:
+                    if trace is not None:
+                        trace.append(f"R16@{pred}")
                     return False
                 continue
 
@@ -304,6 +319,8 @@ class MethodPoolIR:
             # по аккаунту: у нового зарегистрированного пользователя заказов нет (S4)
             if bid[:1] == "f" and bid[1:].isdigit():
                 if arm in EMPTY_FOR_NEW_USER_COLLECTIONS and getattr(profile, "is_new_user", False):
+                    if trace is not None:
+                        trace.append(f"R17@{pred}")
                     return False
                 continue
 
@@ -324,6 +341,8 @@ class MethodPoolIR:
             )
 
             if matched_rule is not None:
+                if trace is not None:
+                    trace.append(f"{matched_rule.id}@{pred}")
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
 
