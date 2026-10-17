@@ -1,0 +1,75 @@
+{
+ "key": "sha256:b4b846ba079c4cdb0b690755ba91fa425b85ab15a64ccb5837377942b8b60fb8",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "m1-v5",
+ "kind": "select",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You map steps of a user scenario in the Train Ticket web application to backend REST requests.\nTrain Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.\n\nRules:\n- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.\n- Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.\n- When a UI variant is sent only under a condition, check the condition against the scenario.\n- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.\n- Administrator steps (admin console) use admin services; passenger steps do not.\n- A step that the system refuses still sends its request: pick the handler that refuses it.\n\nEnum codes used in request fields:\n- AssuranceType: TRAFFIC_ACCIDENT=1 (Traffic Accident Assurance, 3.0)\n- DocumentType: NONE=0 (Null), ID_CARD=1 (ID Card), PASSPORT=2 (Passport), OTHER=3 (Other)\n- Gender: NONE=0 (Null), MALE=1 (Male), FEMALE=2 (Female), OTHER=3 (Other)\n- MoneyType: A=Add Money (1), D=Draw Back Money (2)\n- OrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CHANGE=3 (Cancel & Rebook), CANCEL=4 (Cancel), REFUNDS=5 (Refunded), USED=6 (Used)\n- PaymentType: P=Payment (1), D=Difference (2), O=Outside Payment (3), E=Difference & Outside Payment (4)\n- SeatClass: NONE=0 (NoSeat), BUSINESS=1 (GreenSeat), FIRSTCLASS=2 (FirstClassSeat), SECONDCLASS=3 (SecondClassSeat), HARDSEAT=4 (HardSeat), SOFTSEAT=5 (SoftSeat), HARDBED=6 (HardBed), SOFTBED=7 (SoftBed), HIGHSOFTBED=8 (HighSoftSeat)\n- Type: G=G (1), D=D (2), Z=Z (3), T=T (4), K=K (5)\n- WaitListOrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CANCEL=3 (Cancel), REFUNDS=4 (Refunded), EXPIRED=5 (Expired)\n"
+  },
+  {
+   "role": "user",
+   "content": "Scenario S0: My account: contacts, orders of both train types, paid orders, luggage consignments\nDescription: A registered passenger logs in and opens their contact book. They refresh their list of orders twice — for high-speed (GaoTie/DongChe) trains and for regular ('Other' type) trains, which are kept separately — and then refresh the orders once more with the filter 'Paid' status. Finally they look up the luggage consignments registered on their account. Nothing is searched, booked or paid.\nSteps:\n1. Log in with username and password\n2. Open the contact book\n3. Refresh the list of orders for high-speed (GaoTie/DongChe) trains\n4. Refresh the list of orders for regular ('Other' type) trains\n5. Refresh the list of orders filtered by the 'Paid' status\n6. Look up the luggage consignments registered on the account\n\nRequests of earlier steps: none yet.\n\nCurrent step 1: Log in with username and password\n\nCandidate handlers:\nC1: POST /api/v1/users/login\n    handler UserController#getToken(BasicAuthDto dao) in ts-auth-service\n    body: username, password, verificationCode\n    UI: page adminlogin, action login [\"Login\", \"Submit\"]\n    UI: page client_login, action login [\"Login\", \"Submit\"]\n    code: logger.info(\"Login request of username: {}\", dao.getUsername()); try { Response<?> res = tokenService.getToken(dao, headers); return ResponseEntity.ok(res); } catch (UserOperationException e) { logger.error(\"[getToken][tokenService.getToken error][UserOperationException, message: {}]\", e.getMessage());\nC2: POST /api/v1/orderservice/order/tickets\n    handler OrderController#getTicketListByDateAndTripId(Seat seatRequest) in ts-order-service\n    serves high-speed trains (GaoTie/DongChe, G/D) only; its twin serves the other kind\n    body: travelDate, trainNumber, startStation, destStation, seatType, totalNum, stations\n    UI: none (the web UI never calls it)\n    code: OrderController.LOGGER.info(\"[getSoldTickets][Get Sold Ticket][Travel Date: {}]\", seatRequest.getTravelDate().toString()); return ok(orderService.getSoldTickets(seatRequest, headers));\nC3: POST /api/v1/orderOtherService/orderOther/tickets\n    handler OrderOtherController#getTicketListByDateAndTripId(Seat seatRequest) in ts-order-other-service\n    serves regular trains (the 'Other' type, not G/D) only; its twin serves the other kind\n    body: travelDate, trainNumber, startStation, destStation, seatType, totalNum, stations\n    UI: none (the web UI never calls it)\n    code: OrderOtherController.LOGGER.info(\"[getSoldTickets][Get Sold Ticket][Travel Date: {}]\", seatRequest.getTravelDate().toString()); return ok(orderService.getSoldTickets(seatRequest, headers));\nC4: POST /api/v1/auth\n    handler AuthController#createDefaultUser(AuthDto authDto) in ts-auth-service\n    body: userId, userName, password\n    UI: none (the web UI never calls it)\n    code: logger.info(\"[createDefaultUser][Create default auth user with authDto][AuthDto: {}]\", authDto.toString()); userService.createDefaultAuthUser(authDto); Response response = new Response(1, \"SUCCESS\", authDto); return new ResponseEntity<>(response, HttpStatus.CREATED);\nC5: POST /api/v1/travelservice/trips/left\n    handler TravelController#queryInfo(TripInfo info) in ts-travel-service\n    serves high-speed trains (GaoTie/DongChe, G/D) only; its twin serves the other kind\n    body: startPlace, endPlace, departureTime\n    UI: page client_order_list, action searchRouteList [\"Search\"]; sent only when: this.trainTypeSelected == 0; the same UI action also sends: POST /api/v1/travel2service/trips/left (when this.trainTypeSelected == 0), POST /api/v1/travel2service/trips/left (when this.trainTypeSelected == 2)\n    UI: page client_order_list, action searchRouteList [\"Search\"]; sent only when: this.trainTypeSelected == 1; the same UI action also sends: POST /api/v1/travel2service/trips/left (when this.trainTypeSelected == 0), POST /api/v1/travel2service/trips/left (when this.trainTypeSelected == 2)\n    code: * Return Trips and the remaining tickets * * @param info    trip info * @param headers headers * @return HttpEntity */\nC6: POST /api/v1/travel2service/trips/left\n    handler Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo info) in ts-travel2-service\n    serves regular trains (the 'Other' type, not G/D) only; its twin serves the other kind\n    body: startPlace, endPlace, departureTime\n    UI: page client_order_list, action searchRouteList [\"Search\"]; sent only when: this.trainTypeSelected == 0; the same UI action also sends: POST /api/v1/travelservice/trips/left (when this.trainTypeSelected == 0), POST /api/v1/travelservice/trips/left (when this.trainTypeSelected == 1)\n    UI: page client_order_list, action searchRouteList [\"Search\"]; sent only when: this.trainTypeSelected == 2; the same UI action also sends: POST /api/v1/travelservice/trips/left (when this.trainTypeSelected == 0), POST /api/v1/travelservice/trips/left (when this.trainTypeSelected == 1)\n    code: * Return Trip and the remaining tickets * * @param info trip info * @param headers headers * @return HttpEntity */\nC7: POST /api/v1/travelservice/trips/left_parallel\n    handler TravelController#queryInfoInparallel(TripInfo info) in ts-travel-service\n    body: startPlace, endPlace, departureTime\n    UI: none (the web UI never calls it)\n    code: * Return Trips and the remaining tickets * * @param info    trip info * @param headers headers * @return HttpEntity */\nC8: POST /api/v1/admintravelservice/admintravel\n    handler AdminTravelController#addTravel(TravelInfo request) in ts-admin-travel-service\n    body: loginId, tripId, trainTypeName, routeId, startStationName, stationsName, terminalStationName, startTime, endTime\n    UI: page admin_travel, action addNewTravel [\"Add\"]\n    code: logger.info(\"[addTravel][Add travel][trip id: {}, train type name: {}, form station {} to station {}, login id: {}]\", request.getTripId(), request.getTrainTypeName(), request.getStartStationName(), request.getStationsName(), request.getLoginId()); return ok(adminTravelService.addTravel(request, headers));\nC9: POST /api/v1/notifyservice/notification/order_create_success\n    handler NotificationController#order_create_success(NotifyInfo info) in ts-notification-service\n    body: id, sendStatus, email, orderNumber, username, startPlace, endPlace, startTime, date, seatClass, seatNumber, price\n    UI: none (the web UI never calls it)\n    code: return service.orderCreateSuccess(info, headers);\nC10: GET /api/v1/priceservice/prices/{routeId}/{trainType}\n    handler PriceController#query(String routeId, String trainType) in ts-price-service\n    UI: none (the web UI never calls it)\n    code: PriceController.LOGGER.info(\"[findByRouteIdAndTrainType][Query price][RouteId: {}, TrainType: {}]\",routeId,trainType); return ok(service.findByRouteIdAndTrainType(routeId, trainType, headers));\n\nAnswer with JSON: a short reasoning (one or two sentences), the candidate label, whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. \"trip\": \"first_of_step_2\" for the first trip found at step 2, \"order\": \"new_of_step_6\" for the order created at step 6). Leave refs empty when the request uses nothing from earlier steps."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "reasoning": {
+    "type": "string",
+    "maxLength": 400
+   },
+   "candidate": {
+    "type": "string",
+    "enum": [
+     "C1",
+     "C2",
+     "C3",
+     "C4",
+     "C5",
+     "C6",
+     "C7",
+     "C8",
+     "C9",
+     "C10"
+    ]
+   },
+   "expected_outcome": {
+    "type": "string",
+    "enum": [
+     "success",
+     "refused"
+    ]
+   },
+   "refs": {
+    "type": "object",
+    "properties": {},
+    "additionalProperties": false
+   }
+  },
+  "required": [
+   "reasoning",
+   "candidate",
+   "expected_outcome",
+   "refs"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "reasoning": "The step is logging in with username and password, which corresponds to the login endpoint in the auth service. Candidate C1 is the specific handler for user login.",
+  "candidate": "C1",
+  "expected_outcome": "success",
+  "refs": {}
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 71,
+  "prompt_tokens": 2535,
+  "total_tokens": 2606,
+  "prompt_tokens_details": {
+   "cached_tokens": 0
+  }
+ },
+ "seconds": 3.31
+}

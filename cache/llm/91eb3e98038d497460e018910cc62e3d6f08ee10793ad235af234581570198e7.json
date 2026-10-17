@@ -1,0 +1,354 @@
+{
+ "key": "sha256:91eb3e98038d497460e018910cc62e3d6f08ee10793ad235af234581570198e7",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "m1-v5",
+ "kind": "select",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You map steps of a user scenario in the Train Ticket web application to backend REST requests.\nTrain Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.\n\nRules:\n- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.\n- Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.\n- When a UI variant is sent only under a condition, check the condition against the scenario.\n- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.\n- Administrator steps (admin console) use admin services; passenger steps do not.\n- A step that the system refuses still sends its request: pick the handler that refuses it.\n\nEnum codes used in request fields:\n- AssuranceType: TRAFFIC_ACCIDENT=1 (Traffic Accident Assurance, 3.0)\n- DocumentType: NONE=0 (Null), ID_CARD=1 (ID Card), PASSPORT=2 (Passport), OTHER=3 (Other)\n- Gender: NONE=0 (Null), MALE=1 (Male), FEMALE=2 (Female), OTHER=3 (Other)\n- MoneyType: A=Add Money (1), D=Draw Back Money (2)\n- OrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CHANGE=3 (Cancel & Rebook), CANCEL=4 (Cancel), REFUNDS=5 (Refunded), USED=6 (Used)\n- PaymentType: P=Payment (1), D=Difference (2), O=Outside Payment (3), E=Difference & Outside Payment (4)\n- SeatClass: NONE=0 (NoSeat), BUSINESS=1 (GreenSeat), FIRSTCLASS=2 (FirstClassSeat), SECONDCLASS=3 (SecondClassSeat), HARDSEAT=4 (HardSeat), SOFTSEAT=5 (SoftSeat), HARDBED=6 (HardBed), SOFTBED=7 (SoftBed), HIGHSOFTBED=8 (HighSoftSeat)\n- Type: G=G (1), D=D (2), Z=Z (3), T=T (4), K=K (5)\n- WaitListOrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CANCEL=3 (Cancel), REFUNDS=4 (Refunded), EXPIRED=5 (Expired)\n"
+  },
+  {
+   "role": "user",
+   "content": "Scenario S2: Buying a regular train ticket with station food and no insurance; paying and cancelling with a refund; a second order rebooked to a cheaper seat class\nDescription: A registered passenger logs in. They search for regular trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing departing on 1 October 2026 and open the details of the first trip in the results. They browse the food stores at Suzhou station. They open their contact book and take the first contact as the passenger. They book one first-class seat on that regular train for this contact with food from a station store, without assurance (insurance) and without luggage consignment. They refresh their list of orders, pay for the order from the internal account balance, ask how much would be refunded if the order were cancelled, and cancel the order. Then they book another first-class seat on the same regular train for the same contact with the same station food, refresh the orders, pay for the new order, and rebook this paid ticket to a second-class seat on the same regular train: the second-class ticket is cheaper, so the difference is refunded to the internal account balance.\nSteps:\n1. Log in with username and password\n2. Search regular trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing departing on 1 October 2026\n3. Open the details of the first trip found\n4. Browse the food stores at Suzhou station\n5. Open the contact book and take the first contact\n6. Book one first-class seat on the regular train for this contact, with food from a station store, no assurance (insurance) and no luggage consignment\n7. Refresh the list of orders\n8. Pay for the order from the internal account balance\n9. Ask how much would be refunded if the order were cancelled\n10. Cancel the order\n11. Book another first-class seat on the same regular train for the same contact with the same station food\n12. Refresh the list of orders\n13. Pay for the new order from the internal account balance\n14. Rebook the paid ticket to a second-class seat on the same regular train (the cheaper ticket: the difference is refunded to the internal balance)\n\nRequests of earlier steps:\nstep 1: POST /api/v1/users/login -> UserController#getToken [ts-auth-service] (success)\nstep 2: POST /api/v1/travel2service/trips/left -> Travel2Controller#queryInfo [ts-travel2-service] (success)\nstep 3: POST /api/v1/travel2service/trip_detail -> Travel2Controller#getTripAllDetailInfo [ts-travel2-service] (success)\nstep 4: GET /api/v1/foodservice/foods/{date}/{startStation}/{endStation}/{tripId} -> FoodController#getAllFood [ts-food-service] (success)\nstep 5: GET /api/v1/contactservice/contacts/account/{accountId} -> ContactsController#findContactsByAccountId [ts-contacts-service] (success)\nstep 6: POST /api/v1/preserveotherservice/preserveOther -> PreserveOtherController#preserve [ts-preserve-other-service] (success)\n\nCurrent step 7: Refresh the list of orders\n\nCandidate handlers:\nC1: POST /api/v1/orderservice/order/refresh\n    handler OrderController#queryOrdersForRefresh(OrderInfo qi) in ts-order-service\n    serves high-speed trains (GaoTie/DongChe, G/D) only; its twin serves the other kind\n    body: loginId, travelDateStart, travelDateEnd, boughtDateStart, boughtDateEnd, state, enableTravelDateQuery, enableBoughtDateQuery, enableStateQuery\n    UI: page client_ticket_collect, action queryMyOrderList; the same UI action also sends: POST /api/v1/orderOtherService/orderOther/refresh\n    UI: page client_enter_station, action queryMyOrderList; the same UI action also sends: POST /api/v1/orderOtherService/orderOther/refresh\n    code: OrderController.LOGGER.info(\"[queryOrdersForRefresh][Query Orders][for LoginId:{}]\", qi.getLoginId()); return ok(orderService.queryOrdersForRefresh(qi, qi.getLoginId(), headers));\nC2: POST /api/v1/orderOtherService/orderOther/refresh\n    handler OrderOtherController#queryOrdersForRefresh(QueryInfo qi) in ts-order-other-service\n    serves regular trains (the 'Other' type, not G/D) only; its twin serves the other kind\n    body: loginId, travelDateStart, travelDateEnd, boughtDateStart, boughtDateEnd, state, enableTravelDateQuery, enableBoughtDateQuery, enableStateQuery\n    UI: page client_ticket_collect, action queryMyOrderList; the same UI action also sends: POST /api/v1/orderservice/order/refresh\n    UI: page client_enter_station, action queryMyOrderList; the same UI action also sends: POST /api/v1/orderservice/order/refresh\n    code: OrderOtherController.LOGGER.info(\"[queryOrdersForRefresh][Query Orders][for LoginId:{}]\", qi.getLoginId()); return ok(orderService.queryOrdersForRefresh(qi, qi.getLoginId(), headers));\nC3: GET /api/v1/waitorderservice/waitlistorders\n    handler WaitListOrderController#getWaitListOrders() in ts-wait-order-service\n    UI: none (the web UI never calls it)\n    code: LOGGER.info(\"[getWaitListOrders][Get All Wait List Orders]\"); return ok(waitListOrderService.getAllWaitListOrders(headers));\nC4: GET /api/v1/waitorderservice/orders\n    handler WaitListOrderController#getAllOrders() in ts-wait-order-service\n    UI: none (the web UI never calls it)\n    code: LOGGER.info(\"[getAllOrders][Get All Orders]\"); return ok(waitListOrderService.getAllOrders(headers));\nC5: GET /api/v1/adminorderservice/adminorder\n    handler AdminOrderController#getAllOrders() in ts-admin-order-service\n    UI: page admin, admin_config, admin_contacts, admin_price, admin_station, admin_train, action loadRecordList\n    code: logger.info(\"[getAllOrders][Get all orders][getAllOrders]\"); return ok(adminOrderService.getAllOrders(headers));\nC6: GET /api/v1/orderservice/order\n    handler OrderController#findAllOrder() in ts-order-service\n    serves high-speed trains (GaoTie/DongChe, G/D) only; its twin serves the other kind\n    UI: none (the web UI never calls it)\n    code: OrderController.LOGGER.info(\"[getAllOrders][Find All Order]\"); // ArrayList<Order> return ok(orderService.getAllOrders(headers));\nC7: GET /api/v1/orderOtherService/orderOther\n    handler OrderOtherController#findAllOrder() in ts-order-other-service\n    serves regular trains (the 'Other' type, not G/D) only; its twin serves the other kind\n    UI: none (the web UI never calls it)\n    code: OrderOtherController.LOGGER.info(\"[getAllOrders][Find All Order]\"); return ok(orderService.getAllOrders(headers));\nC8: POST /api/v1/waitorderservice/order\n    handler WaitListOrderController#createNewOrder(WaitListOrderVO createOrder) in ts-wait-order-service\n    body: accountId, contactsId, tripId, seatType, date, from, to, price\n    UI: none (the web UI never calls it)\n    code: WaitListOrderController.LOGGER.info(\"[createWaitOrder][Create Wait Order][from {} to {} at {}]\", createOrder.getFrom(), createOrder.getTo(), createOrder.getDate()); return ok(waitListOrderService.create(createOrder, headers));\nC9: GET /api/v1/waitorderservice/welcome\n    handler WaitListOrderController#home() in ts-wait-order-service\n    UI: none (the web UI never calls it)\n    code: return \"Welcome to [ Wait Order Service ] !\";\nC10: POST /api/v1/orderservice/order/tickets\n    handler OrderController#getTicketListByDateAndTripId(Seat seatRequest) in ts-order-service\n    serves high-speed trains (GaoTie/DongChe, G/D) only; its twin serves the other kind\n    body: travelDate, trainNumber, startStation, destStation, seatType, totalNum, stations\n    UI: none (the web UI never calls it)\n    code: OrderController.LOGGER.info(\"[getSoldTickets][Get Sold Ticket][Travel Date: {}]\", seatRequest.getTravelDate().toString()); return ok(orderService.getSoldTickets(seatRequest, headers));\nC11: POST /api/v1/orderOtherService/orderOther/tickets\n    handler OrderOtherController#getTicketListByDateAndTripId(Seat seatRequest) in ts-order-other-service\n    serves regular trains (the 'Other' type, not G/D) only; its twin serves the other kind\n    body: travelDate, trainNumber, startStation, destStation, seatType, totalNum, stations\n    UI: none (the web UI never calls it)\n    code: OrderOtherController.LOGGER.info(\"[getSoldTickets][Get Sold Ticket][Travel Date: {}]\", seatRequest.getTravelDate().toString()); return ok(orderService.getSoldTickets(seatRequest, headers));\nC12: GET /api/v1/contactservice/contacts/account/{accountId}\n    handler ContactsController#findContactsByAccountId(String accountId) in ts-contacts-service\n    UI: page client_ticket_book, action refresh_booking_contacts [\"Refresh Contacts\"]\n    UI: page admin, admin_config, admin_contacts, admin_price, admin_station, admin_train, action getContactOptions\n    code: ContactsController.LOGGER.info(\"[findContactsByAccountId][Find Contacts By Account Id][accountId: {}]\", accountId); ContactsController.LOGGER.info(\"[ContactsService][VerifyLogin Success]\"); return ok(contactsService.findContactsByAccountId(accountId, headers));\n\nAnswer with JSON: a short reasoning (one or two sentences), the candidate label, whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. \"trip\": \"first_of_step_2\" for the first trip found at step 2, \"order\": \"new_of_step_6\" for the order created at step 6). Leave refs empty when the request uses nothing from earlier steps."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "reasoning": {
+    "type": "string",
+    "maxLength": 400
+   },
+   "candidate": {
+    "type": "string",
+    "enum": [
+     "C1",
+     "C2",
+     "C3",
+     "C4",
+     "C5",
+     "C6",
+     "C7",
+     "C8",
+     "C9",
+     "C10",
+     "C11",
+     "C12"
+    ]
+   },
+   "expected_outcome": {
+    "type": "string",
+    "enum": [
+     "success",
+     "refused"
+    ]
+   },
+   "refs": {
+    "type": "object",
+    "properties": {
+     "trip": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "contact": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "order": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "food": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "store": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "station": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "route": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "train": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "price": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "consign": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "assurance": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     },
+     "user": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5",
+       "first_of_step_6",
+       "second_of_step_6",
+       "new_of_step_6"
+      ]
+     }
+    },
+    "additionalProperties": false
+   }
+  },
+  "required": [
+   "reasoning",
+   "candidate",
+   "expected_outcome",
+   "refs"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "reasoning": "The user is refreshing the list of orders for a regular train booking, which requires the 'Other' service twin. The UI action 'queryMyOrderList' on the ticket collection page sends a POST request to the orderOtherService refresh endpoint for regular trains.",
+  "candidate": "C2",
+  "expected_outcome": "success",
+  "refs": {}
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 88,
+  "prompt_tokens": 2958,
+  "total_tokens": 3046,
+  "prompt_tokens_details": {
+   "cached_tokens": 910
+  }
+ },
+ "seconds": 2.74
+}

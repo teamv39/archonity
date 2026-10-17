@@ -99,9 +99,15 @@ class TestCatalog:
         g = [r for r in by[PRESERVE] if "client_ticket_book" in r.file][0]
         o = [r for r in by[PRESERVE_OTHER] if "client_ticket_book" in r.file][0]
         assert g.group == o.group
-        assert g.guards == ["tripType == 'G' || tripType == 'D'"]
-        assert o.guards == ["!(tripType == 'G' || tripType == 'D')"]
+        assert g.guards[-1] == "tripType == 'G' || tripType == 'D'"
+        assert o.guards[-1] == "!(tripType == 'G' || tripType == 'D')"
         assert "client_ticket_book.html" in " ".join(g.pages)
+
+    def test_request_in_response_handler_is_marked(self, catalog) -> None:
+        diff = [r for r in catalog.requests if r.url == "/api/v1/rebookservice/rebook/difference"
+                and r.file.endswith("client_order_list.js")][0]
+        assert diff.guards[0] == "in the response handler of POST /api/v1/rebookservice/rebook"
+        assert 'result["status"] == 2' in diff.guards
 
     def test_order_list_refresh_sends_two_requests(self, catalog) -> None:
         reqs = [r for r in catalog.requests if r.file.endswith("client_order_list.js") and r.function == "queryMyOrderList"]

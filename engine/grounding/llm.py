@@ -6,16 +6,19 @@
 - `temperature = 0`, thinking выключен, вывод по JSON-схеме, вызовы по одному (параллельность не ускоряет).
 
 Сервер: `ARCHONITY_LLM_URL` (по умолчанию http://127.0.0.1:8080), имя модели для ключа — `ARCHONITY_LLM_MODEL`.
+Strict Local-First: адрес вне loopback и частной сети клиент не принимает (`LocalOnlyError`).
 Параметры запуска `llama server` — docs/researches/model_selection.md.
 """
 from __future__ import annotations
 
 import hashlib
+import ipaddress
 import json
 import os
 import sys
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
@@ -27,6 +30,24 @@ DEFAULT_URL = "http://127.0.0.1:8080"
 DEFAULT_MODEL = "Qwen3.6-35B-A3B-UD-IQ4_XS"
 MAX_TOKENS = 600
 TIMEOUT_S = 300
+
+
+class LocalOnlyError(ValueError):
+    """Адрес LLM-сервера не локальный: облачные и внешние API запрещены (AGENTS.md)."""
+
+
+def check_local_url(url: str) -> str:
+    """Разрешены только loopback и частная сеть (сервер на машине команды)."""
+    host = urllib.parse.urlparse(url).hostname or ""
+    if host == "localhost":
+        return url
+    try:
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        raise LocalOnlyError(f"LLM: разрешён только локальный сервер по IP или localhost, получено {url}") from None
+    if not (ip.is_loopback or ip.is_private):
+        raise LocalOnlyError(f"LLM: адрес {url} не локальный")
+    return url
 
 
 @dataclass
@@ -48,7 +69,7 @@ class LLMStats:
 class LLMClient:
     def __init__(self, url: str | None = None, model: str | None = None, use_server: bool = True,
                  refresh: bool = False, cache_dir: Path = CACHE_DIR) -> None:
-        self.url = (url or os.environ.get("ARCHONITY_LLM_URL") or DEFAULT_URL).rstrip("/")
+        self.url = check_local_url((url or os.environ.get("ARCHONITY_LLM_URL") or DEFAULT_URL).rstrip("/"))
         self.model = model or os.environ.get("ARCHONITY_LLM_MODEL") or DEFAULT_MODEL
         self.use_server = use_server
         self.refresh = refresh

@@ -1,0 +1,60 @@
+{
+ "key": "sha256:4f957bb5e92827d9e72b4ade5b2e47caabfbb5b8d3ead215f98307d26ca7a627",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "m1-v5",
+ "kind": "params",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You map steps of a user scenario in the Train Ticket web application to backend REST requests.\nTrain Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.\n\nRules:\n- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.\n- Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.\n- When a UI variant is sent only under a condition, check the condition against the scenario.\n- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.\n- Administrator steps (admin console) use admin services; passenger steps do not.\n- A step that the system refuses still sends its request: pick the handler that refuses it.\n\nEnum codes used in request fields:\n- AssuranceType: TRAFFIC_ACCIDENT=1 (Traffic Accident Assurance, 3.0)\n- DocumentType: NONE=0 (Null), ID_CARD=1 (ID Card), PASSPORT=2 (Passport), OTHER=3 (Other)\n- Gender: NONE=0 (Null), MALE=1 (Male), FEMALE=2 (Female), OTHER=3 (Other)\n- MoneyType: A=Add Money (1), D=Draw Back Money (2)\n- OrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CHANGE=3 (Cancel & Rebook), CANCEL=4 (Cancel), REFUNDS=5 (Refunded), USED=6 (Used)\n- PaymentType: P=Payment (1), D=Difference (2), O=Outside Payment (3), E=Difference & Outside Payment (4)\n- SeatClass: NONE=0 (NoSeat), BUSINESS=1 (GreenSeat), FIRSTCLASS=2 (FirstClassSeat), SECONDCLASS=3 (SecondClassSeat), HARDSEAT=4 (HardSeat), SOFTSEAT=5 (SoftSeat), HARDBED=6 (HardBed), SOFTBED=7 (SoftBed), HIGHSOFTBED=8 (HighSoftSeat)\n- Type: G=G (1), D=D (2), Z=Z (3), T=T (4), K=K (5)\n- WaitListOrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CANCEL=3 (Cancel), REFUNDS=4 (Refunded), EXPIRED=5 (Expired)\n"
+  },
+  {
+   "role": "user",
+   "content": "Scenario S5: Advanced search: the cheapest, the quickest and the fewest-stops trips, a transfer via Suzhou; booking the cheapest trip, collecting the ticket and entering the station\nDescription: A registered passenger logs in and uses the advanced search from Shanghai to Nanjing on 1 October 2026 three times: for the cheapest trips, for the quickest trips and for the trips with the fewest stops. They also ask for trips with a transfer at Suzhou (Shanghai — Suzhou — Nanjing) on the same date. The cheapest option turns out to be a regular train (the 'Other' train type, not high-speed): they open its details, take the first contact from their contact book and book a first-class seat on it without food, assurance or consignment. They refresh their list of orders, pay for the order from the internal account balance, collect the ticket and enter the station (board the train) with it.\nSteps:\n1. Log in with username and password\n2. Advanced search: the cheapest trips from Shanghai to Nanjing on 1 October 2026\n3. Advanced search: the quickest trips from Shanghai to Nanjing on 1 October 2026\n4. Advanced search: the trips with the fewest stops from Shanghai to Nanjing on 1 October 2026\n5. Ask for trips with a transfer at Suzhou (Shanghai — Suzhou — Nanjing) on 1 October 2026\n6. Open the details of the cheapest trip found (a regular, 'Other'-type train)\n7. Open the contact book and take the first contact\n8. Book a first-class seat on the cheapest (regular) trip for this contact, without food, assurance or consignment\n9. Refresh the list of orders\n10. Pay for the order from the internal account balance\n11. Collect the ticket for the order\n12. Enter the station (board the train) with the order\n\nRequests of earlier steps:\nstep 1: POST /api/v1/users/login -> UserController#getToken [ts-auth-service] (success)\nstep 2: POST /api/v1/travelplanservice/travelPlan/cheapest -> TravelPlanController#getByCheapest [ts-travel-plan-service] (success)\n\nCurrent step 3: Advanced search: the quickest trips from Shanghai to Nanjing on 1 October 2026\nChosen request: POST /api/v1/travelplanservice/travelPlan/quickest -> TravelPlanController#getByQuickest(TripInfo queryInfo)\n\nRequest fields (Java type):\n  startPlace (body): String\n  endPlace (body): String\n  departureTime (body): String\n\nFill only the fields whose value follows from the step text or the scenario description: seat class, food, assurance, consignment weight and consignee, query filters and date ranges, names, numbers and dates of new entities. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "startPlace": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "endPlace": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "departureTime": {
+    "type": [
+     "string",
+     "null"
+    ]
+   }
+  },
+  "required": [
+   "startPlace",
+   "endPlace",
+   "departureTime"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "startPlace": "Shanghai",
+  "endPlace": "Nanjing",
+  "departureTime": "2026-10-01"
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 43,
+  "prompt_tokens": 1370,
+  "total_tokens": 1413,
+  "prompt_tokens_details": {
+   "cached_tokens": 817
+  }
+ },
+ "seconds": 1.31
+}

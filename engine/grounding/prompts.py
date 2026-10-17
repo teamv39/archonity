@@ -7,6 +7,7 @@
 """
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -14,7 +15,7 @@ from engine.grounding.docs import SKIP_PARAM_TYPES, HandlerInfo
 from engine.grounding.request import OUTCOMES, REF_ENTITIES, REF_PICKS
 from engine.grounding.ui_catalog import UIRequest
 
-PROMPT_VERSION = "m1-v1"
+PROMPT_VERSION = "m1-v5"
 CAND_SRC_LINES = 6
 
 SYSTEM = """You map steps of a user scenario in the Train Ticket web application to backend REST requests.
@@ -24,6 +25,7 @@ Rules:
 - Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.
 - Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.
 - When a UI variant is sent only under a condition, check the condition against the scenario.
+- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.
 - Administrator steps (admin console) use admin services; passenger steps do not.
 - A step that the system refuses still sends its request: pick the handler that refuses it.
 
@@ -86,17 +88,30 @@ def _ui_line(r: UIRequest, siblings: list[UIRequest]) -> str:
     return s
 
 
-def candidate_block(label: str, h: HandlerInfo, ui: list[tuple[UIRequest, list[UIRequest]]]) -> str:
+def candidate_block(label: str, h: HandlerInfo, ui: list[tuple[UIRequest, list[UIRequest]]],
+                    train_kind: str | None = None) -> str:
     lines = [f"{label}: " + "; ".join(f"{v} {p}" for v, p in h.routes)]
     lines.append(f"    handler {h.signature} in {h.module}")
+    if train_kind:
+        lines.append(f"    serves {train_kind} only; its twin serves the other kind")
     if h.body_fields:
         lines.append("    body: " + ", ".join(f["name"] for f in h.body_fields))
     for r, sib in ui[:2]:
         lines.append("    " + _ui_line(r, sib))
+    if not ui:
+        lines.append("    UI: none (the web UI never calls it)")
     src = [ln for ln in h.source.splitlines()[1:] if ln not in ("}", "{")][:CAND_SRC_LINES]
     if src:
         lines.append("    code: " + " ".join(src))
     return "\n".join(lines)
+
+
+def train_kind(module: str) -> str:
+    """Какие поезда обслуживает модуль из пары близнецов: `other` или цифра в имени — обычные."""
+    core = module.removeprefix("ts-").removesuffix("-service")
+    if re.search(r"other|\d", core):
+        return "regular trains (the 'Other' type, not G/D)"
+    return "high-speed trains (GaoTie/DongChe, G/D)"
 
 
 def select_schema(labels: list[str], step: int) -> dict[str, Any]:

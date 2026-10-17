@@ -1,5 +1,5 @@
 {
- "source": "черновик: engine/resolver.py ScenarioGrounder.ground_step; сверка: субагент по ts-ui-dashboard и контроллерам 17.10.2026; status: ok — подтверждено UI, no_ui — запроса нет в активном UI, disputed — спорно",
+ "source": "черновик: engine/resolver.py ScenarioGrounder.ground_step; сверка: субагент по ts-ui-dashboard и контроллерам 17.10.2026; status: ok — подтверждено UI, no_ui — запроса нет в активном UI, disputed — спорно; params — ключевые поля по тексту шага (коды из enum исходников, foodType: 1 поезд, 2 станция, 0 без еды)",
  "scenarios": {
   "S0": [
    {
@@ -46,7 +46,11 @@
      "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
     ],
     "status": "ok",
-    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)",
+    "params": {
+     "enableStateQuery": true,
+     "state": 1
+    }
    },
    {
     "n": 6,
@@ -104,7 +108,13 @@
     "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 2,
+     "assurance": 1,
+     "foodType": 1,
+     "consigneeWeight": 2.0
+    }
    },
    {
     "n": 7,
@@ -222,7 +232,12 @@
     "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 2,
+     "assurance": 0,
+     "foodType": 2
+    }
    },
    {
     "n": 7,
@@ -264,7 +279,12 @@
     "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 2,
+     "assurance": 0,
+     "foodType": 2
+    }
    },
    {
     "n": 12,
@@ -290,7 +310,10 @@
     "handler": "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 3
+    }
    }
   ],
   "S3": [
@@ -350,7 +373,13 @@
     "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 2,
+     "assurance": 1,
+     "foodType": 2,
+     "consigneeWeight": 0.5
+    }
    },
    {
     "n": 8,
@@ -358,7 +387,12 @@
     "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 3,
+     "assurance": 0,
+     "foodType": 0
+    }
    },
    {
     "n": 9,
@@ -474,7 +508,12 @@
     "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 2,
+     "assurance": 1,
+     "foodType": 1
+    }
    },
    {
     "n": 8,
@@ -534,7 +573,11 @@
      "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
     ],
     "status": "ok",
-    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)",
+    "params": {
+     "enableStateQuery": true,
+     "state": 4
+    }
    }
   ],
   "S5": [
@@ -600,7 +643,12 @@
     "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 2,
+     "assurance": 0,
+     "foodType": 0
+    }
    },
    {
     "n": 9,
@@ -652,7 +700,10 @@
     "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "stayTime": 5
+    }
    },
    {
     "n": 3,
@@ -660,7 +711,13 @@
     "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "name": "GaoTieSix",
+     "economyClass": 100,
+     "confortClass": 30,
+     "averageSpeed": 300
+    }
    },
    {
     "n": 4,
@@ -676,7 +733,12 @@
     "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "trainType": "GaoTieSix",
+     "basicPriceRate": 0.5,
+     "firstClassPriceRate": 1.2
+    }
    },
    {
     "n": 6,
@@ -684,7 +746,11 @@
     "handler": "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "tripId": "G9101",
+     "trainTypeName": "GaoTieSix"
+    }
    },
    {
     "n": 7,
@@ -724,7 +790,12 @@
     "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 2,
+     "assurance": 0,
+     "foodType": 0
+    }
    },
    {
     "n": 12,
@@ -784,7 +855,13 @@
     "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
     "alt": [],
     "status": "ok",
-    "note": ""
+    "note": "",
+    "params": {
+     "seatType": 2,
+     "assurance": 0,
+     "foodType": 0,
+     "consigneeWeight": 3.0
+    }
    },
    {
     "n": 5,
@@ -860,7 +937,10 @@
      "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
     ],
     "status": "ok",
-    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)",
+    "params": {
+     "enableTravelDateQuery": true
+    }
    },
    {
     "n": 14,
@@ -870,7 +950,10 @@
      "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
     ],
     "status": "ok",
-    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)",
+    "params": {
+     "enableBoughtDateQuery": true
+    }
    }
   ]
  }

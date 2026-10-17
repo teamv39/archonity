@@ -28,8 +28,13 @@ class TestQualityAndConstraints:
             "aiohttp",
         }
 
+        # Клиент локального llama server ходит по HTTP; адрес вне loopback и частной сети он отклоняет
+        # (test_llm_client_rejects_external_url)
+        local_http_clients = {ROOT / "engine" / "grounding" / "llm.py"}
         python_files = list((ROOT / "engine").rglob("*.py")) + [ROOT / "run_eval.py"]
         for p in python_files:
+            if p in local_http_clients:
+                continue
             tree = ast.parse(p.read_text(encoding="utf-8"), filename=str(p))
             for node in ast.walk(tree):
                 if isinstance(node, ast.Import):
@@ -42,6 +47,15 @@ class TestQualityAndConstraints:
                         assert node.module not in forbidden_modules, (
                             f"Violation of Strict Local-First: {p} imports forbidden from '{node.module}'"
                         )
+
+    def test_llm_client_rejects_external_url(self) -> None:
+        from engine.grounding.llm import LLMClient, LocalOnlyError
+
+        for url in ("https://api.openai.com", "http://api.anthropic.com:443", "http://8.8.8.8:8080"):
+            with pytest.raises(LocalOnlyError):
+                LLMClient(url=url, use_server=False)
+        for url in ("http://127.0.0.1:8080", "http://localhost:8080", "http://192.168.1.20:8080"):
+            assert LLMClient(url=url, use_server=False).url == url
 
     def test_performance_under_5_seconds(self) -> None:
         """Тест производительности: генерация всех 8 сценариев должна укладываться в 5 секунд."""

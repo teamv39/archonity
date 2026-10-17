@@ -196,6 +196,44 @@ def _functions_up(n: ts.Node) -> list[ts.Node]:
     return out
 
 
+def _action_fn(n: ts.Node) -> ts.Node | None:
+    """Узел функции действия: ближайшая именованная функция, не колбэк."""
+    for f in _functions_up(n):
+        nm = _func_name(f)
+        if nm and nm not in CALLBACK_NAMES:
+            return f
+    return None
+
+
+RESPONSE_CB = {"success", "then", "done"}
+
+
+def _response_of(fn: ts.Node) -> str | None:
+    """Если функция — обработчик ответа запроса (`success: function`, `$http(...).success(fn)`), то `VERB url` запроса."""
+    p = fn.parent
+    call = None
+    if p is not None and p.type == "pair" and _text(p.child_by_field_name("key")).strip("'\"") in RESPONSE_CB:
+        obj = p.parent
+        args = obj.parent if obj is not None else None
+        call = args.parent if args is not None and args.type == "arguments" else None
+    elif p is not None and p.type == "arguments" and p.parent is not None and p.parent.type == "call_expression":
+        f = p.parent.child_by_field_name("function")
+        if f is not None and f.type == "member_expression" and _text(f.child_by_field_name("property")) in RESPONSE_CB:
+            call = f.child_by_field_name("object")
+    if call is None or call.type != "call_expression" or _callee(call) not in AJAX_OBJ:
+        return None
+    args = call.child_by_field_name("arguments")
+    if args is None or not args.named_children or args.named_children[0].type != "object":
+        return None
+    props = {_text(x.child_by_field_name("key")).strip("'\""): x.child_by_field_name("value")
+             for x in args.named_children[0].named_children if x.type == "pair"}
+    verb = _string_value(props["type"] if "type" in props else props.get("method")) if (
+        "type" in props or "method" in props) else "GET"
+    url = props.get("url")
+    url_s = (_string_value(url) or _text(url)) if url is not None else "?"
+    return f"in the response handler of {(verb or 'GET').upper()} {_norm(url_s, 80)}"
+
+
 def _action_name(n: ts.Node) -> tuple[str, list[str]]:
     """Ближайшая именованная функция, не колбэк, и цепочка имён наружу."""
     names = [nm for nm in (_func_name(f) for f in _functions_up(n)) if nm]
@@ -239,6 +277,10 @@ def _guards(n: ts.Node, stop: ts.Node | None) -> list[str]:
                 out.append(f"!({cond})")
         elif p.type == "switch_case":
             out.append(_norm("case " + _text(p.child_by_field_name("value"))))
+        elif p.type in FUNC_TYPES:
+            resp = _response_of(p)
+            if resp:
+                out.append(resp)
         child, p = p, p.parent
     return list(reversed(out))
 
@@ -456,8 +498,7 @@ class _FileParser:
             args = site.child_by_field_name("arguments")
             a = args.named_children if args is not None else []
             env = {p: a[i] for i, p in enumerate(params) if i < len(a)}
-            fns = _functions_up(site)
-            out.append(_Ctx(env, site, _guards(site, fns[0] if fns else None)))
+            out.append(_Ctx(env, site, _guards(site, _action_fn(site))))
         return out
 
     def requests(self) -> Iterator[dict[str, Any]]:
@@ -491,8 +532,7 @@ class _FileParser:
 
     def _record(self, call: ts.Node, url: ts.Node, verb: str, data: ts.Node | None, msg_root: ts.Node,
                 ctx: _Ctx) -> dict[str, Any]:
-        fns = _functions_up(call)
-        inner_guards = _guards(call, fns[0] if fns else None)
+        inner_guards = _guards(call, _action_fn(call))
         anchor = ctx.via if ctx.via is not None else call
         func, outer = _action_name(anchor)
         fields, consts, cond = self.body(data, ctx)

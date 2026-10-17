@@ -1,0 +1,188 @@
+{
+ "key": "sha256:776064b4590d0a34ddecf2843740d417a793b821bcd399ef91b457597def5c4b",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "m1-v5",
+ "kind": "params",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You map steps of a user scenario in the Train Ticket web application to backend REST requests.\nTrain Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.\n\nRules:\n- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.\n- Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.\n- When a UI variant is sent only under a condition, check the condition against the scenario.\n- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.\n- Administrator steps (admin console) use admin services; passenger steps do not.\n- A step that the system refuses still sends its request: pick the handler that refuses it.\n\nEnum codes used in request fields:\n- AssuranceType: TRAFFIC_ACCIDENT=1 (Traffic Accident Assurance, 3.0)\n- DocumentType: NONE=0 (Null), ID_CARD=1 (ID Card), PASSPORT=2 (Passport), OTHER=3 (Other)\n- Gender: NONE=0 (Null), MALE=1 (Male), FEMALE=2 (Female), OTHER=3 (Other)\n- MoneyType: A=Add Money (1), D=Draw Back Money (2)\n- OrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CHANGE=3 (Cancel & Rebook), CANCEL=4 (Cancel), REFUNDS=5 (Refunded), USED=6 (Used)\n- PaymentType: P=Payment (1), D=Difference (2), O=Outside Payment (3), E=Difference & Outside Payment (4)\n- SeatClass: NONE=0 (NoSeat), BUSINESS=1 (GreenSeat), FIRSTCLASS=2 (FirstClassSeat), SECONDCLASS=3 (SecondClassSeat), HARDSEAT=4 (HardSeat), SOFTSEAT=5 (SoftSeat), HARDBED=6 (HardBed), SOFTBED=7 (SoftBed), HIGHSOFTBED=8 (HighSoftSeat)\n- Type: G=G (1), D=D (2), Z=Z (3), T=T (4), K=K (5)\n- WaitListOrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CANCEL=3 (Cancel), REFUNDS=4 (Refunded), EXPIRED=5 (Expired)\n"
+  },
+  {
+   "role": "user",
+   "content": "Scenario S2: Buying a regular train ticket with station food and no insurance; paying and cancelling with a refund; a second order rebooked to a cheaper seat class\nDescription: A registered passenger logs in. They search for regular trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing departing on 1 October 2026 and open the details of the first trip in the results. They browse the food stores at Suzhou station. They open their contact book and take the first contact as the passenger. They book one first-class seat on that regular train for this contact with food from a station store, without assurance (insurance) and without luggage consignment. They refresh their list of orders, pay for the order from the internal account balance, ask how much would be refunded if the order were cancelled, and cancel the order. Then they book another first-class seat on the same regular train for the same contact with the same station food, refresh the orders, pay for the new order, and rebook this paid ticket to a second-class seat on the same regular train: the second-class ticket is cheaper, so the difference is refunded to the internal account balance.\nSteps:\n1. Log in with username and password\n2. Search regular trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing departing on 1 October 2026\n3. Open the details of the first trip found\n4. Browse the food stores at Suzhou station\n5. Open the contact book and take the first contact\n6. Book one first-class seat on the regular train for this contact, with food from a station store, no assurance (insurance) and no luggage consignment\n7. Refresh the list of orders\n8. Pay for the order from the internal account balance\n9. Ask how much would be refunded if the order were cancelled\n10. Cancel the order\n11. Book another first-class seat on the same regular train for the same contact with the same station food\n12. Refresh the list of orders\n13. Pay for the new order from the internal account balance\n14. Rebook the paid ticket to a second-class seat on the same regular train (the cheaper ticket: the difference is refunded to the internal balance)\n\nRequests of earlier steps:\nstep 1: POST /api/v1/users/login -> UserController#getToken [ts-auth-service] (success)\nstep 2: POST /api/v1/travel2service/trips/left -> Travel2Controller#queryInfo [ts-travel2-service] (success)\nstep 3: POST /api/v1/travel2service/trip_detail -> Travel2Controller#getTripAllDetailInfo [ts-travel2-service] (success)\nstep 4: GET /api/v1/foodservice/foods/{date}/{startStation}/{endStation}/{tripId} -> FoodController#getAllFood [ts-food-service] (success)\nstep 5: GET /api/v1/contactservice/contacts/account/{accountId} -> ContactsController#findContactsByAccountId [ts-contacts-service] (success)\nstep 6: POST /api/v1/preserveotherservice/preserveOther -> PreserveOtherController#preserve [ts-preserve-other-service] (success)\nstep 7: POST /api/v1/orderOtherService/orderOther/refresh -> OrderOtherController#queryOrdersForRefresh [ts-order-other-service] (success)\nstep 8: POST /api/v1/inside_pay_service/inside_payment -> InsidePaymentController#pay [ts-inside-payment-service] (success)\nstep 9: GET /api/v1/cancelservice/cancel/refound/{orderId} -> CancelController#calculate [ts-cancel-service] (success)\nstep 10: GET /api/v1/cancelservice/cancel/{orderId}/{loginId} -> CancelController#cancelTicket [ts-cancel-service] (success)\n\nCurrent step 11: Book another first-class seat on the same regular train for the same contact with the same station food\nChosen request: POST /api/v1/preserveotherservice/preserveOther -> PreserveOtherController#preserve(OrderTicketsInfo oti)\n\nRequest fields (Java type):\n  accountId (body): String\n  contactsId (body): String\n  tripId (body): String\n  seatType (body): int\n  loginToken (body): String\n  date (body): String\n  from (body): String\n  to (body): String\n  assurance (body): int\n  foodType (body): int\n  stationName (body): String\n  storeName (body): String\n  foodName (body): String\n  foodPrice (body): double\n  handleDate (body): String\n  consigneeName (body): String\n  consigneePhone (body): String\n  consigneeWeight (body): double\n  isWithin (body): boolean\nValues the web UI sends under conditions:\n  seatType='2' when $(\"#sub_setType\").text().indexOf(\"confort\") >= 0\n  seatType='3' when !($(\"#sub_setType\").text().indexOf(\"confort\") >= 0)\n  foodType=1 when null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text() && $('#sub_foodType').text().indexOf(\"Train\")\n  foodType=2 when null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text() && !($('#sub_foodType').text().indexOf(\"Train\")) && $('#sub_foodType').text().indexOf(\"Station\")\n  foodType=0 when null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text() && !($('#sub_foodType').text().indexOf(\"Train\")) && !($('#sub_foodType').text().indexOf(\"Station\"))\n  foodType=0 when !(null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text())\n  stationName='' when null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text() && $('#sub_foodType').text().indexOf(\"Train\")\n  storeName='' when null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text() && $('#sub_foodType').text().indexOf(\"Train\")\n  isWithin=False when $('#need-consign-or-not').is(\":checked\")\n\nFill only the fields whose value follows from the step text or the scenario description: seat class, food, assurance, consignment weight and consignee, query filters and date ranges, names, numbers and dates of new entities. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "accountId": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "contactsId": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "tripId": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "seatType": {
+    "type": [
+     "integer",
+     "null"
+    ]
+   },
+   "loginToken": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "date": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "from": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "to": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "assurance": {
+    "type": [
+     "integer",
+     "null"
+    ]
+   },
+   "foodType": {
+    "type": [
+     "integer",
+     "null"
+    ]
+   },
+   "stationName": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "storeName": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "foodName": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "foodPrice": {
+    "type": [
+     "number",
+     "null"
+    ]
+   },
+   "handleDate": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "consigneeName": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "consigneePhone": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "consigneeWeight": {
+    "type": [
+     "number",
+     "null"
+    ]
+   },
+   "isWithin": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   }
+  },
+  "required": [
+   "accountId",
+   "contactsId",
+   "tripId",
+   "seatType",
+   "loginToken",
+   "date",
+   "from",
+   "to",
+   "assurance",
+   "foodType",
+   "stationName",
+   "storeName",
+   "foodName",
+   "foodPrice",
+   "handleDate",
+   "consigneeName",
+   "consigneePhone",
+   "consigneeWeight",
+   "isWithin"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "accountId": null,
+  "contactsId": null,
+  "tripId": null,
+  "seatType": 2,
+  "loginToken": null,
+  "date": null,
+  "from": null,
+  "to": null,
+  "assurance": 0,
+  "foodType": 2,
+  "stationName": null,
+  "storeName": null,
+  "foodName": null,
+  "foodPrice": 0.0,
+  "handleDate": null,
+  "consigneeName": null,
+  "consigneePhone": null,
+  "consigneeWeight": 0.0,
+  "isWithin": false
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 165,
+  "prompt_tokens": 2146,
+  "total_tokens": 2311,
+  "prompt_tokens_details": {
+   "cached_tokens": 1137
+  }
+ },
+ "seconds": 3.13
+}

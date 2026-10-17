@@ -1,0 +1,320 @@
+{
+ "key": "sha256:f805bbe656009f4187cc64e5d2969196ed3726288727157247445b0fefd0b84d",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "m1-v5",
+ "kind": "select",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You map steps of a user scenario in the Train Ticket web application to backend REST requests.\nTrain Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.\n\nRules:\n- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.\n- Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.\n- When a UI variant is sent only under a condition, check the condition against the scenario.\n- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.\n- Administrator steps (admin console) use admin services; passenger steps do not.\n- A step that the system refuses still sends its request: pick the handler that refuses it.\n\nEnum codes used in request fields:\n- AssuranceType: TRAFFIC_ACCIDENT=1 (Traffic Accident Assurance, 3.0)\n- DocumentType: NONE=0 (Null), ID_CARD=1 (ID Card), PASSPORT=2 (Passport), OTHER=3 (Other)\n- Gender: NONE=0 (Null), MALE=1 (Male), FEMALE=2 (Female), OTHER=3 (Other)\n- MoneyType: A=Add Money (1), D=Draw Back Money (2)\n- OrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CHANGE=3 (Cancel & Rebook), CANCEL=4 (Cancel), REFUNDS=5 (Refunded), USED=6 (Used)\n- PaymentType: P=Payment (1), D=Difference (2), O=Outside Payment (3), E=Difference & Outside Payment (4)\n- SeatClass: NONE=0 (NoSeat), BUSINESS=1 (GreenSeat), FIRSTCLASS=2 (FirstClassSeat), SECONDCLASS=3 (SecondClassSeat), HARDSEAT=4 (HardSeat), SOFTSEAT=5 (SoftSeat), HARDBED=6 (HardBed), SOFTBED=7 (SoftBed), HIGHSOFTBED=8 (HighSoftSeat)\n- Type: G=G (1), D=D (2), Z=Z (3), T=T (4), K=K (5)\n- WaitListOrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CANCEL=3 (Cancel), REFUNDS=4 (Refunded), EXPIRED=5 (Expired)\n"
+  },
+  {
+   "role": "user",
+   "content": "Scenario S6: An administrator opens a new high-speed trip and a passenger is the first to buy a ticket on it\nDescription: An administrator logs in to the admin console. They add a new station Ning Bo (stay time 5 minutes), a new train type GaoTieSix (100 second-class and 30 first-class seats, average speed 300), a new route Shanghai — Suzhou — Ning Bo (distances 0, 100 and 250), a price configuration for GaoTieSix on this route (basic rate 0.5, first-class rate 1.2) and a new high-speed trip G9101 of type GaoTieSix on this route from Shanghai via Suzhou to Ning Bo (departure 09:00, arrival 12:00). Then a registered passenger logs in, searches for high-speed (GaoTie/DongChe) trains from Shanghai to Ning Bo departing on 1 October 2026, opens the details of the new trip, takes the first contact from the contact book, books a first-class seat on it without food, assurance or consignment, refreshes the list of orders and pays for the order from the internal account balance. Finally the administrator opens the list of all orders in the system.\nSteps:\n1. Log in to the admin console with the administrator's username and password\n2. Add a new station Ning Bo with a stay time of 5 minutes\n3. Add a new train type GaoTieSix with 100 second-class and 30 first-class seats and an average speed of 300\n4. Add a new route Shanghai — Suzhou — Ning Bo with distances 0, 100 and 250\n5. Add a price configuration for train type GaoTieSix on the new route: basic rate 0.5, first-class rate 1.2\n6. Add a new high-speed trip G9101 of type GaoTieSix on the new route from Shanghai via Suzhou to Ning Bo, departing 09:00 and arriving 12:00\n7. Log in as a passenger with username and password\n8. Search high-speed (GaoTie/DongChe) trains from Shanghai to Ning Bo departing on 1 October 2026\n9. Open the details of the new trip found\n10. Open the contact book and take the first contact\n11. Book a first-class seat on the new trip for this contact, without food, assurance or consignment\n12. Refresh the list of orders\n13. Pay for the order from the internal account balance\n14. As the administrator, open the list of all orders in the system\n\nRequests of earlier steps:\nstep 1: POST /api/v1/users/login -> UserController#getToken [ts-auth-service] (success)\nstep 2: POST /api/v1/adminbasicservice/adminbasic/stations -> AdminBasicInfoController#addStation [ts-admin-basic-info-service] (success)\nstep 3: POST /api/v1/adminbasicservice/adminbasic/trains -> AdminBasicInfoController#addTrain [ts-admin-basic-info-service] (success)\nstep 4: POST /api/v1/adminrouteservice/adminroute -> AdminRouteController#addRoute [ts-admin-route-service] (success)\nstep 5: POST /api/v1/adminbasicservice/adminbasic/prices -> AdminBasicInfoController#addPrice [ts-admin-basic-info-service] (success)\n\nCurrent step 6: Add a new high-speed trip G9101 of type GaoTieSix on the new route from Shanghai via Suzhou to Ning Bo, departing 09:00 and arriving 12:00\n\nCandidate handlers:\nC1: POST /api/v1/admintravelservice/admintravel\n    handler AdminTravelController#addTravel(TravelInfo request) in ts-admin-travel-service\n    body: loginId, tripId, trainTypeName, routeId, startStationName, stationsName, terminalStationName, startTime, endTime\n    UI: page admin_travel, action addNewTravel [\"Add\"]\n    code: logger.info(\"[addTravel][Add travel][trip id: {}, train type name: {}, form station {} to station {}, login id: {}]\", request.getTripId(), request.getTrainTypeName(), request.getStartStationName(), request.getStationsName(), request.getLoginId()); return ok(adminTravelService.addTravel(request, headers));\nC2: POST /api/v1/adminrouteservice/adminroute\n    handler AdminRouteController#addRoute(RouteInfo request) in ts-admin-route-service\n    body: loginId, startStation, endStation, stationList, distanceList, id\n    UI: page admin_route, action updateRoute [\"Update\"]\n    UI: page admin_route, action addNewRoute [\"Add\"]\n    code: logger.info(\"[addRoute][Create and modify route][route id: {}, from station {} to station {}]\", request.getId(), request.getStartStation(), request.getEndStation()); return ok(adminRouteService.createAndModifyRoute(request, headers));\nC3: POST /api/v1/travelservice/trips\n    handler TravelController#createTrip(TravelInfo routeIds) in ts-travel-service\n    serves high-speed trains (GaoTie/DongChe, G/D) only; its twin serves the other kind\n    body: loginId, tripId, trainTypeName, routeId, startStationName, stationsName, terminalStationName, startTime, endTime\n    UI: none (the web UI never calls it)\n    code: // null TravelController.LOGGER.info(\"[create][Create trip][TripId: {}]\", routeIds.getTripId()); return new ResponseEntity<>(travelService.create(routeIds, headers), HttpStatus.CREATED);\nC4: POST /api/v1/travel2service/trips\n    handler Travel2Controller#createTrip(edu.fudan.common.entity.TravelInfo routeIds) in ts-travel2-service\n    serves regular trains (the 'Other' type, not G/D) only; its twin serves the other kind\n    body: loginId, tripId, trainTypeName, routeId, startStationName, stationsName, terminalStationName, startTime, endTime\n    UI: none (the web UI never calls it)\n    code: // null Travel2Controller.LOGGER.info(\"[create][Create trip][TripId: {}]\", routeIds.getTripId()); return new ResponseEntity<>(service.create(routeIds, headers), HttpStatus.CREATED);\nC5: POST /api/v1/trainservice/trains\n    handler TrainController#create(TrainType trainType) in ts-train-service\n    body: id, name, economyClass, confortClass, averageSpeed\n    UI: none (the web UI never calls it)\n    code: TrainController.LOGGER.info(\"[create][Create train][TrainTypeId: {}]\",trainType.getId()); boolean isCreateSuccess = trainService.create(trainType, headers); if (isCreateSuccess) { return ok(new Response(1, \"create success\", null)); } else { return ok(new Response(0, \"train type already exist\", trainType));\nC6: POST /api/v1/priceservice/prices\n    handler PriceController#create(PriceConfig info) in ts-price-service\n    body: id, trainType, routeId, basicPriceRate, firstClassPriceRate\n    UI: none (the web UI never calls it)\n    code: PriceController.LOGGER.info(\"[createNewPriceConfig][Create price][RouteId: {}, TrainType: {}]\",info.getRouteId(),info.getTrainType()); return new ResponseEntity<>(service.createNewPriceConfig(info, headers), HttpStatus.CREATED);\nC7: POST /api/v1/adminbasicservice/adminbasic/trains\n    handler AdminBasicInfoController#addTrain(TrainType t) in ts-admin-basic-info-service\n    body: id, name, economyClass, confortClass, averageSpeed\n    UI: page admin_train, action addTrain [\"Add\"]; sent only when: parseInt($('#add-train-economy-class').val()) && parseInt($('#add-train-confort-class').val()) && parseInt($('#add-train-average-speed').val())\n    code: AdminBasicInfoController.LOGGER.info(\"[addTrain][Add Train by admin][TrainType id: {}]\", t.getId()); return ok(adminBasicInfoService.addTrain(t, headers));\nC8: POST /api/v1/orderservice/order/admin\n    handler OrderController#addcreateNewOrder(Order order) in ts-order-service\n    serves high-speed trains (GaoTie/DongChe, G/D) only; its twin serves the other kind\n    body: id, boughtDate, travelDate, travelTime, accountId, contactsName, documentType, contactsDocumentNumber, trainNumber, coachNumber, seatClass, seatNumber, from, to, status, price\n    UI: none (the web UI never calls it)\n    code: return ok(orderService.addNewOrder(order, headers));\nC9: POST /api/v1/orderOtherService/orderOther/admin\n    handler OrderOtherController#addcreateNewOrder(Order order) in ts-order-other-service\n    serves regular trains (the 'Other' type, not G/D) only; its twin serves the other kind\n    body: id, boughtDate, travelDate, travelTime, accountId, contactsName, documentType, contactsDocumentNumber, trainNumber, coachNumber, seatClass, seatNumber, from, to, status, price\n    UI: none (the web UI never calls it)\n    code: OrderOtherController.LOGGER.info(\"[addNewOrder][Add new order][OrderId: {}]\", order.getId()); return ok(orderService.addNewOrder(order, headers));\nC10: POST /api/v1/adminorderservice/adminorder\n    handler AdminOrderController#addOrder(Order request) in ts-admin-order-service\n    body: id, boughtDate, travelDate, travelTime, accountId, contactsName, documentType, contactsDocumentNumber, trainNumber, coachNumber, seatClass, seatNumber, from, to, status, price, differenceMoney\n    UI: page admin, admin_config, admin_contacts, admin_price, admin_station, admin_train, action addNewOrder [\"Add\"]\n    code: logger.info(\"[addOrder][Add new order][AccountID: {}]\", request.getAccountId()); return ok(adminOrderService.addOrder(request, headers));\n\nAnswer with JSON: a short reasoning (one or two sentences), the candidate label, whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. \"trip\": \"first_of_step_2\" for the first trip found at step 2, \"order\": \"new_of_step_6\" for the order created at step 6). Leave refs empty when the request uses nothing from earlier steps."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "reasoning": {
+    "type": "string",
+    "maxLength": 400
+   },
+   "candidate": {
+    "type": "string",
+    "enum": [
+     "C1",
+     "C2",
+     "C3",
+     "C4",
+     "C5",
+     "C6",
+     "C7",
+     "C8",
+     "C9",
+     "C10"
+    ]
+   },
+   "expected_outcome": {
+    "type": "string",
+    "enum": [
+     "success",
+     "refused"
+    ]
+   },
+   "refs": {
+    "type": "object",
+    "properties": {
+     "trip": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "contact": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "order": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "food": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "store": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "station": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "route": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "train": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "price": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "consign": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "assurance": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     },
+     "user": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1",
+       "first_of_step_2",
+       "second_of_step_2",
+       "new_of_step_2",
+       "first_of_step_3",
+       "second_of_step_3",
+       "new_of_step_3",
+       "first_of_step_4",
+       "second_of_step_4",
+       "new_of_step_4",
+       "first_of_step_5",
+       "second_of_step_5",
+       "new_of_step_5"
+      ]
+     }
+    },
+    "additionalProperties": false
+   }
+  },
+  "required": [
+   "reasoning",
+   "candidate",
+   "expected_outcome",
+   "refs"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "reasoning": "The step involves an administrator adding a new high-speed trip (G9101), which requires using the admin travel service. Since the trip is high-speed (GaoTie), the correct service is ts-admin-travel-service, and the handler is AdminTravelController#addTravel. The request relies on the previously created train type and route, but the API call itself creates the trip entity.",
+  "candidate": "C1",
+  "expected_outcome": "success",
+  "refs": {
+   "train": "new_of_step_3",
+   "price": "new_of_step_5",
+   "user": "new_of_step_1"
+  }
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 157,
+  "prompt_tokens": 3042,
+  "total_tokens": 3199,
+  "prompt_tokens_details": {
+   "cached_tokens": 1121
+  }
+ },
+ "seconds": 3.75
+}

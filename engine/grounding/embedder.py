@@ -138,10 +138,12 @@ class STEmbedder:
 
 
 def _revision(repo: str) -> str | None:
+    """Коммит снимка модели в кеше HF (`.../snapshots/<sha>/config.json`)."""
     try:
-        from huggingface_hub import snapshot_download
+        from huggingface_hub import try_to_load_from_cache
 
-        return Path(snapshot_download(repo, local_files_only=True)).name
+        p = try_to_load_from_cache(repo, "config.json")
+        return Path(p).parent.name if isinstance(p, str) else None
     except Exception:  # noqa: BLE001
         return None
 

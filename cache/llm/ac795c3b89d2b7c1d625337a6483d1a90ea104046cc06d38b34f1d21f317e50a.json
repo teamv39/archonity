@@ -1,0 +1,108 @@
+{
+ "key": "sha256:ac795c3b89d2b7c1d625337a6483d1a90ea104046cc06d38b34f1d21f317e50a",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "m1-v5",
+ "kind": "params",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You map steps of a user scenario in the Train Ticket web application to backend REST requests.\nTrain Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.\n\nRules:\n- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.\n- Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.\n- When a UI variant is sent only under a condition, check the condition against the scenario.\n- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.\n- Administrator steps (admin console) use admin services; passenger steps do not.\n- A step that the system refuses still sends its request: pick the handler that refuses it.\n\nEnum codes used in request fields:\n- AssuranceType: TRAFFIC_ACCIDENT=1 (Traffic Accident Assurance, 3.0)\n- DocumentType: NONE=0 (Null), ID_CARD=1 (ID Card), PASSPORT=2 (Passport), OTHER=3 (Other)\n- Gender: NONE=0 (Null), MALE=1 (Male), FEMALE=2 (Female), OTHER=3 (Other)\n- MoneyType: A=Add Money (1), D=Draw Back Money (2)\n- OrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CHANGE=3 (Cancel & Rebook), CANCEL=4 (Cancel), REFUNDS=5 (Refunded), USED=6 (Used)\n- PaymentType: P=Payment (1), D=Difference (2), O=Outside Payment (3), E=Difference & Outside Payment (4)\n- SeatClass: NONE=0 (NoSeat), BUSINESS=1 (GreenSeat), FIRSTCLASS=2 (FirstClassSeat), SECONDCLASS=3 (SecondClassSeat), HARDSEAT=4 (HardSeat), SOFTSEAT=5 (SoftSeat), HARDBED=6 (HardBed), SOFTBED=7 (SoftBed), HIGHSOFTBED=8 (HighSoftSeat)\n- Type: G=G (1), D=D (2), Z=Z (3), T=T (4), K=K (5)\n- WaitListOrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CANCEL=3 (Cancel), REFUNDS=4 (Refunded), EXPIRED=5 (Expired)\n"
+  },
+  {
+   "role": "user",
+   "content": "Scenario S0: My account: contacts, orders of both train types, paid orders, luggage consignments\nDescription: A registered passenger logs in and opens their contact book. They refresh their list of orders twice — for high-speed (GaoTie/DongChe) trains and for regular ('Other' type) trains, which are kept separately — and then refresh the orders once more with the filter 'Paid' status. Finally they look up the luggage consignments registered on their account. Nothing is searched, booked or paid.\nSteps:\n1. Log in with username and password\n2. Open the contact book\n3. Refresh the list of orders for high-speed (GaoTie/DongChe) trains\n4. Refresh the list of orders for regular ('Other' type) trains\n5. Refresh the list of orders filtered by the 'Paid' status\n6. Look up the luggage consignments registered on the account\n\nRequests of earlier steps:\nstep 1: POST /api/v1/users/login -> UserController#getToken [ts-auth-service] (success)\nstep 2: GET /api/v1/contactservice/contacts/account/{accountId} -> ContactsController#findContactsByAccountId [ts-contacts-service] (success)\nstep 3: POST /api/v1/orderservice/order/refresh -> OrderController#queryOrdersForRefresh [ts-order-service] (success)\n\nCurrent step 4: Refresh the list of orders for regular ('Other' type) trains\nChosen request: POST /api/v1/orderOtherService/orderOther/refresh -> OrderOtherController#queryOrdersForRefresh(QueryInfo qi)\n\nRequest fields (Java type):\n  loginId (body): String\n  travelDateStart (body): String\n  travelDateEnd (body): String\n  boughtDateStart (body): String\n  boughtDateEnd (body): String\n  state (body): int\n  enableTravelDateQuery (body): boolean\n  enableBoughtDateQuery (body): boolean\n  enableStateQuery (body): boolean\nValues the web UI always sends: enableStateQuery=False, enableTravelDateQuery=False, enableBoughtDateQuery=False, travelDateStart=None, travelDateEnd=None, boughtDateStart=None, boughtDateEnd=None\n\nFill only the fields whose value follows from the step text or the scenario description: seat class, food, assurance, consignment weight and consignee, query filters and date ranges, names, numbers and dates of new entities. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "loginId": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "travelDateStart": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "travelDateEnd": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "boughtDateStart": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "boughtDateEnd": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "state": {
+    "type": [
+     "integer",
+     "null"
+    ]
+   },
+   "enableTravelDateQuery": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   },
+   "enableBoughtDateQuery": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   },
+   "enableStateQuery": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   }
+  },
+  "required": [
+   "loginId",
+   "travelDateStart",
+   "travelDateEnd",
+   "boughtDateStart",
+   "boughtDateEnd",
+   "state",
+   "enableTravelDateQuery",
+   "enableBoughtDateQuery",
+   "enableStateQuery"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "loginId": null,
+  "travelDateStart": null,
+  "travelDateEnd": null,
+  "boughtDateStart": null,
+  "boughtDateEnd": null,
+  "state": 0,
+  "enableTravelDateQuery": false,
+  "enableBoughtDateQuery": false,
+  "enableStateQuery": false
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 87,
+  "prompt_tokens": 1264,
+  "total_tokens": 1351,
+  "prompt_tokens_details": {
+   "cached_tokens": 719
+  }
+ },
+ "seconds": 1.83
+}

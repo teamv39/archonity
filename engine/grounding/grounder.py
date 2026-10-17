@@ -122,8 +122,10 @@ class StepGrounder:
 
         sel = None
         if self.llm is not None:
-            blocks = "\n".join(P.candidate_block(lb, self.cat.handlers[h], self._ui_for(self.cat.handlers[h]))
-                               for lb, h in zip(labels, cands))
+            blocks = "\n".join(
+                P.candidate_block(lb, self.cat.handlers[h], self._ui_for(self.cat.handlers[h]),
+                                  P.train_kind(self.cat.handlers[h].module) if h in self.retriever.twins else None)
+                for lb, h in zip(labels, cands))
             msgs = [{"role": "system", "content": self.system},
                     {"role": "user", "content": prefix + P.SELECT_TASK.format(n=n, action=action, candidates=blocks)}]
             sel, key = self.llm.complete_json("select", P.PROMPT_VERSION, msgs, P.select_schema(labels, n))
@@ -203,7 +205,34 @@ def evaluate(results: dict[str, list[StepRequest]], gold_path: Path) -> dict[str
     print(f"\nточность top-1 {hit}/{total} = {hit / max(1, total):.3f}; эталон среди кандидатов {cand_hit}/{total}")
     for sid, n, act, got, want, in_c in wrong:
         print(f"  {sid}.{n:<3} {act[:64]:<64} got {got:<34} want {want}{'' if in_c else '  (нет в кандидатах)'}")
-    return {"total": total, "top1": hit, "in_candidates": cand_hit}
+    p_total = p_hit = 0
+    p_wrong = []
+    for sid, reqs in results.items():
+        g = {s["n"]: s for s in gold.get(sid, [])}
+        for r in reqs:
+            for k, want in (g.get(r.step, {}).get("params") or {}).items():
+                got = r.params.get(k)
+                p_total += 1
+                if _same(got, want):
+                    p_hit += 1
+                else:
+                    p_wrong.append(f"{sid}.{r.step} {k}: got {got!r} want {want!r}")
+    if p_total:
+        print(f"параметры {p_hit}/{p_total} = {p_hit / p_total:.3f}")
+        for w in p_wrong:
+            print("  " + w)
+    return {"total": total, "top1": hit, "in_candidates": cand_hit, "params": p_hit, "params_total": p_total}
+
+
+def _same(got: Any, want: Any) -> bool:
+    if isinstance(want, bool) or isinstance(got, bool):
+        return got is want
+    if isinstance(want, (int, float)):
+        try:
+            return abs(float(got) - float(want)) < 1e-6
+        except (TypeError, ValueError):
+            return False
+    return str(got).strip().lower() == str(want).strip().lower()
 
 
 def main() -> None:

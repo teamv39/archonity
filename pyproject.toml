@@ -13,9 +13,11 @@ dependencies = [
 [project.optional-dependencies]
 # Только для пересчёта векторов M1 (бейкофф эмбеддингов); прогон из кеша cache/emb/ их не требует.
 # torch под RTX 50 (SM120) — сборка CUDA 12.8: pip install torch --index-url https://download.pytorch.org/whl/cu128
+# EmbeddingGemma 2 в sentence-transformers 6.1 требует torchvision даже в текстовом режиме.
 embed = [
-    "sentence-transformers>=5",
+    "sentence-transformers>=6.1",
     "torch>=2.7",
+    "torchvision>=0.22",
 ]
 
 [tool.uv]

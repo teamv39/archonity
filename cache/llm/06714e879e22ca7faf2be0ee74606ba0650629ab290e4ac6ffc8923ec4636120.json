@@ -1,0 +1,172 @@
+{
+ "key": "sha256:06714e879e22ca7faf2be0ee74606ba0650629ab290e4ac6ffc8923ec4636120",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "m1-v5",
+ "kind": "select",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You map steps of a user scenario in the Train Ticket web application to backend REST requests.\nTrain Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.\n\nRules:\n- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.\n- Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.\n- When a UI variant is sent only under a condition, check the condition against the scenario.\n- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.\n- Administrator steps (admin console) use admin services; passenger steps do not.\n- A step that the system refuses still sends its request: pick the handler that refuses it.\n\nEnum codes used in request fields:\n- AssuranceType: TRAFFIC_ACCIDENT=1 (Traffic Accident Assurance, 3.0)\n- DocumentType: NONE=0 (Null), ID_CARD=1 (ID Card), PASSPORT=2 (Passport), OTHER=3 (Other)\n- Gender: NONE=0 (Null), MALE=1 (Male), FEMALE=2 (Female), OTHER=3 (Other)\n- MoneyType: A=Add Money (1), D=Draw Back Money (2)\n- OrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CHANGE=3 (Cancel & Rebook), CANCEL=4 (Cancel), REFUNDS=5 (Refunded), USED=6 (Used)\n- PaymentType: P=Payment (1), D=Difference (2), O=Outside Payment (3), E=Difference & Outside Payment (4)\n- SeatClass: NONE=0 (NoSeat), BUSINESS=1 (GreenSeat), FIRSTCLASS=2 (FirstClassSeat), SECONDCLASS=3 (SecondClassSeat), HARDSEAT=4 (HardSeat), SOFTSEAT=5 (SoftSeat), HARDBED=6 (HardBed), SOFTBED=7 (SoftBed), HIGHSOFTBED=8 (HighSoftSeat)\n- Type: G=G (1), D=D (2), Z=Z (3), T=T (4), K=K (5)\n- WaitListOrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CANCEL=3 (Cancel), REFUNDS=4 (Refunded), EXPIRED=5 (Expired)\n"
+  },
+  {
+   "role": "user",
+   "content": "Scenario S1: Buying a high-speed train ticket with food on the train, insurance and luggage; paying from the account; collecting the ticket and boarding\nDescription: A registered passenger logs in with a username and password. They search for high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026 and open the details of the first trip in the results. They look at the food menu offered on that trip. They open their contact book and take the first contact as the passenger. They book one first-class seat on that trip for this contact, adding food on the train (the first dish from the menu), assurance (insurance) of the first type and luggage consignment of 2 kg to a consignee. They refresh their list of orders, open the new order and check its price. They pay for the order from their internal account balance. They collect the ticket for the order and then enter the station (board the train) with it. Finally they look up the luggage consignment record and the assurance record of the order.\nSteps:\n1. Log in with username and password\n2. Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026\n3. Open the details of the first trip found\n4. View the food menu offered on this trip\n5. Open the contact book and take the first contact\n6. Book one first-class seat on the trip for this contact, with food on the train, assurance (insurance) of the first type and luggage consignment of 2 kg to a consignee\n7. Refresh the list of orders\n8. Open the new order\n9. Check the price of the order\n10. Pay for the order from the internal account balance\n11. Collect the ticket for the order\n12. Enter the station (board the train) with the order\n13. Look up the luggage consignment record of the order\n14. Look up the assurance (insurance) record of the order\n\nRequests of earlier steps:\nstep 1: POST /api/v1/users/login -> UserController#getToken [ts-auth-service] (success)\n\nCurrent step 2: Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026\n\nCandidate handlers:\nC1: POST /api/v1/travelplanservice/travelPlan/quickest\n    handler TravelPlanController#getByQuickest(TripInfo queryInfo) in ts-travel-plan-service\n    body: startPlace, endPlace, departureTime\n    UI: page client_adsearch, action adSearchPath [\"Search\"]; sent only when: !(selectType == 0) && !(selectType == 1) && selectType == 2; the same UI action also sends: POST /api/v1/travelplanservice/travelPlan/minStation (when selectType == 0), POST /api/v1/travelplanservice/travelPlan/cheapest (when !(selectType == 0) && selectType == 1)\n    UI: page old_index, action click:#flow_advance_reserve_booking_button [\"Search\"]; sent only when: !(selectType == 0) && !(selectType == 1) && selectType == 2; the same UI action also sends: POST /api/v1/travelplanservice/travelPlan/cheapest (when !(selectType == 0) && selectType == 1), POST /api/v1/travelplanservice/travelPlan/minStation (when selectType == 0)\n    code: TravelPlanController.LOGGER.info(\"[getQuickest][Search Quickest][start: {},end: {},time: {}]\",queryInfo.getStartPlace(),queryInfo.getEndPlace(),queryInfo.getDepartureTime()); return ok(travelPlanService.getQuickest(queryInfo, headers));\nC2: POST /api/v1/travel2service/trips/left\n    handler Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo info) in ts-travel2-service\n    serves regular trains (the 'Other' type, not G/D) only; its twin serves the other kind\n    body: startPlace, endPlace, departureTime\n    UI: page client_order_list, action searchRouteList [\"Search\"]; sent only when: this.trainTypeSelected == 0; the same UI action also sends: POST /api/v1/travelservice/trips/left (when this.trainTypeSelected == 0), POST /api/v1/travelservice/trips/left (when this.trainTypeSelected == 1)\n    UI: page client_order_list, action searchRouteList [\"Search\"]; sent only when: this.trainTypeSelected == 2; the same UI action also sends: POST /api/v1/travelservice/trips/left (when this.trainTypeSelected == 0), POST /api/v1/travelservice/trips/left (when this.trainTypeSelected == 1)\n    code: * Return Trip and the remaining tickets * * @param info trip info * @param headers headers * @return HttpEntity */\nC3: POST /api/v1/travelservice/trips/left\n    handler TravelController#queryInfo(TripInfo info) in ts-travel-service\n    serves high-speed trains (GaoTie/DongChe, G/D) only; its twin serves the other kind\n    body: startPlace, endPlace, departureTime\n    UI: page client_order_list, action searchRouteList [\"Search\"]; sent only when: this.trainTypeSelected == 0; the same UI action also sends: POST /api/v1/travel2service/trips/left (when this.trainTypeSelected == 0), POST /api/v1/travel2service/trips/left (when this.trainTypeSelected == 2)\n    UI: page client_order_list, action searchRouteList [\"Search\"]; sent only when: this.trainTypeSelected == 1; the same UI action also sends: POST /api/v1/travel2service/trips/left (when this.trainTypeSelected == 0), POST /api/v1/travel2service/trips/left (when this.trainTypeSelected == 2)\n    code: * Return Trips and the remaining tickets * * @param info    trip info * @param headers headers * @return HttpEntity */\nC4: GET /api/v1/priceservice/prices/{routeId}/{trainType}\n    handler PriceController#query(String routeId, String trainType) in ts-price-service\n    UI: none (the web UI never calls it)\n    code: PriceController.LOGGER.info(\"[findByRouteIdAndTrainType][Query price][RouteId: {}, TrainType: {}]\",routeId,trainType); return ok(service.findByRouteIdAndTrainType(routeId, trainType, headers));\nC5: POST /api/v1/travelplanservice/travelPlan/cheapest\n    handler TravelPlanController#getByCheapest(TripInfo queryInfo) in ts-travel-plan-service\n    body: startPlace, endPlace, departureTime\n    UI: page client_adsearch, action adSearchPath [\"Search\"]; sent only when: !(selectType == 0) && selectType == 1; the same UI action also sends: POST /api/v1/travelplanservice/travelPlan/minStation (when selectType == 0), POST /api/v1/travelplanservice/travelPlan/quickest (when !(selectType == 0) && !(selectType == 1) && selectType == 2)\n    UI: page old_index, action click:#flow_advance_reserve_booking_button [\"Search\"]; sent only when: !(selectType == 0) && selectType == 1; the same UI action also sends: POST /api/v1/travelplanservice/travelPlan/quickest (when !(selectType == 0) && !(selectType == 1) && selectType == 2), POST /api/v1/travelplanservice/travelPlan/minStation (when selectType == 0)\n    code: TravelPlanController.LOGGER.info(\"[getCheapest][Search Cheapest][start: {},end: {},time: {}]\",queryInfo.getStartPlace(),queryInfo.getEndPlace(),queryInfo.getDepartureTime()); return ok(travelPlanService.getCheapest(queryInfo, headers));\nC6: POST /api/v1/routeplanservice/routePlan/quickestRoute\n    handler RoutePlanController#getQuickestRoutes(RoutePlanInfo info) in ts-route-plan-service\n    body: startStation, endStation, travelDate, num\n    UI: none (the web UI never calls it)\n    code: RoutePlanController.LOGGER.info(\"[searchQuickestResult][Get Quickest Routes][From: {}, To: {}, Num: {}, Date: {}]\", info.getStartStation(), info.getEndStation(), info.getNum(), info.getTravelDate()); return ok(routePlanService.searchQuickestResult(info, headers));\nC7: POST /api/v1/travelplanservice/travelPlan/transferResult\n    handler TravelPlanController#getTransferResult(TransferTravelInfo info) in ts-travel-plan-service\n    body: startStation, viaStation, endStation, travelDate, trainType\n    UI: none (the web UI never calls it)\n    code: TravelPlanController.LOGGER.info(\"[getTransferSearch][Search Transit][start: {},end: {}]\",info.getStartStation(),info.getEndStation()); return ok(travelPlanService.getTransferSearch(info, headers));\nC8: POST /api/v1/routeplanservice/routePlan/cheapestRoute\n    handler RoutePlanController#getCheapestRoutes(RoutePlanInfo info) in ts-route-plan-service\n    body: startStation, endStation, travelDate, num\n    UI: none (the web UI never calls it)\n    code: RoutePlanController.LOGGER.info(\"[searchCheapestResult][Get Cheapest Routes][From: {}, To: {}, Num: {}, Date: {}]\", info.getStartStation(), info.getEndStation(), + info.getNum(), info.getTravelDate()); return ok(routePlanService.searchCheapestResult(info, headers));\nC9: POST /api/v1/priceservice/prices/byRouteIdsAndTrainTypes\n    handler PriceController#query(List<String> ridsAndTts) in ts-price-service\n    UI: none (the web UI never calls it)\n    code: PriceController.LOGGER.info(\"[findByRouteIdAndTrainType][Query price][routeId and Train Type: {}]\", ridsAndTts); return ok(service.findByRouteIdsAndTrainTypes(ridsAndTts, headers));\nC10: POST /api/v1/travelplanservice/travelPlan/minStation\n    handler TravelPlanController#getByMinStation(TripInfo queryInfo) in ts-travel-plan-service\n    body: startPlace, endPlace, departureTime\n    UI: page client_adsearch, action adSearchPath [\"Search\"]; sent only when: selectType == 0; the same UI action also sends: POST /api/v1/travelplanservice/travelPlan/cheapest (when !(selectType == 0) && selectType == 1), POST /api/v1/travelplanservice/travelPlan/quickest (when !(selectType == 0) && !(selectType == 1) && selectType == 2)\n    UI: page old_index, action click:#flow_advance_reserve_booking_button [\"Search\"]; sent only when: selectType == 0; the same UI action also sends: POST /api/v1/travelplanservice/travelPlan/cheapest (when !(selectType == 0) && selectType == 1), POST /api/v1/travelplanservice/travelPlan/quickest (when !(selectType == 0) && !(selectType == 1) && selectType == 2)\n    code: TravelPlanController.LOGGER.info(\"[getMinStation][Search Min Station][start: {},end: {},time: {}]\",queryInfo.getStartPlace(),queryInfo.getEndPlace(),queryInfo.getDepartureTime()); return ok(travelPlanService.getMinStation(queryInfo, headers));\n\nAnswer with JSON: a short reasoning (one or two sentences), the candidate label, whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. \"trip\": \"first_of_step_2\" for the first trip found at step 2, \"order\": \"new_of_step_6\" for the order created at step 6). Leave refs empty when the request uses nothing from earlier steps."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "reasoning": {
+    "type": "string",
+    "maxLength": 400
+   },
+   "candidate": {
+    "type": "string",
+    "enum": [
+     "C1",
+     "C2",
+     "C3",
+     "C4",
+     "C5",
+     "C6",
+     "C7",
+     "C8",
+     "C9",
+     "C10"
+    ]
+   },
+   "expected_outcome": {
+    "type": "string",
+    "enum": [
+     "success",
+     "refused"
+    ]
+   },
+   "refs": {
+    "type": "object",
+    "properties": {
+     "trip": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "contact": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "order": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "food": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "store": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "station": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "route": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "train": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "price": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "consign": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "assurance": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     },
+     "user": {
+      "type": "string",
+      "enum": [
+       "first_of_step_1",
+       "second_of_step_1",
+       "new_of_step_1"
+      ]
+     }
+    },
+    "additionalProperties": false
+   }
+  },
+  "required": [
+   "reasoning",
+   "candidate",
+   "expected_outcome",
+   "refs"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "reasoning": "The user is searching for high-speed trains (GaoTie/DongChe), which corresponds to the 'ts-travel-service' twin. The UI action 'searchRouteList' with 'trainTypeSelected' indicating high-speed trains (0 or 1) triggers the POST /api/v1/travelservice/trips/left endpoint.",
+  "candidate": "C3",
+  "expected_outcome": "success",
+  "refs": {}
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 108,
+  "prompt_tokens": 3391,
+  "total_tokens": 3499,
+  "prompt_tokens_details": {
+   "cached_tokens": 782
+  }
+ },
+ "seconds": 3.43
+}
