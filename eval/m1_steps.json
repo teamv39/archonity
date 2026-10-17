@@ -1,0 +1,877 @@
+{
+ "source": "черновик: engine/resolver.py ScenarioGrounder.ground_step; сверка: субагент по ts-ui-dashboard и контроллерам 17.10.2026; status: ok — подтверждено UI, no_ui — запроса нет в активном UI, disputed — спорно",
+ "scenarios": {
+  "S0": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 2,
+    "action": "Open the contact book",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 3,
+    "action": "Refresh the list of orders for high-speed (GaoTie/DongChe) trains",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 4,
+    "action": "Refresh the list of orders for regular ('Other' type) trains",
+    "handler": "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 5,
+    "action": "Refresh the list of orders filtered by the 'Paid' status",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 6,
+    "action": "Look up the luggage consignments registered on the account",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#findByAccountId(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   }
+  ],
+  "S1": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 2,
+    "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 3,
+    "action": "Open the details of the first trip found",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 4,
+    "action": "View the food menu offered on this trip",
+    "handler": "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 5,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 6,
+    "action": "Book one first-class seat on the trip for this contact, with food on the train, assurance (insurance) of the first type and luggage consignment of 2 kg to a consignee",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 7,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 8,
+    "action": "Open the new order",
+    "handler": "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 9,
+    "action": "Check the price of the order",
+    "handler": "method:ts-order-service:order.controller.OrderController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 10,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 11,
+    "action": "Collect the ticket for the order",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 12,
+    "action": "Enter the station (board the train) with the order",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 13,
+    "action": "Look up the luggage consignment record of the order",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 14,
+    "action": "Look up the assurance (insurance) record of the order",
+    "handler": "method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   }
+  ],
+  "S2": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 2,
+    "action": "Search regular trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing departing on 1 October 2026",
+    "handler": "method:ts-travel2-service:travel2.controller.Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 3,
+    "action": "Open the details of the first trip found",
+    "handler": "method:ts-travel2-service:travel2.controller.Travel2Controller#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 4,
+    "action": "Browse the food stores at Suzhou station",
+    "handler": "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "disputed",
+    "note": "UI получает магазины станций через FoodController#getAllFood; формулировка шага ближе к StationFoodController"
+   },
+   {
+    "n": 5,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 6,
+    "action": "Book one first-class seat on the regular train for this contact, with food from a station store, no assurance (insurance) and no luggage consignment",
+    "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 7,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 8,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 9,
+    "action": "Ask how much would be refunded if the order were cancelled",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 10,
+    "action": "Cancel the order",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 11,
+    "action": "Book another first-class seat on the same regular train for the same contact with the same station food",
+    "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 12,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 13,
+    "action": "Pay for the new order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 14,
+    "action": "Rebook the paid ticket to a second-class seat on the same regular train (the cheaper ticket: the difference is refunded to the internal balance)",
+    "handler": "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   }
+  ],
+  "S3": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 2,
+    "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 3,
+    "action": "Open the details of the first trip found",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 4,
+    "action": "Browse the food stores at Suzhou station",
+    "handler": "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "disputed",
+    "note": "UI получает магазины станций через FoodController#getAllFood; формулировка шага ближе к StationFoodController"
+   },
+   {
+    "n": 5,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 6,
+    "action": "Add a new contact (a companion with an ID card) to the contact book",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 7,
+    "action": "Book a first-class seat on the trip for the first contact, with food from a station store, assurance (insurance) of the first type and a luggage consignment of 0.5 kg to a consignee",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 8,
+    "action": "Book a second-class seat on the same trip for the new contact, without food, assurance or consignment",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 9,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 10,
+    "action": "Open the first new order",
+    "handler": "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 11,
+    "action": "Open the second new order",
+    "handler": "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 12,
+    "action": "Pay for the first order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 13,
+    "action": "Pay for the second order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 14,
+    "action": "Check what a 0.5 kg consignment within the region costs",
+    "handler": "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 15,
+    "action": "Look at the list of assurance types",
+    "handler": "method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssuranceType(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   }
+  ],
+  "S4": [
+   {
+    "n": 1,
+    "action": "Register a new passenger account (username, password, gender, ID document, e-mail)",
+    "handler": "method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 2,
+    "action": "Log in with the new username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 3,
+    "action": "Add a contact (the passenger themselves) to the empty contact book",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 4,
+    "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 5,
+    "action": "Open the details of the first trip found",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 6,
+    "action": "View the food menu offered on this trip",
+    "handler": "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 7,
+    "action": "Book a first-class seat on the trip for the new contact, with food on the train and assurance (insurance) of the first type, without consignment",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 8,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 9,
+    "action": "Open the new order",
+    "handler": "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 10,
+    "action": "Check the price of the order",
+    "handler": "method:ts-order-service:order.controller.OrderController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 11,
+    "action": "Pay for the order: the internal balance is empty, so the payment is completed through the external payment channel",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 12,
+    "action": "Ask how much would be refunded if the paid order were cancelled",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 13,
+    "action": "Cancel the paid order (the refund goes back to the internal balance)",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 14,
+    "action": "Refresh the list of orders filtered by the 'Cancel' status",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   }
+  ],
+  "S5": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 2,
+    "action": "Advanced search: the cheapest trips from Shanghai to Nanjing on 1 October 2026",
+    "handler": "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 3,
+    "action": "Advanced search: the quickest trips from Shanghai to Nanjing on 1 October 2026",
+    "handler": "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 4,
+    "action": "Advanced search: the trips with the fewest stops from Shanghai to Nanjing on 1 October 2026",
+    "handler": "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 5,
+    "action": "Ask for trips with a transfer at Suzhou (Shanghai — Suzhou — Nanjing) on 1 October 2026",
+    "handler": "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 6,
+    "action": "Open the details of the cheapest trip found (a regular, 'Other'-type train)",
+    "handler": "method:ts-travel2-service:travel2.controller.Travel2Controller#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 7,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 8,
+    "action": "Book a first-class seat on the cheapest (regular) trip for this contact, without food, assurance or consignment",
+    "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 9,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 10,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 11,
+    "action": "Collect the ticket for the order",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 12,
+    "action": "Enter the station (board the train) with the order",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   }
+  ],
+  "S6": [
+   {
+    "n": 1,
+    "action": "Log in to the admin console with the administrator's username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 2,
+    "action": "Add a new station Ning Bo with a stay time of 5 minutes",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 3,
+    "action": "Add a new train type GaoTieSix with 100 second-class and 30 first-class seats and an average speed of 300",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 4,
+    "action": "Add a new route Shanghai — Suzhou — Ning Bo with distances 0, 100 and 250",
+    "handler": "method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 5,
+    "action": "Add a price configuration for train type GaoTieSix on the new route: basic rate 0.5, first-class rate 1.2",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 6,
+    "action": "Add a new high-speed trip G9101 of type GaoTieSix on the new route from Shanghai via Suzhou to Ning Bo, departing 09:00 and arriving 12:00",
+    "handler": "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 7,
+    "action": "Log in as a passenger with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 8,
+    "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Ning Bo departing on 1 October 2026",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 9,
+    "action": "Open the details of the new trip found",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса"
+   },
+   {
+    "n": 10,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 11,
+    "action": "Book a first-class seat on the new trip for this contact, without food, assurance or consignment",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 12,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 13,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 14,
+    "action": "As the administrator, open the list of all orders in the system",
+    "handler": "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   }
+  ],
+  "S7": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 2,
+    "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 3,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 4,
+    "action": "Book a first-class seat on the first trip found for this contact, with a luggage consignment of 3 kg to a consignee, without food or assurance",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 5,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 6,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 7,
+    "action": "Collect the ticket for the order",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 8,
+    "action": "Ask how much would be refunded for the collected order",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI прячет кнопку у выданного билета, но шаг явно говорит об отказе системы — запрос ушёл"
+   },
+   {
+    "n": 9,
+    "action": "Try to cancel the collected order (the system refuses)",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI прячет кнопку у выданного билета, но шаг явно говорит об отказе системы — запрос ушёл"
+   },
+   {
+    "n": 10,
+    "action": "Try to rebook the collected order onto the second high-speed trip found (the system refuses)",
+    "handler": "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI прячет кнопку у выданного билета, но шаг явно говорит об отказе системы — запрос ушёл"
+   },
+   {
+    "n": 11,
+    "action": "Look up the luggage consignment of the order",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 12,
+    "action": "Change the consignee's name and phone number in the consignment",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#updateConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": ""
+   },
+   {
+    "n": 13,
+    "action": "Refresh the list of orders filtered by travel date (September — December 2026)",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   },
+   {
+    "n": 14,
+    "action": "Refresh the list of orders filtered by purchase date (today)",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)"
+   }
+  ]
+ }
+}

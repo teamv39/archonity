@@ -73,6 +73,16 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Пропустить автоматический вызов evaluate_golden.py",
     )
+    parser.add_argument(
+        "--grounder",
+        choices=("legacy", "m1"),
+        default="legacy",
+        help="Заземление шагов: legacy (engine/resolver.py) или m1 (engine/grounding, ADR-005)",
+    )
+    parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
+    parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
+    parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
+    parser.add_argument("--no-embed", action="store_true", help="M1 без dense-ретривера (только BM25)")
     return parser.parse_args()
 
 
@@ -156,11 +166,22 @@ def main() -> None:
     print(f"AST IR:     {pool_ir_path}")
 
     # Запуск пайплайна
+    m1_options = None
+    if args.grounder == "m1":
+        from engine.grounding.llm import LLMClient
+
+        m1_options = {
+            "embedder": None if args.no_embed else "qwen3-4b",
+            "llm": None if args.no_llm else LLMClient(use_server=not args.no_server, refresh=args.no_cache),
+        }
+    print(f"Grounder:   {args.grounder}")
     pipeline = ArchonityPipeline(
         skeleton_path=args.skeleton,
         targets_root=args.targets,
         rules_path=args.rules,
         ir_path=pool_ir_path,
+        grounder=args.grounder,
+        m1_options=m1_options,
     )
 
     print("Генерация графов для сценариев...")
@@ -174,6 +195,12 @@ def main() -> None:
     evidence_out = args.out.parent / "evidence.json"
     adapter.save_evidence_log(evidence_out)
     print(f"Evidence Log сохранен в: {evidence_out}")
+
+    if args.grounder == "m1":
+        steps_out = args.out.parent / "step_requests.json"
+        with open(steps_out, "w", encoding="utf-8") as f:
+            json.dump(pipeline.step_requests, f, ensure_ascii=False, indent=1)
+        print(f"StepRequest (M1) сохранены в: {steps_out}")
 
     decisions_out = args.out.parent / "decisions.json"
     with open(decisions_out, "w", encoding="utf-8") as f:

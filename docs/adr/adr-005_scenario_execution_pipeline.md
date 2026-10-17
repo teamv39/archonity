@@ -51,13 +51,26 @@ Python. Загружает скелет и строит индексы: узлы
 
 ### M1. Заземление шагов
 
-Python + LLM. Превращает шаг сценария в запрос.
+Python + LLM, код — `engine/grounding/`. Превращает шаг сценария в `StepRequest`. В конвейер подключается флагом `run_eval.py --grounder m1` (по умолчанию пока `legacy`, то есть `engine/resolver.py`).
 
-1. Детерминированный каталог UI из `ts-ui-dashboard/`: JS-функция → URL, HTTP-метод, поля тела, надпись кнопки, страница. Пути сопоставляются с шаблонами `@RequestMapping` (идея из `baseline_nlp.py`).
-2. Кандидаты обработчиков для шага — top-k от BM25 по каталогу и коду и top-k от плотных эмбеддингов (запрос — шаг, документ — обработчик с подписями UI); списки сливаются через RRF. Одного BM25 на входе LLM мало.
-3. LLM выбирает обработчик среди кандидатов и извлекает параметры по JSON-схеме.
+1. **Каталог UI** (`ui_catalog.py`) из `ts-ui-dashboard/` по AST tree-sitter-javascript. Запись — один запрос: JS-функция действия, страница, надписи кнопок, глагол, шаблон URL (`"/cancel/" + orderId` → `/cancel/{orderId}`), поля тела. Шаблон сопоставляется с `@RequestMapping` по полному пути. Отдельно хранятся:
+   - варианты URL с условием, когда UI выбирает путь по данным (`tripType == 'G' || tripType == 'D'` → preserve, иначе preserveOther);
+   - запросы, которые шлёт одна функция (`queryMyOrderList` → order и orderOther);
+   - литералы тела: без условия (`enableStateQuery = false`, `isWithin = false`) и под условием.
+   URL, переданный в функцию-помощник параметром, разрешается по местам её вызова в том же файле.
+2. **Документ обработчика** (`docs.py`): глагол и путь, `Класс#метод(параметры)`, поля DTO тела из скелета, исходник метода с комментарием; вариант `code_ui` добавляет UI. Около 20 % шагов S0–S7 не имеют запроса в активном UI (детали рейса, открыть заказ, цена заказа, отказ в отмене), поэтому документ по коду должен находить обработчик и без UI.
+3. **Кандидаты** (`retrieval.py`): BM25 и плотные эмбеддинги (запрос — текст шага), слияние RRF (k = 60), top-10. К каждому кандидату добавляется близнец — обработчик другого модуля с тем же путём после снятия `other` и цифр (travel/travel2, order/orderOther, preserve/preserveOther): выбор между близнецами делает LLM по типу поезда.
+4. **LLM, два вызова** (`prompts.py`, `grounder.py`):
+   - выбор: схема с `enum` меток кандидатов (`C1`…`Cn`), `expected_outcome`, `refs` и коротким `reasoning`;
+   - параметры: схема строится по полям DTO и path/query-параметрам выбранного обработчика, все поля nullable. Литералы UI без условия подставляются детерминированно (источник `UI`), LLM заполняет только то, что определяет текст. Вызов пропускается, если у запроса нет тела и query-параметров.
 
-Векторы документов и шагов кешируются в репозитории так же, как ответы LLM. Без LLM (нет GPU и нет кеша) модуль работает на BM25 и кеше векторов — хуже, но работает.
+   Порядок промпта под кеш префикса: системный (правила и коды перечислений из исходников) → сценарий → история выбранных запросов → шаг и кандидаты. Шаги сценария идут подряд, префикс переиспользуется. Версия промпта — `PROMPT_VERSION`, входит в ключ кеша.
+
+Без LLM (нет сервера и нет кеша) берётся первый кандидат, параметры — только литералы UI, `expected_outcome` — по словам «refuse/reject/fail» в шаге. Векторы кешируются в `cache/emb/`, ответы — в `cache/llm/`. Без torch и GPU модуль работает из кеша; на промахе кеша векторов — на одном BM25.
+
+Эталон входов для оценки M1 — `eval/m1_steps.json`: черновик из `resolver.py`, сверенный с UI и контроллерами. Конвейер его не читает. Метрики: `python -m engine.grounding.bakeoff` (Recall@k ретриверов) и `python -m engine.grounding.grounder --eval eval/m1_steps.json` (top-1).
+
+Гипотеза, которую проверяет сдача на платформе: шаг «Refresh the list of orders» без уточнения типа — один запрос в сервис по типу поезда заказа, хотя UI шлёт оба. На S0 это подтверждается: фильтр «Paid» в эталоне обработан только `ts-order-service`. `resolver.py` отдаёт оба обработчика.
 
 ### M2. IR тел методов
 
@@ -103,15 +116,22 @@ Python. Обёртка над `platform/evaluate_golden.py`: балл на S0, �
   "action": "Book one first-class seat on the trip for this contact, with food ...",
   "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
   "http": {"method": "POST", "path": "/api/v1/preserveservice/preserve"},
-  "ui_source": {"file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js", "line": 511},
-  "params": {"seatType": "SeatClass.FIRSTCLASS", "assurance": 1, "foodType": 2, "consigneeWeight": 2.0},
+  "ui_source": {"file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js", "line": 518},
+  "params": {"seatType": 2, "assurance": 1, "foodType": 2, "consigneeWeight": 2.0},
   "expected_outcome": "success",
   "refs": {"trip": "first_of_step_2", "contact": "first_of_step_5"},
-  "grounding": {"source": "LLM", "candidates": ["..."], "cache_key": "sha256:..."}
+  "grounding": {
+    "source": "LLM",
+    "reasoning": "...",
+    "candidates": ["method:..."],
+    "cache_keys": {"select": "sha256:...", "params": "sha256:..."},
+    "param_sources": {"seatType": "LLM", "isWithin": "UI"},
+    "ranks": {"bm25": 1, "dense": 2, "fused": 1}
+  }
 }
 ```
 
-`handler` — ID узла скелета, всегда. `params` — только то, что влияет на ветки; имена полей берутся из DTO обработчика (здесь `OrderTicketsInfo`), значения в примере условные. `expected_outcome`: `success` или `refused` (S7). `refs` ссылаются на результаты предыдущих шагов.
+`handler` — ID узла скелета, всегда, и всегда один: шаг — один запрос. `params` — поля DTO обработчика (здесь `OrderTicketsInfo`) и path/query-параметры, которые определил текст шага или UI; коды перечислений — числами из исходника (`SeatClass.FIRSTCLASS` = 2). `expected_outcome`: `success` или `refused` (S7). `refs` — ссылки на результаты предыдущих шагов: ключ из словаря сущностей (`trip`, `contact`, `order`, `food`, `store`, `station`, `route`, `train`, `price`, `consign`, `assurance`, `user`), значение `<first|second|new>_of_step_<n>`. `grounding.source`: `LLM` или `RETRIEVAL` (фолбэк без LLM).
 
 ### IR (выход M2)
 
