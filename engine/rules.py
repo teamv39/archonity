@@ -247,12 +247,16 @@ class RuntimeRules:
     # equals сущности из list.contains(x) на результате чтения: on (по умолчанию) или off (до 17.10).
     ELEMENT_CALLBACK_MODES = ("on", "off")
 
+    # Асинхронная доставка RabbitMQ (правило R13): on (по умолчанию) или off (абляция исключения потребителя).
+    RABBITMQ_DELIVERY_MODES = ("on", "off")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
         entity_constructors_on_load: str = "project_calls",
         collection_tables_on_read: str = "loaded",
         element_callbacks: str = "on",
+        rabbitmq_delivery: str = "on",
     ) -> None:
         if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
             raise ValueError(
@@ -265,8 +269,11 @@ class RuntimeRules:
         self.entity_constructors_on_load = entity_constructors_on_load
         if element_callbacks not in self.ELEMENT_CALLBACK_MODES:
             raise ValueError(f"element_callbacks: {element_callbacks!r}, ожидается одно из {self.ELEMENT_CALLBACK_MODES}")
+        if rabbitmq_delivery not in self.RABBITMQ_DELIVERY_MODES:
+            raise ValueError(f"rabbitmq_delivery: {rabbitmq_delivery!r}, ожидается одно из {self.RABBITMQ_DELIVERY_MODES}")
         self.collection_tables_on_read = collection_tables_on_read
         self.element_callbacks = element_callbacks
+        self.rabbitmq_delivery = rabbitmq_delivery
         self.rules_path = Path(rules_path) if rules_path else self.DEFAULT_RULES_PATH
         self.data: dict[str, Any] = {}
         self.admin_services: set[str] = set()

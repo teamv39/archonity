@@ -155,10 +155,12 @@ class GraphBuilder:
                         ledger.include("calls", m, x, source_type, rule)
 
             # 2. Межсервисные вызовы (remote_call + message_delivery)
-            remote_targets = (
-                self.index.wiring["remote_call"].get(m, set())
-                | self.index.wiring["message_delivery"].get(m, set())
-            )
+            remote_targets = set(self.index.wiring["remote_call"].get(m, set()))
+            if getattr(self.rules, "rabbitmq_delivery", "on") != "off":
+                remote_targets |= self.index.wiring["message_delivery"].get(m, set())
+            elif ledger:
+                for tgt in self.index.wiring["message_delivery"].get(m, set()):
+                    ledger.prune("remote", m, tgt, "DEFAULT_RULE", "ablate_rabbitmq_delivery")
             for t in remote_targets:
                 if self.rules.is_dead_code_method(t, profile=profile, is_admin_scenario=is_admin_scenario):
                     self._prune_by_rule(self.rules.is_dead_code_method, "remote", m, t, profile, is_admin_scenario)

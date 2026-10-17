@@ -85,6 +85,12 @@ def parse_args() -> argparse.Namespace:
              "вернуло строки (по умолчанию), off — не учитывать (поведение до 17.10)",
     )
     parser.add_argument(
+        "--rabbitmq-delivery",
+        choices=("on", "off"),
+        default="on",
+        help="Асинхронная доставка RabbitMQ (правило R13): on — учитывать межсервисное ребро к потребителю (по умолчанию), off — абляция (исключить потребителя)",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -205,6 +211,7 @@ def main() -> None:
         entity_constructors_on_load=args.entity_ctors,
         collection_tables_on_read=args.collection_tables,
         element_callbacks=args.element_callbacks,
+        rabbitmq_delivery=args.rabbitmq_delivery,
         grounder=args.grounder,
         m1_options=m1_options,
     )
