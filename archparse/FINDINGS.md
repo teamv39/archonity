@@ -158,10 +158,49 @@
 * Общая проверка: для всех вызовов на enum-константах из `data/ir/` (117 с `target`) в исполненных методах S0–S7 сверено, есть ли ребро `calls` к цели. Пропуски только там, где ветка отсечена верно: S4 — цикл по заказам нового пользователя в `checkSecurityAboutOrder` пуст; S7 — перебронирование отклонено до проверок класса места. Плюс `RebookServiceImpl#payDifference` в S2, который не должен исполняться вовсе (раздел 8).
 * Итог: блок закрыт без изменений кода.
 
-## 8. Рёбра S2/S3 по механизмам (17.10.2026, блок 10, в работе)
+## 8. Рёбра S2/S3 по механизмам (17.10.2026, блок 10, выполнен)
 
 ### 8.1. Перебронирование в S2 привязано к доплате
 
 * **Что нашли.** Шаг 14 S2 («перебронировать на второй класс, разницу вернут на счёт») M1 привязал к `RebookController#payDifference` (`/rebook/difference`). Эталон шагов M1 (`eval/m1_steps.json`) и UI говорят `RebookController#rebook`: `/rebook/difference` UI шлёт только после ответа `rebook` со статусом 2 («доплатите»), а билет дешевле — разница возвращается внутри `rebook` через `drawBackMoney`. Это единственное расхождение M1 с его эталоном на 103 шагах.
 * **Цена** (эксперимент с подменой обработчика, код не менялся): в S2 уходит 2 `executes` и 5 `calls` ветки `payDifference`, приходит 4 `executes` (`RebookController#rebook`, `RebookServiceImpl#rebook`, `checkTime`, `drawBackMoney`), 12 `calls` и 1 `remote` (`drawBackMoney` -> `InsidePaymentController#drawBack`); `data` без изменений. Если ветка `rebook` верна, это около +0.03 к баллу S2, около +0.004 к итогу.
-* **Чья зона.** Заземление — M1 (ИИ-разработчик), правка не в archparse.
+* **Чья зона.** Заземление — M1 (ИИ-разработчик), передано в работу, правка не в archparse.
+
+### 8.2. Покупка билетов (`preserve` / `preserveOther`)
+
+* **Безусловная перекрёстная проверка безопасности (R3, R17):** в `SecurityServiceImpl#check` опрашиваются оба сервиса (`OrderController#securityInfoCheck` и `OrderOtherController#securityInfoCheck`). Пользователь `fdse_microservice` имеет заказы обоих типов в дампе БД, поэтому циклы по заказам отрабатывают в обоих сервисах. Все вызовы — True Positives.
+* **Каскадная маршрутизация через `ts-basic-service`:** последовательно опрашиваются `station`, `train_type`, `route` и `price_config`. Коллекции `route_stations` и `route_distances` отсечены по правилу R10 (блок 7).
+* **Мертвый код отправки уведомлений:** метод `sendEmail` в сервисах preserve физически закомментирован в Java-коде. Вызовы `ts-notification-service` и таблицы `notify_info` корректно отсутствуют (True Negative).
+* **Конструкторы сущностей и колбэки:** явный `new Order(...)` формирует ребро к конструктору с аргументами, а `accountOrders.contains(order)` активирует колбэк `Order#equals` (блок 8).
+
+### 8.3. Внутренняя оплата (`inside-payment`)
+
+* **Отсечение внешней оплаты (R15):** баланс пользователя в дампе (10 361 RMB) заведомо покрывает стоимость билета (<100 RMB). Ветка внешней оплаты через `ts-payment-service` не выполняется, таблицы `payment` и `money` отсечены корректно.
+* **Разделение таблиц `pay` и `drawBack`:** операция `pay` выполняет списание и регистрирует транзакцию (трогает `inside_payment` и `inside_money`). Операция `drawBack` (возврат средств при отмене/перебронировании) трогает только `inside_money` без создания записи `inside_payment`.
+
+### 8.4. Отмена заказа и расчет возврата (`cancel-service`)
+
+* **Разделение шагов 9 и 10:** шаг 9 (`calculateRefund`) опрашивает сервисы заказов и считает 80% локально, не затрагивая `inside-payment`. Шаг 10 (`cancelTicket`) меняет статус через `cancelFromOtherOrder` и выполняет возврат `drawbackMoney` -> `InsidePaymentController#drawBack` в `inside_money`.
+* **Зондирующий запрос к `ts-order-service`:** запрос возвращает 0 записей. Ребро `data` к таблице `orders` формируется легитимно, поскольку SQL SELECT физически выполняется (R10). Конструктор `Order#<init>()` не страдает от отсутствия гидрации при 0 строк, так как уже включен в сценарий S2 через проверку безопасности.
+
+### 8.5. Перебронирование (`rebook-service`)
+
+* **Ветка возврата разницы (R11):** при смене 1-го класса на более дешевый 2-й класс регулярного поезда `priceOld > priceNew` истинно. Выполняется `drawBackMoney` (пишет в `inside_money`), ветка доплаты `payDifferentMoney` отсекается.
+* **Внутрисемейное обновление:** оба поезда регулярные (`!tripGD`), поэтому вызывается `updateOrder` (`PUT /api/v1/orderOtherService/orderOther`), методы смены типа поезда (`deleteOrder`/`createOrder`) не вызываются.
+
+### 8.6. Заказ питания и асинхронная доставка RabbitMQ (`food` + `delivery`)
+
+* **Жадная загрузка коллекций блюд:** в `StationFoodStore` коллекция блюд аннотирована `@ElementCollection(fetch=FetchType.EAGER)`. При запросе магазинов (шаг 4) читаются обе таблицы: `station_food_store` и `station_food_list`.
+* **Асинхронная доставка сообщений (R13):** `FoodServiceImpl#createFoodOrder` вызывает `RabbitSend#send`. В графе формируется `remote` к `delivery.mq.RabbitReceive#process`, который сохраняет запись в таблицу `delivery`. Сервис `ts-food-delivery-service` изолирован и не слушает очередь (отсутствие рёбер подтверждено).
+
+### 8.7. Страховка и багаж в S3 (`assurance` + `consign`)
+
+* **Страховка:** оформление билета с опцией страховки 1-го типа на шаге 7 вызывает `AssuranceServiceImpl#create`, дёргает `Assurance#<init>(...)` с аргументами и пишет в таблицу `assurance`. Фантомное ребро скелета `getAssuranceById` отсекается правилами. Шаг 15 запрашивает типы через `getAllAssuranceTypes`.
+* **Багаж (консигнация):** на шаге 7 вставляется запись `ConsignServiceImpl#insertConsignRecord` в таблицу `ts-consign-mysql.consign_record` с обращением к `ConsignPriceController#getPriceByWeightAndRegion`. На шаге 14 отдельно запрашивается расчет тарифа багажа 0.5 кг.
+
+### 8.8. Итог блока 10
+
+* Все 5 механизмов мутаций и межсервисного взаимодействия в S2 и S3 согласованы с `annotation_rules.md` и кодом микросервисов Train Ticket.
+* Ложных или пропущенных рёбер в зоне ответственности парсера (archparse) и правил обхода не выявлено.
+* Блок 10 закрыт.
+
