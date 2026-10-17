@@ -28,7 +28,7 @@ class ArchonityPipeline:
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
         entity_ir_path: str | Path | None = None,
-        entity_constructors_on_load: str = "body",
+        entity_constructors_on_load: str = "project_calls",
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
     ) -> None:

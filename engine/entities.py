@@ -199,6 +199,10 @@ def hydration(
         call = replace(call, ctors=tuple(c for c in call.ctors if c in allowed))
     op = call.operation
     if op == "SAVE":
+        # id_assigned: True — merge, Hibernate создаёт управляемую копию конструктором; False — persist;
+        # None (сущность пришла параметром или id не выводится) трактуем как persist: на сценариях S1–S7
+        # такие save идут после чтения той же сущности в том же методе (findById перед save),
+        # либо конструктор пустой, так что конструктор уже в ответе по другому пути.
         if call.id_assigned:
             return Hydration(call.ctors, f"R7:save_merge({call.id_assigned_reason})")
         return Hydration((), f"R7:save_persist({call.id_assigned_reason or 'id unknown'})")

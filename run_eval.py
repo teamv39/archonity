@@ -66,9 +66,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--entity-ctors",
         choices=("body", "project_calls", "off"),
-        default="body",
-        help="Режим правила R7 (конструкторы сущностей при загрузке из БД): body — непустое тело, "
-             "project_calls — только конструкторы с вызовом проектного метода (выдача до обобщения R7), off — выключено",
+        default="project_calls",
+        help="Режим правила R7 (конструкторы сущностей при загрузке из БД): project_calls — только конструкторы "
+             "с вызовом проектного метода (по умолчанию), body — любое непустое тело (опровергнуто платформой), off — выключено",
     )
     parser.add_argument(
         "--reparse",

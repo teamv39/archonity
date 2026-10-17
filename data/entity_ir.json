@@ -2342,7 +2342,9 @@
     "callee" : "save",
     "repository" : "TrainTypeRepository",
     "entity" : "train.entity.TrainType",
-    "operation" : "SAVE"
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "line 30: new TrainType(trainType.getName(), trainType.getEconomyClass(), trainType.getConfortClass())"
   }, {
     "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
     "line" : 43,
@@ -2448,7 +2450,9 @@
     "callee" : "save",
     "repository" : "TripRepository",
     "entity" : "travel.entity.Trip",
-    "operation" : "SAVE"
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "line 62: new Trip(ti, info.getTrainTypeName(), info.getStartStationName(), info.getStationsName(), info.getTerminalStationName(), info.getStartTime(), info.getEndTime())"
   }, {
     "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
     "line" : 78,
@@ -2642,7 +2646,9 @@
     "callee" : "save",
     "repository" : "TripRepository",
     "entity" : "travel2.entity.Trip",
-    "operation" : "SAVE"
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "line 114: new Trip(ti, info.getTrainTypeName(), info.getStartStationName(), info.getStationsName(), info.getTerminalStationName(), info.getStartTime(), info.getEndTime())"
   }, {
     "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
     "line" : 128,

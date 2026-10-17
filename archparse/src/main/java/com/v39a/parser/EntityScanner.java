@@ -464,15 +464,18 @@ public class EntityScanner {
                 Expression t = a.getTarget();
                 boolean toId = (t instanceof FieldAccessExpr f && f.getNameAsString().equals(idField))
                         || (t instanceof NameExpr ne && ne.getNameAsString().equals(idField));
-                if (toId && a.getValue() instanceof NameExpr v) {
-                    for (int i = 0; i < n; i++) {
-                        if (cd.getParameter(i).getNameAsString().equals(v.getNameAsString())) {
-                            return !(oce.getArgument(i) instanceof NullLiteralExpr);
+                if (toId) {
+                    if (a.getValue() instanceof NameExpr v) {
+                        for (int i = 0; i < n; i++) {
+                            if (cd.getParameter(i).getNameAsString().equals(v.getNameAsString())) {
+                                return !(oce.getArgument(i) instanceof NullLiteralExpr);
+                            }
                         }
                     }
+                    return null; // id присваивается не параметром: значение неизвестно
                 }
             }
-            return null;
+            return Boolean.FALSE; // конструктор id не трогает: он остаётся null, Spring Data делает persist
         }
         if (entity.cid().isAnnotationPresent("AllArgsConstructor")) {
             List<String> fields = new ArrayList<>();
