@@ -98,6 +98,36 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
     parser.add_argument("--no-embed", action="store_true", help="M1 без dense-ретривера (только BM25)")
+    parser.add_argument(
+        "--executor",
+        choices=("legacy", "m4"),
+        default="legacy",
+        help="Исполнитель шагов: legacy (обход скелета, rules.py) или m4 (IR тел методов, ADR-005; требует --grounder m1)",
+    )
+    parser.add_argument(
+        "--judge",
+        choices=("on", "cache", "off"),
+        default="on",
+        help="Судья M4: on — кеш, на промахе сервер; cache — только кеш; off — без судьи",
+    )
+    parser.add_argument("--judge-budget", type=int, default=400, help="M4: вызовов сервера судьи на прогон")
+    parser.add_argument(
+        "--m4-only",
+        metavar="SUBSTR",
+        default=None,
+        help="M4 исполняет только методы, чей ID содержит подстроку; остальные раскрывает legacy (поиск регрессий)",
+    )
+    parser.add_argument(
+        "--m4-legacy-rules",
+        action="store_true",
+        help="M4, абляция: эвристики rules.py поверх решений IR",
+    )
+    parser.add_argument(
+        "--no-signal-arm",
+        choices=("continue", "then"),
+        default="continue",
+        help="M4, плечо без сигнала исхода: continue — без раннего выхода, then — всегда then",
+    )
     return parser.parse_args()
 
 
@@ -111,6 +141,18 @@ def resolve_scenario_paths(args_scenarios: list[str] | None) -> list[Path]:
 
     default_pattern = str(ROOT_DIR / "hackaton" / "tt-challenge" / "scenarios" / "*.json")
     return [Path(p) for p in sorted(glob.glob(default_pattern), key=lambda x: Path(x).name)]
+
+
+def print_m4_stats(stats: dict) -> None:
+    """Счётчики M4: плоские значения в строку, вложенные словари построчно с отступом."""
+    print("Статистика M4:")
+    for key, value in stats.items():
+        if isinstance(value, dict):
+            print(f"  {key}:")
+            for k, v in value.items():
+                print(f"    {k}: {v}")
+        else:
+            print(f"  {key}: {value}")
 
 
 def print_evaluation_summary(eval_res: dict) -> None:
@@ -161,6 +203,11 @@ def print_evaluation_summary(eval_res: dict) -> None:
 def main() -> None:
     args = parse_args()
 
+    if args.executor == "m4" and args.grounder != "m1":
+        print("Ошибка: --executor m4 требует --grounder m1 (нужны params и expected_outcome из StepRequest)",
+              file=sys.stderr)
+        sys.exit(2)
+
     scenarios = resolve_scenario_paths(args.scenarios)
     if not scenarios:
         print("Ошибка: не найдено ни одного файла сценариев!", file=sys.stderr)
@@ -190,6 +237,18 @@ def main() -> None:
             "llm": None if args.no_llm else LLMClient(use_server=not args.no_server, refresh=args.no_cache),
         }
     print(f"Grounder:   {args.grounder}")
+    m4_options = None
+    if args.executor == "m4":
+        from engine.executor.executor import M4Options
+
+        m4_options = M4Options(
+            judge=args.judge,
+            judge_budget=args.judge_budget,
+            only=args.m4_only,
+            legacy_rules=args.m4_legacy_rules,
+            no_signal_arm=args.no_signal_arm,
+        )
+    print(f"Executor:   {args.executor}")
     pipeline = ArchonityPipeline(
         skeleton_path=args.skeleton,
         targets_root=args.targets,
@@ -199,11 +258,15 @@ def main() -> None:
         collection_tables_on_read=args.collection_tables,
         grounder=args.grounder,
         m1_options=m1_options,
+        executor=args.executor,
+        m4_options=m4_options,
     )
 
     print("Генерация графов для сценариев...")
     adapter = pipeline.run_all(scenarios, output_path=args.out)
     print(f"Сабмишн успешно сохранен в: {args.out}")
+    if pipeline.m4 is not None:
+        print_m4_stats(pipeline.m4.stats())
 
     canonical_out = args.out.parent / "canonical_graph.json"
     adapter.save_canonical_graph(canonical_out)

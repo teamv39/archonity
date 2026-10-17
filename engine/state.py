@@ -562,6 +562,8 @@ class ScenarioState:
             db_row = dict(order)
             db_row["status"] = int(OrderStatus.NOTPAID)
             db_row["price"] = str(price)
+            # Колонки дампа (Order.from/to — @Column from_station/to_station): по ним читает строки исполнитель M4
+            db_row["from_station"], db_row["to_station"] = order["from"], order["to"]
             self.db_state.insert(tbl, db_row)
 
         mutations = [f"order_created:{order_id}:{tbl}:NOTPAID"]
@@ -598,7 +600,13 @@ class ScenarioState:
             }
             self.consignments.append(cs)
             if hasattr(self.db_state, "insert"):
-                self.db_state.insert("consign_record", cs)
+                # Строка таблицы с колонками дампа (ConsignRecord: @Column consign_record_id, user_id, ...)
+                self.db_state.insert("consign_record", {
+                    "consign_record_id": cs["id"], "user_id": self.account_id, "order_id": order_id,
+                    "consignee": cs["consignee"], "consign_record_phone": cs["phone"],
+                    "consign_record_price": cs["price"], "weight": w, "from_place": order["from"],
+                    "to_place": order["to"], "handle_date": self.system_date, "target_date": self.travel_date,
+                })
             mutations.append(f"consign_created:{order_id}:{w}kg")
 
         return StepMutationResult(step_index, action, "SUCCESS", mutations, affected_entities={"order_id": order_id})
@@ -866,8 +874,8 @@ class ScenarioState:
 
         if hasattr(self.db_state, "update"):
             self.db_state.update("consign_record", {
-                "consignee": new_name, "phone": new_phone,
-            }, id=cs.get("id"))
+                "consignee": new_name, "consign_record_phone": new_phone,
+            }, consign_record_id=cs.get("id") or cs.get("consign_record_id"))
 
         return StepMutationResult(
             step_index, action, "SUCCESS",

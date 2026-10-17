@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import dataclasses
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from engine.adapters.skeleton import SkeletonIndex, load_json
 from engine.adapters.submission import SubmissionAdapter
@@ -14,6 +14,9 @@ from engine.resolver import ScenarioGrounder
 from engine.ir import MethodPoolIR
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
+
+if TYPE_CHECKING:
+    from engine.executor.executor import M4Options
 
 
 class ArchonityPipeline:
@@ -32,6 +35,8 @@ class ArchonityPipeline:
         collection_tables_on_read: str = "loaded",
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
+        executor: str = "legacy",
+        m4_options: M4Options | None = None,
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -74,6 +79,19 @@ class ArchonityPipeline:
         # 6. Журнал решений по рёбрам (evidence.json v2): пишет сам builder
         self.ledger = DecisionLedger()
 
+        # 7. Исполнитель шагов: legacy (обход builder.traverse) или M4 (IR тел методов, ADR-005)
+        self.executor_mode = executor
+        self.m4 = None
+        if executor == "m4":
+            if grounder != "m1":
+                raise ValueError("M4 требует --grounder m1: нужны params и expected_outcome из StepRequest")
+            from engine.executor.executor import M4Executor
+
+            self.m4 = M4Executor(self.index, self.builder, self.targets_root, options=m4_options,
+                                 llm=(m1_options or {}).get("llm"))
+        elif executor != "legacy":
+            raise ValueError(f"неизвестный executor: {executor}")
+
     def run_scenario(
         self,
         scenario_dict: dict[str, Any],
@@ -83,6 +101,8 @@ class ArchonityPipeline:
         sid = scenario_dict.get("id", "S?")
         profile = ScenarioProfile.from_scenario(scenario_dict)
         self.ledger.begin_scenario(sid)
+        if self.m4 is not None:
+            self.m4.begin_scenario(scenario_dict)
 
         # Шаг 1: Инициализация изолированного состояния сценария (M3)
         if scenario_state is None:
@@ -129,14 +149,23 @@ class ArchonityPipeline:
                 scenario_state.apply_step(st, scenario_dict=scenario_dict)
                 continue
 
-            m, c, r, d = self.builder.traverse(
-                step_entries,
-                is_admin_scenario=step_profile.is_admin,
-                scenario_meta=scenario_meta,
-                profile=step_profile,
-                scenario_state=scenario_state,
-                ledger=self.ledger,
-            )
+            if self.m4 is not None and step_req is not None:
+                m, c, r, d = self.m4.run_step(
+                    step_req,
+                    profile=step_profile,
+                    scenario_state=scenario_state,
+                    scenario_meta=scenario_meta,
+                    ledger=self.ledger,
+                )
+            else:
+                m, c, r, d = self.builder.traverse(
+                    step_entries,
+                    is_admin_scenario=step_profile.is_admin,
+                    scenario_meta=scenario_meta,
+                    profile=step_profile,
+                    scenario_state=scenario_state,
+                    ledger=self.ledger,
+                )
             all_methods |= m
             all_calls |= c
             all_remote |= r
@@ -146,7 +175,11 @@ class ArchonityPipeline:
             if step_req is not None:
                 # M3 читает params через .get(k, default): пустые значения не передаём, чтобы сработал default
                 params = {k: v for k, v in step_req.params.items() if v is not None}
-                scenario_state.apply_step(dataclasses.replace(step_req, params=params), scenario_dict=scenario_dict)
+                mutation = scenario_state.apply_step(
+                    dataclasses.replace(step_req, params=params), scenario_dict=scenario_dict
+                )
+                if self.m4 is not None:
+                    self.m4.end_step(step_req, mutation)
             else:
                 scenario_state.apply_step(st, scenario_dict=scenario_dict)
 
