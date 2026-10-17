@@ -14,7 +14,7 @@ def main():
     parser.add_argument(
         "--ir",
         type=Path,
-        default=Path("archparse/out/pool_ir.json"),
+        default=Path("data/pool_ir.json"),
         help="Путь к pool_ir.json"
     )
     parser.add_argument(
@@ -26,8 +26,8 @@ def main():
     args = parser.parse_args()
 
     if not args.ir.exists():
-        # Проверяем в archparse/out/
-        alt_ir = Path("out/pool_ir.json")
+        # Запуск из archparse/
+        alt_ir = Path("../data/pool_ir.json")
         if alt_ir.exists():
             args.ir = alt_ir
         else:

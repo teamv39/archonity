@@ -82,7 +82,6 @@ models/
 !/data/runtime_and_topology_rules.json
 !/data/branch_rules.json
 !/data/pool_ir.json
-!archparse/out/pool_ir.json
 datasets/
 raw_data/
 processed_data/

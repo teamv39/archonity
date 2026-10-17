@@ -157,24 +157,36 @@ Python. Обёртка над `platform/evaluate_golden.py`: балл на S0, �
 
 ### evidence.json v2
 
-Словарь по ключу ребра `relation|source|target`:
+Журнал решений: его пишет сам `GraphBuilder` в момент решения (`engine/decisions.py`), поэтому он не расходится с `submission.json`; это проверяет тест. Прогон сохраняет журнал в `output/decisions.json`. Старый `evidence.json` (по сервисам, для visualizer) пока остаётся рядом.
+
+По сценарию — словарь по ключу ребра `relation|source|target`, `relation` как в `submission.json`. В журнале есть и отсеянные рёбра: видно, что и почему не попало в ответ.
 
 ```json
 {
-  "data|method:...TokenServiceImpl#getToken(...)|res:table:ts-auth-service.user_roles": {
-    "steps": [1],
-    "source_type": "FRAMEWORK_RULE",
-    "rule": "R10",
-    "confidence": 0.9,
-    "file": "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
-    "line": 90,
-    "call_site": "call:method:...#getToken(...)@90:36",
-    "path": ["UserController#getToken", "TokenServiceImpl#getToken"]
+  "version": 2,
+  "scenarios": {
+    "S2": {
+      "remote|method:...SeatServiceImpl#distributeSeat(...)|method:...OrderOtherController#getTicketListByDateAndTripId(...)": {
+        "included": true,
+        "steps": [6, 11, 14],
+        "source_type": "IR_BRANCH",
+        "rule": "BR_TRIP_GD_DISPATCH@b53:else",
+        "decisions": [
+          {"step": 6, "op": "include", "source_type": "IR_BRANCH", "rule": "BR_TRIP_GD_DISPATCH@b53:else"},
+          {"step": 11, "op": "include", "source_type": "IR_BRANCH", "rule": "BR_TRIP_GD_DISPATCH@b53:else"},
+          {"step": 14, "op": "include", "source_type": "IR_BRANCH", "rule": "BR_TRIP_GD_DISPATCH@b53:else"}
+        ]
+      }
+    }
   }
 }
 ```
 
-`source_type`: `SKELETON` (связь из скелета, ветка достигнута), `IR_BRANCH` (решено условием), `STATE` (решено состоянием БД), `DEFAULT_RULE`, `LLM_JUDGE`, `FRAMEWORK_RULE` (правило каталога). `confidence` — для ранжирования при абляциях; в `submission.json` не попадает.
+- `included`, `steps` — попало ли ребро в ответ и на каких шагах. Решение `op`: `include`, `prune` (отсев), `discard` (удаление уже включённого ребра после обхода). Ребро в ответе, если хотя бы на одном шаге осталось включённым.
+- `source_type`: `SKELETON` (связь скелета без условий: включена достижимостью или отсеяна структурно), `IR_BRANCH` (решено условием ветки IR), `IR_CALL` (ребро построено по вызову из IR, которого нет в скелете, R7), `STATE` (решено состоянием сценария), `DEFAULT_RULE` (эвристика `rules.py` или правило движка по умолчанию), `LLM_JUDGE`, `FRAMEWORK_RULE` (правило фреймворка).
+- `rule`: ID правила `branch_rules.json` с предикатом (`BR_TRIP_GD_DISPATCH@b53:else`; несколько через `;`), `R7`/`R15`–`R17`, строка `rules.py` (`rules.py:508`), имя правила движка (`reachability`, `ENTRY`, `spring_security`, `order_hydration`, `R19`).
+- Дополнительно по месту: `guards` (отсев веткой IR), `line`/`col` (вызовы R7), `via` (для `executes`: ребро, по которому дошли до метода).
+- Ещё не сделано: `confidence`, `file`/`line` и `call_site` для рёбер скелета, `path` от точки входа.
 
 ### Кеш LLM
 
