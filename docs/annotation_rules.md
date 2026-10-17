@@ -166,6 +166,16 @@ data: TokenServiceImpl#getToken(...)                             -> res:table:ts
 data: TokenServiceImpl#getToken(...)                             -> res:table:ts-auth-service.user_roles
 ```
 
+Обобщение на все ленивые коллекции (Гипотеза, 17.10.2026, ждёт проверки на платформе). Таблица ленивой коллекции идёт от метода с вызовом чтения, только если коллекция загрузилась, пока метод на стеке. Геттер сам коллекцию не грузит, грузит первое обращение к элементам. Если метод только вернул сущность или результат геттера, коллекцию загрузит сериализация ответа после возврата. Проектного кадра с этой таблицей в `data_access` на стеке тогда уже нет, и ребра нет. Как `loadUserByUsername` в S0.
+
+- `getRouteById` возвращает `Route`: без `route_stations` и `route_distances`.
+- `getRouteByStartAndEnd` вызывает `route.getStations().contains(...)`: `route_stations` есть, `route_distances` нет.
+- `listTrainFoodByTripId` возвращает `tf.getFoodList()` в `return`: без `train_food_list`.
+- `getToken` передаёт пользователя в `createToken`, тот кладёт роли в токен: `user_roles` есть (сходится с S0).
+- `EAGER`-коллекции (`station_food_list`) грузятся тем же запросом, запись (`save`, `delete`) трогает таблицу коллекции сама: их правило не трогает.
+
+Факты даёт archparse (`collections`, `collections_loaded` в `entity_ir.json`), решение — `engine/entities.py`. Режим: `RuntimeRules(collection_tables_on_read=...)` или `run_eval.py --collection-tables`: `loaded` (по умолчанию) или `all` — все таблицы `data_access` исполненного вызова, выдача до правила ребро в ребро.
+
 Схема в ID таблицы не всегда совпадает с сервисом: `res:table:ts-consign-mysql.consign_record`. ID копируем из `nodes`.
 
 ### R11. Запись и отложенный SQL

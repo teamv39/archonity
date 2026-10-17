@@ -239,16 +239,27 @@ class RuntimeRules:
     # off — правило выключено целиком.
     ENTITY_CTOR_MODES = ("body", "project_calls", "off")
 
+    # Таблицы ленивых коллекций при чтении (R10), см. engine/entities.py:
+    # loaded (по умолчанию) — только коллекции, которые метод загрузил, пока он на стеке;
+    # all — все таблицы data_access исполненного вызова (поведение до 17.10, для отката).
+    COLLECTION_TABLE_MODES = ("loaded", "all")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
         entity_constructors_on_load: str = "project_calls",
+        collection_tables_on_read: str = "loaded",
     ) -> None:
         if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
             raise ValueError(
                 f"entity_constructors_on_load: {entity_constructors_on_load!r}, ожидается одно из {self.ENTITY_CTOR_MODES}"
             )
+        if collection_tables_on_read not in self.COLLECTION_TABLE_MODES:
+            raise ValueError(
+                f"collection_tables_on_read: {collection_tables_on_read!r}, ожидается одно из {self.COLLECTION_TABLE_MODES}"
+            )
         self.entity_constructors_on_load = entity_constructors_on_load
+        self.collection_tables_on_read = collection_tables_on_read
         self.rules_path = Path(rules_path) if rules_path else self.DEFAULT_RULES_PATH
         self.data: dict[str, Any] = {}
         self.admin_services: set[str] = set()

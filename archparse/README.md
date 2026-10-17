@@ -130,21 +130,27 @@ if (orderResult.getStatus() == 1) {
 
 ### 3.5. Сущности и вызовы репозиториев: `data/entity_ir.json`
 
-Второй артефакт archparse, режим `--mode entities` (`EntityScanner`). Нужен правилу R7 в движке ([annotation_rules.md](../docs/annotation_rules.md)): когда Hibernate создаёт экземпляр сущности, исполняется её конструктор без аргументов. Хардкода `Order` в `builder.py` больше нет, все такие решения идут через этот файл. Сканируются все `src/main/java` проекта, а не пул.
+Второй артефакт archparse, режим `--mode entities` (`EntityScanner`), запуск: `& .\gradlew.bat run --args="--mode entities"`. Нужен правилам R7 и R10 в движке ([annotation_rules.md](../docs/annotation_rules.md)): когда Hibernate создаёт экземпляр сущности, исполняется её конструктор без аргументов; таблица ленивой коллекции идёт в ответ, только если метод загрузил коллекцию сам. Хардкода `Order` в `builder.py` больше нет, все такие решения идут через этот файл. Сканируются все `src/main/java` проекта, а не пул.
 
 ```json
 {
-  "schema": "entity_ir/1",
+  "schema": "entity_ir/2",
   "entities": [
     {"type": "route.entity.Route", "module": "ts-route-service", "file": "...", "kind": "Entity",
      "table": "route", "id_field": "id", "id_generated": false,
      "no_arg_ctor": "method:ts-route-service:route.entity.Route#<init>()",
-     "ctor_statements": 1, "ctor_assigns_id": true, "embedded": []}
+     "ctor_statements": 1, "ctor_assigns_id": true, "embedded": [],
+     "collections": [{"field": "stations", "table": "route_stations", "fetch": "LAZY"},
+                     {"field": "distances", "table": "route_distances", "fetch": "LAZY"}]}
   ],
   "repository_calls": [
     {"file": "ts-route-service/.../RouteServiceImpl.java", "line": 82, "col": 49, "callee": "findById",
      "repository": "RouteRepository", "entity": "route.entity.Route", "operation": "READ",
-     "expects": "ROWS", "expects_reason": "line 83: if (!route.isPresent()): absent arm fails"},
+     "expects": "ROWS", "expects_reason": "line 83: if (!route.isPresent()): absent arm fails",
+     "collections_loaded": [], "collections_loaded_reason": []},
+    {"file": "ts-route-service/.../RouteServiceImpl.java", "line": 105, "col": 51, "callee": "findAll",
+     "operation": "READ", "collections_loaded": ["stations"],
+     "collections_loaded_reason": ["getRouteByStartAndEnd line 109: route.getStations()"]},
     {"file": "ts-assurance-service/.../AssuranceServiceImpl.java", "line": 64, "col": 33, "callee": "save",
      "repository": "AssuranceRepository", "entity": "assurance.entity.Assurance", "operation": "SAVE",
      "id_assigned": true, "id_assigned_reason": "line 63: new Assurance(UUID.randomUUID().toString(), ...)"}
@@ -161,6 +167,8 @@ if (orderResult.getStatus() == 1) {
 - `operation`: `READ` (всё, что не подходит ниже, включая своё `@Query`), `SAVE`, `DELETE`, `EXISTS`, `COUNT`, `MODIFY` (`@Modifying`).
 - `expects` (только `READ`): чего ждёт успешный путь метода. Находим первое условие после вызова, которое проверяет результат (`== null`, `!= null`, `isPresent()`, `isEmpty()`, `size()`, проверка прямо в `if`). Плечо отказа: `throw`, `return new Response<>(0, ...)` или `LOGGER.error/warn` на верхнем уровне плеча. «Найдено» ведёт к отказу, «не найдено» нет — `EMPTY`; наоборот — `ROWS`; `orElseThrow()`/`get()` — `ROWS`; иначе `UNKNOWN`, тогда решает состояние БД в движке.
 - `id_assigned` (только `SAVE`): задан ли id до вызова. Признаки: сеттер id на той же переменной до `save`, конструктор без аргументов присваивает id, аргумент конструктора с параметрами (явного или `@AllArgsConstructor`) попадает в id, билдер задаёт id. Явный конструктор с параметрами, который id не трогает, даёт `false`. Не определено (сущность пришла параметром метода) — поля нет; движок трактует это как `persist`: в сценариях S1–S7 такие `save` идут после `findById` той же сущности в том же методе или у сущности пустой конструктор, так что конструктор уже в ответе.
+- `collections` (правило R10): коллекции в отдельной таблице. `@ElementCollection` — таблица из `@CollectionTable(name)`, иначе по Hibernate «имя класса сущности_поле» (не `@Table`: `User` с `@Table(auth_user)` даёт `user_roles`). `@OneToMany`/`@ManyToMany` — только с явной `@JoinTable(name)`. `fetch` — `EAGER`, если указан, иначе `LAZY`. Все 6 таблиц коллекций совпадают с узлами скелета с `collection_of`.
+- `collections_loaded` (только `READ` сущности с ленивыми коллекциями): поля коллекций, которые метод загружает сам. Признак: геттер коллекции на переменной типа сущности (или `get()`/`orElse*()` у `Optional<сущность>`), и вызов не внутри `return`. Геттер в `return` коллекцию не грузит, её загрузит сериализация ответа. На один уровень смотрим в методы того же модуля, которым передана сущность (`getToken` -> `createToken(user)` -> `user.getRoles()`). Пустой список — метод коллекции не трогает; поля нет — ленивых коллекций нет.
 - `no_arg_ctor_statements`: число операторов в каждом явном конструкторе без аргументов (для встраиваемых типов без `@Embeddable`).
 - `constructors[]`: IR тел конструкторов без аргументов, в которых есть вызовы. Движок добавляет их в общий индекс IR, отсюда enum-вызовы `Order#<init>() -> OrderStatus#getCode()`.
 

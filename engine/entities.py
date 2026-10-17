@@ -11,6 +11,9 @@ archparse (`--mode entities`) пишет `data/entity_ir.json`: сущности
 - `save` сущности с заданным id: Spring Data делает merge, Hibernate создаёт управляемую копию.
 
 Конструктор с пустым телом в ответ не идёт: `Contacts#<init>()` в эталоне S0 нет, хотя контакты грузятся.
+
+Таблица ленивой коллекции при чтении (правило R10) идёт в ответ, только если метод загрузил коллекцию сам
+(`collection_table_loaded`).
 """
 from __future__ import annotations
 
@@ -41,6 +44,8 @@ class Entity:
     no_arg_ctor: str | None
     ctor_statements: int
     embedded: tuple[str, ...]
+    # Коллекции в отдельных таблицах: имя таблицы -> (поле, LAZY | EAGER)
+    collections: dict[str, tuple[str, str]] = field(default_factory=dict)
 
 
 @dataclass(frozen=True)
@@ -58,6 +63,11 @@ class RepositoryCall:
     tables: frozenset[str]
     main_table: str | None
     ctors: tuple[str, ...] = field(default=())
+    # Таблицы ленивых коллекций сущности среди tables: ID узла таблицы -> поле коллекции
+    lazy_tables: dict[str, str] = field(default_factory=dict)
+    # Для READ: поля ленивых коллекций, которые метод загрузил сам (None — archparse не определил)
+    collections_loaded: tuple[str, ...] | None = None
+    collections_loaded_reason: tuple[str, ...] = field(default=())
 
 
 @dataclass(frozen=True)
@@ -124,6 +134,7 @@ class EntityFacts:
                 no_arg_ctor=d.get("no_arg_ctor") if d.get("no_arg_ctor") in nodes else None,
                 ctor_statements=int(d.get("ctor_statements") or 0),
                 embedded=tuple(d.get("embedded") or ()),
+                collections={c["table"]: (c["field"], c.get("fetch", "LAZY")) for c in d.get("collections") or ()},
             )
 
         unmatched = 0
@@ -136,8 +147,15 @@ class EntityFacts:
             tables = frozenset(tables_by_cs.get(cs, ()))
             entity = self.entities.get(d.get("entity") or "")
             main_table = None
+            lazy_tables: dict[str, str] = {}
             if entity and entity.table:
                 main_table = next((t for t in tables if nodes.get(t, {}).get("name") == entity.table), None)
+            if entity:
+                for t in tables:
+                    coll = entity.collections.get(nodes.get(t, {}).get("name", ""))
+                    if coll and coll[1] == "LAZY":
+                        lazy_tables[t] = coll[0]
+            loaded = d.get("collections_loaded")
             call = RepositoryCall(
                 method=method,
                 line=d["line"],
@@ -152,10 +170,38 @@ class EntityFacts:
                 tables=tables,
                 main_table=main_table,
                 ctors=self._ctors_of(entity, nodes),
+                lazy_tables=lazy_tables,
+                collections_loaded=None if loaded is None else tuple(loaded),
+                collections_loaded_reason=tuple(d.get("collections_loaded_reason") or ()),
             )
             self.calls_by_method.setdefault(method, []).append(call)
         if unmatched:
             LOGGER.warning("entity_ir.json: %d вызовов репозиториев без call_site в скелете", unmatched)
+
+    def collection_table_loaded(self, method: str, table: str) -> tuple[bool, str] | None:
+        """Ушёл ли SQL к таблице ленивой коллекции, пока метод на стеке (R10).
+
+        Ленивую коллекцию Hibernate читает при первом обращении к её элементам. Если метод только вернул
+        сущность, коллекцию загрузит сериализация ответа после возврата, проектного кадра с этой таблицей
+        в `data_access` на стеке уже нет. Запись (save, delete) трогает таблицу коллекции сама.
+        None — таблица не ленивая коллекция ни у одного вызова метода, решение не наше.
+        """
+        calls = [c for c in self.calls_by_method.get(method, ()) if table in c.tables]
+        if not calls or not any(table in c.lazy_tables for c in calls):
+            return None
+        for c in calls:
+            coll = c.lazy_tables.get(table)
+            if coll is None:
+                return True, f"R10:not_lazy_at_line_{c.line}"
+            if c.operation != "READ":
+                return True, f"R10:{c.operation.lower()}_writes_collection(line {c.line})"
+            if c.collections_loaded is None:
+                return True, f"R10:loaded_unknown(line {c.line})"
+            if coll in c.collections_loaded:
+                why = next((r for r in c.collections_loaded_reason if f".get{coll[:1].upper()}{coll[1:]}()" in r), "")
+                return True, f"R10:loaded({why})"
+        lines = ",".join(str(c.line) for c in calls)
+        return False, f"R10:lazy_not_loaded(lines {lines})"
 
     def allowed_ctors(self, mode: str) -> frozenset[str] | None:
         """Конструкторы, которые допускает режим правила (None — все с непустым телом)."""

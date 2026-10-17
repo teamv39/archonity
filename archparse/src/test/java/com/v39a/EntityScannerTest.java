@@ -111,6 +111,45 @@ public class EntityScannerTest {
         assertEquals(Boolean.FALSE, paySave.idAssigned);
     }
 
+    private static EntityReportIR.CollectionField collection(String type, String field) {
+        return entity(type).collections.stream().filter(c -> c.field.equals(field)).findFirst()
+                .orElseThrow(() -> new AssertionError("collection not found: " + type + "." + field));
+    }
+
+    @Test
+    public void testEntityCollections() {
+        // Имя по умолчанию «таблица сущности_поле», ленивая
+        assertEquals("route_stations", collection("route.entity.Route", "stations").table);
+        assertEquals("LAZY", collection("route.entity.Route", "distances").fetch);
+        // @CollectionTable(name) и fetch = EAGER
+        EntityReportIR.CollectionField storeFood = collection("food.entity.StationFoodStore", "foodList");
+        assertEquals("station_food_list", storeFood.table);
+        assertEquals("EAGER", storeFood.fetch);
+        // @CollectionTable без name
+        assertEquals("user_roles", collection("auth.entity.User", "roles").table);
+        assertEquals("food_delivery_order_food_list",
+                collection("food_delivery.entity.FoodDeliveryOrder", "foodList").table);
+    }
+
+    @Test
+    public void testLazyCollectionsLoadedByMethod() {
+        String route = "route/service/RouteServiceImpl.java";
+        // Сущность только возвращается: коллекции загрузит сериализация ответа
+        assertEquals(java.util.List.of(), call(route, 82, "findById").collectionsLoaded);
+        // route.getStations().contains(...) в цикле: stations грузятся, distances нет
+        assertEquals(java.util.List.of("stations"), call(route, 105, "findAll").collectionsLoaded);
+        // Геттер внутри return не грузит коллекцию
+        assertEquals(java.util.List.of(),
+                call("trainFood/service/TrainFoodServiceImpl.java", 54, "findByTripId").collectionsLoaded);
+        // createToken(user) кладёт user.getRoles() в токен: заход на уровень в проектный метод
+        assertEquals(java.util.List.of("roles"),
+                call("auth/service/impl/TokenServiceImpl.java", 90, "findByUsername").collectionsLoaded);
+        assertEquals(java.util.List.of(),
+                call("auth/security/UserDetailsServiceImpl.java", 29, "findByUsername").collectionsLoaded);
+        // Только EAGER-коллекции: поле не пишется
+        assertNull(call("food/service/StationFoodServiceImpl.java", 102, "findByStationNameIn").collectionsLoaded);
+    }
+
     @Test
     public void testSpringPhysicalNaming() {
         assertEquals("station_food_store", springName("StationFoodStore"));
