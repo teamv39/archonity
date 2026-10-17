@@ -110,6 +110,7 @@ calls:    Order#<init>() -> edu.fudan.common.entity.SeatClass#getCode()
 - Зависит от данных: конструктор сработает, только если запрос вернул хотя бы одну строку (по состоянию сценария).
 - Ребра `queryOrders → Order#<init>()` нет: конструктор вызывает Hibernate.
 - Вызовы через enum-константу (`OrderStatus.PAID.getCode()`) в скелете отсутствуют — у call_site нет `receiver_type` и рёбер. Их должен разрешать наш парсер (M2).
+- Аналогично при создании нового заказа (`new Order()`) в коде сервисов `ts-preserve-service`, `ts-preserve-other-service` и `ts-rebook-service` конструктор `ts-common:edu.fudan.common.entity.Order#<init>()` выполняет те же вызовы `Date2String`, `OrderStatus#getCode()` и `SeatClass#getCode()`.
 
 ### R8. Отражение Jackson не учитывается
 
