@@ -217,6 +217,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-travel-service:travel.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@80:34",
             "args" : [ ]
           }, {
@@ -252,6 +253,7 @@
         "line" : 49,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-travel-service:travel.config.SecurityConfig#corsConfigurer()@49:16",
           "args" : [ ],
           "anon" : "type:ts-travel-service:travel.config.SecurityConfig$1"
@@ -268,6 +270,7 @@
         "line" : 36,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-travel-service:travel.config.SecurityConfig#passwordEncoder()@36:16",
           "args" : [ ]
         }
@@ -428,6 +431,7 @@
         "line" : 71,
         "expr" : {
           "new" : "ResponseEntity<>",
+          "fqn" : "org.springframework.http.ResponseEntity",
           "call" : "call:method:ts-travel-service:travel.controller.TravelController#createTrip(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@71:16",
           "args" : [ {
             "call" : "call:method:ts-travel-service:travel.controller.TravelController#createTrip(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@71:51",
@@ -959,6 +963,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "ArrayList<>",
+            "fqn" : "java.util.ArrayList",
             "call" : "call:method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@119:49",
             "args" : [ ]
           }
@@ -1165,6 +1170,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "ArrayList<>",
+            "fqn" : "java.util.ArrayList",
             "call" : "call:method:ts-travel-service:travel.controller.TravelController#queryInfoInparallel(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@140:49",
             "args" : [ ]
           }
@@ -1766,6 +1772,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TravelInfo",
+          "fqn" : "edu.fudan.common.entity.TravelInfo",
           "call" : "call:method:ts-travel-service:travel.init.InitData#run(java.lang.String[])@27:27",
           "args" : [ ]
         }
@@ -2537,6 +2544,7 @@
             "operator" : "=",
             "expr" : {
               "new" : "AdminTrip",
+              "fqn" : "travel.entity.AdminTrip",
               "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#adminQueryAll(org.springframework.http.HttpHeaders)@569:39",
               "args" : [ ]
             }
@@ -2650,6 +2658,7 @@
           "line" : 578,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#adminQueryAll(org.springframework.http.HttpHeaders)@578:20",
             "args" : [ {
               "lit" : 1,
@@ -2689,6 +2698,7 @@
           "line" : 581,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#adminQueryAll(org.springframework.http.HttpHeaders)@581:20",
             "args" : [ {
               "lit" : 0,
@@ -3164,6 +3174,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TripId",
+          "fqn" : "edu.fudan.common.entity.TripId",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#create(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@60:21",
           "args" : [ {
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#create(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@60:37",
@@ -3209,6 +3220,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "Trip",
+            "fqn" : "travel.entity.Trip",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#create(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@62:25",
             "args" : [ {
               "name" : "ti",
@@ -3303,6 +3315,7 @@
           "line" : 66,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#create(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@66:20",
             "args" : [ {
               "lit" : 1,
@@ -3366,6 +3379,7 @@
           "line" : 69,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#create(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@69:20",
             "args" : [ {
               "lit" : 1,
@@ -3427,6 +3441,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TripId",
+          "fqn" : "edu.fudan.common.entity.TripId",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@165:21",
           "args" : [ {
             "name" : "tripId",
@@ -3476,6 +3491,7 @@
           "line" : 168,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@168:20",
             "args" : [ {
               "lit" : 1,
@@ -3529,6 +3545,7 @@
           "line" : 171,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@171:20",
             "args" : [ {
               "lit" : 0,
@@ -3598,6 +3615,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Seat",
+          "fqn" : "edu.fudan.common.entity.Seat",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@538:28",
           "args" : [ ]
         }
@@ -3743,6 +3761,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@550:36",
           "args" : [ {
             "name" : "seatRequest",
@@ -3807,6 +3826,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<Integer>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getRestTicketNumber(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@556:17",
             "args" : [ ],
             "anon" : "type:ts-travel-service:travel.service.TravelServiceImpl$3"
@@ -3905,6 +3925,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@519:36",
           "args" : [ {
             "lit" : null,
@@ -4004,6 +4025,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Route",
+          "fqn" : "edu.fudan.common.entity.Route",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@528:24",
           "args" : [ ]
         }
@@ -4186,6 +4208,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "TripId",
+            "fqn" : "edu.fudan.common.entity.TripId",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getRouteByTripId(java.lang.String,org.springframework.http.HttpHeaders)@77:30",
             "args" : [ {
               "name" : "tripId",
@@ -4298,6 +4321,7 @@
           "line" : 86,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getRouteByTripId(java.lang.String,org.springframework.http.HttpHeaders)@86:20",
             "args" : [ {
               "lit" : 1,
@@ -4337,6 +4361,7 @@
           "line" : 89,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getRouteByTripId(java.lang.String,org.springframework.http.HttpHeaders)@89:20",
             "args" : [ {
               "lit" : 0,
@@ -4456,6 +4481,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Travel",
+          "fqn" : "travel.entity.Travel",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTickets(travel.entity.Trip,edu.fudan.common.entity.Route,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@387:24",
           "args" : [ ]
         }
@@ -4551,6 +4577,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTickets(travel.entity.Trip,edu.fudan.common.entity.Route,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@394:36",
           "args" : [ {
             "name" : "query",
@@ -4876,6 +4903,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "Travel",
+            "fqn" : "travel.entity.Travel",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTicketsByBatch(java.util.List,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@333:28",
             "args" : [ ]
           }
@@ -5015,6 +5043,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTicketsByBatch(java.util.List,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@345:36",
           "args" : [ {
             "name" : "infos",
@@ -5169,6 +5198,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "ObjectMapper",
+          "fqn" : "com.fasterxml.jackson.databind.ObjectMapper",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTicketsByBatch(java.util.List,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@359:31",
           "args" : [ ]
         }
@@ -5210,6 +5240,7 @@
               } ]
             }, {
               "new" : "TypeReference<Map<String,TravelResult>>",
+              "fqn" : "com.fasterxml.jackson.core.type.TypeReference",
               "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTicketsByBatch(java.util.List,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@361:74",
               "args" : [ ],
               "anon" : "type:ts-travel-service:travel.service.TravelServiceImpl$1"
@@ -5407,6 +5438,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@505:36",
           "args" : [ {
             "lit" : null,
@@ -5475,6 +5507,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<TrainType>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@511:17",
             "args" : [ ],
             "anon" : "type:ts-travel-service:travel.service.TravelServiceImpl$2"
@@ -5521,6 +5554,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TripId",
+          "fqn" : "edu.fudan.common.entity.TripId",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTrainTypeByTripId(java.lang.String,org.springframework.http.HttpHeaders)@95:26",
           "args" : [ {
             "name" : "tripId",
@@ -5644,6 +5678,7 @@
           "line" : 104,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTrainTypeByTripId(java.lang.String,org.springframework.http.HttpHeaders)@104:20",
             "args" : [ {
               "lit" : 1,
@@ -5683,6 +5718,7 @@
           "line" : 107,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTrainTypeByTripId(java.lang.String,org.springframework.http.HttpHeaders)@107:20",
             "args" : [ {
               "lit" : 0,
@@ -5720,6 +5756,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TripAllDetail",
+          "fqn" : "travel.entity.TripAllDetail",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@297:30",
           "args" : [ ]
         }
@@ -5767,6 +5804,7 @@
           },
           "args" : [ {
             "new" : "TripId",
+            "fqn" : "edu.fudan.common.entity.TripId",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@299:45",
             "args" : [ {
               "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@299:61",
@@ -5855,6 +5893,7 @@
           "line" : 304,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@304:20",
             "args" : [ {
               "lit" : 0,
@@ -6024,6 +6063,7 @@
             "line" : 313,
             "expr" : {
               "new" : "Response<>",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@313:24",
               "args" : [ {
                 "lit" : 0,
@@ -6071,6 +6111,7 @@
                 },
                 "args" : [ {
                   "new" : "TripId",
+                  "fqn" : "edu.fudan.common.entity.TripId",
                   "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@316:54",
                   "args" : [ {
                     "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@316:70",
@@ -6091,6 +6132,7 @@
         "line" : 319,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@319:16",
           "args" : [ {
             "lit" : 1,
@@ -6228,6 +6270,7 @@
           "line" : 122,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripByRoute(java.util.ArrayList,org.springframework.http.HttpHeaders)@122:20",
             "args" : [ {
               "lit" : 1,
@@ -6267,6 +6310,7 @@
           "line" : 125,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#getTripByRoute(java.util.ArrayList,org.springframework.http.HttpHeaders)@125:20",
             "args" : [ {
               "lit" : 0,
@@ -6496,6 +6540,7 @@
         "line" : 198,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#query(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@198:16",
           "args" : [ {
             "lit" : 1,
@@ -6592,6 +6637,7 @@
           "line" : 472,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#queryAll(org.springframework.http.HttpHeaders)@472:20",
             "args" : [ {
               "lit" : 1,
@@ -6632,6 +6678,7 @@
         "line" : 475,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#queryAll(org.springframework.http.HttpHeaders)@475:16",
           "args" : [ {
             "lit" : 0,
@@ -6764,6 +6811,7 @@
         "line" : 216,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#queryByBatch(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@216:16",
           "args" : [ {
             "lit" : 1,
@@ -6907,6 +6955,7 @@
             "operator" : "=",
             "expr" : {
               "new" : "MyCallable",
+              "fqn" : "travel.service.TravelServiceImpl$MyCallable",
               "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#queryInParallel(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@271:39",
               "args" : [ {
                 "name" : "info",
@@ -7085,6 +7134,7 @@
           "line" : 289,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#queryInParallel(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@289:20",
             "args" : [ {
               "lit" : 0,
@@ -7103,6 +7153,7 @@
           "line" : 291,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#queryInParallel(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)@291:20",
             "args" : [ {
               "lit" : 1,
@@ -7140,6 +7191,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TripId",
+          "fqn" : "edu.fudan.common.entity.TripId",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@132:21",
           "args" : [ {
             "name" : "tripId",
@@ -7187,6 +7239,7 @@
           "line" : 135,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@135:20",
             "args" : [ {
               "lit" : 1,
@@ -7233,6 +7286,7 @@
           "line" : 138,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@138:20",
             "args" : [ {
               "lit" : 0,
@@ -7289,6 +7343,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TripResponse",
+          "fqn" : "edu.fudan.common.entity.TripResponse",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#setResponse(travel.entity.Trip,edu.fudan.common.entity.TravelResult,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@416:33",
           "args" : [ ]
         }
@@ -7441,6 +7496,7 @@
             "ref" : "param"
           }, {
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#setResponse(travel.entity.Trip,edu.fudan.common.entity.TravelResult,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@427:68",
+            "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
             "callee" : "getCode",
             "recv" : {
               "enum" : "edu.fudan.common.entity.SeatClass",
@@ -7502,6 +7558,7 @@
             "ref" : "param"
           }, {
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#setResponse(travel.entity.Trip,edu.fudan.common.entity.TravelResult,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@430:69",
+            "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
             "callee" : "getCode",
             "recv" : {
               "enum" : "edu.fudan.common.entity.SeatClass",
@@ -8187,6 +8244,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TripId",
+          "fqn" : "edu.fudan.common.entity.TripId",
           "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#update(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@144:21",
           "args" : [ {
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#update(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@144:37",
@@ -8394,6 +8452,7 @@
           "line" : 155,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#update(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@155:20",
             "args" : [ {
               "lit" : 1,
@@ -8450,6 +8509,7 @@
           "line" : 158,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-travel-service:travel.service.TravelServiceImpl#update(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@158:20",
             "args" : [ {
               "lit" : 1,

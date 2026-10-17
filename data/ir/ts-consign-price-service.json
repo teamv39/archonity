@@ -28,6 +28,7 @@
             "type" : "string"
           }, {
             "new" : "Date",
+            "fqn" : "java.util.Date",
             "call" : "call:method:ts-consign-price-service:consignprice.ConsignPriceApplication#main(java.lang.String[])@33:96",
             "args" : [ ]
           } ]
@@ -201,6 +202,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
             "args" : [ ]
           }, {
@@ -236,6 +238,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-consign-price-service:consignprice.config.SecurityConfig$1"
@@ -252,6 +255,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-consign-price-service:consignprice.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -606,6 +610,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "ConsignPrice",
+          "fqn" : "consignprice.entity.ConsignPrice",
           "call" : "call:method:ts-consign-price-service:consignprice.init.InitData#run(java.lang.String[])@26:31",
           "args" : [ ]
         }
@@ -821,6 +826,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "ConsignPrice",
+            "fqn" : "consignprice.entity.ConsignPrice",
             "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@67:30",
             "args" : [ ]
           }
@@ -960,6 +966,7 @@
         "line" : 76,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#createAndModifyPrice(consignprice.entity.ConsignPrice,org.springframework.http.HttpHeaders)@76:16",
           "args" : [ {
             "lit" : 1,
@@ -1176,6 +1183,7 @@
         "line" : 40,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)@40:16",
           "args" : [ {
             "lit" : 1,
@@ -1203,6 +1211,7 @@
         "line" : 81,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceConfig(org.springframework.http.HttpHeaders)@81:16",
           "args" : [ {
             "lit" : 1,
@@ -1428,6 +1437,7 @@
         "line" : 56,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#queryPriceInformation(org.springframework.http.HttpHeaders)@56:16",
           "args" : [ {
             "lit" : 1,

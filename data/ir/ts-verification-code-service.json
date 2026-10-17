@@ -145,6 +145,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:34",
             "args" : [ ]
           }, {
@@ -180,6 +181,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-verification-code-service:verifycode.config.SecurityConfig$1"
@@ -196,6 +198,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-verification-code-service:verifycode.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -639,6 +642,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HashMap<>",
+          "fqn" : "java.util.HashMap",
           "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@51:41",
           "args" : [ ]
         }
@@ -711,6 +715,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "BufferedImage",
+          "fqn" : "java.awt.image.BufferedImage",
           "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@58:31",
           "args" : [ {
             "name" : "width",
@@ -755,6 +760,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Random",
+          "fqn" : "java.util.Random",
           "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getImageCode(int,int,java.io.OutputStream,javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,org.springframework.http.HttpHeaders)@62:25",
           "args" : [ ]
         }
@@ -1598,6 +1604,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Random",
+          "fqn" : "java.util.Random",
           "call" : "call:method:ts-verification-code-service:verifycode.service.impl.VerifyCodeServiceImpl#getRandColor(int,int)@139:25",
           "args" : [ ]
         }
@@ -2158,6 +2165,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Cookie",
+          "fqn" : "javax.servlet.http.Cookie",
           "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#addCookie(javax.servlet.http.HttpServletResponse,java.lang.String,java.lang.String,int)@19:25",
           "args" : [ {
             "name" : "name",
@@ -2314,6 +2322,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HashMap<>",
+          "fqn" : "java.util.HashMap",
           "call" : "call:method:ts-verification-code-service:verifycode.util.CookieUtil#readCookieMap(javax.servlet.http.HttpServletRequest)@35:40",
           "args" : [ ]
         }

@@ -176,6 +176,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-admin-travel-service:admintravel.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
             "args" : [ ]
           }, {
@@ -211,6 +212,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-admin-travel-service:admintravel.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-admin-travel-service:admintravel.config.SecurityConfig$1"
@@ -227,6 +229,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-admin-travel-service:admintravel.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -824,6 +827,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@106:36",
           "args" : [ {
             "name" : "request",
@@ -925,6 +929,7 @@
           "line" : 116,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@116:20",
             "args" : [ {
               "lit" : 1,
@@ -969,6 +974,7 @@
           "line" : 119,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@119:20",
             "args" : [ {
               "lit" : 0,
@@ -1027,6 +1033,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#checkStationsExists(java.util.List,org.springframework.http.HttpHeaders)@231:36",
           "args" : [ {
             "name" : "stationNames",
@@ -1169,6 +1176,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "ArrayList<>",
+          "fqn" : "java.util.ArrayList",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#checkStationsExists(java.util.List,org.springframework.http.HttpHeaders)@243:34",
           "args" : [ ]
         }
@@ -1255,6 +1263,7 @@
           "line" : 251,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#checkStationsExists(java.util.List,org.springframework.http.HttpHeaders)@251:20",
             "args" : [ {
               "lit" : 0,
@@ -1274,6 +1283,7 @@
         "line" : 253,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#checkStationsExists(java.util.List,org.springframework.http.HttpHeaders)@253:16",
           "args" : [ {
             "lit" : 1,
@@ -1346,6 +1356,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "ArrayList<>",
+          "fqn" : "java.util.ArrayList",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#checkTravelInfo(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@190:33",
           "args" : [ ]
         }
@@ -1957,6 +1968,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#deleteTravel(java.lang.String,org.springframework.http.HttpHeaders)@170:36",
           "args" : [ {
             "name" : "headers",
@@ -2058,6 +2070,7 @@
           "line" : 180,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#deleteTravel(java.lang.String,org.springframework.http.HttpHeaders)@180:20",
             "args" : [ {
               "lit" : 0,
@@ -2130,6 +2143,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "ArrayList<>",
+          "fqn" : "java.util.ArrayList",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#getAllTravels(org.springframework.http.HttpHeaders)@44:38",
           "args" : [ ]
         }
@@ -2162,6 +2176,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#getAllTravels(org.springframework.http.HttpHeaders)@47:36",
           "args" : [ {
             "name" : "headers",
@@ -2223,6 +2238,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<ArrayList<AdminTrip>>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#getAllTravels(org.springframework.http.HttpHeaders)@53:17",
             "args" : [ ],
             "anon" : "type:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl$1"
@@ -2347,6 +2363,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#getAllTravels(org.springframework.http.HttpHeaders)@65:37",
           "args" : [ {
             "name" : "headers",
@@ -2408,6 +2425,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<ArrayList<AdminTrip>>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#getAllTravels(org.springframework.http.HttpHeaders)@71:17",
             "args" : [ ],
             "anon" : "type:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl$2"
@@ -2588,6 +2606,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@272:36",
           "args" : [ {
             "lit" : null,
@@ -2840,6 +2859,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@258:36",
           "args" : [ {
             "lit" : null,
@@ -3185,6 +3205,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#updateTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@141:36",
           "args" : [ {
             "name" : "request",
@@ -3286,6 +3307,7 @@
           "line" : 151,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-admin-travel-service:admintravel.service.AdminTravelServiceImpl#updateTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)@151:20",
             "args" : [ {
               "lit" : 0,

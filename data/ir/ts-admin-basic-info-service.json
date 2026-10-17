@@ -271,6 +271,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:34",
             "args" : [ ]
           }, {
@@ -306,6 +307,7 @@
         "line" : 49,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#corsConfigurer()@49:16",
           "args" : [ ],
           "anon" : "type:ts-admin-basic-info-service:adminbasic.config.SecurityConfig$1"
@@ -322,6 +324,7 @@
         "line" : 36,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#passwordEncoder()@36:16",
           "args" : [ ]
         }
@@ -1576,6 +1579,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@239:36",
           "args" : [ {
             "name" : "c",
@@ -1700,6 +1704,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@88:36",
           "args" : [ {
             "name" : "c",
@@ -1814,6 +1819,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@290:36",
           "args" : [ {
             "name" : "pi",
@@ -1938,6 +1944,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@119:36",
           "args" : [ {
             "name" : "s",
@@ -2074,6 +2081,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@181:36",
           "args" : [ {
             "name" : "t",
@@ -2201,6 +2209,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@252:36",
           "args" : [ {
             "name" : "headers",
@@ -2316,6 +2325,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteContact(java.lang.String,org.springframework.http.HttpHeaders)@57:36",
           "args" : [ {
             "name" : "headers",
@@ -2434,6 +2444,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)@304:36",
           "args" : [ {
             "name" : "headers",
@@ -2562,6 +2573,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)@134:36",
           "args" : [ {
             "name" : "headers",
@@ -2702,6 +2714,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)@197:36",
           "args" : [ {
             "name" : "headers",
@@ -2817,6 +2830,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllConfigs(org.springframework.http.HttpHeaders)@225:36",
           "args" : [ {
             "name" : "headers",
@@ -2935,6 +2949,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@42:36",
           "args" : [ {
             "name" : "headers",
@@ -3043,6 +3058,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllPrices(org.springframework.http.HttpHeaders)@277:36",
           "args" : [ {
             "name" : "headers",
@@ -3152,6 +3168,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllStations(org.springframework.http.HttpHeaders)@102:36",
           "args" : [ {
             "name" : "headers",
@@ -3261,6 +3278,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllTrains(org.springframework.http.HttpHeaders)@165:36",
           "args" : [ {
             "name" : "headers",
@@ -3397,6 +3415,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@264:36",
           "args" : [ {
             "name" : "c",
@@ -3521,6 +3540,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@72:36",
           "args" : [ {
             "name" : "mci",
@@ -3635,6 +3655,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@318:36",
           "args" : [ {
             "name" : "pi",
@@ -3759,6 +3780,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@149:36",
           "args" : [ {
             "name" : "s",
@@ -3895,6 +3917,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@211:36",
           "args" : [ {
             "name" : "t",

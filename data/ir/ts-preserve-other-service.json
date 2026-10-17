@@ -61,6 +61,7 @@
         "line" : 14,
         "expr" : {
           "new" : "Queue",
+          "fqn" : "org.springframework.amqp.core.Queue",
           "call" : "call:method:ts-preserve-other-service:preserveOther.config.Queues#emailQueue()@14:16",
           "args" : [ {
             "const" : "preserveOther.config.Queues.queueName",
@@ -200,6 +201,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-preserve-other-service:preserveOther.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
             "args" : [ ]
           }, {
@@ -235,6 +237,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-preserve-other-service:preserveOther.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-preserve-other-service:preserveOther.config.SecurityConfig$1"
@@ -251,6 +254,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-preserve-other-service:preserveOther.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -511,6 +515,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#addAssuranceForOrder(int,java.lang.String,org.springframework.http.HttpHeaders)@319:48",
           "args" : [ {
             "name" : "httpHeaders",
@@ -593,6 +598,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<Assurance>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#addAssuranceForOrder(int,java.lang.String,org.springframework.http.HttpHeaders)@325:17",
             "args" : [ ],
             "anon" : "type:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl$4"
@@ -652,6 +658,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#checkSecurity(java.lang.String,org.springframework.http.HttpHeaders)@350:41",
           "args" : [ {
             "name" : "httpHeaders",
@@ -776,6 +783,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)@425:51",
           "args" : [ {
             "name" : "cr",
@@ -896,6 +904,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#createFoodOrder(edu.fudan.common.entity.FoodOrder,org.springframework.http.HttpHeaders)@411:54",
           "args" : [ {
             "name" : "afi",
@@ -1016,6 +1025,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#createOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@395:53",
           "args" : [ {
             "name" : "coi",
@@ -1080,6 +1090,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<Order>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#createOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@401:17",
             "args" : [ ],
             "anon" : "type:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl$8"
@@ -1139,6 +1150,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Seat",
+          "fqn" : "edu.fudan.common.entity.Seat",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#dipatchSeat(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@266:28",
           "args" : [ ]
         }
@@ -1258,6 +1270,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#dipatchSeat(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@275:42",
           "args" : [ {
             "name" : "seatRequest",
@@ -1322,6 +1335,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<Ticket>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#dipatchSeat(java.lang.String,java.lang.String,java.lang.String,java.lang.String,int,int,java.util.List,org.springframework.http.HttpHeaders)@281:17",
             "args" : [ ],
             "anon" : "type:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl$2"
@@ -1386,6 +1400,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#getAccount(java.lang.String,org.springframework.http.HttpHeaders)@303:45",
           "args" : [ {
             "name" : "httpHeaders",
@@ -1454,6 +1469,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<User>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#getAccount(java.lang.String,org.springframework.http.HttpHeaders)@309:17",
             "args" : [ ],
             "anon" : "type:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl$3"
@@ -1531,6 +1547,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#getContactsById(java.lang.String,org.springframework.http.HttpHeaders)@380:47",
           "args" : [ {
             "name" : "httpHeaders",
@@ -1599,6 +1616,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<Contacts>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#getContactsById(java.lang.String,org.springframework.http.HttpHeaders)@386:17",
             "args" : [ ],
             "anon" : "type:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl$7"
@@ -1682,6 +1700,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#getTripAllDetailInformation(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@365:52",
           "args" : [ {
             "name" : "gtdi",
@@ -1746,6 +1765,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<TripAllDetail>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#getTripAllDetailInformation(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)@371:17",
             "args" : [ ],
             "anon" : "type:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl$6"
@@ -1871,6 +1891,7 @@
           "line" : 56,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@56:20",
             "args" : [ {
               "lit" : 0,
@@ -2001,6 +2022,7 @@
           "line" : 65,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@65:20",
             "args" : [ {
               "lit" : 0,
@@ -2057,6 +2079,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TripAllDetailInfo",
+          "fqn" : "edu.fudan.common.entity.TripAllDetailInfo",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@71:34",
           "args" : [ ]
         }
@@ -2264,6 +2287,7 @@
           "line" : 84,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@84:20",
             "args" : [ {
               "lit" : 0,
@@ -2317,6 +2341,7 @@
             },
             "r" : {
               "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@88:59",
+              "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
               "callee" : "getCode",
               "recv" : {
                 "enum" : "edu.fudan.common.entity.SeatClass",
@@ -2383,6 +2408,7 @@
               "line" : 91,
               "expr" : {
                 "new" : "Response<>",
+                "fqn" : "edu.fudan.common.util.Response",
                 "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@91:28",
                 "args" : [ {
                   "lit" : 0,
@@ -2417,6 +2443,7 @@
                 },
                 "r" : {
                   "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@94:77",
+                  "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
                   "callee" : "getCode",
                   "recv" : {
                     "enum" : "edu.fudan.common.entity.SeatClass",
@@ -2480,6 +2507,7 @@
               "line" : 96,
               "expr" : {
                 "new" : "Response<>",
+                "fqn" : "edu.fudan.common.util.Response",
                 "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@96:28",
                 "args" : [ {
                   "lit" : 0,
@@ -2561,6 +2589,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Order",
+          "fqn" : "edu.fudan.common.entity.Order",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@105:23",
           "args" : [ ]
         }
@@ -2727,6 +2756,7 @@
             },
             "args" : [ {
               "new" : "Date",
+              "fqn" : "java.util.Date",
               "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@116:53",
               "args" : [ ]
             } ]
@@ -2744,6 +2774,7 @@
           },
           "args" : [ {
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@117:45",
+            "target" : "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()",
             "callee" : "getCode",
             "recv" : {
               "enum" : "edu.fudan.common.entity.OrderStatus",
@@ -2830,6 +2861,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Travel",
+          "fqn" : "edu.fudan.common.entity.Travel",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@123:24",
           "args" : [ ]
         }
@@ -2907,6 +2939,7 @@
             },
             "args" : [ {
               "new" : "Date",
+              "fqn" : "java.util.Date",
               "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@127:56",
               "args" : [ ]
             } ]
@@ -2923,6 +2956,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@130:36",
           "args" : [ {
             "name" : "query",
@@ -2987,6 +3021,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<TravelResult>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@136:17",
             "args" : [ ],
             "anon" : "type:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl$1"
@@ -3048,6 +3083,7 @@
           "line" : 140,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@140:20",
             "args" : [ {
               "lit" : 0,
@@ -3231,6 +3267,7 @@
           },
           "r" : {
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@151:55",
+            "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
             "callee" : "getCode",
             "recv" : {
               "enum" : "edu.fudan.common.entity.SeatClass",
@@ -3306,6 +3343,7 @@
               "ref" : "local"
             }, {
               "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@156:50",
+              "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
               "callee" : "getCode",
               "recv" : {
                 "enum" : "edu.fudan.common.entity.SeatClass",
@@ -3342,6 +3380,7 @@
             },
             "args" : [ {
               "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@157:53",
+              "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
               "callee" : "getCode",
               "recv" : {
                 "enum" : "edu.fudan.common.entity.SeatClass",
@@ -3473,6 +3512,7 @@
               "ref" : "local"
             }, {
               "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@165:51",
+              "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
               "callee" : "getCode",
               "recv" : {
                 "enum" : "edu.fudan.common.entity.SeatClass",
@@ -3509,6 +3549,7 @@
             },
             "args" : [ {
               "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@166:54",
+              "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
               "callee" : "getCode",
               "recv" : {
                 "enum" : "edu.fudan.common.entity.SeatClass",
@@ -3686,6 +3727,7 @@
           "line" : 176,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@176:20",
             "args" : [ {
               "lit" : 0,
@@ -3734,6 +3776,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@180:35",
           "args" : [ {
             "lit" : 1,
@@ -3960,6 +4003,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "FoodOrder",
+            "fqn" : "edu.fudan.common.entity.FoodOrder",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@197:35",
             "args" : [ ]
           }
@@ -4291,6 +4335,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "Consign",
+            "fqn" : "edu.fudan.common.entity.Consign",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@219:38",
             "args" : [ ]
           }
@@ -4693,6 +4738,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "NotifyInfo",
+          "fqn" : "edu.fudan.common.entity.NotifyInfo",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@246:33",
           "args" : [ ]
         }
@@ -4711,6 +4757,7 @@
             "callee" : "toString",
             "recv" : {
               "new" : "Date",
+              "fqn" : "java.util.Date",
               "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@247:28",
               "args" : [ ]
             },
@@ -4964,6 +5011,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#queryForStationId(java.lang.String,org.springframework.http.HttpHeaders)@336:47",
           "args" : [ {
             "name" : "httpHeaders",
@@ -5032,6 +5080,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<String>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl#queryForStationId(java.lang.String,org.springframework.http.HttpHeaders)@342:17",
             "args" : [ ],
             "anon" : "type:ts-preserve-other-service:preserveOther.service.PreserveOtherServiceImpl$5"

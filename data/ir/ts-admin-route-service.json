@@ -176,6 +176,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
             "args" : [ ]
           }, {
@@ -211,6 +212,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-admin-route-service:adminroute.config.SecurityConfig$1"
@@ -227,6 +229,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -670,6 +673,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "ArrayList<>",
+          "fqn" : "java.util.ArrayList",
           "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@113:34",
           "args" : [ ]
         }
@@ -756,6 +760,7 @@
           "line" : 121,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@121:20",
             "args" : [ {
               "lit" : 0,
@@ -775,6 +780,7 @@
         "line" : 123,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@123:16",
           "args" : [ {
             "lit" : 1,
@@ -917,6 +923,7 @@
           "line" : 60,
           "expr" : {
             "new" : "Response",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@60:20",
             "args" : [ {
               "lit" : 0,
@@ -1056,6 +1063,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<Route>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@74:17",
             "args" : [ ],
             "anon" : "type:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl$1"

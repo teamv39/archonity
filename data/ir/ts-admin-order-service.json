@@ -176,6 +176,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
             "args" : [ ]
           }, {
@@ -211,6 +212,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-admin-order-service:adminorder.config.SecurityConfig$1"
@@ -227,6 +229,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-admin-order-service:adminorder.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -661,6 +664,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@155:40",
             "args" : [ {
               "name" : "request",
@@ -774,6 +778,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@166:40",
             "args" : [ {
               "name" : "request",
@@ -956,6 +961,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@91:40",
             "args" : [ {
               "lit" : null,
@@ -1073,6 +1079,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@102:40",
             "args" : [ {
               "lit" : null,
@@ -1207,6 +1214,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "ArrayList<>",
+          "fqn" : "java.util.ArrayList",
           "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@43:35",
           "args" : [ ]
         }
@@ -1221,6 +1229,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@45:36",
           "args" : [ {
             "lit" : null,
@@ -1282,6 +1291,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<ArrayList<Order>>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@52:17",
             "args" : [ ],
             "anon" : "type:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl$1"
@@ -1407,6 +1417,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@64:37",
           "args" : [ {
             "lit" : null,
@@ -1468,6 +1479,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<ArrayList<Order>>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@70:17",
             "args" : [ ],
             "anon" : "type:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl$2"
@@ -1589,6 +1601,7 @@
         "line" : 82,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#getAllOrders(org.springframework.http.HttpHeaders)@82:16",
           "args" : [ {
             "lit" : 1,
@@ -1740,6 +1753,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@124:40",
             "args" : [ {
               "name" : "request",
@@ -1853,6 +1867,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-admin-order-service:adminorder.service.AdminOrderServiceImpl#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)@135:40",
             "args" : [ {
               "name" : "request",

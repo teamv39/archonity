@@ -173,6 +173,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-basic-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
             "args" : [ ]
           }, {
@@ -208,6 +209,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-basic-service:fdse.microservice.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-basic-service:fdse.microservice.config.SecurityConfig$1"
@@ -224,6 +226,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-basic-service:fdse.microservice.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -521,6 +524,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#checkStationExists(java.lang.String,org.springframework.http.HttpHeaders)@360:36",
           "args" : [ {
             "lit" : null,
@@ -673,6 +677,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#checkStationsExists(java.util.List,org.springframework.http.HttpHeaders)@343:36",
           "args" : [ {
             "name" : "stationNames",
@@ -856,6 +861,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@425:36",
           "args" : [ {
             "lit" : null,
@@ -1084,6 +1090,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#getRoutesByRouteIds(java.util.List,org.springframework.http.HttpHeaders)@405:36",
           "args" : [ {
             "name" : "routeIds",
@@ -1353,6 +1360,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryForStationId(java.lang.String,org.springframework.http.HttpHeaders)@326:36",
           "args" : [ {
             "lit" : null,
@@ -1500,6 +1508,7 @@
           "line" : 336,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryForStationId(java.lang.String,org.springframework.http.HttpHeaders)@336:20",
             "args" : [ {
               "lit" : 0,
@@ -1550,6 +1559,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryForTravel(edu.fudan.common.entity.Travel,org.springframework.http.HttpHeaders)@42:29",
           "args" : [ ]
         }
@@ -1564,6 +1574,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TravelResult",
+          "fqn" : "edu.fudan.common.entity.TravelResult",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryForTravel(edu.fudan.common.entity.Travel,org.springframework.http.HttpHeaders)@43:31",
           "args" : [ ]
         }
@@ -2719,6 +2730,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryForTravels(java.util.List,org.springframework.http.HttpHeaders)@125:29",
           "args" : [ ]
         }
@@ -5127,6 +5139,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "TravelResult",
+            "fqn" : "edu.fudan.common.entity.TravelResult",
             "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryForTravels(java.util.List,org.springframework.http.HttpHeaders)@309:35",
             "args" : [ ]
           }
@@ -5326,6 +5339,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryPriceConfigByRouteIdAndTrainType(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@444:36",
           "args" : [ {
             "lit" : null,
@@ -5524,6 +5538,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryPriceConfigByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@459:36",
           "args" : [ {
             "name" : "routeIdsTypes",
@@ -5682,6 +5697,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "ObjectMapper",
+            "fqn" : "com.fasterxml.jackson.databind.ObjectMapper",
             "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryPriceConfigByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@473:35",
             "args" : [ ]
           }
@@ -5723,6 +5739,7 @@
                 } ]
               }, {
                 "new" : "TypeReference<Map<String,PriceConfig>>",
+                "fqn" : "com.fasterxml.jackson.core.type.TypeReference",
                 "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryPriceConfigByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@475:83",
                 "args" : [ ],
                 "anon" : "type:ts-basic-service:fdse.microservice.service.BasicServiceImpl$1"
@@ -5847,6 +5864,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryTrainTypeByName(java.lang.String,org.springframework.http.HttpHeaders)@391:36",
           "args" : [ {
             "lit" : null,
@@ -6002,6 +6020,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-basic-service:fdse.microservice.service.BasicServiceImpl#queryTrainTypeByNames(java.util.List,org.springframework.http.HttpHeaders)@374:36",
           "args" : [ {
             "name" : "trainTypeNames",

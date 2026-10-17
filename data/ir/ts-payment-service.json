@@ -179,6 +179,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
             "args" : [ ]
           }, {
@@ -214,6 +215,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-payment-service:com.trainticket.config.SecurityConfig$1"
@@ -230,6 +232,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-payment-service:com.trainticket.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -578,6 +581,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Payment",
+          "fqn" : "com.trainticket.entity.Payment",
           "call" : "call:method:ts-payment-service:com.trainticket.init.InitData#run(java.lang.String[])@27:27",
           "args" : [ ]
         }
@@ -683,6 +687,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Money",
+          "fqn" : "com.trainticket.entity.Money",
           "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@50:26",
           "args" : [ ]
         }
@@ -746,6 +751,7 @@
         "line" : 54,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#addMoney(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@54:16",
           "args" : [ {
             "lit" : 1,
@@ -934,6 +940,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "Payment",
+            "fqn" : "com.trainticket.entity.Payment",
             "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@36:31",
             "args" : [ ]
           }
@@ -1017,6 +1024,7 @@
           "line" : 41,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@41:20",
             "args" : [ {
               "lit" : 1,
@@ -1069,6 +1077,7 @@
           "line" : 44,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#pay(com.trainticket.entity.Payment,org.springframework.http.HttpHeaders)@44:20",
             "args" : [ {
               "lit" : 0,
@@ -1183,6 +1192,7 @@
           "line" : 62,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)@62:20",
             "args" : [ {
               "lit" : 1,
@@ -1222,6 +1232,7 @@
           "line" : 65,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-payment-service:com.trainticket.service.PaymentServiceImpl#query(org.springframework.http.HttpHeaders)@65:20",
             "args" : [ {
               "lit" : 0,

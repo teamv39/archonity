@@ -27,6 +27,7 @@
                   "callee" : "title",
                   "recv" : {
                     "new" : "ApiInfoBuilder",
+                    "fqn" : "springfox.documentation.builders.ApiInfoBuilder",
                     "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#apiInfo()@37:16",
                     "args" : [ ]
                   },
@@ -100,6 +101,7 @@
                   "callee" : "apiInfo",
                   "recv" : {
                     "new" : "Docket",
+                    "fqn" : "springfox.documentation.spring.web.plugins.Docket",
                     "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@29:16",
                     "args" : [ {
                       "field" : "SWAGGER_2",
@@ -160,6 +162,7 @@
         "operator" : "=",
         "expr" : {
           "call" : "call:method:ts-common:edu.fudan.common.entity.Account#<init>()@33:31",
+          "target" : "method:ts-common:edu.fudan.common.entity.Gender#getCode()",
           "callee" : "getCode",
           "recv" : {
             "enum" : "edu.fudan.common.entity.Gender",
@@ -208,6 +211,7 @@
         "operator" : "=",
         "expr" : {
           "call" : "call:method:ts-common:edu.fudan.common.entity.Account#<init>()@36:42",
+          "target" : "method:ts-common:edu.fudan.common.entity.DocumentType#getCode()",
           "callee" : "getCode",
           "recv" : {
             "enum" : "edu.fudan.common.entity.DocumentType",
@@ -1269,6 +1273,7 @@
           },
           "args" : [ {
             "new" : "Date",
+            "fqn" : "java.util.Date",
             "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@62:46",
             "args" : [ {
               "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@62:62",
@@ -1298,6 +1303,7 @@
           },
           "args" : [ {
             "new" : "Date",
+            "fqn" : "java.util.Date",
             "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@63:46",
             "args" : [ {
               "lit" : 123456789,
@@ -1339,6 +1345,7 @@
         "operator" : "=",
         "expr" : {
           "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@66:42",
+          "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
           "callee" : "getCode",
           "recv" : {
             "enum" : "edu.fudan.common.entity.SeatClass",
@@ -1399,6 +1406,7 @@
         "operator" : "=",
         "expr" : {
           "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@70:35",
+          "target" : "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()",
           "callee" : "getCode",
           "recv" : {
             "enum" : "edu.fudan.common.entity.OrderStatus",
@@ -1933,6 +1941,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Order",
+          "fqn" : "edu.fudan.common.entity.Order",
           "call" : "call:method:ts-common:edu.fudan.common.entity.OrderAlterInfo#<init>()@22:24",
           "args" : [ ]
         }
@@ -4691,6 +4700,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "UserDetails",
+            "fqn" : "org.springframework.security.core.userdetails.UserDetails",
             "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getJWTAuthentication(javax.servlet.ServletRequest)@38:39",
             "args" : [ ],
             "anon" : "type:ts-common:edu.fudan.common.security.jwt.JWTUtil$1"
@@ -4700,6 +4710,7 @@
           "line" : 75,
           "expr" : {
             "new" : "UsernamePasswordAuthenticationToken",
+            "fqn" : "org.springframework.security.authentication.UsernamePasswordAuthenticationToken",
             "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getJWTAuthentication(javax.servlet.ServletRequest)@75:20",
             "args" : [ {
               "name" : "userDetails",
@@ -4961,6 +4972,7 @@
               },
               "args" : [ {
                 "new" : "Date",
+                "fqn" : "java.util.Date",
                 "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@100:64",
                 "args" : [ ]
               } ]
@@ -4993,6 +5005,7 @@
             "line" : 103,
             "expr" : {
               "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
               "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@103:19",
               "args" : [ {
                 "lit" : "Token expired",
@@ -5026,6 +5039,7 @@
             "line" : 106,
             "expr" : {
               "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
               "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@106:19",
               "args" : [ {
                 "lit" : "Token format error",
@@ -5059,6 +5073,7 @@
             "line" : 109,
             "expr" : {
               "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
               "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@109:19",
               "args" : [ {
                 "lit" : "Token is not properly constructed",
@@ -5092,6 +5107,7 @@
             "line" : 112,
             "expr" : {
               "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
               "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@112:19",
               "args" : [ {
                 "lit" : "Signature failure",
@@ -5125,6 +5141,7 @@
             "line" : 115,
             "expr" : {
               "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
               "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@115:19",
               "args" : [ {
                 "lit" : "Illegal parameter exception",
@@ -5374,6 +5391,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "ObjectMapper",
+            "fqn" : "com.fasterxml.jackson.databind.ObjectMapper",
             "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#json2Object(java.lang.String,java.lang.Class)@61:41",
             "args" : [ ]
           }
@@ -5533,6 +5551,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "ObjectMapper",
+            "fqn" : "com.fasterxml.jackson.databind.ObjectMapper",
             "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#object2Json(java.lang.Object)@29:41",
             "args" : [ ]
           }
@@ -5670,6 +5689,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "SimpleDateFormat",
+          "fqn" : "java.text.SimpleDateFormat",
           "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#Date2String(java.util.Date)@32:37",
           "args" : [ {
             "lit" : "yyyy-MM-dd HH:mm:ss",
@@ -5740,6 +5760,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "SimpleDateFormat",
+            "fqn" : "java.text.SimpleDateFormat",
             "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)@18:25",
             "args" : [ {
               "lit" : "yyyy-MM-dd HH:mm:ss",
@@ -5757,6 +5778,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "SimpleDateFormat",
+            "fqn" : "java.text.SimpleDateFormat",
             "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)@20:25",
             "args" : [ {
               "lit" : "yyyy-MM-dd",
@@ -5806,6 +5828,7 @@
             "line" : 27,
             "expr" : {
               "new" : "Date",
+              "fqn" : "java.util.Date",
               "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)@27:20",
               "args" : [ {
                 "lit" : 0,

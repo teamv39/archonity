@@ -198,6 +198,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:34",
             "args" : [ ]
           }, {
@@ -233,6 +234,7 @@
         "line" : 49,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-user-service:user.config.SecurityConfig#corsConfigurer()@49:16",
           "args" : [ ],
           "anon" : "type:ts-user-service:user.config.SecurityConfig$1"
@@ -249,6 +251,7 @@
         "line" : 36,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-user-service:user.config.SecurityConfig#passwordEncoder()@36:16",
           "args" : [ ]
         }
@@ -1268,6 +1271,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<AuthDto>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@97:17",
             "args" : [ ],
             "anon" : "type:ts-user-service:user.service.impl.UserServiceImpl$1"
@@ -1405,6 +1409,7 @@
           "line" : 143,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@143:20",
             "args" : [ {
               "lit" : 1,
@@ -1444,6 +1449,7 @@
           "line" : 146,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@146:20",
             "args" : [ {
               "lit" : 0,
@@ -1714,6 +1720,7 @@
           "line" : 126,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserId(java.lang.String,?HttpHeaders)@126:20",
             "args" : [ {
               "lit" : 1,
@@ -1754,6 +1761,7 @@
         "line" : 129,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserId(java.lang.String,?HttpHeaders)@129:16",
           "args" : [ {
             "lit" : 0,
@@ -1820,6 +1828,7 @@
           "line" : 116,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserName(java.lang.String,?HttpHeaders)@116:20",
             "args" : [ {
               "lit" : 1,
@@ -1860,6 +1869,7 @@
         "line" : 119,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserName(java.lang.String,?HttpHeaders)@119:16",
           "args" : [ {
             "lit" : 0,
@@ -1935,6 +1945,7 @@
           "line" : 106,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#getAllUsers(?HttpHeaders)@106:20",
             "args" : [ {
               "lit" : 1,
@@ -1975,6 +1986,7 @@
         "line" : 109,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#getAllUsers(?HttpHeaders)@109:16",
           "args" : [ {
             "lit" : 0,
@@ -2363,6 +2375,7 @@
           "line" : 73,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@73:20",
             "args" : [ {
               "lit" : 1,
@@ -2407,6 +2420,7 @@
           "line" : 76,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@76:20",
             "args" : [ {
               "lit" : 0,
@@ -2651,6 +2665,7 @@
           "line" : 165,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@165:20",
             "args" : [ {
               "lit" : 1,
@@ -2695,6 +2710,7 @@
           "line" : 168,
           "expr" : {
             "new" : "Response",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@168:20",
             "args" : [ {
               "lit" : 0,

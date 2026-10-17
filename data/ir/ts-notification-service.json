@@ -213,6 +213,7 @@
         "line" : 14,
         "expr" : {
           "new" : "Queue",
+          "fqn" : "org.springframework.amqp.core.Queue",
           "call" : "call:method:ts-notification-service:notification.config.Queues#emailQueue()@14:16",
           "args" : [ {
             "const" : "notification.config.Queues.queueName",
@@ -346,6 +347,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-notification-service:notification.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:34",
             "args" : [ ]
           }, {
@@ -381,6 +383,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-notification-service:notification.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-notification-service:notification.config.SecurityConfig$1"
@@ -397,6 +400,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-notification-service:notification.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -650,6 +654,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "NotifyInfo",
+          "fqn" : "notification.entity.NotifyInfo",
           "call" : "call:method:ts-notification-service:notification.controller.NotificationController#test_send_mail()@41:33",
           "args" : [ ]
         }
@@ -951,6 +956,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Mail",
+          "fqn" : "notification.entity.Mail",
           "call" : "call:method:ts-notification-service:notification.mq.RabbitReceive#process(java.lang.String)@62:21",
           "args" : [ ]
         }
@@ -1015,6 +1021,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HashMap<>",
+          "fqn" : "java.util.HashMap",
           "call" : "call:method:ts-notification-service:notification.mq.RabbitReceive#process(java.lang.String)@67:37",
           "args" : [ ]
         }
@@ -1478,6 +1485,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "MimeMessageHelper",
+          "fqn" : "org.springframework.mail.javamail.MimeMessageHelper",
           "call" : "call:method:ts-notification-service:notification.service.MailService#sendEmail(notification.entity.Mail,java.lang.String)@33:36",
           "args" : [ {
             "name" : "message",
@@ -1673,6 +1681,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Mail",
+          "fqn" : "notification.entity.Mail",
           "call" : "call:method:ts-notification-service:notification.service.NotificationServiceImpl#orderCancelSuccess(notification.entity.NotifyInfo,org.springframework.http.HttpHeaders)@119:21",
           "args" : [ ]
         }
@@ -1737,6 +1746,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HashMap<>",
+          "fqn" : "java.util.HashMap",
           "call" : "call:method:ts-notification-service:notification.service.NotificationServiceImpl#orderCancelSuccess(notification.entity.NotifyInfo,org.springframework.http.HttpHeaders)@124:37",
           "args" : [ ]
         }
@@ -1892,6 +1902,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Mail",
+          "fqn" : "notification.entity.Mail",
           "call" : "call:method:ts-notification-service:notification.service.NotificationServiceImpl#orderChangedSuccess(notification.entity.NotifyInfo,org.springframework.http.HttpHeaders)@92:21",
           "args" : [ ]
         }
@@ -1956,6 +1967,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HashMap<>",
+          "fqn" : "java.util.HashMap",
           "call" : "call:method:ts-notification-service:notification.service.NotificationServiceImpl#orderChangedSuccess(notification.entity.NotifyInfo,org.springframework.http.HttpHeaders)@97:37",
           "args" : [ ]
         }
@@ -2249,6 +2261,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Mail",
+          "fqn" : "notification.entity.Mail",
           "call" : "call:method:ts-notification-service:notification.service.NotificationServiceImpl#orderCreateSuccess(notification.entity.NotifyInfo,org.springframework.http.HttpHeaders)@65:21",
           "args" : [ ]
         }
@@ -2313,6 +2326,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HashMap<>",
+          "fqn" : "java.util.HashMap",
           "call" : "call:method:ts-notification-service:notification.service.NotificationServiceImpl#orderCreateSuccess(notification.entity.NotifyInfo,org.springframework.http.HttpHeaders)@70:37",
           "args" : [ ]
         }
@@ -2606,6 +2620,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Mail",
+          "fqn" : "notification.entity.Mail",
           "call" : "call:method:ts-notification-service:notification.service.NotificationServiceImpl#preserveSuccess(notification.entity.NotifyInfo,org.springframework.http.HttpHeaders)@38:21",
           "args" : [ ]
         }
@@ -2670,6 +2685,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HashMap<>",
+          "fqn" : "java.util.HashMap",
           "call" : "call:method:ts-notification-service:notification.service.NotificationServiceImpl#preserveSuccess(notification.entity.NotifyInfo,org.springframework.http.HttpHeaders)@43:37",
           "args" : [ ]
         }

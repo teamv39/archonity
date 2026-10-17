@@ -239,6 +239,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@83:34",
             "args" : [ ]
           }, {
@@ -274,6 +275,7 @@
         "line" : 52,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-price-service:price.config.SecurityConfig#corsConfigurer()@52:16",
           "args" : [ ],
           "anon" : "type:ts-price-service:price.config.SecurityConfig$1"
@@ -290,6 +292,7 @@
         "line" : 39,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-price-service:price.config.SecurityConfig#passwordEncoder()@39:16",
           "args" : [ ]
         }
@@ -410,6 +413,7 @@
         "line" : 60,
         "expr" : {
           "new" : "ResponseEntity<>",
+          "fqn" : "org.springframework.http.ResponseEntity",
           "call" : "call:method:ts-price-service:price.controller.PriceController#create(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@60:16",
           "args" : [ {
             "call" : "call:method:ts-price-service:price.controller.PriceController#create(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@60:45",
@@ -789,6 +793,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "PriceConfig",
+          "fqn" : "price.entity.PriceConfig",
           "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@26:35",
           "args" : [ ]
         }
@@ -1940,6 +1945,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "PriceConfig",
+            "fqn" : "price.entity.PriceConfig",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@34:27",
             "args" : [ ]
           }
@@ -2116,6 +2122,7 @@
             "operator" : "=",
             "expr" : {
               "new" : "PriceConfig",
+              "fqn" : "price.entity.PriceConfig",
               "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@45:31",
               "args" : [ ]
             }
@@ -2259,6 +2266,7 @@
         "line" : 56,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@56:16",
           "args" : [ {
             "lit" : 1,
@@ -2347,6 +2355,7 @@
           "line" : 130,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)@130:20",
             "args" : [ {
               "lit" : 0,
@@ -2398,6 +2407,7 @@
           "line" : 134,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)@134:20",
             "args" : [ {
               "lit" : 1,
@@ -2511,6 +2521,7 @@
           "line" : 118,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findAllPriceConfig(org.springframework.http.HttpHeaders)@118:20",
             "args" : [ {
               "lit" : 1,
@@ -2529,6 +2540,7 @@
           "line" : 120,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findAllPriceConfig(org.springframework.http.HttpHeaders)@120:20",
             "args" : [ {
               "lit" : 0,
@@ -2752,6 +2764,7 @@
           "line" : 77,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdAndTrainType(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@77:20",
             "args" : [ {
               "lit" : 0,
@@ -2770,6 +2783,7 @@
           "line" : 79,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdAndTrainType(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@79:20",
             "args" : [ {
               "lit" : 1,
@@ -3076,6 +3090,7 @@
           "line" : 102,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@102:20",
             "args" : [ {
               "lit" : 0,
@@ -3094,6 +3109,7 @@
           "line" : 104,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@104:20",
             "args" : [ {
               "lit" : 1,
@@ -3193,6 +3209,7 @@
           "line" : 143,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@143:20",
             "args" : [ {
               "lit" : 0,
@@ -3344,6 +3361,7 @@
           "line" : 152,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@152:20",
             "args" : [ {
               "lit" : 1,

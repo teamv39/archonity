@@ -26,6 +26,7 @@ public class SkeletonGraph {
     private final Map<String, String> anonymousTypeByPos = new HashMap<>();
     private final Map<String, Set<String>> callSitesByMethod = new HashMap<>();
     private final List<MethodNode> methods = new ArrayList<>();
+    private final Set<String> callSitesWithEdges = new HashSet<>();
 
     public static SkeletonGraph load(Path gz) throws IOException {
         try (InputStream in = new GZIPInputStream(Files.newInputStream(gz))) {
@@ -60,6 +61,12 @@ public class SkeletonGraph {
                 default -> { }
             }
         }
+        for (JsonNode e : root.get("edges")) {
+            String src = e.path("source").asText();
+            if (src.startsWith("call:")) {
+                callSitesWithEdges.add(src);
+            }
+        }
     }
 
     static String pos(String file, int line, int col) {
@@ -92,6 +99,11 @@ public class SkeletonGraph {
             }
         }
         return found;
+    }
+
+    /** Есть ли у call_site исходящие рёбра (calls, runtime_dispatch, remote_call, data_access и т. п.). */
+    public boolean hasEdges(String callSite) {
+        return callSitesWithEdges.contains(callSite);
     }
 
     public List<MethodNode> methods() {

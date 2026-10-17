@@ -147,6 +147,7 @@
         "expr" : {
           "lambda" : {
             "line" : 89,
+            "col" : 51,
             "params" : [ "serverWebExchange", "throwable" ],
             "body" : [ {
               "op" : "assign",
@@ -303,6 +304,7 @@
                 "callee" : "setControlBehavior",
                 "recv" : {
                   "new" : "GatewayFlowRule",
+                  "fqn" : "com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule",
                   "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initGatewayRules()@112:19",
                   "args" : [ {
                     "lit" : "admin-basic-info",
@@ -355,6 +357,7 @@
         "line" : 57,
         "expr" : {
           "new" : "SentinelGatewayBlockExceptionHandler",
+          "fqn" : "com.alibaba.csp.sentinel.adapter.gateway.sc.exception.SentinelGatewayBlockExceptionHandler",
           "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#sentinelGatewayBlockExceptionHandler()@57:16",
           "args" : [ {
             "name" : "viewResolvers",
@@ -376,6 +379,7 @@
         "line" : 68,
         "expr" : {
           "new" : "SentinelGatewayFilter",
+          "fqn" : "com.alibaba.csp.sentinel.adapter.gateway.sc.SentinelGatewayFilter",
           "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#sentinelGatewayFilter()@68:16",
           "args" : [ ]
         }

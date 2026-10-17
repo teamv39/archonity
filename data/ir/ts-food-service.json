@@ -61,6 +61,7 @@
         "line" : 14,
         "expr" : {
           "new" : "Queue",
+          "fqn" : "org.springframework.amqp.core.Queue",
           "call" : "call:method:ts-food-service:foodsearch.config.Queues#emailQueue()@14:16",
           "args" : [ {
             "const" : "foodsearch.config.Queues.queueName",
@@ -260,6 +261,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-food-service:foodsearch.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:34",
             "args" : [ ]
           }, {
@@ -295,6 +297,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-food-service:foodsearch.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-food-service:foodsearch.config.SecurityConfig$1"
@@ -311,6 +314,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-food-service:foodsearch.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -750,6 +754,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Delivery",
+          "fqn" : "foodsearch.entity.Delivery",
           "call" : "call:method:ts-food-service:foodsearch.controller.FoodController#test_send_delivery()@39:29",
           "args" : [ ]
         }
@@ -1076,6 +1081,7 @@
           "line" : 119,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#createFoodOrder(foodsearch.entity.FoodOrder,org.springframework.http.HttpHeaders)@119:20",
             "args" : [ {
               "lit" : 0,
@@ -1099,6 +1105,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "FoodOrder",
+            "fqn" : "foodsearch.entity.FoodOrder",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#createFoodOrder(foodsearch.entity.FoodOrder,org.springframework.http.HttpHeaders)@121:18",
             "args" : [ ]
           }
@@ -1313,6 +1320,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "Delivery",
+            "fqn" : "foodsearch.entity.Delivery",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#createFoodOrder(foodsearch.entity.FoodOrder,org.springframework.http.HttpHeaders)@134:33",
             "args" : [ ]
           }
@@ -1498,6 +1506,7 @@
           "line" : 148,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#createFoodOrder(foodsearch.entity.FoodOrder,org.springframework.http.HttpHeaders)@148:20",
             "args" : [ {
               "lit" : 1,
@@ -1677,6 +1686,7 @@
           "line" : 72,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#createFoodOrdersInBatch(java.util.List,org.springframework.http.HttpHeaders)@72:20",
             "args" : [ {
               "lit" : 0,
@@ -1716,6 +1726,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "ArrayList<>",
+          "fqn" : "java.util.ArrayList",
           "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#createFoodOrdersInBatch(java.util.List,org.springframework.http.HttpHeaders)@75:38",
           "args" : [ ]
         }
@@ -1740,6 +1751,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "FoodOrder",
+            "fqn" : "foodsearch.entity.FoodOrder",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#createFoodOrdersInBatch(java.util.List,org.springframework.http.HttpHeaders)@77:28",
             "args" : [ ]
           }
@@ -1959,6 +1971,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "Delivery",
+            "fqn" : "foodsearch.entity.Delivery",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#createFoodOrdersInBatch(java.util.List,org.springframework.http.HttpHeaders)@90:33",
             "args" : [ ]
           }
@@ -2171,6 +2184,7 @@
         "line" : 110,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#createFoodOrdersInBatch(java.util.List,org.springframework.http.HttpHeaders)@110:16",
           "args" : [ {
             "lit" : 1,
@@ -2271,6 +2285,7 @@
           "line" : 158,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#deleteFoodOrder(java.lang.String,org.springframework.http.HttpHeaders)@158:20",
             "args" : [ {
               "lit" : 0,
@@ -2322,6 +2337,7 @@
           "line" : 163,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#deleteFoodOrder(java.lang.String,org.springframework.http.HttpHeaders)@163:20",
             "args" : [ {
               "lit" : 1,
@@ -2398,6 +2414,7 @@
           "line" : 171,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#findAllFoodOrder(org.springframework.http.HttpHeaders)@171:20",
             "args" : [ {
               "lit" : 1,
@@ -2437,6 +2454,7 @@
           "line" : 174,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#findAllFoodOrder(org.springframework.http.HttpHeaders)@174:20",
             "args" : [ {
               "lit" : 0,
@@ -2538,6 +2556,7 @@
           "line" : 204,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@204:20",
             "args" : [ {
               "lit" : 1,
@@ -2577,6 +2596,7 @@
           "line" : 207,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@207:20",
             "args" : [ {
               "lit" : 0,
@@ -2653,6 +2673,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "AllTripFood",
+          "fqn" : "foodsearch.entity.AllTripFood",
           "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@215:35",
           "args" : [ ]
         }
@@ -2719,6 +2740,7 @@
           "line" : 219,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@219:20",
             "args" : [ {
               "lit" : 0,
@@ -2757,6 +2779,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HashMap<>",
+          "fqn" : "java.util.HashMap",
           "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@224:64",
           "args" : [ ]
         }
@@ -2771,6 +2794,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@227:58",
           "args" : [ {
             "lit" : null,
@@ -2839,6 +2863,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<List<Food>>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@233:17",
             "args" : [ ],
             "anon" : "type:ts-food-service:foodsearch.service.FoodServiceImpl$1"
@@ -2942,6 +2967,7 @@
           "line" : 245,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@245:20",
             "args" : [ {
               "lit" : 0,
@@ -2966,6 +2992,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@249:50",
           "args" : [ {
             "lit" : null,
@@ -3037,6 +3064,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<Route>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@255:17",
             "args" : [ ],
             "anon" : "type:ts-food-service:foodsearch.service.FoodServiceImpl$2"
@@ -3374,6 +3402,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@284:60",
             "args" : [ {
               "name" : "stations",
@@ -3438,6 +3467,7 @@
               "ref" : "local"
             }, {
               "new" : "ParameterizedTypeReference<Response<List<StationFoodStore>>>",
+              "fqn" : "org.springframework.core.ParameterizedTypeReference",
               "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@290:21",
               "args" : [ ],
               "anon" : "type:ts-food-service:foodsearch.service.FoodServiceImpl$3"
@@ -3533,6 +3563,7 @@
                   "args" : [ {
                     "lambda" : {
                       "line" : 296,
+                      "col" : 37,
                       "params" : [ "stationFoodStore" ],
                       "body" : [ {
                         "op" : "return",
@@ -3617,6 +3648,7 @@
             "line" : 302,
             "expr" : {
               "new" : "Response<>",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@302:24",
               "args" : [ {
                 "lit" : 0,
@@ -3660,6 +3692,7 @@
           "line" : 306,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@306:20",
             "args" : [ {
               "lit" : 0,
@@ -3708,6 +3741,7 @@
         "line" : 310,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@310:16",
           "args" : [ {
             "lit" : 1,
@@ -3837,6 +3871,7 @@
           "line" : 184,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#updateFoodOrder(foodsearch.entity.FoodOrder,org.springframework.http.HttpHeaders)@184:20",
             "args" : [ {
               "lit" : 0,
@@ -4010,6 +4045,7 @@
           "line" : 195,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-food-service:foodsearch.service.FoodServiceImpl#updateFoodOrder(foodsearch.entity.FoodOrder,org.springframework.http.HttpHeaders)@195:20",
             "args" : [ {
               "lit" : 1,

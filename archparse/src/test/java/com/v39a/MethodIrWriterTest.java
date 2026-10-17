@@ -96,6 +96,31 @@ public class MethodIrWriterTest {
         assertFalse(paid.isEmpty());
         assertEquals("edu.fudan.common.entity.OrderStatus", paid.get(0).get("enum").asText());
         assertEquals(1, paid.get(0).at("/args/0/lit").asInt());
+
+        // У call_site getCode() на enum-константе нет рёбер скелета: цель даёт IR
+        List<JsonNode> getCode = find(m, n -> "getCode".equals(n.path("callee").asText())
+                && "PAID".equals(n.at("/recv/constant").asText()));
+        assertFalse(getCode.isEmpty());
+        assertEquals("method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()", getCode.get(0).get("target").asText());
+    }
+
+    @Test
+    public void testNewTypeFqnAndLambdaColumns() {
+        JsonNode m = method("ts-cancel-service", "CancelServiceImpl#cancelOrder(");
+        List<JsonNode> news = find(m, n -> n.has("new") && "NotifyInfo".equals(n.get("new").asText()));
+        assertFalse(news.isEmpty());
+        assertEquals("edu.fudan.common.entity.NotifyInfo", news.get(0).get("fqn").asText());
+
+        // Несколько лямбд на строке различаются колонкой
+        for (JsonNode doc : result.modules.values()) {
+            java.util.Set<String> seen = new java.util.HashSet<>();
+            for (var e : doc.get("methods").properties()) {
+                for (JsonNode l : find(e.getValue(), n -> n.has("lambda"))) {
+                    assertTrue(l.at("/lambda/col").asInt() > 0);
+                    assertTrue(seen.add(e.getKey() + "@" + l.at("/lambda/line").asInt() + ":" + l.at("/lambda/col").asInt()));
+                }
+            }
+        }
     }
 
     @Test

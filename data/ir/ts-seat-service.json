@@ -195,6 +195,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-seat-service:seat.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:34",
             "args" : [ ]
           }, {
@@ -230,6 +231,7 @@
         "line" : 49,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-seat-service:seat.config.SecurityConfig#corsConfigurer()@49:16",
           "args" : [ ],
           "anon" : "type:ts-seat-service:seat.config.SecurityConfig$1"
@@ -246,6 +248,7 @@
         "line" : 36,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-seat-service:seat.config.SecurityConfig#passwordEncoder()@36:16",
           "args" : [ ]
         }
@@ -633,6 +636,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@56:40",
             "args" : [ {
               "lit" : null,
@@ -649,6 +653,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@58:29",
             "args" : [ {
               "name" : "seatRequest",
@@ -712,6 +717,7 @@
               "ref" : "local"
             }, {
               "new" : "ParameterizedTypeReference<Response<LeftTicketInfo>>",
+              "fqn" : "org.springframework.core.ParameterizedTypeReference",
               "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@64:21",
               "args" : [ ],
               "anon" : "type:ts-seat-service:seat.service.SeatServiceImpl$1"
@@ -800,6 +806,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@71:40",
             "args" : [ {
               "name" : "seatRequest",
@@ -863,6 +870,7 @@
               "ref" : "local"
             }, {
               "new" : "ParameterizedTypeReference<Response<LeftTicketInfo>>",
+              "fqn" : "org.springframework.core.ParameterizedTypeReference",
               "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@77:21",
               "args" : [ ],
               "anon" : "type:ts-seat-service:seat.service.SeatServiceImpl$2"
@@ -987,6 +995,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Ticket",
+          "fqn" : "edu.fudan.common.entity.Ticket",
           "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@88:25",
           "args" : [ ]
         }
@@ -1036,6 +1045,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "Random",
+          "fqn" : "java.util.Random",
           "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@93:23",
           "args" : [ ]
         }
@@ -1223,6 +1233,7 @@
               "line" : 106,
               "expr" : {
                 "new" : "Response<>",
+                "fqn" : "edu.fudan.common.util.Response",
                 "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@106:28",
                 "args" : [ {
                   "lit" : 1,
@@ -1324,6 +1335,7 @@
         "line" : 115,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@115:16",
           "args" : [ {
             "lit" : 1,
@@ -1370,6 +1382,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#getDirectProportion(org.springframework.http.HttpHeaders)@208:36",
           "args" : [ {
             "lit" : null,
@@ -1438,6 +1451,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<Config>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#getDirectProportion(org.springframework.http.HttpHeaders)@214:17",
             "args" : [ ],
             "anon" : "type:ts-seat-service:seat.service.SeatServiceImpl$5"
@@ -1668,6 +1682,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@142:40",
             "args" : [ {
               "name" : "seatRequest",
@@ -1731,6 +1746,7 @@
               "ref" : "local"
             }, {
               "new" : "ParameterizedTypeReference<Response<LeftTicketInfo>>",
+              "fqn" : "org.springframework.core.ParameterizedTypeReference",
               "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@148:21",
               "args" : [ ],
               "anon" : "type:ts-seat-service:seat.service.SeatServiceImpl$3"
@@ -1812,6 +1828,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@156:40",
             "args" : [ {
               "lit" : null,
@@ -1828,6 +1845,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@158:29",
             "args" : [ {
               "name" : "seatRequest",
@@ -1891,6 +1909,7 @@
               "ref" : "local"
             }, {
               "new" : "ParameterizedTypeReference<Response<LeftTicketInfo>>",
+              "fqn" : "org.springframework.core.ParameterizedTypeReference",
               "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@164:21",
               "args" : [ ],
               "anon" : "type:ts-seat-service:seat.service.SeatServiceImpl$4"
@@ -2312,6 +2331,7 @@
         "line" : 202,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-seat-service:seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@202:16",
           "args" : [ {
             "lit" : 1,

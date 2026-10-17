@@ -179,6 +179,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-consign-service:consign.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
             "args" : [ ]
           }, {
@@ -214,6 +215,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-consign-service:consign.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-consign-service:consign.config.SecurityConfig$1"
@@ -230,6 +232,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-consign-service:consign.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -735,6 +738,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "ConsignRecord",
+          "fqn" : "consign.entity.ConsignRecord",
           "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)@50:39",
           "args" : [ ]
         }
@@ -998,6 +1002,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
           "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)@65:36",
           "args" : [ {
             "lit" : null,
@@ -1093,6 +1098,7 @@
             "ref" : "local"
           }, {
             "new" : "ParameterizedTypeReference<Response<Double>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
             "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)@71:17",
             "args" : [ ],
             "anon" : "type:ts-consign-service:consign.service.ConsignServiceImpl$1"
@@ -1195,6 +1201,7 @@
         "line" : 78,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)@78:16",
           "args" : [ {
             "lit" : 1,
@@ -1293,6 +1300,7 @@
           "line" : 122,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#queryByAccountId(java.util.UUID,org.springframework.http.HttpHeaders)@122:20",
             "args" : [ {
               "lit" : 1,
@@ -1329,6 +1337,7 @@
           "line" : 125,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#queryByAccountId(java.util.UUID,org.springframework.http.HttpHeaders)@125:20",
             "args" : [ {
               "lit" : 0,
@@ -1411,6 +1420,7 @@
           "line" : 144,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#queryByConsignee(java.lang.String,org.springframework.http.HttpHeaders)@144:20",
             "args" : [ {
               "lit" : 1,
@@ -1447,6 +1457,7 @@
           "line" : 147,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#queryByConsignee(java.lang.String,org.springframework.http.HttpHeaders)@147:20",
             "args" : [ {
               "lit" : 0,
@@ -1519,6 +1530,7 @@
           "line" : 133,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#queryByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@133:20",
             "args" : [ {
               "lit" : 1,
@@ -1555,6 +1567,7 @@
           "line" : 136,
           "expr" : {
             "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
             "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#queryByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@136:20",
             "args" : [ {
               "lit" : 0,
@@ -1857,6 +1870,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "HttpEntity<>",
+            "fqn" : "org.springframework.http.HttpEntity",
             "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#updateConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)@98:40",
             "args" : [ {
               "lit" : null,
@@ -1952,6 +1966,7 @@
               "ref" : "local"
             }, {
               "new" : "ParameterizedTypeReference<Response<Double>>",
+              "fqn" : "org.springframework.core.ParameterizedTypeReference",
               "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#updateConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)@104:21",
               "args" : [ ],
               "anon" : "type:ts-consign-service:consign.service.ConsignServiceImpl$2"
@@ -2084,6 +2099,7 @@
         "line" : 115,
         "expr" : {
           "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
           "call" : "call:method:ts-consign-service:consign.service.ConsignServiceImpl#updateConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)@115:16",
           "args" : [ {
             "lit" : 1,

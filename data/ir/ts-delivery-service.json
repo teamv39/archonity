@@ -61,6 +61,7 @@
         "line" : 14,
         "expr" : {
           "new" : "Queue",
+          "fqn" : "org.springframework.amqp.core.Queue",
           "call" : "call:method:ts-delivery-service:delivery.config.Queues#emailQueue()@14:16",
           "args" : [ {
             "const" : "delivery.config.Queues.queueName",

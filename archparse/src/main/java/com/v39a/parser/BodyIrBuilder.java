@@ -605,10 +605,18 @@ public class BodyIrBuilder {
     private JsonNode objectCreation(ObjectCreationExpr oce) {
         ObjectNode o = F.objectNode();
         o.put("new", oce.getType().asString());
+        String fqn = typeFqn(oce.getType().getNameWithScope());
+        if (fqn != null) {
+            o.put("fqn", fqn);
+        }
+        SkeletonGraph.MethodNode ctor = fqn == null ? null : skeleton.uniqueMethod(fqn, "<init>", oce.getArguments().size());
         String cs = skeleton.callSite(file, line(oce), AstAnalyzer.skeletonCol(oce));
         if (cs != null) {
             callSitesSeen.add(cs);
             o.put("call", cs);
+            if (ctor != null && !skeleton.hasEdges(cs)) {
+                o.put("target", ctor.id());
+            }
         }
         ArrayNode args = o.putArray("args");
         oce.getArguments().forEach(a -> args.add(expr(a)));
@@ -619,11 +627,36 @@ public class BodyIrBuilder {
         return o;
     }
 
+    /**
+     * Полное имя типа, как написан в `new`: тип проекта (вложенные через '$', как в скелете),
+     * иначе явный импорт, иначе уже полное имя; null — не определить (java.lang, импорт со звёздочкой).
+     */
+    private String typeFqn(String written) {
+        String simple = written.substring(written.lastIndexOf('.') + 1);
+        String project = this.project.resolveType(simple, cu, module);
+        if (project != null && (written.equals(simple) || project.replace('$', '.').equals(written))) {
+            return project;
+        }
+        if (written.contains(".")) {
+            return written;
+        }
+        for (var imp : cu.getImports()) {
+            if (!imp.isStatic() && !imp.isAsterisk() && imp.getNameAsString().endsWith("." + written)) {
+                return imp.getNameAsString();
+            }
+        }
+        return null;
+    }
+
     private void putCallId(ObjectNode o, String file, int line, int col, SkeletonGraph.MethodNode target) {
         String cs = skeleton.callSite(file, line, col);
         if (cs != null) {
             callSitesSeen.add(cs);
             o.put("call", cs);
+            // у call_site без рёбер скелета (вызовы на enum-константах) цель даёт IR
+            if (target != null && !skeleton.hasEdges(cs)) {
+                o.put("target", target.id());
+            }
         } else {
             irCalls++;
             o.put("call", "ircall:" + method.id() + "@" + line + ":" + col);
@@ -637,6 +670,7 @@ public class BodyIrBuilder {
         ObjectNode o = F.objectNode();
         ObjectNode inner = o.putObject("lambda");
         inner.put("line", line(le));
+        inner.put("col", AstAnalyzer.skeletonCol(le));
         ArrayNode ps = inner.putArray("params");
         Set<String> names = new HashSet<>();
         for (Parameter p : le.getParameters()) {

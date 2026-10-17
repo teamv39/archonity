@@ -239,6 +239,7 @@
           },
           "args" : [ {
             "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
             "call" : "call:method:ts-train-service:train.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:34",
             "args" : [ ]
           }, {
@@ -274,6 +275,7 @@
         "line" : 48,
         "expr" : {
           "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
           "call" : "call:method:ts-train-service:train.config.SecurityConfig#corsConfigurer()@48:16",
           "args" : [ ],
           "anon" : "type:ts-train-service:train.config.SecurityConfig$1"
@@ -290,6 +292,7 @@
         "line" : 35,
         "expr" : {
           "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
           "call" : "call:method:ts-train-service:train.config.SecurityConfig#passwordEncoder()@35:16",
           "args" : [ ]
         }
@@ -438,6 +441,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@39:23",
               "args" : [ {
                 "lit" : 1,
@@ -461,6 +465,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@41:23",
               "args" : [ {
                 "lit" : 0,
@@ -550,6 +555,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#delete(java.lang.String,org.springframework.http.HttpHeaders)@99:23",
               "args" : [ {
                 "lit" : 1,
@@ -573,6 +579,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#delete(java.lang.String,org.springframework.http.HttpHeaders)@101:23",
               "args" : [ {
                 "lit" : 0,
@@ -692,6 +699,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)@111:23",
               "args" : [ {
                 "lit" : 1,
@@ -715,6 +723,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)@113:23",
               "args" : [ {
                 "lit" : 0,
@@ -811,6 +820,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@51:23",
               "args" : [ {
                 "lit" : 0,
@@ -841,6 +851,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#retrieve(java.lang.String,org.springframework.http.HttpHeaders)@53:23",
               "args" : [ {
                 "lit" : 1,
@@ -937,6 +948,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@63:23",
               "args" : [ {
                 "lit" : 0,
@@ -967,6 +979,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.lang.String,org.springframework.http.HttpHeaders)@65:23",
               "args" : [ {
                 "lit" : 1,
@@ -1063,6 +1076,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.util.List,org.springframework.http.HttpHeaders)@75:23",
               "args" : [ {
                 "lit" : 0,
@@ -1093,6 +1107,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#retrieveByName(java.util.List,org.springframework.http.HttpHeaders)@77:23",
               "args" : [ {
                 "lit" : 1,
@@ -1187,6 +1202,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@87:23",
               "args" : [ {
                 "lit" : 1,
@@ -1210,6 +1226,7 @@
             "recv" : null,
             "args" : [ {
               "new" : "Response",
+              "fqn" : "edu.fudan.common.util.Response",
               "call" : "call:method:ts-train-service:train.controller.TrainController#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@89:23",
               "args" : [ {
                 "lit" : 0,
@@ -1385,6 +1402,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TrainType",
+          "fqn" : "train.entity.TrainType",
           "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@18:26",
           "args" : [ ]
         }
@@ -1482,6 +1500,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TrainType",
+          "fqn" : "train.entity.TrainType",
           "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@26:16",
           "args" : [ ]
         }
@@ -1579,6 +1598,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TrainType",
+          "fqn" : "train.entity.TrainType",
           "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@33:16",
           "args" : [ ]
         }
@@ -1676,6 +1696,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TrainType",
+          "fqn" : "train.entity.TrainType",
           "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@40:16",
           "args" : [ ]
         }
@@ -1773,6 +1794,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TrainType",
+          "fqn" : "train.entity.TrainType",
           "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@47:16",
           "args" : [ ]
         }
@@ -1870,6 +1892,7 @@
         "operator" : "=",
         "expr" : {
           "new" : "TrainType",
+          "fqn" : "train.entity.TrainType",
           "call" : "call:method:ts-train-service:train.init.InitData#run(java.lang.String[])@54:16",
           "args" : [ ]
         }
@@ -2067,6 +2090,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "TrainType",
+            "fqn" : "train.entity.TrainType",
             "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@30:30",
             "args" : [ {
               "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#create(train.entity.TrainType,org.springframework.http.HttpHeaders)@30:54",
@@ -2636,6 +2660,7 @@
           "operator" : "=",
           "expr" : {
             "new" : "TrainType",
+            "fqn" : "train.entity.TrainType",
             "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@78:30",
             "args" : [ {
               "call" : "call:method:ts-train-service:train.service.TrainServiceImpl#update(train.entity.TrainType,org.springframework.http.HttpHeaders)@78:54",
