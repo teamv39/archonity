@@ -264,3 +264,56 @@ def test_foreach_over_orders_is_empty_for_new_user_only():
     s1 = _profile_for("S1.json")
     assert not any(pool.evaluate_guard(mid, c.guard, s4) for c in loop_calls)
     assert all(pool.evaluate_guard(mid, c.guard, s1) for c in loop_calls)
+
+
+def test_evaluate_guard_high_speed_vs_regular_order_branches():
+    pool = MethodPoolIR.load()
+
+    p_hs = ScenarioProfile(
+        id="S0",
+        is_admin=False,
+        has_assurance=False,
+        has_food=False,
+        has_consign=False,
+        train_mode="high_speed_only",
+    )
+    p_reg = ScenarioProfile(
+        id="S2",
+        is_admin=False,
+        has_assurance=False,
+        has_food=False,
+        has_consign=False,
+        train_mode="regular_only",
+    )
+
+    cancel_mid = "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+    # b49: G/D orderResult
+    assert pool.evaluate_guard(cancel_mid, ("b49:then",), p_hs) is True
+    assert pool.evaluate_guard(cancel_mid, ("b49:then",), p_reg) is False
+    assert pool.evaluate_guard(cancel_mid, ("b49:else",), p_reg) is True
+
+    # b105: Regular orderOtherResult
+    assert pool.evaluate_guard(cancel_mid, ("b105:then",), p_reg) is True
+    assert pool.evaluate_guard(cancel_mid, ("b105:then",), p_hs) is False
+
+    # b65 in CancelServiceImpl is drawbackMoney status check, NOT execute b65!
+    assert pool.evaluate_guard(cancel_mid, ("b65:then",), p_hs) is True
+
+    execute_mid = "method:ts-execute-service:execute.serivce.ExecuteServiceImpl#ticketCollect(java.lang.String,org.springframework.http.HttpHeaders)"
+    # b95: G/D order check
+    assert pool.evaluate_guard(execute_mid, ("b95:then",), p_hs) is True
+    assert pool.evaluate_guard(execute_mid, ("b95:then",), p_reg) is False
+
+    # b113: Regular order check
+    assert pool.evaluate_guard(execute_mid, ("b95:else", "b113:then"), p_reg) is True
+    assert pool.evaluate_guard(execute_mid, ("b95:else", "b113:then"), p_hs) is False
+
+
+def test_evaluate_guard_consign_is_present():
+    pool = MethodPoolIR.load()
+    consign_mid = "method:ts-consign-service:consign.service.ConsignServiceImpl#updateConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)"
+    profile = ScenarioProfile(id="S7", is_admin=False, has_assurance=False, has_food=False, has_consign=True, train_mode="high_speed_only")
+    # b85: !repository.findById(consignRequest.getId()).isPresent() -> then (fallback insert) should be False
+    assert pool.evaluate_guard(consign_mid, ("b85:then",), profile) is False
+    assert pool.evaluate_guard(consign_mid, ("b85:else",), profile) is True
+

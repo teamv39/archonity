@@ -302,8 +302,22 @@ class MethodPoolIR:
             cond = branch.condition_text
 
             # 1. CancelServiceImpl / ExecuteServiceImpl: поезд G/D vs Regular
-            # orderResult.getStatus() == 1  или  resultFromOrder.getStatus() == 1
-            if 'getStatus() == 1' in cond and ('orderResult' in cond or 'resultFromOrder' in cond):
+            # Regular ветка:
+            # - в ts-cancel: b105, b178 (orderOtherResult.getStatus() == 1)
+            # - в ts-execute: b65, b113 (resultFromOrder.getStatus() == 1 на втором вызове)
+            if 'orderOtherResult' in cond or ("ExecuteServiceImpl" in method_id and bid in ("b65", "b113")):
+                if profile.train_mode == "regular_only":
+                    val = True
+                elif profile.train_mode == "high_speed_only":
+                    val = False
+                else:
+                    val = True
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+            # High-speed ветка:
+            # - в ts-cancel: b49, b160 (orderResult.getStatus() == 1)
+            # - в ts-execute: b47, b95 (resultFromOrder.getStatus() == 1 на первом вызове)
+            elif 'getStatus() == 1' in cond and ('orderResult' in cond or ("ExecuteServiceImpl" in method_id and bid in ("b47", "b95"))):
                 if profile.train_mode == "regular_only":
                     # Для regular-поездов заказ в ts-order-service не найден (status != 1)
                     val = False
@@ -403,5 +417,34 @@ class MethodPoolIR:
                 val = getattr(profile, "is_new_user", False)
                 if (arm == "then" and not val) or (arm == "else" and val):
                     return False
+
+            # 12. ConsignServiceImpl#updateConsignRecord: при обновлении запись уже существует
+            # !repository.findById(consignRequest.getId()).isPresent()
+            if 'consignRequest.getId()).isPresent()' in cond or ('findById' in cond and 'isPresent' in cond):
+                val = False  # Консигнация существует, поэтому !isPresent == False
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
+            # 13. RebookServiceImpl#rebook: разница в цене при перебронировании (S2)
+            # priceOld.compareTo(priceNew) > 0
+            if 'priceOld.compareTo(priceNew) > 0' in cond:
+                val = True  # В S2 билет дешевле (second class), разница возвращается
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
+            # 14. OrderServiceImpl#queryOrders / OrderOtherServiceImpl#queryOrders: фильтрация заказов (b131, b148)
+            # qi.isEnableStateQuery() || qi.isEnableBoughtDateQuery() || qi.isEnableTravelDateQuery()
+            if 'isEnableStateQuery()' in cond and 'isEnableBoughtDateQuery()' in cond:
+                val = getattr(profile, "has_order_filter", False)
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
+            # 15. OrderServiceImpl#queryOrders / OrderOtherServiceImpl#queryOrders: фильтрация по статусу (b138, b155)
+            # qi.isEnableStateQuery()
+            if cond.strip() == 'qi.isEnableStateQuery()':
+                val = getattr(profile, "has_status_filter", False)
+                if (arm == "then" and not val) or (arm == "else" and val):
+                    return False
+
 
         return True
