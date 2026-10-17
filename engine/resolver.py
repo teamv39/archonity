@@ -337,6 +337,28 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
         )
 
+    # 5.1 Проверка цены заказа (Check the price of the order)
+    if re.search(r"\bcheck\b.*?\bprice\b", t):
+        if getattr(profile, "train_mode", "both") == "regular_only":
+            intent_eps.add(
+                "method:ts-order-other-service:other.controller.OrderOtherController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)"
+            )
+        else:
+            intent_eps.add(
+                "method:ts-order-service:order.controller.OrderController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)"
+            )
+
+    # 5.2 Просмотр деталей заказа (Open the order)
+    if re.search(r"\bopen\s+(?:the\s+)?(?:first\s+|second\s+)?(?:new\s+)?order\b", t):
+        if getattr(profile, "train_mode", "both") == "regular_only":
+            intent_eps.add(
+                "method:ts-order-other-service:other.controller.OrderOtherController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)"
+            )
+        else:
+            intent_eps.add(
+                "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)"
+            )
+
     # 6. Оплата заказа (в веб-интерфейсе точка входа всегда InsidePaymentController#pay; при пустом балансе он сам обращается к PaymentController через remote_call)
     if re.search(r"\bpay\s+for\b.*?\border\b", t) or re.search(r"\bpay\b", t):
         intent_eps.add(
@@ -490,14 +512,6 @@ class ScenarioGrounder:
         """Резолвинг одного шага сценария в точки входа и контекст связанных файлов."""
         prev = set(prev_files) if prev_files else set()
         act = st.get("action") or ""
-
-        # Пропуск клиентских UI-шагов без обращения к бэкенду (просмотр строк таблицы заказов и цен в кэше UI)
-        if re.search(
-            r"^\s*(?:open\s+(?:the\s+)?(?:first\s+|second\s+)?(?:new\s+)?order|check\s+(?:the\s+)?price\s+of\s+(?:the\s+)?order)\s*$",
-            act,
-            re.IGNORECASE,
-        ):
-            return set(), prev
 
         # Принцип Guarantees-first: если шаг имеет детерминированные точки входа по явному намерению,
         # используем их и пропускаем BM25 для предотвращения ложноположительных срабатываний.
