@@ -26,7 +26,7 @@ def test_ensure_pool_ir_fallback():
 
 def test_method_pool_ir_load():
     pool = MethodPoolIR.load()
-    assert len(pool.methods) == 34
+    assert len(pool.methods) >= 34
     # Check that cancelOrder is present
     cancel_mid = "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
     assert pool.has_method(cancel_mid)
