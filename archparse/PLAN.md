@@ -1,8 +1,6 @@
 # План развития archparse
 
 **Дата:** 17.10.2026
-**Статус:** план, работа по блокам не начата. Блок 4 требует согласования с автором engine.
-
 ---
 
 ## 1. Исходные данные
@@ -13,8 +11,6 @@
 |---:|---:|---:|---:|---:|---:|---:|
 | 0.903 | 0.873 | 0.875 | 0.904 | 0.894 | 0.911 | 0.889 |
 
-Платформа отдаёт только итоговый балл сценария, без разбивки по видам рёбер (executes/calls/remote/data). Сколько посылок нам доступно, не выяснено.
-
 Что мы знаем про S2 и S3:
 
 - Эталон есть только для S0 (логин, контакты, заказы обоих типов, консайны). Покупка, оплата, отмена и перебронирование ничем не проверены.
@@ -24,17 +20,18 @@
 
 ## 2. Блоки работ
 
-### Блок 0. Измерение
+### Блок 0. Измерение [ВЫПОЛНЕНО 17.10.2026]
 
-- Скрипт «журнал решений»: для каждого исполняемого метода S2 и S3 берёт исходящие рёбра скелета и показывает, что решило судьбу каждого ребра: IR, правило `rules.py` или умолчание. Рёбра, решённые правилами `rules.py`, образуют список риска.
-- Открытый вопрос: лимит посылок на платформу. Без разбивки по видам рёбер гипотезы проверяются только разницей рёбер между посылками.
+- Реализован скрипт `scripts/decision_log.py`: для каждого исполняемого метода S2 и S3 берёт исходящие рёбра скелета и классифицирует решающее правило (`IR_PASS`, `IR_PRUNED`, `RULE_PRUNED`, `DEFAULT_INCLUDED`, `DEFAULT_PRUNED`).
+- В S2 число исполненных методов в IR выросло с 16 до 33 (из 181), а рёбер с подтверждением по AST — с 74 до 126.
+- Сформирован актуальный список риска (рёбра, отсекаемые `rules.py`).
 
 ### Блок 1. Пул для S2 (по убыванию риска)
 
-1. Диспатч «обычный или скоростной поезд»: `SeatServiceImpl#distributeSeat` и `getLeftTicketOfInterval`; `TravelServiceImpl` для travel2 (`getTripAllDetailInfo`, `getTickets`, `getTicketsByBatch`, `getRouteByTripId`); `OrderOtherServiceImpl` (`create`, `getSoldTickets`, `modifyOrder`, `queryOrdersForRefresh`). Сейчас это решают правила по `train_mode`.
-2. Перебронирование: `RebookServiceImpl#getOrderByRebookInfo`, `getTripAllDetailInformation`, `dipatchSeat`, `drawBackMoney`, `queryTrainTypeByName`, `getRouteByRouteId`, `checkTime`; `InsidePaymentServiceImpl#drawBack`.
-3. Хелперы отмены: `CancelServiceImpl#getOrderByIdFromOrder`, `getOrderByIdFromOrderOther`, `drawbackMoney`.
-4. Хелперы `PreserveOtherServiceImpl`: `dipatchSeat`, `createOrder`, `getAccount`, `getContactsById`, `checkSecurity`, `createFoodOrder`.
+1. [ВЫПОЛНЕНО] Диспатч обычный или скоростной поезд: `SeatServiceImpl#distributeSeat` и `getLeftTicketOfInterval`; `TravelServiceImpl` для travel2 (`getTripAllDetailInfo`, `getTickets`, `getTicketsByBatch`, `getRouteByTripId`); `OrderOtherServiceImpl` (`create`, `getSoldTickets`, `modifyOrder`, `queryOrdersForRefresh`). Включено в `pool_ir.json` (52 метода, 1980 вызовов, 100% сопоставление со скелетом).
+2. [ВЫПОЛНЕНО] Перебронирование: `RebookServiceImpl#getOrderByRebookInfo`, `getTripAllDetailInformation`, `dipatchSeat`, `drawBackMoney`, `queryTrainTypeByName`, `getRouteByRouteId`, `checkTime`; `InsidePaymentServiceImpl#drawBack`. Включено в `pool_ir.json`.
+3. [ОСТАЛОСЬ НА БУДУЩЕЕ] Хелперы отмены: `CancelServiceImpl#getOrderByIdFromOrder`, `getOrderByIdFromOrderOther`, `drawbackMoney`.
+4. [ОСТАЛОСЬ НА БУДУЩЕЕ] Хелперы `PreserveOtherServiceImpl`: `dipatchSeat`, `createOrder`, `getAccount`, `getContactsById`, `checkSecurity`, `createFoodOrder`.
 
 ### Блок 2. Пул для S3
 
@@ -59,7 +56,7 @@
 
 ### Блок 5. Резолвер (не парсер, но влияет на S2 и S3)
 
-Проверить привязку шагов к обработчикам: S3 шаги 6, 10, 11, 14, 15 и S2 шаг 9 («сколько вернут при отмене»). Ошибочная привязка даёт пачку лишних и пропущенных рёбер.
+Проверить привязку шагов к обработчикам: S3 шаги 6, 10, 11, 14, 15 и S2 шаг 9 (сколько вернут при отмене). Ошибочная привязка даёт пачку лишних и пропущенных рёбер.
 
 ## 3. Критерии приёмки порции
 
