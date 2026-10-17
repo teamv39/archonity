@@ -76,6 +76,7 @@ def pack() -> Path:
         _add_dir_to_zip(z, "code/engine")
         _add_dir_to_zip(z, "code/engine/adapters")
         _add_dir_to_zip(z, "code/engine/graph")
+        _add_dir_to_zip(z, "code/engine/grounding")
         _add_dir_to_zip(z, "code/data")
 
         # 5. Исходный код решения
@@ -99,6 +100,21 @@ def pack() -> Path:
                 if fp.is_file():
                     _add_file_to_zip(z, fp, f"code/data/{fname}", normalize_lf=True)
 
+        # Кеши M1 (ответы LLM и векторы эмбеддера): прогон --grounder m1 без GPU (ADR-005, «Кеш LLM»)
+        _add_dir_to_zip(z, "code/cache")
+        _add_dir_to_zip(z, "code/cache/emb")
+        for cache_dir in (ROOT / "cache" / "llm", ROOT / "cache" / "emb" / "qwen3-4b"):
+            if cache_dir.is_dir():
+                _add_dir_to_zip(z, f"code/{cache_dir.relative_to(ROOT).as_posix()}")
+                for full_p in sorted(cache_dir.iterdir()):
+                    if full_p.is_file():
+                        _add_file_to_zip(
+                            z,
+                            full_p,
+                            f"code/{full_p.relative_to(ROOT).as_posix()}",
+                            normalize_lf=full_p.suffix in (".json", ".txt", ".md"),
+                        )
+
     file_count = len(zipfile.ZipFile(ZIP_OUT).infolist())
     size_kb = ZIP_OUT.stat().st_size / 1024
     print(f"Архив успешно создан: {ZIP_OUT}")
@@ -108,3 +124,4 @@ def pack() -> Path:
 
 if __name__ == "__main__":
     pack()
+

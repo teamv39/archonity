@@ -1,0 +1,9 @@
+{
+ "name": "gemma2",
+ "repo": "google/embeddinggemma-2",
+ "revision": "914f7f89142e33e77833254d9c9b90c3cef7303b",
+ "query_fmt": "task: code retrieval | query: {q}",
+ "doc_fmt": "title: {title} | text: {text}",
+ "fmt_version": 1,
+ "dtype": "bfloat16"
+}

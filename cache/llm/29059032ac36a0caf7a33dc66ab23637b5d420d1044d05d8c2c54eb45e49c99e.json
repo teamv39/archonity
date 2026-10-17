@@ -1,0 +1,108 @@
+{
+ "key": "sha256:29059032ac36a0caf7a33dc66ab23637b5d420d1044d05d8c2c54eb45e49c99e",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "m1-v7",
+ "kind": "params",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You map steps of a user scenario in the Train Ticket web application to backend REST requests.\nTrain Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.\n\nRules:\n- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.\n- Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.\n- When a UI variant is sent only under a condition, check the condition against the scenario.\n- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.\n- Administrator steps (admin console) use admin services; passenger steps do not.\n- A step that the system refuses still sends its request: pick the handler that refuses it.\n\nEnum codes used in request fields:\n- AssuranceType: TRAFFIC_ACCIDENT=1 (Traffic Accident Assurance, 3.0)\n- DocumentType: NONE=0 (Null), ID_CARD=1 (ID Card), PASSPORT=2 (Passport), OTHER=3 (Other)\n- Gender: NONE=0 (Null), MALE=1 (Male), FEMALE=2 (Female), OTHER=3 (Other)\n- MoneyType: A=Add Money (1), D=Draw Back Money (2)\n- OrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CHANGE=3 (Cancel & Rebook), CANCEL=4 (Cancel), REFUNDS=5 (Refunded), USED=6 (Used)\n- PaymentType: P=Payment (1), D=Difference (2), O=Outside Payment (3), E=Difference & Outside Payment (4)\n- SeatClass: NONE=0 (NoSeat), BUSINESS=1 (GreenSeat), FIRSTCLASS=2 (FirstClassSeat), SECONDCLASS=3 (SecondClassSeat), HARDSEAT=4 (HardSeat), SOFTSEAT=5 (SoftSeat), HARDBED=6 (HardBed), SOFTBED=7 (SoftBed), HIGHSOFTBED=8 (HighSoftSeat)\n- Type: G=G (1), D=D (2), Z=Z (3), T=T (4), K=K (5)\n- WaitListOrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CANCEL=3 (Cancel), REFUNDS=4 (Refunded), EXPIRED=5 (Expired)\n"
+  },
+  {
+   "role": "user",
+   "content": "Scenario S3: Family trip on a high-speed train: two passengers, a new contact, station food, assurance and a small consignment; paying for both orders\nDescription: A registered passenger logs in and searches for high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026, opens the details of the first trip found and browses the food stores at Suzhou station. They open their contact book, take the first contact and also add a new contact (a companion with an ID card). They book a first-class seat on that trip for the first contact with food from a station store, assurance (insurance) of the first type and a luggage consignment of only 0.5 kg to a consignee; then they book a second-class seat on the same trip for the new contact — without food, assurance or consignment. They refresh the list of orders, open both new orders and pay for both from the internal account balance. Finally they check what a 0.5 kg consignment within the region costs and look at the list of assurance types.\nSteps:\n1. Log in with username and password\n2. Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026\n3. Open the details of the first trip found\n4. Browse the food stores at Suzhou station\n5. Open the contact book and take the first contact\n6. Add a new contact (a companion with an ID card) to the contact book\n7. Book a first-class seat on the trip for the first contact, with food from a station store, assurance (insurance) of the first type and a luggage consignment of 0.5 kg to a consignee\n8. Book a second-class seat on the same trip for the new contact, without food, assurance or consignment\n9. Refresh the list of orders\n10. Open the first new order\n11. Open the second new order\n12. Pay for the first order from the internal account balance\n13. Pay for the second order from the internal account balance\n14. Check what a 0.5 kg consignment within the region costs\n15. Look at the list of assurance types\n\nRequests of earlier steps:\nstep 1: POST /api/v1/users/login -> UserController#getToken [ts-auth-service] (success)\nstep 2: POST /api/v1/travelservice/trips/left -> TravelController#queryInfo [ts-travel-service] (success)\nstep 3: POST /api/v1/travelservice/trip_detail -> TravelController#getTripAllDetailInfo [ts-travel-service] (success)\nstep 4: GET /api/v1/stationfoodservice/stationfoodstores/{stationId} -> StationFoodController#getFoodStoresOfStation [ts-station-food-service] (success)\nstep 5: GET /api/v1/contactservice/contacts/account/{accountId} -> ContactsController#findContactsByAccountId [ts-contacts-service] (success)\nstep 6: POST /api/v1/contactservice/contacts -> ContactsController#createNewContacts [ts-contacts-service] (success)\nstep 7: POST /api/v1/preserveservice/preserve -> PreserveController#preserve [ts-preserve-service] (success)\nstep 8: POST /api/v1/preserveservice/preserve -> PreserveController#preserve [ts-preserve-service] (success)\n\nCurrent step 9: Refresh the list of orders\nChosen request: POST /api/v1/orderservice/order/refresh -> OrderController#queryOrdersForRefresh(OrderInfo qi)\n\nRequest fields (Java type):\n  loginId (body): String\n  travelDateStart (body): String\n  travelDateEnd (body): String\n  boughtDateStart (body): String\n  boughtDateEnd (body): String\n  state (body): int\n  enableTravelDateQuery (body): boolean\n  enableBoughtDateQuery (body): boolean\n  enableStateQuery (body): boolean\nValues the web UI always sends: enableStateQuery=False, enableTravelDateQuery=False, enableBoughtDateQuery=False, travelDateStart=None, travelDateEnd=None, boughtDateStart=None, boughtDateEnd=None\n\nFill only the fields whose value follows from the step text or the scenario description: seat class, food, assurance, consignment weight and consignee, query filters and date ranges, names, numbers and dates of new entities. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "loginId": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "travelDateStart": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "travelDateEnd": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "boughtDateStart": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "boughtDateEnd": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "state": {
+    "type": [
+     "integer",
+     "null"
+    ]
+   },
+   "enableTravelDateQuery": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   },
+   "enableBoughtDateQuery": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   },
+   "enableStateQuery": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   }
+  },
+  "required": [
+   "loginId",
+   "travelDateStart",
+   "travelDateEnd",
+   "boughtDateStart",
+   "boughtDateEnd",
+   "state",
+   "enableTravelDateQuery",
+   "enableBoughtDateQuery",
+   "enableStateQuery"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "loginId": null,
+  "travelDateStart": null,
+  "travelDateEnd": null,
+  "boughtDateStart": null,
+  "boughtDateEnd": null,
+  "state": 0,
+  "enableTravelDateQuery": false,
+  "enableBoughtDateQuery": false,
+  "enableStateQuery": false
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 87,
+  "prompt_tokens": 1706,
+  "total_tokens": 1793,
+  "prompt_tokens_details": {
+   "cached_tokens": 1027
+  }
+ },
+ "seconds": 2.13
+}
