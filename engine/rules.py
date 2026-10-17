@@ -545,7 +545,7 @@ class RuntimeRules:
                     if target_svc in ("ts-preserve-other-service", "ts-travel2-service"):
                         return True
                     if target_svc == "ts-order-other-service":
-                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source):
+                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source or "getAllOrders" in source):
                             return True
                 elif profile.train_mode == "regular_only":
                     if target_svc == "ts-preserve-service":
