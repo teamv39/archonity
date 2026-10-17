@@ -98,9 +98,9 @@ call:method:ts-inside-payment-service:inside_payment.service.InsidePaymentServic
 
 ### R7. Конструктор сущности при загрузке из БД
 
-Статус: S0.
+Статус: S0 для `Order`; обобщение на остальные сущности — Гипотеза (17.10.2026).
 
-Явный конструктор сущности исполняется, когда Hibernate материализует строки результата, вместе со своими вызовами:
+Явный конструктор без аргументов исполняется, когда Hibernate создаёт экземпляр сущности, вместе со своими вызовами:
 
 ```text
 executes: ts-order-service:order.entity.Order#<init>()
@@ -113,6 +113,18 @@ calls:    Order#<init>() -> edu.fudan.common.entity.SeatClass#getCode()
 - Ребра `queryOrders → Order#<init>()` нет: конструктор вызывает Hibernate.
 - Вызовы через enum-константу (`OrderStatus.PAID.getCode()`) в скелете отсутствуют — у call_site нет `receiver_type` и рёбер. Их должен разрешать наш парсер (M2).
 - Аналогично при создании нового заказа (`new Order()`) в коде сервисов `ts-preserve-service`, `ts-preserve-other-service` и `ts-rebook-service` конструктор `ts-common:edu.fudan.common.entity.Order#<init>()` выполняет те же вызовы `Date2String`, `OrderStatus#getCode()` и `SeatClass#getCode()`.
+
+Пустой конструктор в эталон не попадает: `Contacts#<init>()` (тело — только комментарий) в S0 отсутствует, хотя контакты пользователя в S0 загружаются (5 строк в дампе). Обобщение, которое сходится с обоими случаями: конструктор при загрузке идёт в `executes`, если в его теле есть хотя бы один оператор. Так попадают `Route`, `Station`, `Trip`, `Config`, `PriceConfig`, `StationFoodStore`, `TrainFood`, `Money`, `user.entity.User`, `Assurance`.
+
+Когда Hibernate создаёт экземпляр (факты archparse, `data/entity_ir.json`; решение — `engine/entities.py`):
+
+- чтение (`find*`, своё `@Query`), если запрос вернул строки. Строки пользователя (таблица с `account_id`/`user_id`, не ключом) — по модели состояния и дампу; справочники — непустой дамп;
+- чтение, после которого успешный путь ждёт пустой результат (проверка «уже существует» перед созданием: `AssuranceServiceImpl#create`, `UserServiceImpl#saveUser`), конструктор не вызывает;
+- `delete*`: Spring Data сначала загружает строку;
+- `save` сущности с заданным id: Spring Data делает `merge`, Hibernate загружает строку и создаёт управляемую копию конструктором. Без id — `persist`, конструктор не вызывается;
+- `exists*`, `count*`, `@Modifying @Query` экземпляров не создают.
+
+Встраиваемые поля (`@Embedded TripId` у `Trip`) создаются вместе с сущностью по тому же правилу непустого тела. Элементы `@ElementCollection` (`Food`) не учитываются: коллекции ленивые. Отключить правило можно, передав в `ArchonityPipeline` несуществующий `entity_ir_path`.
 
 ### R8. Отражение Jackson не учитывается
 

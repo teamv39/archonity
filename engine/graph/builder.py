@@ -15,8 +15,9 @@ from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex
 from engine.decisions import DecisionLedger, rules_return_line
+from engine.entities import hydration
 from engine.rules import RuntimeRules, ScenarioProfile
-from engine.state import ScenarioState, TrainType
+from engine.state import ScenarioState
 
 
 class GraphBuilder:
@@ -214,6 +215,11 @@ class GraphBuilder:
                 if ledger:
                     ledger.include("data", m, t, source_type, rule)
 
+            # 4. Конструкторы сущностей при загрузке строк Hibernate (R7, факты archparse)
+            for ctor, rule, via in self._hydrated_constructors(m, edges_data, profile, scenario_state):
+                reached_via.setdefault(ctor, ("STATE", rule, via))
+                stack.append((ctor, u))
+
         active_methods = {m for m, _ in seen_methods}
         if ledger:
             for m in sorted(active_methods):
@@ -231,6 +237,42 @@ class GraphBuilder:
         )
 
         return active_methods, edges_calls, edges_remote, edges_data
+
+    def _hydrated_constructors(
+        self,
+        m: str,
+        edges_data: set[tuple[str, str]],
+        profile: ScenarioProfile | None,
+        scenario_state: ScenarioState | None,
+    ) -> list[tuple[str, str, str]]:
+        """Конструкторы сущностей, которые Hibernate вызвал на вызовах репозитория в методе m.
+
+        Вызов репозитория считается исполненным, если в ответ вошло ребро data к одной из его таблиц
+        и его guard из IR (если метод в пуле) активен. Ребра calls к конструктору нет: его вызывает Hibernate.
+        Возвращает [(конструктор, правило, ребро data, через которое он исполнился)].
+        """
+        entities = getattr(self.index, "entities", None)
+        if entities is None:
+            return []
+        out: list[tuple[str, str, str]] = []
+        for call in entities.calls_by_method.get(m, ()):
+            table = next((t for t in sorted(call.tables) if (m, t) in edges_data), None)
+            if table is None:
+                continue
+            c_ir = self.index.pool_ir.calls_by_mid_line_col.get((m, call.line, call.col))
+            if c_ir is not None and c_ir.guard:
+                active, _ = self._eval_guards(m, [c_ir.guard], profile, scenario_state)
+                if not active:
+                    continue
+            is_new_user = bool(getattr(scenario_state, "is_new_user", False) or getattr(profile, "is_new_user", False))
+            decision = hydration(call, scenario_state, self.index.table_resource_to_db, is_new_user)
+            via = f"data|{m}|{call.main_table or table}"
+            if decision.ctors:
+                out.extend((ctor, decision.rule, via) for ctor in decision.ctors)
+            elif self._ledger and call.entity and call.entity.no_arg_ctor and call.entity.ctor_statements > 0:
+                self._ledger.prune("executes", f"scenario:{self._ledger.scenario_id}", call.entity.no_arg_ctor,
+                                   "STATE", decision.rule, via=via, line=call.line, col=call.col)
+        return out
 
     def _eval_guards(
         self,
@@ -333,62 +375,12 @@ class GraphBuilder:
             if jwt_prov in self.index.N and user_name in self.index.N:
                 self._add_edge(edges_calls, "calls", jwt_prov, user_name, "FRAMEWORK_RULE", "spring_security")
 
-        # 2. Гидрация Order при обращении к таблицам orders / orders_other
+        # 2. Конструкторы сущностей при загрузке строк (R7) решает обход по фактам archparse
+        #    (_hydrated_constructors), вызовы внутри конструкторов дают IR и скелет.
+
+        # Фильтрация неактивного условия по дате в queryOrders
         table_targets = {t for _, t in edges_data}
-
-        # ts-order-service.orders
-        if any("ts-order-service.orders" in t for t in table_targets):
-            has_gt_orders = True
-            is_new = False
-            if scenario_state is not None:
-                is_new = scenario_state.is_new_user
-            if profile is not None and not is_new:
-                is_new = getattr(profile, "is_new_user", False)
-
-            if is_new:
-                if scenario_state is not None:
-                    has_gt_orders = any(
-                        getattr(o.get("train_type", None), "name", str(o.get("train_type", ""))) in ("GaoTie", "DongChe")
-                        or o.get("train_type") == TrainType.GaoTie
-                        or o.get("train_type") == "GaoTie"
-                        for o in scenario_state.orders
-                    )
-                else:
-                    has_gt_orders = False
-
-            if has_gt_orders:
-                order_init = "method:ts-order-service:order.entity.Order#<init>()"
-                if order_init in self.index.N:
-                    self._activate(active_methods, order_init, "STATE", "order_hydration")
-                    self._add_order_constructor_calls(order_init, active_methods, edges_calls)
-
-        # ts-order-other-service.orders_other
         if any("ts-order-other-service.orders_other" in t for t in table_targets):
-            has_other_orders = True
-            is_new = False
-            if scenario_state is not None:
-                is_new = scenario_state.is_new_user
-            if profile is not None and not is_new:
-                is_new = getattr(profile, "is_new_user", False)
-
-            if is_new:
-                if scenario_state is not None:
-                    has_other_orders = any(
-                        getattr(o.get("train_type", None), "name", str(o.get("train_type", ""))) == "Other"
-                        or o.get("train_type") == TrainType.Other
-                        or o.get("train_type") == "Other"
-                        for o in scenario_state.orders
-                    )
-                else:
-                    has_other_orders = False
-
-            if has_other_orders:
-                order_other_init = "method:ts-order-other-service:other.entity.Order#<init>()"
-                if order_other_init in self.index.N:
-                    self._activate(active_methods, order_other_init, "STATE", "order_hydration")
-                    self._add_order_constructor_calls(order_other_init, active_methods, edges_calls)
-
-            # Фильтрация неактивного условия по дате в queryOrders
             query_orders = (
                 "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders("
                 "other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)"
@@ -404,11 +396,6 @@ class GraphBuilder:
             ):
                 self._discard_edge(edges_calls, "calls", query_orders, string2date, "DEFAULT_RULE", "date_filter")
 
-        # ts-common:edu.fudan.common.entity.Order#<init>()
-        common_order_init = "method:ts-common:edu.fudan.common.entity.Order#<init>()"
-        if common_order_init in active_methods:
-            self._add_order_constructor_calls(common_order_init, active_methods, edges_calls)
-
     def _discard_edge(
         self, edges: set[tuple[str, str]], relation: str, s: str, t: str, source_type: str, rule: str
     ) -> None:
@@ -416,19 +403,3 @@ class GraphBuilder:
         if (s, t) in edges and self._ledger:
             self._ledger.discard(relation, s, t, source_type, rule)
         edges.discard((s, t))
-
-    def _add_order_constructor_calls(
-        self,
-        order_init_method: str,
-        active_methods: set[str],
-        edges_calls: set[tuple[str, str]],
-    ) -> None:
-        """Добавление вызовов enum и форматирования даты из конструктора Order."""
-        order_status = "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
-        seat_class = "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()"
-        date2string = "method:ts-common:edu.fudan.common.util.StringUtils#Date2String(java.util.Date)"
-
-        for helper in (order_status, seat_class, date2string):
-            if helper in self.index.N:
-                self._activate(active_methods, helper, "FRAMEWORK_RULE", "order_ctor")
-                self._add_edge(edges_calls, "calls", order_init_method, helper, "FRAMEWORK_RULE", "order_ctor")

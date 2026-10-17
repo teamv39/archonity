@@ -119,7 +119,7 @@ if (orderResult.getStatus() == 1) {
 2. В `MethodCallExpr` проверять: `scope` — это `FieldAccessExpr` или `NameExpr`, чьё имя совпадает с одной из известных констант (`NOTPAID`, `PAID`, `CHANGE`, `COLLECTED`, `CANCEL`, `USED`, `FIRSTCLASS`, `SECONDCLASS`...), и статический импорт/квалификатор указывает на один из двух типов.
 3. Если да — `enum_constant: {type, constant}`, `callee` — имя метода (`getCode`, `getNameByCode`). Python-сторона сама построит целевой `method_id` (`method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()`)
 
-Это закрывает R7 не только для `Order#<init>()` (где это уже захардкожено в `graph/builder.py._add_order_constructor_calls`), а для **всех** `== OrderStatus.XXX.getCode()` проверок в пуле — то есть status-гейтов в Cancel/Execute/Rebook, которые сейчас не дают `calls`/`executes` ребро на сам `getCode()` вообще.
+Это закрывает R7 не только для `Order#<init>()` (его вызовы теперь тоже идут из IR конструкторов, раздел 3.5), а для **всех** `== OrderStatus.XXX.getCode()` проверок в пуле — то есть status-гейтов в Cancel/Execute/Rebook, которые сейчас не дают `calls`/`executes` ребро на сам `getCode()` вообще.
 
 ### 3.4. Два прохода
 
@@ -127,6 +127,44 @@ if (orderResult.getStatus() == 1) {
 
 1. **Проход 1, индекс.** По всем файлам пула и `ts-common`: поля класса и их типы, локальные переменные и их типы, enum-типы с константами, сигнатуры методов. Результат: карта «класс, имя, тип», нужная, чтобы во втором проходе понять, что `restTemplate` это `RestTemplate`, а `OrderStatus.PAID` это константа enum.
 2. **Проход 2, структура.** По методам пула: цепочки `if/else if/else` и `switch`, каждый вызов с позицией `(file, line, col)`, вид вызова (проектный, enum, прочее), `early_exit`. Тип получателя берётся из карты прохода 1 без полного `SymbolSolver`: код Train Ticket простой, поля и локальные переменные объявлены явно.
+
+### 3.5. Сущности и вызовы репозиториев: `data/entity_ir.json`
+
+Второй артефакт archparse, режим `--mode entities` (`EntityScanner`). Нужен правилу R7 в движке ([annotation_rules.md](../docs/annotation_rules.md)): когда Hibernate создаёт экземпляр сущности, исполняется её конструктор без аргументов. Хардкода `Order` в `builder.py` больше нет, все такие решения идут через этот файл. Сканируются все `src/main/java` проекта, а не пул.
+
+```json
+{
+  "schema": "entity_ir/1",
+  "entities": [
+    {"type": "route.entity.Route", "module": "ts-route-service", "file": "...", "kind": "Entity",
+     "table": "route", "id_field": "id", "id_generated": false,
+     "no_arg_ctor": "method:ts-route-service:route.entity.Route#<init>()",
+     "ctor_statements": 1, "ctor_assigns_id": true, "embedded": []}
+  ],
+  "repository_calls": [
+    {"file": "ts-route-service/.../RouteServiceImpl.java", "line": 82, "col": 49, "callee": "findById",
+     "repository": "RouteRepository", "entity": "route.entity.Route", "operation": "READ",
+     "expects": "ROWS", "expects_reason": "line 83: if (!route.isPresent()): absent arm fails"},
+    {"file": "ts-assurance-service/.../AssuranceServiceImpl.java", "line": 64, "col": 33, "callee": "save",
+     "repository": "AssuranceRepository", "entity": "assurance.entity.Assurance", "operation": "SAVE",
+     "id_assigned": true, "id_assigned_reason": "line 63: new Assurance(UUID.randomUUID().toString(), ...)"}
+  ],
+  "no_arg_ctor_statements": {"method:ts-common:edu.fudan.common.entity.TripId#<init>()": 0},
+  "constructors": [ /* MethodIR тел конструкторов без аргументов с вызовами, формат раздела 3.1 */ ]
+}
+```
+
+Поля:
+
+- `entities[]`: классы с `@Entity`, `@Embeddable`, `@Document`. `table` — `@Table(name)` или правило Spring Boot (`StationFoodStore` -> `station_food_store`). `ctor_statements` — число операторов в теле конструктора без аргументов (комментарии не считаются). `embedded` — типы полей `@Embedded` и полей-встраиваемых классов, без коллекций.
+- `repository_calls[]`: каждый вызов на поле, тип которого — интерфейс, наследующий `CrudRepository`/`JpaRepository`/`PagingAndSortingRepository`/`MongoRepository`. Сущность — первый параметр типа репозитория. Позиция `(file, line, col)` стыкуется с `call_site` скелета так же, как в разделе 3.2.
+- `operation`: `READ` (всё, что не подходит ниже, включая своё `@Query`), `SAVE`, `DELETE`, `EXISTS`, `COUNT`, `MODIFY` (`@Modifying`).
+- `expects` (только `READ`): чего ждёт успешный путь метода. Находим первое условие после вызова, которое проверяет результат (`== null`, `!= null`, `isPresent()`, `isEmpty()`, `size()`, проверка прямо в `if`). Плечо отказа: `throw`, `return new Response<>(0, ...)` или `LOGGER.error/warn` на верхнем уровне плеча. «Найдено» ведёт к отказу, «не найдено» нет — `EMPTY`; наоборот — `ROWS`; `orElseThrow()`/`get()` — `ROWS`; иначе `UNKNOWN`, тогда решает состояние БД в движке.
+- `id_assigned` (только `SAVE`): задан ли id до вызова. Признаки: сеттер id на той же переменной до `save`, конструктор без аргументов присваивает id, аргумент конструктора с параметрами (явного или `@AllArgsConstructor`) попадает в id, билдер задаёт id. Не определено — поля нет.
+- `no_arg_ctor_statements`: число операторов в каждом явном конструкторе без аргументов (для встраиваемых типов без `@Embeddable`).
+- `constructors[]`: IR тел конструкторов без аргументов, в которых есть вызовы. Движок добавляет их в общий индекс IR, отсюда enum-вызовы `Order#<init>() -> OrderStatus#getCode()`.
+
+Проверка: все 273 вызова репозиториев находят `call_site` скелета, и все `call_site` с `data_access` покрыты (`tests/test_entities.py`, `EntityScannerTest`).
 
 ## 4. Задачи на сегодня (по порядку)
 
