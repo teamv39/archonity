@@ -60,7 +60,7 @@ uv run --with pytest pytest
 uv run python run_eval.py
 ```
 Команда выполняет:
-1. Резолвинг точек входа для сценариев $S_0 \dots S_7$ через `ScenarioGrounder`.
+1. Заземление шагов $S_0 \dots S_7$ через M1 (`engine/grounding`, `--grounder m1` по умолчанию): ответы LLM и векторы эмбеддера берутся из `cache/`, сервер LLM не нужен. Старый `ScenarioGrounder` — `--grounder legacy`.
 2. Обход графа скелета и фильтрацию веток через `GraphBuilder` и `RuntimeRules`.
 3. Сохранение `output/submission.json`, `output/evidence.json`, `output/decisions.json`.
 4. Синхронизацию данных с графовым визуализатором (`visualizer/public/data/`).
@@ -79,7 +79,7 @@ uv run python pack_submission.py
 ```
 Скрипт автоматически:
 * Кладёт `output/submission.json` и `output/evidence.json` в корень архива.
-* Упаковывает исходный код `engine/`, `run_eval.py`, `pyproject.toml` и каталог `data/` в папку `code/`.
+* Упаковывает исходный код `engine/`, `run_eval.py`, `pyproject.toml`, каталог `data/` и кеши M1 (`cache/llm/`, `cache/emb/qwen3-4b/`) в папку `code/`.
 * Исключает временные файлы (`__pycache__`, `.pyc`, `.git`, `.venv`).
 
 ---
@@ -91,8 +91,8 @@ unzip -l output/submission.zip
 ```
 Убедись, что:
 1. В корне присутствуют `submission.json` и `evidence.json`.
-2. В каталоге `code/` присутствуют `code/run_eval.py`, `code/engine/`, `code/data/pool_ir.json`, `code/data/entity_ir.json`.
-3. Отсутствуют сторонние мусорные файлы и размер архива составляет ~150–250 KB.
+2. В каталоге `code/` присутствуют `code/run_eval.py`, `code/engine/`, `code/data/pool_ir.json`, `code/data/entity_ir.json`, `code/cache/llm/` и `code/cache/emb/qwen3-4b/` (кеши M1).
+3. Отсутствуют сторонние мусорные файлы и размер архива составляет около 3.3 MB (из них около 3 MB — кеши M1).
 
 ---
 

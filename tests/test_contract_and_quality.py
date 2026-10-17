@@ -57,9 +57,10 @@ class TestQualityAndConstraints:
         for url in ("http://127.0.0.1:8080", "http://localhost:8080", "http://192.168.1.20:8080"):
             assert LLMClient(url=url, use_server=False).url == url
 
-    def test_performance_under_5_seconds(self) -> None:
+    def test_performance_under_5_seconds(self, tmp_path: Path) -> None:
         """Тест производительности: генерация всех 8 сценариев должна укладываться в 5 секунд."""
-        cmd = [sys.executable, str(ROOT / "run_eval.py"), "--no-eval"]
+        # Вывод во временную папку: иначе тест перезаписывает output/submission.json, собранный для сдачи
+        cmd = [sys.executable, str(ROOT / "run_eval.py"), "-o", str(tmp_path / "submission.json"), "--no-eval"]
         t0 = time.perf_counter()
         res = subprocess.run(cmd, capture_output=True, text=True)
         duration = time.perf_counter() - t0

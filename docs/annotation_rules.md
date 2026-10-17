@@ -233,6 +233,8 @@ data: TokenServiceImpl#getToken(...)                             -> res:table:ts
 
 Один шаг — один клиентский запрос через шлюз. Одинаковые обработчики разных шагов сливаются в множествах (в S0 6 шагов дают 5 входов: «Refresh» и «Refresh Paid» идут в один `OrderController#queryOrdersForRefresh`). Ответ — множество на весь сценарий, порядок и повторы не важны.
 
+«Refresh the list of orders» без типа поезда — один вход: `queryOrdersForRefresh` сервиса заказов по типу поезда заказа, с которым работает сценарий (`ts-order-service` для G/D, `ts-order-other-service` для остальных). UI в `queryMyOrderList` шлёт оба запроса, но второго в эталоне нет: S0 и платформа 17.10, [OQ-08](open-questions.md#oq-08).
+
 ## Цифры для ориентира
 
 - Скелет: 1538 методов, 8961 call_site, 33 таблицы; `calls` 1240, `runtime_dispatch` 287, `remote_call` 415 (из них 166 от call_site), `data_access` 319, `message_delivery` 4.

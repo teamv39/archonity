@@ -51,7 +51,7 @@ Python. Загружает скелет и строит индексы: узлы
 
 ### M1. Заземление шагов
 
-Python + LLM, код — `engine/grounding/`. Превращает шаг сценария в `StepRequest`. В конвейер подключается флагом `run_eval.py --grounder m1` (по умолчанию пока `legacy`, то есть `engine/resolver.py`).
+Python + LLM, код — `engine/grounding/`. Превращает шаг сценария в `StepRequest`. В конвейере по умолчанию с 17.10 (`run_eval.py --grounder m1`); старый `engine/resolver.py` — `--grounder legacy`.
 
 1. **Каталог UI** (`ui_catalog.py`) из `ts-ui-dashboard/` по AST tree-sitter-javascript. Запись — один запрос: JS-функция действия, страница, надписи кнопок, глагол, шаблон URL (`"/cancel/" + orderId` → `/cancel/{orderId}`), поля тела. Шаблон сопоставляется с `@RequestMapping` по полному пути. Отдельно хранятся:
    - варианты URL с условием, когда UI выбирает путь по данным (`tripType == 'G' || tripType == 'D'` → preserve, иначе preserveOther);
@@ -70,7 +70,7 @@ Python + LLM, код — `engine/grounding/`. Превращает шаг сце
 
 Эталон входов для оценки M1 — `eval/m1_steps.json`: черновик из `resolver.py`, сверенный с UI и контроллерами. Конвейер его не читает. Метрики: `python -m engine.grounding.bakeoff` (Recall@k ретриверов) и `python -m engine.grounding.grounder --eval eval/m1_steps.json` (top-1).
 
-Гипотеза, которую проверяет сдача на платформе: шаг «Refresh the list of orders» без уточнения типа — один запрос в сервис по типу поезда заказа, хотя UI шлёт оба. На S0 это подтверждается: фильтр «Paid» в эталоне обработан только `ts-order-service`. `resolver.py` отдаёт оба обработчика.
+Шаг «Refresh the list of orders» без уточнения типа поезда — один запрос: в сервис заказов по типу поезда заказа, с которым работает сценарий, хотя UI (`queryMyOrderList`) шлёт оба. Это неочевидно из UI и подтверждено платформой 17.10 ([OQ-08](../open-questions.md#oq-08)): без второго refresh S1, S3–S7 выросли на 0.010–0.018. На S0 так же: фильтр «Paid» в эталоне обработан только `ts-order-service`. `resolver.py` отдаёт оба обработчика.
 
 ### M2. IR тел методов
 

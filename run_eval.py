@@ -83,8 +83,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--grounder",
         choices=("legacy", "m1"),
-        default="legacy",
-        help="Заземление шагов: legacy (engine/resolver.py) или m1 (engine/grounding, ADR-005)",
+        default="m1",
+        help="Заземление шагов: m1 (engine/grounding, ADR-005; ответы LLM из cache/, без сервера — только кеш) "
+             "или legacy (engine/resolver.py)",
     )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
