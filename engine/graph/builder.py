@@ -65,6 +65,8 @@ class GraphBuilder:
                     if self.index.pool_ir.evaluate_guard(m, c_enum.guard, profile, scenario_state):
                         enum_target = self.index.pool_ir.get_enum_target(c_enum)
                         if enum_target and enum_target in self.index.N:
+                            if self.rules.is_dead_code_edge(m, "calls", enum_target, profile=profile, is_admin_scenario=is_admin_scenario):
+                                continue
                             edges_calls.add((m, enum_target))
                             seen_methods.add((enum_target, self.index.unit_of(enum_target)))
 
@@ -78,8 +80,9 @@ class GraphBuilder:
             ):
                 seat_get_code = "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()"
                 if seat_get_code in self.index.N:
-                    edges_calls.add((m, seat_get_code))
-                    seen_methods.add((seat_get_code, self.index.unit_of(seat_get_code)))
+                    if not self.rules.is_dead_code_edge(m, "calls", seat_get_code, profile=profile, is_admin_scenario=is_admin_scenario):
+                        edges_calls.add((m, seat_get_code))
+                        seen_methods.add((seat_get_code, self.index.unit_of(seat_get_code)))
 
             # 0.2 Дополнительные R7 Enum-вызовы OrderStatus в сервисах Rebook, Cancel и Order
             if (
@@ -99,8 +102,9 @@ class GraphBuilder:
             ):
                 order_get_code = "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
                 if order_get_code in self.index.N:
-                    edges_calls.add((m, order_get_code))
-                    seen_methods.add((order_get_code, self.index.unit_of(order_get_code)))
+                    if not self.rules.is_dead_code_edge(m, "calls", order_get_code, profile=profile, is_admin_scenario=is_admin_scenario):
+                        edges_calls.add((m, order_get_code))
+                        seen_methods.add((order_get_code, self.index.unit_of(order_get_code)))
 
             # 1. Внутрисервисные вызовы (calls + overrides/CHA + runtime_dispatch)
             for t in self.index.calls.get(m, ()):

@@ -470,6 +470,7 @@ class RuntimeRules:
                         "checkTime",
                         "TripAllDetailInfo#<init>",
                         "Order#<init>",
+                        "SeatClass#getCode",
                     )
                     if any(b in target or b in source for b in blocked_rebook):
                         return True
