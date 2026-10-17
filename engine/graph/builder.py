@@ -210,19 +210,46 @@ class GraphBuilder:
 
         # ts-order-service.orders
         if any("ts-order-service.orders" in t for t in table_targets):
-            order_init = "method:ts-order-service:order.entity.Order#<init>()"
-            if order_init in self.index.N:
-                active_methods.add(order_init)
-                self._add_order_constructor_calls(order_init, active_methods, edges_calls)
+            has_gt_orders = True
+            is_new = False
+            train_mode = "both"
+            if scenario_state is not None:
+                is_new = scenario_state.is_new_user
+            if profile is not None:
+                train_mode = getattr(profile, "train_mode", "both")
+                if not is_new:
+                    is_new = getattr(profile, "is_new_user", False)
+
+            if is_new:
+                if scenario_state is not None:
+                    has_gt_orders = any(
+                        getattr(o.get("train_type", None), "name", str(o.get("train_type", ""))) in ("GaoTie", "DongChe")
+                        or o.get("train_type") == TrainType.GaoTie
+                        or o.get("train_type") == "GaoTie"
+                        for o in scenario_state.orders
+                    )
+                else:
+                    has_gt_orders = False
+            elif train_mode == "regular_only":
+                has_gt_orders = False
+
+            if has_gt_orders:
+                order_init = "method:ts-order-service:order.entity.Order#<init>()"
+                if order_init in self.index.N:
+                    active_methods.add(order_init)
+                    self._add_order_constructor_calls(order_init, active_methods, edges_calls)
 
         # ts-order-other-service.orders_other
         if any("ts-order-other-service.orders_other" in t for t in table_targets):
             has_other_orders = True
             is_new = False
+            train_mode = "both"
             if scenario_state is not None:
                 is_new = scenario_state.is_new_user
-            elif profile is not None:
-                is_new = getattr(profile, "is_new_user", False)
+            if profile is not None:
+                train_mode = getattr(profile, "train_mode", "both")
+                if not is_new:
+                    is_new = getattr(profile, "is_new_user", False)
 
             if is_new:
                 if scenario_state is not None:
@@ -234,6 +261,8 @@ class GraphBuilder:
                     )
                 else:
                     has_other_orders = False
+            elif train_mode == "high_speed_only":
+                has_other_orders = False
 
             if has_other_orders:
                 order_other_init = "method:ts-order-other-service:other.entity.Order#<init>()"
