@@ -76,6 +76,7 @@ def pack() -> Path:
         _add_dir_to_zip(z, "code/engine")
         _add_dir_to_zip(z, "code/engine/adapters")
         _add_dir_to_zip(z, "code/engine/graph")
+        _add_dir_to_zip(z, "code/engine/grounding")
         _add_dir_to_zip(z, "code/data")
 
         # 5. Исходный код решения
@@ -92,7 +93,6 @@ def pack() -> Path:
                 _add_file_to_zip(z, p, f"code/{rel_p}", normalize_lf=True)
 
         # Данные правил (строго канонический список data/*.json без мусора)
-                # Данные правил (строго канонический список data/*.json без мусора)
         data_dir = ROOT / "data"
         if data_dir.is_dir():
             for fname in DATA_RULE_FILES:
@@ -101,6 +101,8 @@ def pack() -> Path:
                     _add_file_to_zip(z, fp, f"code/data/{fname}", normalize_lf=True)
 
         # Кеши M1 (ответы LLM и векторы эмбеддера): прогон --grounder m1 без GPU (ADR-005, «Кеш LLM»)
+        _add_dir_to_zip(z, "code/cache")
+        _add_dir_to_zip(z, "code/cache/emb")
         for cache_dir in (ROOT / "cache" / "llm", ROOT / "cache" / "emb" / "qwen3-4b"):
             if cache_dir.is_dir():
                 _add_dir_to_zip(z, f"code/{cache_dir.relative_to(ROOT).as_posix()}")
