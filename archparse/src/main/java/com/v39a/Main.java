@@ -11,6 +11,8 @@ import com.v39a.config.TargetPool;
 import com.v39a.model.EntityReportIR;
 import com.v39a.model.MethodIR;
 import com.v39a.parser.EntityScanner;
+import com.v39a.parser.MethodIrWriter;
+import com.v39a.skeleton.SkeletonGraph;
 import com.v39a.parser.AstAnalyzer;
 import com.v39a.parser.TypeIndex;
 
@@ -54,6 +56,31 @@ public class Main {
             System.out.printf("Finished! %d entities, %d repository calls, %d constructors saved to %s%n",
                     report.entities.size(), report.repositoryCalls.size(), report.constructors.size(),
                     outputFile.toAbsolutePath());
+            return;
+        }
+
+        if ("bodies".equalsIgnoreCase(mode)) {
+            Path outDir = outputPathStr != null ? Paths.get(outputPathStr) : resolveOutputFile(null, "ir");
+            Path skeletonGz = targetsDir.resolve("../../skeleton/trainticket.json.gz").normalize();
+            System.out.println("archparse: IR of all method bodies (README 3.6)");
+            System.out.println("Targets directory: " + targetsDir.toAbsolutePath());
+            System.out.println("Skeleton: " + skeletonGz.toAbsolutePath());
+            MethodIrWriter.Result r = MethodIrWriter.build(targetsDir, SkeletonGraph.load(skeletonGz));
+            Files.createDirectories(outDir);
+            ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+            for (Map.Entry<String, com.fasterxml.jackson.databind.node.ObjectNode> e : r.modules.entrySet()) {
+                mapper.writeValue(outDir.resolve(e.getKey() + ".json").toFile(), e.getValue());
+            }
+            System.out.printf("Finished! %d methods in %d modules, %d skeleton call sites, %d ircalls -> %s%n",
+                    r.methods, r.modules.size(), r.callSites, r.irCalls, outDir.toAbsolutePath());
+            System.out.printf("Coverage: %d skeleton methods missing, %d declarations unmatched, %d call sites uncovered, "
+                            + "%d duplicated, %d foreign%n", r.missingMethods.size(), r.unmatchedDeclarations.size(),
+                    r.uncoveredCallSites.size(), r.duplicateCallSites.size(), r.foreignCallSites.size());
+            r.missingMethods.stream().limit(20).forEach(m -> System.out.println("  missing: " + m));
+            r.unmatchedDeclarations.stream().limit(20).forEach(m -> System.out.println("  unmatched: " + m));
+            r.uncoveredCallSites.stream().limit(20).forEach(m -> System.out.println("  uncovered: " + m));
+            r.duplicateCallSites.stream().limit(10).forEach(m -> System.out.println("  duplicate: " + m));
+            r.foreignCallSites.stream().limit(10).forEach(m -> System.out.println("  foreign: " + m));
             return;
         }
 

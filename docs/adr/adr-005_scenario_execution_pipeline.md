@@ -74,7 +74,7 @@ Python + LLM, код — `engine/grounding/`. Превращает шаг сце
 
 ### M2. IR тел методов
 
-Java, JavaParser. Для каждого метода проекта — дерево операторов, связанное с узлами скелета. Пишет `ir/<module>.json`.
+Java, JavaParser. Для каждого метода проекта — дерево операторов, связанное с узлами скелета. Пишет `data/ir/<module>.json`, точные поля — [archparse/README.md](../../archparse/README.md), раздел 3.6.
 
 ### M3. Состояние сценария
 
@@ -135,7 +135,7 @@ Python. Обёртка над `platform/evaluate_golden.py`: балл на S0, �
 
 ### IR (выход M2)
 
-Файл на модуль: `ir/<module>.json` — словарь `method_id → тело`.
+Файл на модуль: `data/ir/<module>.json` — словарь `method_id → тело` (в обёртке со `schema` и `module`, см. README archparse, раздел 3.6).
 
 ```json
 {

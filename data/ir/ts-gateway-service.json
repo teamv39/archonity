@@ -1,0 +1,389 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-gateway-service",
+  "methods" : {
+    "method:ts-gateway-service:gateway.GatewayApplication#main(java.lang.String[])" : {
+      "file" : "ts-gateway-service/src/main/java/gateway/GatewayApplication.java",
+      "line" : 16,
+      "end" : 18,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 17,
+        "expr" : {
+          "call" : "call:method:ts-gateway-service:gateway.GatewayApplication#main(java.lang.String[])@17:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "GatewayApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-gateway-service:gateway.GatewayConfiguration#<init>(org.springframework.beans.factory.ObjectProvider,org.springframework.http.codec.ServerCodecConfigurer)" : {
+      "file" : "ts-gateway-service/src/main/java/gateway/GatewayConfiguration.java",
+      "line" : 41,
+      "end" : 45,
+      "params" : [ {
+        "name" : "viewResolversProvider",
+        "type" : "ObjectProvider<List<ViewResolver>>"
+      }, {
+        "name" : "serverCodecConfigurer",
+        "type" : "ServerCodecConfigurer"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "field" : "viewResolvers",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#<init>(org.springframework.beans.factory.ObjectProvider,org.springframework.http.codec.ServerCodecConfigurer)@43:52",
+          "callee" : "getIfAvailable",
+          "recv" : {
+            "name" : "viewResolversProvider",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "method_ref" : "Collections::emptyList",
+            "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#<init>(org.springframework.beans.factory.ObjectProvider,org.springframework.http.codec.ServerCodecConfigurer)@43:80"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 44,
+        "target" : {
+          "field" : "serverCodecConfigurer",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "serverCodecConfigurer",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-gateway-service:gateway.GatewayConfiguration#doInit()" : {
+      "file" : "ts-gateway-service/src/main/java/gateway/GatewayConfiguration.java",
+      "line" : 74,
+      "end" : 81,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 76,
+        "expr" : {
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#doInit()@76:9",
+          "callee" : "initGatewayRules",
+          "recv" : null,
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#doInit()@79:20",
+          "callee" : "println",
+          "recv" : {
+            "field" : "out",
+            "of" : {
+              "name" : "System",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "===== begin to do flow control",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 80,
+        "expr" : {
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#doInit()@80:20",
+          "callee" : "println",
+          "recv" : {
+            "field" : "out",
+            "of" : {
+              "name" : "System",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "only 20 requests per second can pass",
+            "type" : "string"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-gateway-service:gateway.GatewayConfiguration#initBlockHandlers()" : {
+      "file" : "ts-gateway-service/src/main/java/gateway/GatewayConfiguration.java",
+      "line" : 88,
+      "end" : 98,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 89,
+        "target" : {
+          "name" : "blockRequestHandler",
+          "ref" : "local"
+        },
+        "decl" : "BlockRequestHandler",
+        "operator" : "=",
+        "expr" : {
+          "lambda" : {
+            "line" : 89,
+            "col" : 51,
+            "params" : [ "serverWebExchange", "throwable" ],
+            "body" : [ {
+              "op" : "assign",
+              "line" : 90,
+              "target" : {
+                "name" : "map",
+                "ref" : "local"
+              },
+              "decl" : "Map<Object,Object>",
+              "operator" : "=",
+              "expr" : {
+                "new" : "HashMap<>",
+                "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initBlockHandlers()@90:39",
+                "args" : [ ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 91,
+              "expr" : {
+                "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initBlockHandlers()@91:17",
+                "callee" : "put",
+                "recv" : {
+                  "name" : "map",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "lit" : "code",
+                  "type" : "string"
+                }, {
+                  "lit" : 0,
+                  "type" : "int"
+                } ]
+              }
+            }, {
+              "op" : "expr",
+              "line" : 92,
+              "expr" : {
+                "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initBlockHandlers()@92:17",
+                "callee" : "put",
+                "recv" : {
+                  "name" : "map",
+                  "ref" : "local"
+                },
+                "args" : [ {
+                  "lit" : "message",
+                  "type" : "string"
+                }, {
+                  "lit" : "接口被限流了",
+                  "type" : "string"
+                } ]
+              }
+            }, {
+              "op" : "return",
+              "line" : 93,
+              "expr" : {
+                "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initBlockHandlers()@95:21",
+                "callee" : "body",
+                "recv" : {
+                  "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initBlockHandlers()@94:21",
+                  "callee" : "contentType",
+                  "recv" : {
+                    "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initBlockHandlers()@93:35",
+                    "callee" : "status",
+                    "recv" : {
+                      "name" : "ServerResponse",
+                      "ref" : "type"
+                    },
+                    "args" : [ {
+                      "field" : "OK",
+                      "of" : {
+                        "name" : "HttpStatus",
+                        "ref" : "type"
+                      }
+                    } ]
+                  },
+                  "args" : [ {
+                    "field" : "APPLICATION_JSON_UTF8",
+                    "of" : {
+                      "name" : "MediaType",
+                      "ref" : "type"
+                    }
+                  } ]
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initBlockHandlers()@95:40",
+                  "callee" : "fromObject",
+                  "recv" : {
+                    "name" : "BodyInserters",
+                    "ref" : "type"
+                  },
+                  "args" : [ {
+                    "name" : "map",
+                    "ref" : "local"
+                  } ]
+                } ]
+              }
+            } ]
+          }
+        }
+      }, {
+        "op" : "expr",
+        "line" : 97,
+        "expr" : {
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initBlockHandlers()@97:32",
+          "callee" : "setBlockHandler",
+          "recv" : {
+            "name" : "GatewayCallbackManager",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "blockRequestHandler",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-gateway-service:gateway.GatewayConfiguration#initGatewayRules()" : {
+      "file" : "ts-gateway-service/src/main/java/gateway/GatewayConfiguration.java",
+      "line" : 107,
+      "end" : 119,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 108,
+        "target" : {
+          "name" : "rules",
+          "ref" : "local"
+        },
+        "decl" : "Set<GatewayFlowRule>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HashSet<>",
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initGatewayRules()@108:38",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 112,
+        "expr" : {
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initGatewayRules()@112:15",
+          "callee" : "add",
+          "recv" : {
+            "name" : "rules",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initGatewayRules()@115:18",
+            "callee" : "setIntervalSec",
+            "recv" : {
+              "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initGatewayRules()@114:18",
+              "callee" : "setCount",
+              "recv" : {
+                "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initGatewayRules()@113:18",
+                "callee" : "setControlBehavior",
+                "recv" : {
+                  "new" : "GatewayFlowRule",
+                  "fqn" : "com.alibaba.csp.sentinel.adapter.gateway.common.rule.GatewayFlowRule",
+                  "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initGatewayRules()@112:19",
+                  "args" : [ {
+                    "lit" : "admin-basic-info",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ {
+                  "field" : "CONTROL_BEHAVIOR_DEFAULT",
+                  "of" : {
+                    "name" : "RuleConstant",
+                    "ref" : "type"
+                  }
+                } ]
+              },
+              "args" : [ {
+                "lit" : 20,
+                "type" : "int"
+              } ]
+            },
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 118,
+        "expr" : {
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#initGatewayRules()@118:28",
+          "callee" : "loadRules",
+          "recv" : {
+            "name" : "GatewayRuleManager",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "rules",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-gateway-service:gateway.GatewayConfiguration#sentinelGatewayBlockExceptionHandler()" : {
+      "file" : "ts-gateway-service/src/main/java/gateway/GatewayConfiguration.java",
+      "line" : 53,
+      "end" : 58,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 57,
+        "expr" : {
+          "new" : "SentinelGatewayBlockExceptionHandler",
+          "fqn" : "com.alibaba.csp.sentinel.adapter.gateway.sc.exception.SentinelGatewayBlockExceptionHandler",
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#sentinelGatewayBlockExceptionHandler()@57:16",
+          "args" : [ {
+            "name" : "viewResolvers",
+            "ref" : "field"
+          }, {
+            "name" : "serverCodecConfigurer",
+            "ref" : "field"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-gateway-service:gateway.GatewayConfiguration#sentinelGatewayFilter()" : {
+      "file" : "ts-gateway-service/src/main/java/gateway/GatewayConfiguration.java",
+      "line" : 65,
+      "end" : 69,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 68,
+        "expr" : {
+          "new" : "SentinelGatewayFilter",
+          "fqn" : "com.alibaba.csp.sentinel.adapter.gateway.sc.SentinelGatewayFilter",
+          "call" : "call:method:ts-gateway-service:gateway.GatewayConfiguration#sentinelGatewayFilter()@68:16",
+          "args" : [ ]
+        }
+      } ]
+    }
+  }
+}

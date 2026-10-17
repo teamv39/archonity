@@ -91,8 +91,8 @@ unzip -l output/submission.zip
 ```
 Убедись, что:
 1. В корне присутствуют `submission.json` и `evidence.json`.
-2. В каталоге `code/` присутствуют `code/run_eval.py`, `code/engine/`, `code/data/pool_ir.json`, `code/data/entity_ir.json`, `code/cache/llm/` и `code/cache/emb/qwen3-4b/` (кеши M1).
-3. Отсутствуют сторонние мусорные файлы и размер архива составляет около 3.3 MB (из них около 3 MB — кеши M1).
+2. В каталоге `code/` присутствуют `code/run_eval.py`, `code/engine/`, `code/data/pool_ir.json`, `code/data/entity_ir.json`, `code/data/ir/` (IR тел методов, 42 файла), `code/cache/llm/` и `code/cache/emb/qwen3-4b/` (кеши M1).
+3. Отсутствуют сторонние мусорные файлы и размер архива составляет около 3.5 MB (из них около 3 MB — кеши M1).
 
 ---
 

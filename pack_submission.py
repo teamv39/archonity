@@ -99,6 +99,10 @@ def pack() -> Path:
                 fp = data_dir / fname
                 if fp.is_file():
                     _add_file_to_zip(z, fp, f"code/data/{fname}", normalize_lf=True)
+            # IR тел методов (M2, archparse/README.md, раздел 3.6): data/ir/<module>.json
+            _add_dir_to_zip(z, "code/data/ir")
+            for fp in sorted((data_dir / "ir").glob("*.json")):
+                _add_file_to_zip(z, fp, f"code/data/ir/{fp.name}", normalize_lf=True)
 
         # Кеши M1 (ответы LLM и векторы эмбеддера): прогон --grounder m1 без GPU (ADR-005, «Кеш LLM»)
         _add_dir_to_zip(z, "code/cache")

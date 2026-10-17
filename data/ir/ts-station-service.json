@@ -1,0 +1,3223 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-station-service",
+  "methods" : {
+    "method:ts-station-service:fdse.microservice.StationApplication#main(java.lang.String[])" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/StationApplication.java",
+      "line" : 23,
+      "end" : 25,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.StationApplication#main(java.lang.String[])@24:21",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "StationApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.StationApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/StationApplication.java",
+      "line" : 27,
+      "end" : 31,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.StationApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@30:18",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/config/SecurityConfig.java",
+      "line" : 63,
+      "end" : 84,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@80:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:59",
+                      "callee" : "permitAll",
+                      "recv" : {
+                        "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:59",
+                          "callee" : "hasAnyRole",
+                          "recv" : {
+                            "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                            "callee" : "antMatchers",
+                            "recv" : {
+                              "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:56",
+                              "callee" : "hasAnyRole",
+                              "recv" : {
+                                "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:18",
+                                "callee" : "antMatchers",
+                                "recv" : {
+                                  "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:57",
+                                  "callee" : "hasAnyRole",
+                                  "recv" : {
+                                    "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                                    "callee" : "antMatchers",
+                                    "recv" : {
+                                      "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                                      "callee" : "authorizeRequests",
+                                      "recv" : {
+                                        "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                                        "callee" : "and",
+                                        "recv" : {
+                                          "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:38",
+                                          "callee" : "sessionCreationPolicy",
+                                          "recv" : {
+                                            "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                                            "callee" : "sessionManagement",
+                                            "recv" : {
+                                              "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:25",
+                                              "callee" : "disable",
+                                              "recv" : {
+                                                "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:18",
+                                                "callee" : "csrf",
+                                                "recv" : {
+                                                  "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@65:34",
+                                                  "callee" : "disable",
+                                                  "recv" : {
+                                                    "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@65:22",
+                                                    "callee" : "httpBasic",
+                                                    "recv" : {
+                                                      "name" : "httpSecurity",
+                                                      "ref" : "param"
+                                                    },
+                                                    "args" : [ ]
+                                                  },
+                                                  "args" : [ ]
+                                                },
+                                                "args" : [ ]
+                                              },
+                                              "args" : [ ]
+                                            },
+                                            "args" : [ ]
+                                          },
+                                          "args" : [ {
+                                            "field" : "STATELESS",
+                                            "of" : {
+                                              "name" : "SessionCreationPolicy",
+                                              "ref" : "type"
+                                            }
+                                          } ]
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ {
+                                      "field" : "POST",
+                                      "of" : {
+                                        "name" : "HttpMethod",
+                                        "ref" : "type"
+                                      }
+                                    }, {
+                                      "name" : "stations",
+                                      "ref" : "field"
+                                    } ]
+                                  },
+                                  "args" : [ {
+                                    "name" : "admin",
+                                    "ref" : "field"
+                                  } ]
+                                },
+                                "args" : [ {
+                                  "field" : "PUT",
+                                  "of" : {
+                                    "name" : "HttpMethod",
+                                    "ref" : "type"
+                                  }
+                                }, {
+                                  "name" : "stations",
+                                  "ref" : "field"
+                                } ]
+                              },
+                              "args" : [ {
+                                "name" : "admin",
+                                "ref" : "field"
+                              } ]
+                            },
+                            "args" : [ {
+                              "field" : "DELETE",
+                              "of" : {
+                                "name" : "HttpMethod",
+                                "ref" : "type"
+                              }
+                            }, {
+                              "name" : "stations",
+                              "ref" : "field"
+                            } ]
+                          },
+                          "args" : [ {
+                            "name" : "admin",
+                            "ref" : "field"
+                          } ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/stationservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
+            "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@80:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 83,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@83:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@83:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/config/SecurityConfig.java",
+      "line" : 47,
+      "end" : 60,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 49,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#corsConfigurer()@49:16",
+          "args" : [ ],
+          "anon" : "type:ts-station-service:fdse.microservice.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/config/SecurityConfig.java",
+      "line" : 34,
+      "end" : 37,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 36,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
+          "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig#passwordEncoder()@36:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/config/SecurityConfig.java",
+      "line" : 50,
+      "end" : 58,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@57:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-station-service:fdse.microservice.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.controller.StationController#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/controller/StationController.java",
+      "line" : 38,
+      "end" : 42,
+      "params" : [ {
+        "name" : "station",
+        "type" : "Station"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@40:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[create][Create station][name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@40:84",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "station",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "new" : "ResponseEntity<>",
+          "fqn" : "org.springframework.http.ResponseEntity",
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@41:16",
+          "args" : [ {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@41:52",
+            "callee" : "create",
+            "recv" : {
+              "name" : "stationService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "station",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }, {
+            "field" : "CREATED",
+            "of" : {
+              "name" : "HttpStatus",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.controller.StationController#delete(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/controller/StationController.java",
+      "line" : 50,
+      "end" : 54,
+      "params" : [ {
+        "name" : "stationsId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#delete(java.lang.String,org.springframework.http.HttpHeaders)@52:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[delete][Delete station][StationId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "stationsId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#delete(java.lang.String,org.springframework.http.HttpHeaders)@53:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#delete(java.lang.String,org.springframework.http.HttpHeaders)@53:34",
+            "callee" : "delete",
+            "recv" : {
+              "name" : "stationService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "stationsId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.controller.StationController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/controller/StationController.java",
+      "line" : 28,
+      "end" : 31,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 30,
+        "expr" : {
+          "lit" : "Welcome to [ Station Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.controller.StationController#query(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/controller/StationController.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#query(org.springframework.http.HttpHeaders)@35:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#query(org.springframework.http.HttpHeaders)@35:34",
+            "callee" : "query",
+            "recv" : {
+              "name" : "stationService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.controller.StationController#queryById(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/controller/StationController.java",
+      "line" : 76,
+      "end" : 83,
+      "params" : [ {
+        "name" : "stationId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 80,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryById(java.lang.String,org.springframework.http.HttpHeaders)@80:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[queryById][Query stations By Id][Id: {}]",
+            "type" : "string"
+          }, {
+            "name" : "stationId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 82,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryById(java.lang.String,org.springframework.http.HttpHeaders)@82:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryById(java.lang.String,org.springframework.http.HttpHeaders)@82:34",
+            "callee" : "queryById",
+            "recv" : {
+              "name" : "stationService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "stationId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.controller.StationController#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/controller/StationController.java",
+      "line" : 68,
+      "end" : 73,
+      "params" : [ {
+        "name" : "stationNameList",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 71,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@71:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[queryForIdBatch][Query stations for id batch][StationNameNumbers: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@71:128",
+            "callee" : "size",
+            "recv" : {
+              "name" : "stationNameList",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@72:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@72:34",
+            "callee" : "queryForIdBatch",
+            "recv" : {
+              "name" : "stationService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "stationNameList",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.controller.StationController#queryForNameBatch(java.util.List,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/controller/StationController.java",
+      "line" : 86,
+      "end" : 91,
+      "params" : [ {
+        "name" : "stationIdList",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 89,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForNameBatch(java.util.List,org.springframework.http.HttpHeaders)@89:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[queryByIdBatch][Query stations for name batch][StationIdNumbers: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForNameBatch(java.util.List,org.springframework.http.HttpHeaders)@89:125",
+            "callee" : "size",
+            "recv" : {
+              "name" : "stationIdList",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 90,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForNameBatch(java.util.List,org.springframework.http.HttpHeaders)@90:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForNameBatch(java.util.List,org.springframework.http.HttpHeaders)@90:34",
+            "callee" : "queryByIdBatch",
+            "recv" : {
+              "name" : "stationService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "stationIdList",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.controller.StationController#queryForStationId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/controller/StationController.java",
+      "line" : 59,
+      "end" : 65,
+      "params" : [ {
+        "name" : "stationName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 63,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForStationId(java.lang.String,org.springframework.http.HttpHeaders)@63:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[queryForId][Query for station id][StationName: {}]",
+            "type" : "string"
+          }, {
+            "name" : "stationName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForStationId(java.lang.String,org.springframework.http.HttpHeaders)@64:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#queryForStationId(java.lang.String,org.springframework.http.HttpHeaders)@64:34",
+            "callee" : "queryForId",
+            "recv" : {
+              "name" : "stationService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "stationName",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.controller.StationController#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/controller/StationController.java",
+      "line" : 44,
+      "end" : 48,
+      "params" : [ {
+        "name" : "station",
+        "type" : "Station"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 46,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@46:34",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[update][Update station][StationId: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@46:89",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "station",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@47:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-station-service:fdse.microservice.controller.StationController#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@47:34",
+            "callee" : "update",
+            "recv" : {
+              "name" : "stationService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "station",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.entity.Station#<init>()" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/entity/Station.java",
+      "line" : 31,
+      "end" : 33,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 32,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.entity.Station#<init>(java.lang.String)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/entity/Station.java",
+      "line" : 39,
+      "end" : 41,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 40,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.entity.Station#<init>(java.lang.String)@40:43",
+          "callee" : "toLowerCase",
+          "recv" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.entity.Station#<init>(java.lang.String)@40:26",
+            "callee" : "replace",
+            "recv" : {
+              "name" : "name",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "lit" : " ",
+              "type" : "string"
+            }, {
+              "lit" : "",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ {
+            "field" : "ROOT",
+            "of" : {
+              "name" : "Locale",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.entity.Station#<init>(java.lang.String,int)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/entity/Station.java",
+      "line" : 44,
+      "end" : 47,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "stayTime",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 45,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.entity.Station#<init>(java.lang.String,int)@45:43",
+          "callee" : "toLowerCase",
+          "recv" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.entity.Station#<init>(java.lang.String,int)@45:26",
+            "callee" : "replace",
+            "recv" : {
+              "name" : "name",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "lit" : " ",
+              "type" : "string"
+            }, {
+              "lit" : "",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ {
+            "field" : "ROOT",
+            "of" : {
+              "name" : "Locale",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 46,
+        "target" : {
+          "field" : "stayTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "stayTime",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.entity.Station#setName(java.lang.String)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/entity/Station.java",
+      "line" : 35,
+      "end" : 37,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.entity.Station#setName(java.lang.String)@36:43",
+          "callee" : "toLowerCase",
+          "recv" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.entity.Station#setName(java.lang.String)@36:26",
+            "callee" : "replace",
+            "recv" : {
+              "name" : "name",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "lit" : " ",
+              "type" : "string"
+            }, {
+              "lit" : "",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ {
+            "field" : "ROOT",
+            "of" : {
+              "name" : "Locale",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/init/InitData.java",
+      "line" : 15,
+      "end" : 82,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 17,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "decl" : "Station",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@17:24",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 18,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@18:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Shang Hai",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 19,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@19:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 10,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 20,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@20:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 22,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@22:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 23,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@23:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Shang Hai Hong Qiao",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@24:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 10,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 25,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@25:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 27,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@27:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@28:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Tai Yuan",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@29:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 5,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@30:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 32,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@32:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@33:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Bei Jing",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@34:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 10,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@35:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 37,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@37:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@38:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Nan Jing",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 39,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@39:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 8,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@40:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@42:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@43:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Shi Jia Zhuang",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@44:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 8,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 45,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@45:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 47,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@47:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@48:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Xu Zhou",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 49,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@49:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 7,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 50,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@50:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 52,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@52:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@53:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Ji Nan",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 54,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@54:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 5,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@55:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 57,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@57:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 58,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@58:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Hang Zhou",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 59,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@59:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 9,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 60,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@60:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 62,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@62:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 63,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@63:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Jia Xing Nan",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@64:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 2,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@65:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 67,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@67:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 68,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@68:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Zhen Jiang",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 69,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@69:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 2,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 70,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@70:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 72,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@72:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 73,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@73:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Wu Xi",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 74,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@74:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 3,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 75,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@75:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 77,
+        "target" : {
+          "name" : "info",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Station",
+          "fqn" : "fdse.microservice.entity.Station",
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@77:16",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 78,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@78:14",
+          "callee" : "setName",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "Su Zhou",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@79:14",
+          "callee" : "setStayTime",
+          "recv" : {
+            "name" : "info",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 3,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 80,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.init.InitData#run(java.lang.String[])@80:17",
+          "callee" : "create",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "info",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+      "line" : 25,
+      "end" : 38,
+      "params" : [ {
+        "name" : "station",
+        "type" : "Station"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "if",
+        "line" : 27,
+        "id" : "b27",
+        "cond" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@27:30",
+          "callee" : "isEmpty",
+          "recv" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@27:20",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "station",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 28,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@28:39",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[create][Create station error][Name not specify]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 29,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@29:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Name not specify",
+              "type" : "string"
+            }, {
+              "name" : "station",
+              "ref" : "param"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 31,
+        "id" : "b31",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@31:24",
+            "callee" : "findByName",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@31:43",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "station",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 32,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@32:21",
+            "callee" : "setStayTime",
+            "recv" : {
+              "name" : "station",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@32:41",
+              "callee" : "getStayTime",
+              "recv" : {
+                "name" : "station",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 33,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@33:24",
+            "callee" : "save",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "station",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 34,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@34:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Create success",
+              "type" : "string"
+            }, {
+              "name" : "station",
+              "ref" : "param"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 36,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@36:35",
+          "callee" : "error",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[create][Create station error][Already exists][StationId: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@36:113",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "station",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 37,
+        "expr" : {
+          "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#create(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@37:16",
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          }, {
+            "lit" : "Already exists",
+            "type" : "string"
+          }, {
+            "name" : "station",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.service.StationServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+      "line" : 66,
+      "end" : 76,
+      "params" : [ {
+        "name" : "stationsId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 68,
+        "target" : {
+          "name" : "op",
+          "ref" : "local"
+        },
+        "decl" : "Optional<Station>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@68:43",
+          "callee" : "findById",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "stationsId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 69,
+        "id" : "b69",
+        "cond" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@69:16",
+          "callee" : "isPresent",
+          "recv" : {
+            "name" : "op",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 70,
+          "target" : {
+            "name" : "station",
+            "ref" : "local"
+          },
+          "decl" : "Station",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@70:34",
+            "callee" : "get",
+            "recv" : {
+              "name" : "op",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 71,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@71:24",
+            "callee" : "delete",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "station",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 72,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@72:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Delete success",
+              "type" : "string"
+            }, {
+              "name" : "station",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 74,
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@74:35",
+          "callee" : "error",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "StationServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[delete][Delete station error][Station not found][StationId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "stationsId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 75,
+        "expr" : {
+          "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#delete(java.lang.String,org.springframework.http.HttpHeaders)@75:16",
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          }, {
+            "lit" : "Station not exist",
+            "type" : "string"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.service.StationServiceImpl#exist(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+      "line" : 41,
+      "end" : 48,
+      "params" : [ {
+        "name" : "stationName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "boolean",
+        "operator" : "=",
+        "expr" : {
+          "lit" : false,
+          "type" : "boolean"
+        }
+      }, {
+        "op" : "if",
+        "line" : 44,
+        "id" : "b44",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#exist(java.lang.String,org.springframework.http.HttpHeaders)@44:24",
+            "callee" : "findByName",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "stationName",
+              "ref" : "param"
+            } ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 45,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "lit" : true,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 47,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.service.StationServiceImpl#query(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+      "line" : 78,
+      "end" : 87,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 80,
+        "target" : {
+          "name" : "stations",
+          "ref" : "local"
+        },
+        "decl" : "List<Station>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#query(org.springframework.http.HttpHeaders)@80:45",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 81,
+        "id" : "b81",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "stations",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#query(org.springframework.http.HttpHeaders)@81:43",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "stations",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 82,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#query(org.springframework.http.HttpHeaders)@82:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Find all content",
+              "type" : "string"
+            }, {
+              "name" : "stations",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 84,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#query(org.springframework.http.HttpHeaders)@84:39",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[query][Query stations warn][Find all stations: {}]",
+              "type" : "string"
+            }, {
+              "lit" : "No content",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 85,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#query(org.springframework.http.HttpHeaders)@85:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No content",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryById(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+      "line" : 124,
+      "end" : 133,
+      "params" : [ {
+        "name" : "stationId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 126,
+        "target" : {
+          "name" : "station",
+          "ref" : "local"
+        },
+        "decl" : "Optional<Station>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryById(java.lang.String,org.springframework.http.HttpHeaders)@126:48",
+          "callee" : "findById",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "stationId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 127,
+        "id" : "b127",
+        "cond" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryById(java.lang.String,org.springframework.http.HttpHeaders)@127:21",
+          "callee" : "isPresent",
+          "recv" : {
+            "name" : "station",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 128,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryById(java.lang.String,org.springframework.http.HttpHeaders)@128:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryById(java.lang.String,org.springframework.http.HttpHeaders)@128:61",
+              "callee" : "getName",
+              "recv" : {
+                "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryById(java.lang.String,org.springframework.http.HttpHeaders)@128:55",
+                "callee" : "get",
+                "recv" : {
+                  "name" : "station",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 130,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryById(java.lang.String,org.springframework.http.HttpHeaders)@130:39",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[queryById][Find station name error][Station not found][StationId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "stationId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 131,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryById(java.lang.String,org.springframework.http.HttpHeaders)@131:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No that stationId",
+              "type" : "string"
+            }, {
+              "name" : "stationId",
+              "ref" : "param"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+      "line" : 135,
+      "end" : 153,
+      "params" : [ {
+        "name" : "idList",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 137,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "ArrayList<String>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@137:36",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "for",
+        "line" : 138,
+        "init" : [ {
+          "op" : "assign",
+          "line" : 138,
+          "target" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "decl" : "int",
+          "operator" : "=",
+          "expr" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        } ],
+        "cond" : {
+          "bin" : "<",
+          "l" : {
+            "name" : "i",
+            "ref" : "local"
+          },
+          "r" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@138:36",
+            "callee" : "size",
+            "recv" : {
+              "name" : "idList",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }
+        },
+        "update" : [ {
+          "un" : "post++",
+          "e" : {
+            "name" : "i",
+            "ref" : "local"
+          }
+        } ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 139,
+          "target" : {
+            "name" : "stationOld",
+            "ref" : "local"
+          },
+          "decl" : "Optional<Station>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@139:55",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@139:71",
+              "callee" : "get",
+              "recv" : {
+                "name" : "idList",
+                "ref" : "param"
+              },
+              "args" : [ {
+                "name" : "i",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "if",
+          "line" : 140,
+          "id" : "b140",
+          "cond" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@140:27",
+            "callee" : "isPresent",
+            "recv" : {
+              "name" : "stationOld",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "then" : [ {
+            "op" : "assign",
+            "line" : 141,
+            "target" : {
+              "name" : "station",
+              "ref" : "local"
+            },
+            "decl" : "Station",
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@141:44",
+              "callee" : "get",
+              "recv" : {
+                "name" : "stationOld",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 142,
+            "expr" : {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@142:24",
+              "callee" : "add",
+              "recv" : {
+                "name" : "result",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@142:36",
+                "callee" : "getName",
+                "recv" : {
+                  "name" : "station",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "if",
+        "line" : 146,
+        "id" : "b146",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@146:21",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 147,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@147:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "result",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 149,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@149:39",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[queryByIdBatch][Find station names error][Stations not found][StationIdNumber: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@149:138",
+              "callee" : "size",
+              "recv" : {
+                "name" : "idList",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 150,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryByIdBatch(java.util.List,org.springframework.http.HttpHeaders)@150:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No stationNamelist according to stationIdList",
+              "type" : "string"
+            }, {
+              "name" : "result",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+      "line" : 89,
+      "end" : 99,
+      "params" : [ {
+        "name" : "stationName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 91,
+        "target" : {
+          "name" : "station",
+          "ref" : "local"
+        },
+        "decl" : "Station",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForId(java.lang.String,org.springframework.http.HttpHeaders)@91:38",
+          "callee" : "findByName",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "stationName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 93,
+        "id" : "b93",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "station",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 94,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForId(java.lang.String,org.springframework.http.HttpHeaders)@94:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForId(java.lang.String,org.springframework.http.HttpHeaders)@94:55",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "station",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 96,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForId(java.lang.String,org.springframework.http.HttpHeaders)@96:39",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[queryForId][Find station id warn][Station not found][StationName: {}]",
+              "type" : "string"
+            }, {
+              "name" : "stationName",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 97,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForId(java.lang.String,org.springframework.http.HttpHeaders)@97:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Not exists",
+              "type" : "string"
+            }, {
+              "name" : "stationName",
+              "ref" : "param"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+      "line" : 102,
+      "end" : 122,
+      "params" : [ {
+        "name" : "nameList",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 104,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Map<String,String>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HashMap<>",
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@104:38",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 105,
+        "target" : {
+          "name" : "stations",
+          "ref" : "local"
+        },
+        "decl" : "List<Station>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@105:45",
+          "callee" : "findByNames",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "nameList",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 106,
+        "target" : {
+          "name" : "stationMap",
+          "ref" : "local"
+        },
+        "decl" : "Map<String,String>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HashMap<>",
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@106:42",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 107,
+        "id" : "f107:stations",
+        "var" : "s",
+        "var_type" : "Station",
+        "iter" : {
+          "name" : "stations",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "expr",
+          "line" : 108,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@108:24",
+            "callee" : "put",
+            "recv" : {
+              "name" : "stationMap",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@108:30",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "s",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@108:43",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "s",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "foreach",
+        "line" : 111,
+        "id" : "f111:nameList",
+        "var" : "name",
+        "var_type" : "String",
+        "iter" : {
+          "name" : "nameList",
+          "ref" : "param"
+        },
+        "body" : [ {
+          "op" : "expr",
+          "line" : 112,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@112:20",
+            "callee" : "put",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "name",
+              "ref" : "local"
+            }, {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@112:41",
+              "callee" : "get",
+              "recv" : {
+                "name" : "stationMap",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "name",
+                "ref" : "local"
+              } ]
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "if",
+        "line" : 115,
+        "id" : "b115",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@115:21",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "result",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 116,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@116:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "name" : "success",
+              "ref" : "field"
+            }, {
+              "name" : "result",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 118,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@118:39",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[queryForIdBatch][Find station ids warn][Stations not found][StationNameNumber: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@118:139",
+              "callee" : "size",
+              "recv" : {
+                "name" : "nameList",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 119,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#queryForIdBatch(java.util.List,org.springframework.http.HttpHeaders)@119:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No content according to name list",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-station-service/src/main/java/fdse/microservice/service/StationServiceImpl.java",
+      "line" : 50,
+      "end" : 64,
+      "params" : [ {
+        "name" : "info",
+        "type" : "Station"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 53,
+        "target" : {
+          "name" : "op",
+          "ref" : "local"
+        },
+        "decl" : "Optional<Station>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@53:43",
+          "callee" : "findById",
+          "recv" : {
+            "name" : "repository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@53:57",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 54,
+        "id" : "b54",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@54:17",
+            "callee" : "isPresent",
+            "recv" : {
+              "name" : "op",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 55,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@55:39",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "StationServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[update][Update station error][Station not found][StationId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@55:117",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 56,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@56:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Station not exist",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 58,
+          "target" : {
+            "name" : "station",
+            "ref" : "local"
+          },
+          "decl" : "Station",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@58:34",
+            "callee" : "get",
+            "recv" : {
+              "name" : "op",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 59,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@59:21",
+            "callee" : "setName",
+            "recv" : {
+              "name" : "station",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@59:34",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 60,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@60:21",
+            "callee" : "setStayTime",
+            "recv" : {
+              "name" : "station",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@60:38",
+              "callee" : "getStayTime",
+              "recv" : {
+                "name" : "info",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 61,
+          "expr" : {
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@61:24",
+            "callee" : "save",
+            "recv" : {
+              "name" : "repository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "station",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 62,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-station-service:fdse.microservice.service.StationServiceImpl#update(fdse.microservice.entity.Station,org.springframework.http.HttpHeaders)@62:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Update success",
+              "type" : "string"
+            }, {
+              "name" : "station",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    }
+  }
+}

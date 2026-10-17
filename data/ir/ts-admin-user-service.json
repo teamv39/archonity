@@ -1,0 +1,1670 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-admin-user-service",
+  "methods" : {
+    "method:ts-admin-user-service:adminuser.AdminUserApplication#main(java.lang.String[])" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/AdminUserApplication.java",
+      "line" : 25,
+      "end" : 27,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 26,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.AdminUserApplication#main(java.lang.String[])@26:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "AdminUserApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.AdminUserApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/AdminUserApplication.java",
+      "line" : 29,
+      "end" : 33,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.AdminUserApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@32:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:67",
+                  "callee" : "hasRole",
+                  "recv" : {
+                    "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:81",
+                      "callee" : "permitAll",
+                      "recv" : {
+                        "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/swagger-ui.html",
+                          "type" : "string"
+                        }, {
+                          "lit" : "/webjars/**",
+                          "type" : "string"
+                        }, {
+                          "lit" : "/images/**",
+                          "type" : "string"
+                        }, {
+                          "lit" : "/configuration/**",
+                          "type" : "string"
+                        }, {
+                          "lit" : "/swagger-resources/**",
+                          "type" : "string"
+                        }, {
+                          "lit" : "/v2/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "lit" : "/api/v1/adminuserservice/users/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "lit" : "ADMIN",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
+            "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-admin-user-service:adminuser.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
+          "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-admin-user-service:adminuser.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/controller/AdminUserController.java",
+      "line" : 44,
+      "end" : 48,
+      "params" : [ {
+        "name" : "userDto",
+        "type" : "UserDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 46,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@46:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[addUser][Add user][userName: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@46:66",
+            "callee" : "getUserName",
+            "recv" : {
+              "name" : "userDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@47:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@47:36",
+            "callee" : "addUser",
+            "recv" : {
+              "name" : "adminUserService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "userDto",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.controller.AdminUserController#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/controller/AdminUserController.java",
+      "line" : 50,
+      "end" : 54,
+      "params" : [ {
+        "name" : "userId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@52:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[deleteUser][Delete user][userId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@53:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@53:36",
+            "callee" : "deleteUser",
+            "recv" : {
+              "name" : "adminUserService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "userId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.controller.AdminUserController#getAllUsers(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/controller/AdminUserController.java",
+      "line" : 30,
+      "end" : 35,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#getAllUsers(org.springframework.http.HttpHeaders)@33:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[getAllUsers][Get all users]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#getAllUsers(org.springframework.http.HttpHeaders)@34:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#getAllUsers(org.springframework.http.HttpHeaders)@34:36",
+            "callee" : "getAllUsers",
+            "recv" : {
+              "name" : "adminUserService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.controller.AdminUserController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/controller/AdminUserController.java",
+      "line" : 25,
+      "end" : 28,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 27,
+        "expr" : {
+          "lit" : "Welcome to [ AdminUser Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.controller.AdminUserController#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/controller/AdminUserController.java",
+      "line" : 37,
+      "end" : 41,
+      "params" : [ {
+        "name" : "userDto",
+        "type" : "UserDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 39,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@39:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[updateUser][Update User][userName: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@39:72",
+            "callee" : "getUserName",
+            "recv" : {
+              "name" : "userDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@40:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-user-service:adminuser.controller.AdminUserController#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@40:36",
+            "callee" : "updateUser",
+            "recv" : {
+              "name" : "adminUserService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "userDto",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/service/AdminUserServiceImpl.java",
+      "line" : 109,
+      "end" : 129,
+      "params" : [ {
+        "name" : "userDto",
+        "type" : "UserDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 111,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@111:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[addUser][ADD USER INFO][UserDto: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@111:70",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "userDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 112,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@112:36",
+          "args" : [ {
+            "name" : "userDto",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 113,
+        "target" : {
+          "name" : "user_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@113:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-user-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 114,
+        "target" : {
+          "name" : "USER_SERVICE_IP_URI",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "user_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/userservice/users",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 115,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<User>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@115:58",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "USER_SERVICE_IP_URI",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/register",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<User>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@119:17",
+            "args" : [ ],
+            "anon" : "type:ts-admin-user-service:adminuser.service.AdminUserServiceImpl$2"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 122,
+        "target" : {
+          "name" : "userName",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@122:35",
+          "callee" : "getUserName",
+          "recv" : {
+            "name" : "userDto",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 123,
+        "id" : "b123",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@123:16",
+              "callee" : "getBody",
+              "recv" : {
+                "name" : "re",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "bin" : "!=",
+            "l" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@123:50",
+              "callee" : "getStatus",
+              "recv" : {
+                "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@123:40",
+                "callee" : "getBody",
+                "recv" : {
+                  "name" : "re",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : 1,
+              "type" : "int"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 124,
+          "expr" : {
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@124:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminUserServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[addUser][receive response][Add user error][userName: {}]",
+              "type" : "string"
+            }, {
+              "name" : "userName",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 125,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@125:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Add user error",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 127,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@127:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminUserServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[addUser][Add user success][userName: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userName",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 128,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@128:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/service/AdminUserServiceImpl.java",
+      "line" : 60,
+      "end" : 81,
+      "params" : [ {
+        "name" : "userId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 62,
+        "target" : {
+          "name" : "newHeaders",
+          "ref" : "local"
+        },
+        "decl" : "HttpHeaders",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpHeaders",
+          "fqn" : "org.springframework.http.HttpHeaders",
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@62:34",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 63,
+        "target" : {
+          "name" : "token",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@63:32",
+          "callee" : "getFirst",
+          "recv" : {
+            "name" : "headers",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "field" : "AUTHORIZATION",
+            "of" : {
+              "name" : "HttpHeaders",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@64:20",
+          "callee" : "set",
+          "recv" : {
+            "name" : "newHeaders",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "AUTHORIZATION",
+            "of" : {
+              "name" : "HttpHeaders",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "token",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 66,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity<>",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@66:46",
+          "args" : [ {
+            "name" : "newHeaders",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 68,
+        "target" : {
+          "name" : "user_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@68:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-user-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 69,
+        "target" : {
+          "name" : "USER_SERVICE_IP_URI",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "user_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/userservice/users",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 70,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@70:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "USER_SERVICE_IP_URI",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "userId",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "DELETE",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 75,
+        "id" : "b75",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@75:16",
+              "callee" : "getBody",
+              "recv" : {
+                "name" : "re",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "bin" : "!=",
+            "l" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@75:50",
+              "callee" : "getStatus",
+              "recv" : {
+                "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@75:40",
+                "callee" : "getBody",
+                "recv" : {
+                  "name" : "re",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : 1,
+              "type" : "int"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 76,
+          "expr" : {
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@76:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminUserServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deleteUser][receive response][Delete user error][userId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "userId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 77,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@77:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "delete user error",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@79:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminUserServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deleteUser][Delete user success][userId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 80,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)@80:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/service/AdminUserServiceImpl.java",
+      "line" : 40,
+      "end" : 57,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@42:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "name" : "user_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@43:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-user-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 44,
+        "target" : {
+          "name" : "USER_SERVICE_IP_URI",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "user_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/userservice/users",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 45,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<List<User>>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@45:64",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "USER_SERVICE_IP_URI",
+            "ref" : "local"
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<List<User>>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@49:17",
+            "args" : [ ],
+            "anon" : "type:ts-admin-user-service:adminuser.service.AdminUserServiceImpl$1"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 51,
+        "id" : "b51",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@51:16",
+              "callee" : "getBody",
+              "recv" : {
+                "name" : "re",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "bin" : "!=",
+            "l" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@51:50",
+              "callee" : "getStatus",
+              "recv" : {
+                "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@51:40",
+                "callee" : "getBody",
+                "recv" : {
+                  "name" : "re",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : 1,
+              "type" : "int"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 52,
+          "expr" : {
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@52:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminUserServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getAllUsers][receive response][Get All Users error]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 53,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@53:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "get all users error",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@55:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminUserServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllUsers][Get All Users][success]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 56,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getAllUsers(org.springframework.http.HttpHeaders)@56:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#getServiceUrl(java.lang.String)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/service/AdminUserServiceImpl.java",
+      "line" : 36,
+      "end" : 38,
+      "params" : [ {
+        "name" : "serviceName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 37,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "lit" : "http://",
+            "type" : "string"
+          },
+          "r" : {
+            "name" : "serviceName",
+            "ref" : "param"
+          }
+        }
+      } ]
+    },
+    "method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-user-service/src/main/java/adminuser/service/AdminUserServiceImpl.java",
+      "line" : 83,
+      "end" : 107,
+      "params" : [ {
+        "name" : "userDto",
+        "type" : "UserDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 85,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@85:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "lit" : "UPDATE USER: ",
+              "type" : "string"
+            },
+            "r" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@85:47",
+              "callee" : "toString",
+              "recv" : {
+                "name" : "userDto",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 87,
+        "target" : {
+          "name" : "newHeaders",
+          "ref" : "local"
+        },
+        "decl" : "HttpHeaders",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpHeaders",
+          "fqn" : "org.springframework.http.HttpHeaders",
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@87:34",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 88,
+        "target" : {
+          "name" : "token",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@88:32",
+          "callee" : "getFirst",
+          "recv" : {
+            "name" : "headers",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "field" : "AUTHORIZATION",
+            "of" : {
+              "name" : "HttpHeaders",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 89,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@89:20",
+          "callee" : "set",
+          "recv" : {
+            "name" : "newHeaders",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "AUTHORIZATION",
+            "of" : {
+              "name" : "HttpHeaders",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "token",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 91,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@91:36",
+          "args" : [ {
+            "name" : "userDto",
+            "ref" : "param"
+          }, {
+            "name" : "newHeaders",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 92,
+        "target" : {
+          "name" : "user_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@92:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-user-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 93,
+        "target" : {
+          "name" : "USER_SERVICE_IP_URI",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "user_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/userservice/users",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 94,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@94:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "USER_SERVICE_IP_URI",
+            "ref" : "local"
+          }, {
+            "field" : "PUT",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 100,
+        "target" : {
+          "name" : "userName",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@100:35",
+          "callee" : "getUserName",
+          "recv" : {
+            "name" : "userDto",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 101,
+        "id" : "b101",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@101:16",
+              "callee" : "getBody",
+              "recv" : {
+                "name" : "re",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "bin" : "!=",
+            "l" : {
+              "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@101:50",
+              "callee" : "getStatus",
+              "recv" : {
+                "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@101:40",
+                "callee" : "getBody",
+                "recv" : {
+                  "name" : "re",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : 1,
+              "type" : "int"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 102,
+          "expr" : {
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@102:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AdminUserServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[updateUser][receive response][Update user error][userName: {}]",
+              "type" : "string"
+            }, {
+              "name" : "userName",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 103,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@103:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Update user error",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 105,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@105:37",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminUserServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[updateUser][Update user success][userName: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userName",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 106,
+        "expr" : {
+          "call" : "call:method:ts-admin-user-service:adminuser.service.AdminUserServiceImpl#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)@106:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    }
+  }
+}

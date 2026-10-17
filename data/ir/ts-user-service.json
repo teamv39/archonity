@@ -1,0 +1,2730 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-user-service",
+  "methods" : {
+    "method:ts-user-service:user.UserApplication#main(java.lang.String[])" : {
+      "file" : "ts-user-service/src/main/java/user/UserApplication.java",
+      "line" : 25,
+      "end" : 27,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 26,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.UserApplication#main(java.lang.String[])@26:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "UserApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.UserApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-user-service/src/main/java/user/UserApplication.java",
+      "line" : 28,
+      "end" : 32,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.UserApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@31:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-user-service/src/main/java/user/config/SecurityConfig.java",
+      "line" : 63,
+      "end" : 82,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:80",
+                      "callee" : "hasAnyRole",
+                      "recv" : {
+                        "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:62",
+                          "callee" : "permitAll",
+                          "recv" : {
+                            "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                            "callee" : "antMatchers",
+                            "recv" : {
+                              "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                              "callee" : "authorizeRequests",
+                              "recv" : {
+                                "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                                "callee" : "and",
+                                "recv" : {
+                                  "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:38",
+                                  "callee" : "sessionCreationPolicy",
+                                  "recv" : {
+                                    "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                                    "callee" : "sessionManagement",
+                                    "recv" : {
+                                      "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:25",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:18",
+                                        "callee" : "csrf",
+                                        "recv" : {
+                                          "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@65:34",
+                                          "callee" : "disable",
+                                          "recv" : {
+                                            "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@65:22",
+                                            "callee" : "httpBasic",
+                                            "recv" : {
+                                              "name" : "httpSecurity",
+                                              "ref" : "param"
+                                            },
+                                            "args" : [ ]
+                                          },
+                                          "args" : [ ]
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ {
+                                    "field" : "STATELESS",
+                                    "of" : {
+                                      "name" : "SessionCreationPolicy",
+                                      "ref" : "type"
+                                    }
+                                  } ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ ]
+                            },
+                            "args" : [ {
+                              "lit" : "/api/v1/userservice/users/**",
+                              "type" : "string"
+                            } ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "field" : "DELETE",
+                          "of" : {
+                            "name" : "HttpMethod",
+                            "ref" : "type"
+                          }
+                        }, {
+                          "lit" : "/api/v1/userservice/users/*",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "ADMIN",
+                        "type" : "string"
+                      }, {
+                        "lit" : "USER",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
+            "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 81,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@81:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-user-service:user.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@81:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-user-service/src/main/java/user/config/SecurityConfig.java",
+      "line" : 47,
+      "end" : 60,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 49,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-user-service:user.config.SecurityConfig#corsConfigurer()@49:16",
+          "args" : [ ],
+          "anon" : "type:ts-user-service:user.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-user-service:user.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-user-service/src/main/java/user/config/SecurityConfig.java",
+      "line" : 34,
+      "end" : 37,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 36,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
+          "call" : "call:method:ts-user-service:user.config.SecurityConfig#passwordEncoder()@36:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-user-service/src/main/java/user/config/SecurityConfig.java",
+      "line" : 50,
+      "end" : 58,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@57:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-user-service:user.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-user-service:user.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-user-service:user.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-user-service:user.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-user-service:user.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.controller.UserController#deleteUserById(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/controller/UserController.java",
+      "line" : 59,
+      "end" : 65,
+      "params" : [ {
+        "name" : "userId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 63,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#deleteUserById(java.lang.String,org.springframework.http.HttpHeaders)@63:31",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "UserController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deleteUserById][Delete user][UserId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#deleteUserById(java.lang.String,org.springframework.http.HttpHeaders)@64:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-user-service:user.controller.UserController#deleteUserById(java.lang.String,org.springframework.http.HttpHeaders)@64:31",
+            "callee" : "deleteUser",
+            "recv" : {
+              "name" : "userService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "userId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/controller/UserController.java",
+      "line" : 35,
+      "end" : 39,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)@37:31",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "UserController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllUser][Get all user]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)@38:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-user-service:user.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)@38:31",
+            "callee" : "getAllUsers",
+            "recv" : {
+              "name" : "userService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.controller.UserController#getUserByUserId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/controller/UserController.java",
+      "line" : 46,
+      "end" : 50,
+      "params" : [ {
+        "name" : "userId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#getUserByUserId(java.lang.String,org.springframework.http.HttpHeaders)@48:31",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "UserController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getUserByUserId][Get user by user id][UserId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 49,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#getUserByUserId(java.lang.String,org.springframework.http.HttpHeaders)@49:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-user-service:user.controller.UserController#getUserByUserId(java.lang.String,org.springframework.http.HttpHeaders)@49:31",
+            "callee" : "findByUserId",
+            "recv" : {
+              "name" : "userService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "userId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.controller.UserController#getUserByUserName(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/controller/UserController.java",
+      "line" : 41,
+      "end" : 45,
+      "params" : [ {
+        "name" : "userName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#getUserByUserName(java.lang.String,org.springframework.http.HttpHeaders)@43:31",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "UserController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getUserByUserName][Get user by user name][UserName: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#getUserByUserName(java.lang.String,org.springframework.http.HttpHeaders)@44:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-user-service:user.controller.UserController#getUserByUserName(java.lang.String,org.springframework.http.HttpHeaders)@44:31",
+            "callee" : "findByUserName",
+            "recv" : {
+              "name" : "userService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "userName",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/controller/UserController.java",
+      "line" : 52,
+      "end" : 56,
+      "params" : [ {
+        "name" : "userDto",
+        "type" : "UserDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 54,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)@54:31",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "UserController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[registerUser][Register user][UserName: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)@54:90",
+            "callee" : "getUserName",
+            "recv" : {
+              "name" : "userDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)@55:58",
+          "callee" : "body",
+          "recv" : {
+            "call" : "call:method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)@55:31",
+            "callee" : "status",
+            "recv" : {
+              "name" : "ResponseEntity",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "field" : "CREATED",
+              "of" : {
+                "name" : "HttpStatus",
+                "ref" : "type"
+              }
+            } ]
+          },
+          "args" : [ {
+            "call" : "call:method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)@55:75",
+            "callee" : "saveUser",
+            "recv" : {
+              "name" : "userService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "userDto",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.controller.UserController#testHello()" : {
+      "file" : "ts-user-service/src/main/java/user/controller/UserController.java",
+      "line" : 30,
+      "end" : 33,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 32,
+        "expr" : {
+          "lit" : "Hello",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-user-service:user.controller.UserController#updateUser(user.dto.UserDto,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/controller/UserController.java",
+      "line" : 67,
+      "end" : 72,
+      "params" : [ {
+        "name" : "user",
+        "type" : "UserDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 70,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#updateUser(user.dto.UserDto,org.springframework.http.HttpHeaders)@70:31",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "UserController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[updateUser][Update user][UserId: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-user-service:user.controller.UserController#updateUser(user.dto.UserDto,org.springframework.http.HttpHeaders)@70:81",
+            "callee" : "getUserId",
+            "recv" : {
+              "name" : "user",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 71,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.controller.UserController#updateUser(user.dto.UserDto,org.springframework.http.HttpHeaders)@71:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-user-service:user.controller.UserController#updateUser(user.dto.UserDto,org.springframework.http.HttpHeaders)@71:31",
+            "callee" : "updateUser",
+            "recv" : {
+              "name" : "userService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "user",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.dto.Gender#<init>(int,java.lang.String)" : {
+      "file" : "ts-user-service/src/main/java/user/dto/Gender.java",
+      "line" : 28,
+      "end" : 31,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "field" : "code",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "code",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-user-service:user.dto.Gender#getCode()" : {
+      "file" : "ts-user-service/src/main/java/user/dto/Gender.java",
+      "line" : 33,
+      "end" : 35,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 34,
+        "expr" : {
+          "name" : "code",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-user-service:user.dto.Gender#getName()" : {
+      "file" : "ts-user-service/src/main/java/user/dto/Gender.java",
+      "line" : 37,
+      "end" : 39,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "name" : "name",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-user-service:user.dto.Gender#getNameByCode(int)" : {
+      "file" : "ts-user-service/src/main/java/user/dto/Gender.java",
+      "line" : 41,
+      "end" : 49,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "genderSet",
+          "ref" : "local"
+        },
+        "decl" : "Gender[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.dto.Gender#getNameByCode(int)@42:37",
+          "callee" : "values",
+          "recv" : {
+            "name" : "Gender",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 43,
+        "id" : "f43:genderSet",
+        "var" : "gender",
+        "var_type" : "Gender",
+        "iter" : {
+          "name" : "genderSet",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 44,
+          "id" : "b44",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-user-service:user.dto.Gender#getNameByCode(int)@44:24",
+              "callee" : "getCode",
+              "recv" : {
+                "name" : "gender",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "code",
+              "ref" : "param"
+            }
+          },
+          "then" : [ {
+            "op" : "return",
+            "line" : 45,
+            "expr" : {
+              "call" : "call:method:ts-user-service:user.dto.Gender#getNameByCode(int)@45:31",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "gender",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.dto.Gender#getNameByCode(int)@48:29",
+          "callee" : "getName",
+          "recv" : {
+            "index" : {
+              "lit" : 0,
+              "type" : "int"
+            },
+            "of" : {
+              "name" : "genderSet",
+              "ref" : "local"
+            }
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.entity.User#<init>()" : {
+      "file" : "ts-user-service/src/main/java/user/entity/User.java",
+      "line" : 40,
+      "end" : 42,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 41,
+        "target" : {
+          "field" : "userId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.entity.User#<init>()@41:41",
+          "callee" : "toString",
+          "recv" : {
+            "call" : "call:method:ts-user-service:user.entity.User#<init>()@41:28",
+            "callee" : "randomUUID",
+            "recv" : {
+              "name" : "UUID",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.init.InitUser#run(java.lang.String[])" : {
+      "file" : "ts-user-service/src/main/java/user/init/InitUser.java",
+      "line" : 29,
+      "end" : 44,
+      "params" : [ {
+        "name" : "strings",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "name" : "whetherExistUser",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@31:48",
+          "callee" : "findByUserName",
+          "recv" : {
+            "name" : "userRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "fdse_microservice",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 32,
+        "target" : {
+          "name" : "user",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@39:54",
+          "callee" : "build",
+          "recv" : {
+            "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@39:18",
+            "callee" : "email",
+            "recv" : {
+              "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@38:18",
+              "callee" : "documentNum",
+              "recv" : {
+                "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@37:18",
+                "callee" : "documentType",
+                "recv" : {
+                  "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@36:18",
+                  "callee" : "gender",
+                  "recv" : {
+                    "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@35:18",
+                    "callee" : "password",
+                    "recv" : {
+                      "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@34:18",
+                      "callee" : "userName",
+                      "recv" : {
+                        "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@33:18",
+                        "callee" : "userId",
+                        "recv" : {
+                          "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@32:26",
+                          "callee" : "builder",
+                          "recv" : {
+                            "name" : "User",
+                            "ref" : "type"
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "fdse_microservice",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "111111",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "lit" : 1,
+                    "type" : "int"
+                  } ]
+                },
+                "args" : [ {
+                  "lit" : 1,
+                  "type" : "int"
+                } ]
+              },
+              "args" : [ {
+                "lit" : "2135488099312X",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ {
+              "lit" : "trainticket_notify@163.com",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@40:14",
+          "callee" : "setUserId",
+          "recv" : {
+            "name" : "user",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 41,
+        "id" : "b41",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "whetherExistUser",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 42,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.init.InitUser#run(java.lang.String[])@42:28",
+            "callee" : "save",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "user",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      } ]
+    },
+    "method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)" : {
+      "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+      "line" : 80,
+      "end" : 100,
+      "params" : [ {
+        "name" : "dto",
+        "type" : "AuthDto"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 81,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@81:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[createDefaultAuthUser][CALL TO AUTH][AuthDto: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@81:79",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "dto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 82,
+        "target" : {
+          "name" : "headers",
+          "ref" : "local"
+        },
+        "decl" : "HttpHeaders",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpHeaders",
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@82:31",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 83,
+        "target" : {
+          "name" : "entity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity<AuthDto>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity<>",
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@83:38",
+          "args" : [ {
+            "name" : "dto",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 84,
+        "target" : {
+          "name" : "auth_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@84:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-auth-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 86,
+        "target" : {
+          "name" : "auth_svcs",
+          "ref" : "local"
+        },
+        "decl" : "List<ServiceInstance>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@86:59",
+          "callee" : "getInstances",
+          "recv" : {
+            "name" : "discoveryClient",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "ts-auth-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 87,
+        "id" : "b87",
+        "cond" : {
+          "bin" : ">",
+          "l" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@87:22",
+            "callee" : "size",
+            "recv" : {
+              "name" : "auth_svcs",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 88,
+          "target" : {
+            "name" : "auth_svc",
+            "ref" : "local"
+          },
+          "decl" : "ServiceInstance",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@88:50",
+            "callee" : "get",
+            "recv" : {
+              "name" : "auth_svcs",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 89,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@89:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "LOGGER",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[createDefaultAuthUser][CALL TO AUTH][auth_svc host: {}][auth_svc port: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@89:113",
+              "callee" : "getHost",
+              "recv" : {
+                "name" : "auth_svc",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }, {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@89:133",
+              "callee" : "getPort",
+              "recv" : {
+                "name" : "auth_svc",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 91,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@91:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "LOGGER",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[createDefaultAuthUser][CALL TO AUTH][can not get auth url]",
+              "type" : "string"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 94,
+        "target" : {
+          "name" : "res",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<AuthDto>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@94:63",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "auth_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/auth",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "entity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<AuthDto>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@97:17",
+            "args" : [ ],
+            "anon" : "type:ts-user-service:user.service.impl.UserServiceImpl$1"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 99,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#createDefaultAuthUser(user.dto.AuthDto)@99:20",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "res",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+      "line" : 132,
+      "end" : 148,
+      "params" : [ {
+        "name" : "userId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 135,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@135:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[deleteUser][DELETE USER BY ID][userId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 136,
+        "target" : {
+          "name" : "user",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@136:36",
+          "callee" : "findByUserId",
+          "recv" : {
+            "name" : "userRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 137,
+        "id" : "b137",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "user",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 139,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@139:13",
+            "callee" : "deleteUserAuth",
+            "recv" : null,
+            "args" : [ {
+              "name" : "userId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 141,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@141:28",
+            "callee" : "deleteByUserId",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "userId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 142,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@142:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "LOGGER",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[deleteUser][DELETE SUCCESS][userId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "userId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 143,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@143:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "DELETE SUCCESS",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 145,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@145:36",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "UserServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deleteUser][Delete user error][User not found][UserId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "userId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 146,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUser(java.lang.String,?HttpHeaders)@146:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "USER NOT EXISTS",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-user-service:user.service.impl.UserServiceImpl#deleteUserAuth(java.lang.String,?HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+      "line" : 172,
+      "end" : 188,
+      "params" : [ {
+        "name" : "userId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 173,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUserAuth(java.lang.String,?HttpHeaders)@173:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[deleteUserAuth][DELETE USER BY ID][userId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 175,
+        "target" : {
+          "name" : "newHeaders",
+          "ref" : "local"
+        },
+        "decl" : "HttpHeaders",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpHeaders",
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUserAuth(java.lang.String,?HttpHeaders)@175:34",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 176,
+        "target" : {
+          "name" : "token",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUserAuth(java.lang.String,?HttpHeaders)@176:32",
+          "callee" : "getFirst",
+          "recv" : {
+            "name" : "headers",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "field" : "AUTHORIZATION",
+            "of" : {
+              "name" : "HttpHeaders",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 177,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUserAuth(java.lang.String,?HttpHeaders)@177:20",
+          "callee" : "set",
+          "recv" : {
+            "name" : "newHeaders",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "field" : "AUTHORIZATION",
+            "of" : {
+              "name" : "HttpHeaders",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "token",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 179,
+        "target" : {
+          "name" : "httpEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity<>",
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUserAuth(java.lang.String,?HttpHeaders)@179:43",
+          "args" : [ {
+            "name" : "newHeaders",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 181,
+        "target" : {
+          "name" : "auth_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUserAuth(java.lang.String,?HttpHeaders)@181:35",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-auth-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 182,
+        "target" : {
+          "name" : "AUTH_SERVICE_URI",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "auth_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "expr",
+        "line" : 183,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUserAuth(java.lang.String,?HttpHeaders)@183:22",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "AUTH_SERVICE_URI",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/users/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "userId",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "DELETE",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "httpEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 187,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#deleteUserAuth(java.lang.String,?HttpHeaders)@187:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[deleteUserAuth][DELETE USER AUTH SUCCESS][userId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.service.impl.UserServiceImpl#findByUserId(java.lang.String,?HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+      "line" : 122,
+      "end" : 130,
+      "params" : [ {
+        "name" : "userId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 124,
+        "target" : {
+          "name" : "user",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserId(java.lang.String,?HttpHeaders)@124:36",
+          "callee" : "findByUserId",
+          "recv" : {
+            "name" : "userRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 125,
+        "id" : "b125",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "user",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 126,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserId(java.lang.String,?HttpHeaders)@126:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Find User Success",
+              "type" : "string"
+            }, {
+              "name" : "user",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 128,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserId(java.lang.String,?HttpHeaders)@128:32",
+          "callee" : "error",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "UserServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findByUserId][Get user by id error,user is null][UserId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 129,
+        "expr" : {
+          "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserId(java.lang.String,?HttpHeaders)@129:16",
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          }, {
+            "lit" : "No User",
+            "type" : "string"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.service.impl.UserServiceImpl#findByUserName(java.lang.String,?HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+      "line" : 112,
+      "end" : 120,
+      "params" : [ {
+        "name" : "userName",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 114,
+        "target" : {
+          "name" : "user",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserName(java.lang.String,?HttpHeaders)@114:36",
+          "callee" : "findByUserName",
+          "recv" : {
+            "name" : "userRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "userName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 115,
+        "id" : "b115",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "user",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 116,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserName(java.lang.String,?HttpHeaders)@116:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Find User Success",
+              "type" : "string"
+            }, {
+              "name" : "user",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 118,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserName(java.lang.String,?HttpHeaders)@118:32",
+          "callee" : "warn",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "UserServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findByUserName][Get user by name warn,user is null][UserName: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 119,
+        "expr" : {
+          "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#findByUserName(java.lang.String,?HttpHeaders)@119:16",
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          }, {
+            "lit" : "No User",
+            "type" : "string"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.service.impl.UserServiceImpl#getAllUsers(?HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+      "line" : 102,
+      "end" : 110,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 104,
+        "target" : {
+          "name" : "users",
+          "ref" : "local"
+        },
+        "decl" : "List<User>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#getAllUsers(?HttpHeaders)@104:43",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "userRepository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 105,
+        "id" : "b105",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "users",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#getAllUsers(?HttpHeaders)@105:37",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "users",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 106,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#getAllUsers(?HttpHeaders)@106:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Success",
+              "type" : "string"
+            }, {
+              "name" : "users",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 108,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#getAllUsers(?HttpHeaders)@108:32",
+          "callee" : "warn",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "UserServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllUsers][Get all users warn: {}]",
+            "type" : "string"
+          }, {
+            "lit" : "No Content",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 109,
+        "expr" : {
+          "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#getAllUsers(?HttpHeaders)@109:16",
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          }, {
+            "lit" : "NO User",
+            "type" : "string"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-user-service:user.service.impl.UserServiceImpl#getServiceUrl(java.lang.String)" : {
+      "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+      "line" : 41,
+      "end" : 43,
+      "params" : [ {
+        "name" : "serviceName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 42,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "lit" : "http://",
+            "type" : "string"
+          },
+          "r" : {
+            "name" : "serviceName",
+            "ref" : "param"
+          }
+        }
+      } ]
+    },
+    "method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+      "line" : 45,
+      "end" : 78,
+      "params" : [ {
+        "name" : "userDto",
+        "type" : "UserDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@47:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[saveUser][Save User Name][user name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@47:74",
+            "callee" : "getUserName",
+            "recv" : {
+              "name" : "userDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 48,
+        "target" : {
+          "name" : "userId",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@48:33",
+          "callee" : "getUserId",
+          "recv" : {
+            "name" : "userDto",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 49,
+        "id" : "b49",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@49:21",
+            "callee" : "getUserId",
+            "recv" : {
+              "name" : "userDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 50,
+          "target" : {
+            "name" : "userId",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@50:40",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@50:27",
+              "callee" : "randomUUID",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 53,
+        "target" : {
+          "name" : "user",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@60:44",
+          "callee" : "build",
+          "recv" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@60:18",
+            "callee" : "email",
+            "recv" : {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@59:18",
+              "callee" : "documentNum",
+              "recv" : {
+                "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@58:18",
+                "callee" : "documentType",
+                "recv" : {
+                  "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@57:18",
+                  "callee" : "gender",
+                  "recv" : {
+                    "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@56:18",
+                    "callee" : "password",
+                    "recv" : {
+                      "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@55:18",
+                      "callee" : "userName",
+                      "recv" : {
+                        "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@54:18",
+                        "callee" : "userId",
+                        "recv" : {
+                          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@53:26",
+                          "callee" : "builder",
+                          "recv" : {
+                            "name" : "User",
+                            "ref" : "type"
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "name" : "userId",
+                          "ref" : "local"
+                        } ]
+                      },
+                      "args" : [ {
+                        "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@55:35",
+                        "callee" : "getUserName",
+                        "recv" : {
+                          "name" : "userDto",
+                          "ref" : "param"
+                        },
+                        "args" : [ ]
+                      } ]
+                    },
+                    "args" : [ {
+                      "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@56:35",
+                      "callee" : "getPassword",
+                      "recv" : {
+                        "name" : "userDto",
+                        "ref" : "param"
+                      },
+                      "args" : [ ]
+                    } ]
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@57:33",
+                    "callee" : "getGender",
+                    "recv" : {
+                      "name" : "userDto",
+                      "ref" : "param"
+                    },
+                    "args" : [ ]
+                  } ]
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@58:39",
+                  "callee" : "getDocumentType",
+                  "recv" : {
+                    "name" : "userDto",
+                    "ref" : "param"
+                  },
+                  "args" : [ ]
+                } ]
+              },
+              "args" : [ {
+                "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@59:38",
+                "callee" : "getDocumentNum",
+                "recv" : {
+                  "name" : "userDto",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              } ]
+            },
+            "args" : [ {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@60:32",
+              "callee" : "getEmail",
+              "recv" : {
+                "name" : "userDto",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 63,
+        "target" : {
+          "name" : "user1",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@63:37",
+          "callee" : "findByUserName",
+          "recv" : {
+            "name" : "userRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@63:60",
+            "callee" : "getUserName",
+            "recv" : {
+              "name" : "userDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 64,
+        "id" : "b64",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "user1",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 66,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@66:13",
+            "callee" : "createDefaultAuthUser",
+            "recv" : null,
+            "args" : [ {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@68:51",
+              "callee" : "build",
+              "recv" : {
+                "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@68:22",
+                "callee" : "password",
+                "recv" : {
+                  "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@67:22",
+                  "callee" : "userName",
+                  "recv" : {
+                    "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@66:53",
+                    "callee" : "userId",
+                    "recv" : {
+                      "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@66:43",
+                      "callee" : "builder",
+                      "recv" : {
+                        "name" : "AuthDto",
+                        "ref" : "type"
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "bin" : "+",
+                      "l" : {
+                        "name" : "userId",
+                        "ref" : "local"
+                      },
+                      "r" : {
+                        "lit" : "",
+                        "type" : "string"
+                      }
+                    } ]
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@67:36",
+                    "callee" : "getUserName",
+                    "recv" : {
+                      "name" : "user",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  } ]
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@68:36",
+                  "callee" : "getPassword",
+                  "recv" : {
+                    "name" : "user",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                } ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 70,
+          "target" : {
+            "name" : "userSaveResult",
+            "ref" : "local"
+          },
+          "decl" : "User",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@70:50",
+            "callee" : "save",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "user",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 71,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@71:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "LOGGER",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[saveUser][Send authorization message to ts-auth-service....]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 73,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@73:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "REGISTER USER SUCCESS",
+              "type" : "string"
+            }, {
+              "name" : "userSaveResult",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 75,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@75:36",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "UserServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[saveUser][Save user error][User already exists][UserId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@75:113",
+              "callee" : "getUserId",
+              "recv" : {
+                "name" : "userDto",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 76,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)@76:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "USER HAS ALREADY EXISTS",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)" : {
+      "file" : "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
+      "line" : 150,
+      "end" : 170,
+      "params" : [ {
+        "name" : "userDto",
+        "type" : "UserDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 153,
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@153:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[updateUser][UPDATE USER: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@153:62",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "userDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 154,
+        "target" : {
+          "name" : "oldUser",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@154:39",
+          "callee" : "findByUserId",
+          "recv" : {
+            "name" : "userRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@154:60",
+            "callee" : "getUserId",
+            "recv" : {
+              "name" : "userDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 155,
+        "id" : "b155",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "oldUser",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 156,
+          "target" : {
+            "name" : "newUser",
+            "ref" : "local"
+          },
+          "decl" : "User",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@162:62",
+            "callee" : "build",
+            "recv" : {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@162:22",
+              "callee" : "documentType",
+              "recv" : {
+                "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@161:22",
+                "callee" : "documentNum",
+                "recv" : {
+                  "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@160:22",
+                  "callee" : "gender",
+                  "recv" : {
+                    "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@159:22",
+                    "callee" : "userName",
+                    "recv" : {
+                      "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@158:22",
+                      "callee" : "userId",
+                      "recv" : {
+                        "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@157:22",
+                        "callee" : "password",
+                        "recv" : {
+                          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@156:43",
+                          "callee" : "email",
+                          "recv" : {
+                            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@156:33",
+                            "callee" : "builder",
+                            "recv" : {
+                              "name" : "User",
+                              "ref" : "type"
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ {
+                            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@156:57",
+                            "callee" : "getEmail",
+                            "recv" : {
+                              "name" : "userDto",
+                              "ref" : "param"
+                            },
+                            "args" : [ ]
+                          } ]
+                        },
+                        "args" : [ {
+                          "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@157:39",
+                          "callee" : "getPassword",
+                          "recv" : {
+                            "name" : "userDto",
+                            "ref" : "param"
+                          },
+                          "args" : [ ]
+                        } ]
+                      },
+                      "args" : [ {
+                        "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@158:37",
+                        "callee" : "getUserId",
+                        "recv" : {
+                          "name" : "oldUser",
+                          "ref" : "local"
+                        },
+                        "args" : [ ]
+                      } ]
+                    },
+                    "args" : [ {
+                      "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@159:39",
+                      "callee" : "getUserName",
+                      "recv" : {
+                        "name" : "userDto",
+                        "ref" : "param"
+                      },
+                      "args" : [ ]
+                    } ]
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@160:37",
+                    "callee" : "getGender",
+                    "recv" : {
+                      "name" : "userDto",
+                      "ref" : "param"
+                    },
+                    "args" : [ ]
+                  } ]
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@161:42",
+                  "callee" : "getDocumentNum",
+                  "recv" : {
+                    "name" : "userDto",
+                    "ref" : "param"
+                  },
+                  "args" : [ ]
+                } ]
+              },
+              "args" : [ {
+                "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@162:43",
+                "callee" : "getDocumentType",
+                "recv" : {
+                  "name" : "userDto",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              } ]
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 163,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@163:28",
+            "callee" : "deleteByUserId",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@163:51",
+              "callee" : "getUserId",
+              "recv" : {
+                "name" : "oldUser",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 164,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@164:28",
+            "callee" : "save",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "newUser",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 165,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@165:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "SAVE USER SUCCESS",
+              "type" : "string"
+            }, {
+              "name" : "newUser",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 167,
+          "expr" : {
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@167:36",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "UserServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[updateUser][Update user error][User not found][UserId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@167:112",
+              "callee" : "getUserId",
+              "recv" : {
+                "name" : "userDto",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 168,
+          "expr" : {
+            "new" : "Response",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-user-service:user.service.impl.UserServiceImpl#updateUser(user.dto.UserDto,?HttpHeaders)@168:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "USER NOT EXISTS",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    }
+  }
+}

@@ -1,0 +1,1457 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-admin-route-service",
+  "methods" : {
+    "method:ts-admin-route-service:adminroute.AdminRouteApplication#main(java.lang.String[])" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/AdminRouteApplication.java",
+      "line" : 25,
+      "end" : 27,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 26,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.AdminRouteApplication#main(java.lang.String[])@26:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "AdminRouteApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.AdminRouteApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/AdminRouteApplication.java",
+      "line" : 29,
+      "end" : 33,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.AdminRouteApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@32:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:62",
+                      "callee" : "hasRole",
+                      "recv" : {
+                        "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/adminrouteservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "ADMIN",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
+            "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-admin-route-service:adminroute.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
+          "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-admin-route-service:adminroute.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/controller/AdminRouteController.java",
+      "line" : 38,
+      "end" : 43,
+      "params" : [ {
+        "name" : "request",
+        "type" : "RouteInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)@40:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[addRoute][Create and modify route][route id: {}, from station {} to station {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)@41:25",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)@41:42",
+            "callee" : "getStartStation",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)@41:69",
+            "callee" : "getEndStation",
+            "recv" : {
+              "name" : "request",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 42,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)@42:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)@42:37",
+            "callee" : "createAndModifyRoute",
+            "recv" : {
+              "name" : "adminRouteService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "request",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.controller.AdminRouteController#deleteRoute(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/controller/AdminRouteController.java",
+      "line" : 45,
+      "end" : 49,
+      "params" : [ {
+        "name" : "routeId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#deleteRoute(java.lang.String,org.springframework.http.HttpHeaders)@47:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[deleteRoute][Delete route][route id: {}]",
+            "type" : "string"
+          }, {
+            "name" : "routeId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#deleteRoute(java.lang.String,org.springframework.http.HttpHeaders)@48:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#deleteRoute(java.lang.String,org.springframework.http.HttpHeaders)@48:37",
+            "callee" : "deleteRoute",
+            "recv" : {
+              "name" : "adminRouteService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "routeId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.controller.AdminRouteController#getAllRoutes(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/controller/AdminRouteController.java",
+      "line" : 31,
+      "end" : 36,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#getAllRoutes(org.springframework.http.HttpHeaders)@34:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[getAllRoutes][Get all routes request]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#getAllRoutes(org.springframework.http.HttpHeaders)@35:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-route-service:adminroute.controller.AdminRouteController#getAllRoutes(org.springframework.http.HttpHeaders)@35:37",
+            "callee" : "getAllRoutes",
+            "recv" : {
+              "name" : "adminRouteService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.controller.AdminRouteController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/controller/AdminRouteController.java",
+      "line" : 26,
+      "end" : 29,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 28,
+        "expr" : {
+          "lit" : "Welcome to [ AdminRoute Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/service/AdminRouteServiceImpl.java",
+      "line" : 99,
+      "end" : 124,
+      "params" : [ {
+        "name" : "stationNames",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 100,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@100:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[checkStationsExists][Check Stations Exists][stationNames: {}]",
+            "type" : "string"
+          }, {
+            "name" : "stationNames",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 101,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@101:36",
+          "args" : [ {
+            "name" : "stationNames",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 102,
+        "target" : {
+          "name" : "station_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@102:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-station-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 103,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@103:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "station_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/stationservice/stations/idlist",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 108,
+        "target" : {
+          "name" : "r",
+          "ref" : "local"
+        },
+        "decl" : "Response<Map<String,String>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@108:46",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 109,
+        "id" : "b109",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@109:14",
+            "callee" : "getStatus",
+            "recv" : {
+              "name" : "r",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 110,
+          "expr" : {
+            "name" : "r",
+            "ref" : "local"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 112,
+        "target" : {
+          "name" : "stationMap",
+          "ref" : "local"
+        },
+        "decl" : "Map<String,String>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@112:44",
+          "callee" : "getData",
+          "recv" : {
+            "name" : "r",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 113,
+        "target" : {
+          "name" : "notExists",
+          "ref" : "local"
+        },
+        "decl" : "List<String>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "fqn" : "java.util.ArrayList",
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@113:34",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 114,
+        "id" : "f114:stationMap.entrySet()",
+        "var" : "s",
+        "var_type" : "Map.Entry<String,String>",
+        "iter" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@114:54",
+          "callee" : "entrySet",
+          "recv" : {
+            "name" : "stationMap",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 115,
+          "id" : "b115",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@115:18",
+              "callee" : "getValue",
+              "recv" : {
+                "name" : "s",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "then" : [ {
+            "op" : "expr",
+            "line" : 117,
+            "expr" : {
+              "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@117:27",
+              "callee" : "add",
+              "recv" : {
+                "name" : "notExists",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@117:33",
+                "callee" : "getKey",
+                "recv" : {
+                  "name" : "s",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "if",
+        "line" : 120,
+        "id" : "b120",
+        "cond" : {
+          "bin" : ">",
+          "l" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@120:22",
+            "callee" : "size",
+            "recv" : {
+              "name" : "notExists",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 121,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@121:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "some station not exists",
+              "type" : "string"
+            }, {
+              "name" : "notExists",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 123,
+        "expr" : {
+          "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#checkStationsExists(java.util.List,?HttpHeaders)@123:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "check stations Exist succeed",
+            "type" : "string"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/service/AdminRouteServiceImpl.java",
+      "line" : 52,
+      "end" : 80,
+      "params" : [ {
+        "name" : "request",
+        "type" : "RouteInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 55,
+        "target" : {
+          "name" : "start",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@55:32",
+          "callee" : "getStartStation",
+          "recv" : {
+            "name" : "request",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 56,
+        "target" : {
+          "name" : "end",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@56:30",
+          "callee" : "getEndStation",
+          "recv" : {
+            "name" : "request",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 57,
+        "target" : {
+          "name" : "stations",
+          "ref" : "local"
+        },
+        "decl" : "List<String>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@57:41",
+          "callee" : "getStations",
+          "recv" : {
+            "name" : "request",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 58,
+        "id" : "b58",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@58:22",
+              "callee" : "contains",
+              "recv" : {
+                "name" : "stations",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "start",
+                "ref" : "local"
+              } ]
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@58:51",
+              "callee" : "contains",
+              "recv" : {
+                "name" : "stations",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "end",
+                "ref" : "local"
+              } ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 59,
+          "expr" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@59:20",
+            "callee" : "error",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[createAndModifyRoute][check stations][start or end not included in stationList][start: {}, end: {}]",
+              "type" : "string"
+            }, {
+              "name" : "start",
+              "ref" : "local"
+            }, {
+              "name" : "end",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 60,
+          "expr" : {
+            "new" : "Response",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@60:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "start or end station not include in stationList.",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 63,
+        "target" : {
+          "name" : "response",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@63:29",
+          "callee" : "checkStationsExists",
+          "recv" : null,
+          "args" : [ {
+            "name" : "stations",
+            "ref" : "local"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 64,
+        "id" : "b64",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@64:21",
+            "callee" : "getStatus",
+            "recv" : {
+              "name" : "response",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : 0,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 65,
+          "expr" : {
+            "name" : "response",
+            "ref" : "local"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 68,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@68:36",
+          "args" : [ {
+            "name" : "request",
+            "ref" : "param"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 69,
+        "target" : {
+          "name" : "route_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@69:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-route-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 70,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response<Route>>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@70:59",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "route_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/routeservice/routes",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "new" : "ParameterizedTypeReference<Response<Route>>",
+            "fqn" : "org.springframework.core.ParameterizedTypeReference",
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@74:17",
+            "args" : [ ],
+            "anon" : "type:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl$1"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 76,
+        "id" : "b76",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@76:16",
+            "callee" : "getStatusCode",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "field" : "ACCEPTED",
+            "of" : {
+              "name" : "HttpStatus",
+              "ref" : "type"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 77,
+          "expr" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@77:20",
+            "callee" : "error",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[createAndModifyRoute][receive response][Get status error][response code: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@77:110",
+              "callee" : "getStatusCodeValue",
+              "recv" : {
+                "name" : "re",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#createAndModifyRoute(edu.fudan.common.entity.RouteInfo,?HttpHeaders)@79:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#deleteRoute(java.lang.String,?HttpHeaders)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/service/AdminRouteServiceImpl.java",
+      "line" : 82,
+      "end" : 97,
+      "params" : [ {
+        "name" : "routeId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 85,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#deleteRoute(java.lang.String,?HttpHeaders)@85:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 86,
+        "target" : {
+          "name" : "route_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#deleteRoute(java.lang.String,?HttpHeaders)@86:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-route-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 87,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#deleteRoute(java.lang.String,?HttpHeaders)@87:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "route_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/routeservice/routes/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "routeId",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "DELETE",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 92,
+        "id" : "b92",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#deleteRoute(java.lang.String,?HttpHeaders)@92:16",
+            "callee" : "getStatusCode",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "field" : "ACCEPTED",
+            "of" : {
+              "name" : "HttpStatus",
+              "ref" : "type"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 93,
+          "expr" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#deleteRoute(java.lang.String,?HttpHeaders)@93:20",
+            "callee" : "error",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[deleteRoute][response response][Delete error][response code: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#deleteRoute(java.lang.String,?HttpHeaders)@93:98",
+              "callee" : "getStatusCodeValue",
+              "recv" : {
+                "name" : "re",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 95,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#deleteRoute(java.lang.String,?HttpHeaders)@95:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#getAllRoutes(?HttpHeaders)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/service/AdminRouteServiceImpl.java",
+      "line" : 35,
+      "end" : 50,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 38,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#getAllRoutes(?HttpHeaders)@38:36",
+          "args" : [ {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 39,
+        "target" : {
+          "name" : "route_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#getAllRoutes(?HttpHeaders)@39:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-route-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 40,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#getAllRoutes(?HttpHeaders)@40:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "route_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/routeservice/routes",
+              "type" : "string"
+            }
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 45,
+        "id" : "b45",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#getAllRoutes(?HttpHeaders)@45:16",
+            "callee" : "getStatusCode",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "field" : "ACCEPTED",
+            "of" : {
+              "name" : "HttpStatus",
+              "ref" : "type"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 46,
+          "expr" : {
+            "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#getAllRoutes(?HttpHeaders)@46:20",
+            "callee" : "error",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[getAllRoutes][receive response][Get routes error][response code: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#getAllRoutes(?HttpHeaders)@46:102",
+              "callee" : "getStatusCodeValue",
+              "recv" : {
+                "name" : "re",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#getAllRoutes(?HttpHeaders)@48:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-route-service:adminroute.service.AdminRouteServiceImpl#getServiceUrl(java.lang.String)" : {
+      "file" : "ts-admin-route-service/src/main/java/adminroute/service/AdminRouteServiceImpl.java",
+      "line" : 31,
+      "end" : 33,
+      "params" : [ {
+        "name" : "serviceName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 32,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "lit" : "http://",
+            "type" : "string"
+          },
+          "r" : {
+            "name" : "serviceName",
+            "ref" : "param"
+          }
+        }
+      } ]
+    }
+  }
+}
