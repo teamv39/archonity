@@ -1,6 +1,7 @@
 """M1: шаг сценария → StepRequest (ADR-005).
 
 Кандидаты — BM25 и dense через RRF плюс близнецы; выбор и параметры — LLM по JSON-схеме с кешем.
+LLM видит подробные карточки кандидатов и индекс всех обработчиков, выбрать может любой из индекса.
 Без LLM (нет сервера и нет кеша) — первый кандидат, параметры только из констант UI.
 
     python -m engine.grounding.grounder                               # все сценарии, кеш + сервер, если поднят
@@ -93,7 +94,11 @@ class StepGrounder:
         self.retriever = Retriever(self.cat, render, emb)
         self.llm = llm
         self.top_k = top_k
-        self.system = P.system_prompt(enum_codes(ix, self.root))
+        self.labels = P.handler_labels(self.cat.handlers)
+        self.by_label = {lb: h for h, lb in self.labels.items()}
+        enums = enum_codes(ix, self.root)
+        self.system_select = P.system_prompt(enums, P.handler_index(self.cat.handlers, self.labels))
+        self.system_params = P.system_prompt(enums)
 
     def begin(self, sc: dict[str, Any]) -> ScenarioSession:
         steps = sc.get("steps") or []
@@ -116,25 +121,25 @@ class StepGrounder:
     def ground_step(self, sc: dict[str, Any], st: dict[str, Any], ranked: Ranked, history: list[str]) -> StepRequest:
         n, action = st["n"], st.get("action") or ""
         cands = ranked.candidates(self.top_k, self.retriever.twins)
-        labels = [f"C{i + 1}" for i in range(len(cands))]
         prefix = P.scenario_block(sc) + "\n" + P.history_block(history) + "\n"
         grounding: dict[str, Any] = {"candidates": cands, "cache_keys": {}}
 
         sel = None
         if self.llm is not None:
             blocks = "\n".join(
-                P.candidate_block(lb, self.cat.handlers[h], self._ui_for(self.cat.handlers[h]),
+                P.candidate_block(self.labels[h], self.cat.handlers[h], self._ui_for(self.cat.handlers[h]),
                                   P.train_kind(self.cat.handlers[h].module) if h in self.retriever.twins else None)
-                for lb, h in zip(labels, cands))
-            msgs = [{"role": "system", "content": self.system},
+                for h in cands)
+            msgs = [{"role": "system", "content": self.system_select},
                     {"role": "user", "content": prefix + P.SELECT_TASK.format(n=n, action=action, candidates=blocks)}]
-            sel, key = self.llm.complete_json("select", P.PROMPT_VERSION, msgs, P.select_schema(labels, n))
+            sel, key = self.llm.complete_json("select", P.PROMPT_VERSION, msgs,
+                                              P.select_schema(list(self.by_label), n))
             grounding["cache_keys"]["select"] = key
-        if sel is not None and sel.get("candidate") in labels:
-            handler = cands[labels.index(sel["candidate"])]
+        if sel is not None and sel.get("handler") in self.by_label:
+            handler = self.by_label[sel["handler"]]
             outcome = sel.get("expected_outcome") or "success"
             refs = {k: v for k, v in (sel.get("refs") or {}).items() if v}
-            grounding.update(source="LLM", reasoning=sel.get("reasoning", ""))
+            grounding.update(source="LLM", reasoning=sel.get("reasoning", ""), from_index=handler not in cands)
         else:
             handler = cands[0]
             outcome = "refused" if REFUSED.search(action) else "success"
@@ -156,7 +161,7 @@ class StepGrounder:
                 if k in names:
                     params[k], sources[k] = v, "UI"
         if self.llm is not None and grounding["source"] == "LLM" and P.needs_params(h):
-            msgs = [{"role": "system", "content": self.system},
+            msgs = [{"role": "system", "content": self.system_params},
                     {"role": "user", "content": prefix + P.params_task(n, action, verb, path, h, fields, ui_req)}]
             got, key = self.llm.complete_json("params", P.PROMPT_VERSION, msgs, P.params_schema(fields))
             grounding["cache_keys"]["params"] = key

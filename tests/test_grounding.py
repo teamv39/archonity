@@ -148,6 +148,14 @@ class TestPrompts:
         assert P.needs_params(handlers.handlers[PRESERVE])
         assert not P.needs_params(handlers.handlers[CANCEL])
 
+    def test_handler_index_lists_every_handler(self, handlers: HandlerCatalog) -> None:
+        labels = P.handler_labels(handlers.handlers)
+        lines = P.handler_index(handlers.handlers, labels).splitlines()
+        assert len(lines) == len(handlers.handlers) == len(set(labels.values()))
+        cancel = next(ln for ln in lines if ln.startswith(labels[CANCEL] + ":"))
+        assert cancel.endswith("-> CancelController#cancelTicket (ui)")
+        assert P.select_schema(list(labels.values()), 1)["properties"]["handler"]["enum"][0] == "H1"
+
     def test_select_schema_refs(self) -> None:
         s1 = P.select_schema(["C1", "C2"], 1)
         assert s1["properties"]["refs"]["properties"] == {}

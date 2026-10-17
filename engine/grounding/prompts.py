@@ -1,6 +1,6 @@
 """Промпты и JSON-схемы M1: вызов 1 — выбор обработчика, вызов 2 — параметры (ADR-005, M1, п. 3).
 
-Порядок частей под кеш префикса llama.cpp: системный промпт (постоянный) → сценарий (постоянен в сценарии) →
+Порядок частей под кеш префикса llama.cpp: системный промпт (постоянный; у выбора — с индексом всех обработчиков) → сценарий →
 история выбранных запросов (растёт) → текущий шаг и кандидаты или поля запроса.
 Любая правка текста промпта или схемы — новая `PROMPT_VERSION` (иначе кеш вернёт старые ответы для старого текста,
 а новые — пересчитает; версия нужна, чтобы это было явно).
@@ -15,7 +15,7 @@ from engine.grounding.docs import SKIP_PARAM_TYPES, HandlerInfo
 from engine.grounding.request import OUTCOMES, REF_ENTITIES, REF_PICKS
 from engine.grounding.ui_catalog import UIRequest
 
-PROMPT_VERSION = "m1-v5"
+PROMPT_VERSION = "m1-v7"
 CAND_SRC_LINES = 6
 
 SYSTEM = """You map steps of a user scenario in the Train Ticket web application to backend REST requests.
@@ -33,12 +33,17 @@ Enum codes used in request fields:
 {enums}
 """
 
+INDEX = """
+Handler index. Each step lists candidate handlers: the closest search matches, with details. Search can miss: when no candidate does what the step asks, pick the right handler from this index, which lists every handler (label: route -> Class#method; "ui" marks handlers that the web UI calls).
+{index}
+"""
+
 SELECT_TASK = """Current step {n}: {action}
 
-Candidate handlers:
+Candidate handlers (closest search matches):
 {candidates}
 
-Answer with JSON: a short reasoning (one or two sentences), the candidate label, whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "trip": "first_of_step_2" for the first trip found at step 2, "order": "new_of_step_6" for the order created at step 6). Leave refs empty when the request uses nothing from earlier steps."""
+Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "trip": "first_of_step_2" for the first trip found at step 2, "order": "new_of_step_6" for the order created at step 6). Leave refs empty when the request uses nothing from earlier steps."""
 
 PARAMS_TASK = """Current step {n}: {action}
 Chosen request: {verb} {path} -> {signature}
@@ -53,8 +58,23 @@ def enum_reference(enums: dict[str, list[str]]) -> str:
     return "\n".join(f"- {name}: {', '.join(consts)}" for name, consts in sorted(enums.items()))
 
 
-def system_prompt(enums: dict[str, list[str]]) -> str:
-    return SYSTEM.format(enums=enum_reference(enums))
+def system_prompt(enums: dict[str, list[str]], index: str | None = None) -> str:
+    """Индекс обработчиков нужен только вызову выбора; вызову параметров он лишний и отвлекает."""
+    text = SYSTEM.format(enums=enum_reference(enums))
+    return text + INDEX.format(index=index) if index else text
+
+
+def handler_labels(handlers: dict[str, HandlerInfo]) -> dict[str, str]:
+    """Постоянные метки H1..Hn в порядке ID: одни и те же в индексе, в карточках кандидатов и в схеме ответа."""
+    return {hid: f"H{i + 1}" for i, hid in enumerate(sorted(handlers))}
+
+
+def handler_index(handlers: dict[str, HandlerInfo], labels: dict[str, str]) -> str:
+    """Все обработчики, по строке на каждый: кандидаты поиска — подсказка, а не граница выбора."""
+    return "\n".join(
+        f"{labels[hid]}: " + "; ".join(f"{v} {p}" for v, p in h.routes) + f" -> {h.cls}#{h.name}"
+        + (" (ui)" if h.ui else "")
+        for hid, h in sorted(handlers.items()))
 
 
 def scenario_block(sc: dict[str, Any]) -> str:
@@ -121,11 +141,11 @@ def select_schema(labels: list[str], step: int) -> dict[str, Any]:
         "type": "object",
         "properties": {
             "reasoning": {"type": "string", "maxLength": 400},
-            "candidate": {"type": "string", "enum": labels},
+            "handler": {"type": "string", "enum": labels},
             "expected_outcome": {"type": "string", "enum": list(OUTCOMES)},
             "refs": {"type": "object", "properties": ref_props, "additionalProperties": False},
         },
-        "required": ["reasoning", "candidate", "expected_outcome", "refs"],
+        "required": ["reasoning", "handler", "expected_outcome", "refs"],
         "additionalProperties": False,
     }
 

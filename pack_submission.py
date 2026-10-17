@@ -56,6 +56,13 @@ def pack() -> Path:
                         rel_p = full_p.relative_to(ROOT)
                         z.write(full_p, arcname=f"code/{rel_p}")
 
+        # Кеши M1 (ответы LLM и векторы эмбеддера): прогон --grounder m1 без GPU (ADR-005, «Кеш LLM»)
+        for cache_dir in (ROOT / "cache" / "llm", ROOT / "cache" / "emb" / "qwen3-4b"):
+            if cache_dir.is_dir():
+                for full_p in sorted(cache_dir.iterdir()):
+                    if full_p.is_file():
+                        z.write(full_p, arcname=f"code/{full_p.relative_to(ROOT).as_posix()}")
+
     print(f"Архив успешно создан: {ZIP_OUT}")
     print(f"Размер: {ZIP_OUT.stat().st_size / 1024:.1f} KB")
     return ZIP_OUT
