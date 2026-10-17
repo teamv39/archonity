@@ -27,7 +27,7 @@ class ArchonityPipeline:
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
         entity_ir_path: str | Path | None = None,
-        entity_constructors_on_load: str = "body",
+        entity_constructors_on_load: str = "project_calls",
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)

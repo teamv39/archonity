@@ -111,7 +111,7 @@ class TestHydrationDecision:
 
 class TestTraversal:
     def test_hydrated_constructor_executes_without_calls_edge(self, index: SkeletonIndex) -> None:
-        builder = GraphBuilder(index, RuntimeRules())
+        builder = GraphBuilder(index, RuntimeRules(entity_constructors_on_load="body"))
         entry = ["method:ts-route-service:route.controller.RouteController#queryById(java.lang.String,org.springframework.http.HttpHeaders)"]
         state = ScenarioState.create_initial(db_state=index.db_state.fork())
         methods, calls, _, data = builder.traverse(entry, scenario_state=state)
