@@ -121,15 +121,11 @@ class TestDumpFallbackAndCorruptedInput:
 class TestPipelineContractAndExecution:
     """Проверка контракта инициализации ArchonityPipeline и устойчивости к пустой БД."""
 
-    def test_pipeline_default_db_state_populated(self) -> None:
+    def test_pipeline_default_db_state_populated(self, shared_pipeline: ArchonityPipeline) -> None:
         """По умолчанию ArchonityPipeline инициализирует SkeletonIndex с заполненной БД."""
-        pipe = ArchonityPipeline(
-            skeleton_path=SKELETON_PATH,
-            targets_root=TARGETS_ROOT,
-        )
-        assert hasattr(pipe.index, "db_state")
-        assert isinstance(pipe.index.db_state, DatabaseState)
-        assert len(pipe.index.db_state.table_names()) == 32
+        assert hasattr(shared_pipeline.index, "db_state")
+        assert isinstance(shared_pipeline.index.db_state, DatabaseState)
+        assert len(shared_pipeline.index.db_state.table_names()) == 32
 
     def test_pipeline_init_parameter_conformance(self) -> None:
         """Проверка параметров ArchonityPipeline.__init__."""
@@ -143,8 +139,8 @@ class TestPipelineContractAndExecution:
         pipe = ArchonityPipeline(
             skeleton_path=SKELETON_PATH,
             targets_root=TARGETS_ROOT,
+            db_state=DatabaseState(),
         )
-        pipe.index.db_state = DatabaseState()
         s0_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S0.json")
 
         methods, calls, remote, data = pipe.run_scenario(s0_dict)

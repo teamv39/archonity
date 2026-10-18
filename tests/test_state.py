@@ -211,6 +211,8 @@ class TestScenarioIsolation:
 
     def test_state_fork_latency_under_50us(self, db_state: DatabaseState) -> None:
         state = ScenarioState.create_initial(db_state)
+        import gc
+        gc.collect()
         t0 = time.perf_counter()
         for _ in range(500):
             _ = state.fork()
@@ -413,32 +415,29 @@ class TestScenarioS7RefusalConditions:
 class TestPipelineAndGraphBuilderIntegration:
     """Verifies end-to-end integration with ArchonityPipeline and GraphBuilder."""
 
-    def test_pipeline_run_scenario_with_state(self) -> None:
-        pipeline = ArchonityPipeline(skeleton_path=SKELETON_PATH, targets_root=TARGETS_ROOT)
+    def test_pipeline_run_scenario_with_state(self, shared_pipeline: ArchonityPipeline) -> None:
         s0_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S0.json")
-        methods, calls, remote, data = pipeline.run_scenario(s0_dict)
+        methods, calls, remote, data = shared_pipeline.run_scenario(s0_dict)
         assert len(methods) == 34
         assert len(calls) == 24
         assert len(remote) == 0
         assert len(data) == 7
 
-    def test_pipeline_run_all_scenario_isolation(self) -> None:
-        pipeline = ArchonityPipeline(skeleton_path=SKELETON_PATH, targets_root=TARGETS_ROOT)
+    def test_pipeline_run_all_scenario_isolation(self, shared_pipeline: ArchonityPipeline) -> None:
         s1_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S1.json")
         s0_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S0.json")
-        _ = pipeline.run_scenario(s1_dict)
-        m0, c0, r0, d0 = pipeline.run_scenario(s0_dict)
+        _ = shared_pipeline.run_scenario(s1_dict)
+        m0, c0, r0, d0 = shared_pipeline.run_scenario(s0_dict)
         assert len(m0) == 34
         assert len(c0) == 24
         assert len(r0) == 0
         assert len(d0) == 7
 
-    def test_builder_traverse_with_and_without_state(self) -> None:
-        index = SkeletonIndex(SKELETON_PATH)
-        builder = GraphBuilder(index)
+    def test_builder_traverse_with_and_without_state(self, shared_skeleton_index: SkeletonIndex) -> None:
+        builder = GraphBuilder(shared_skeleton_index)
         entry = ["method:ts-user-service:user.controller.UserController#getToken(user.entity.UserDto)"]
         m1, c1, r1, d1 = builder.traverse(entry)
-        state = ScenarioState.create_initial(index.db_state)
+        state = ScenarioState.create_initial(shared_skeleton_index.db_state)
         m2, c2, r2, d2 = builder.traverse(entry, scenario_state=state)
         assert m1 == m2
         assert c1 == c2
@@ -446,8 +445,7 @@ class TestPipelineAndGraphBuilderIntegration:
         assert d1 == d2
 
     def test_empty_db_state_pipeline_regression(self) -> None:
-        pipeline = ArchonityPipeline(skeleton_path=SKELETON_PATH, targets_root=TARGETS_ROOT)
-        pipeline.index.db_state = DatabaseState()
+        pipeline = ArchonityPipeline(skeleton_path=SKELETON_PATH, targets_root=TARGETS_ROOT, db_state=DatabaseState())
         s0_dict = load_json(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S0.json")
         methods, calls, remote, data = pipeline.run_scenario(s0_dict)
         assert len(methods) == 34

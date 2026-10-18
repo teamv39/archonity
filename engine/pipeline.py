@@ -24,6 +24,7 @@ class ArchonityPipeline:
         targets_root: str | Path,
         rules_path: str | Path | None = None,
         db_dump_path: str | Path | None = None,
+        db_state: Any = None,
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
         entity_ir_path: str | Path | None = None,
@@ -53,6 +54,7 @@ class ArchonityPipeline:
         self.index = SkeletonIndex(
             sk_dict,
             db_dump_path=db_dump_path,
+            db_state=db_state,
             pool_ir=pool_ir,
             ir_path=ir_path,
             entity_ir_path=entity_ir_path,
@@ -79,14 +81,16 @@ class ArchonityPipeline:
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
         self.grounder_mode = grounder
-        self.grounder = ScenarioGrounder(self.index, self.targets_root)
+        self.grounder = None
         self.m1 = None
         self.step_requests: dict[str, list[dict[str, Any]]] = {}
-        if grounder == "m1":
+        if grounder == "legacy":
+            self.grounder = ScenarioGrounder(self.index, self.targets_root)
+        elif grounder == "m1":
             from engine.grounding.grounder import StepGrounder
 
             self.m1 = StepGrounder(self.index, self.targets_root, **(m1_options or {}))
-        elif grounder != "legacy":
+        else:
             raise ValueError(f"неизвестный grounder: {grounder}")
 
         # 5. Инициализация графового строителя

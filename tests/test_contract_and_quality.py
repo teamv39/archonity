@@ -84,6 +84,7 @@ class TestQualityAndConstraints:
         cmd = [
             sys.executable,
             str(ROOT / "run_eval.py"),
+            "--scenarios", str(ROOT / "hackaton" / "tt-challenge" / "scenarios" / "S0.json"),
             "-o", str(custom_out),
             "--no-eval",
         ]
