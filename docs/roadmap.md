@@ -94,9 +94,10 @@ M0 индекс скелета и БД → M1 заземление шагов (B
 | 10 | 18.10 | Конструкторы только с вызовами проекта, без calls в конструкторы ([ADR-006](adr/adr-006_constructor_visibility.md)) | **0.98908** |
 | 11 | 19.10 | Зонд S3: добавление `TravelResult#isStatus()` в `executes` | **0.98931** |
 | 12 | 19.10 | Распространение `TravelResult#isStatus()` на все сценарии (S1–S7) | **0.99058** |
-| 13 | 19.10 | Зонд S3: удаление ложного Шага 4 (`StationFoodController#getFoodStoresOfStation` — в UI выбор станции выполняется в памяти JS, HTTP-запроса нет) | **0.99219** (новый рекорд) |
+| 13 | 19.10 | Зонд S3: удаление ложного Шага 4 (`StationFoodController#getFoodStoresOfStation` — в UI выбор станции выполняется в памяти JS, HTTP-запроса нет) | **0.99219** (прирост) |
+| 14 | 19.10 | Зонд S2: то же удаление ложного Шага 4 (`StationFoodController#getFoodStoresOfStation`) в S2 | **0.99374** (новый рекорд) |
 
-Текущий рекордный результат на платформе: **0.99219** ([`output/submission_baseline_0_99219.zip`](file:///output/submission_baseline_0_99219.zip)). По сценариям: S1 1.000, S4 1.000, S5 1.000, S6 0.999, S7 0.996, S2 ≈0.968, S3 ≈0.982.
+Текущий рекордный результат на платформе: **0.99374** ([`output/submission_baseline_0_99374.zip`](file:///output/submission_baseline_0_99374.zip)). По сценариям: S1 1.000, S4 1.000, S5 1.000, S6 0.999, S7 0.996, S2 ≈0.979, S3 ≈0.982. Оставшийся дефицит: всего 0.00626!
 Пул задач и гипотез на 24 часа зафиксирован в [docs/researches/next_day_hypotheses_and_todo.md](researches/next_day_hypotheses_and_todo.md).
 
 ## Ответственность
