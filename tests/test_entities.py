@@ -111,7 +111,7 @@ class TestHydrationDecision:
 
 class TestTraversal:
     def test_hydrated_constructor_executes_without_calls_edge(self, index: SkeletonIndex) -> None:
-        builder = GraphBuilder(index, RuntimeRules(entity_constructors_on_load="body"))
+        builder = GraphBuilder(index, RuntimeRules(constructors="caller_only"))
         entry = ["method:ts-route-service:route.controller.RouteController#queryById(java.lang.String,org.springframework.http.HttpHeaders)"]
         state = ScenarioState.create_initial(db_state=index.db_state.fork())
         methods, calls, _, data = builder.traverse(entry, scenario_state=state)
@@ -136,10 +136,10 @@ def test_db_dump_has_reference_rows() -> None:
 
 
 class TestAblationModes:
-    """Режимы RuntimeRules.entity_constructors_on_load для абляции на платформе."""
+    """Режимы RuntimeRules.constructors при загрузке Hibernate (ADR-006); отбор в ответ — tests/test_projection.py."""
 
-    def test_project_calls_mode_keeps_only_order(self, index: SkeletonIndex) -> None:
-        allowed = index.entities.allowed_ctors("project_calls")
+    def test_all_mode_keeps_only_order(self, index: SkeletonIndex) -> None:
+        allowed = index.entities.allowed_ctors("all")
         assert ORDER_OTHER_CTOR in allowed
         assert ROUTE_CTOR not in allowed  # только UUID.randomUUID(): библиотека, не проект
         route = _calls(index, "RouteServiceImpl#getRouteById", "findById")[0]
@@ -148,17 +148,18 @@ class TestAblationModes:
         assert h.ctors == ()
         assert h.rule == "R7:mode_excludes_ctor"
 
-    @pytest.mark.parametrize("mode,route_expected", [("body", True), ("project_calls", False), ("off", False)])
+    @pytest.mark.parametrize("mode,route_expected", [("caller_only", True), ("all", False), ("off", False)])
     def test_traversal_respects_mode(self, index: SkeletonIndex, mode: str, route_expected: bool) -> None:
-        builder = GraphBuilder(index, RuntimeRules(entity_constructors_on_load=mode))
+        builder = GraphBuilder(index, RuntimeRules(constructors=mode))
         entry = ["method:ts-route-service:route.controller.RouteController#queryById(java.lang.String,org.springframework.http.HttpHeaders)"]
         state = ScenarioState.create_initial(db_state=index.db_state.fork())
         methods, _, _, _ = builder.traverse(entry, scenario_state=state)
         assert (ROUTE_CTOR in methods) == route_expected
 
-    def test_unknown_mode_rejected(self) -> None:
+    @pytest.mark.parametrize("mode", ["maybe", "body", "project_calls"])
+    def test_unknown_mode_rejected(self, mode: str) -> None:
         with pytest.raises(ValueError):
-            RuntimeRules(entity_constructors_on_load="maybe")
+            RuntimeRules(constructors=mode)
 
 
 ROUTE_STATIONS = "res:table:ts-route-service.route_stations"

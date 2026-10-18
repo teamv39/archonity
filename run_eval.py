@@ -69,11 +69,12 @@ def parse_args() -> argparse.Namespace:
         help="Путь к файлу правил отсева мертвого кода",
     )
     parser.add_argument(
-        "--entity-ctors",
-        choices=("body", "project_calls", "off"),
-        default="project_calls",
-        help="Режим правила R7 (конструкторы сущностей при загрузке из БД): project_calls — только конструкторы "
-             "с вызовом проектного метода (по умолчанию), body — любое непустое тело (опровергнуто платформой), off — выключено",
+        "--ctors",
+        choices=("all", "caller_only", "off"),
+        default="caller_only",
+        help="Видимость конструкторов (R7, ADR-006): caller_only — конструктор в ответе, только если из него исполнился "
+             "вызов проекта, рёбер calls в конструктор нет (по умолчанию, посылка 10); all — как до ADR-006 "
+             "(new — всегда, загрузка Hibernate — с вызовом проекта в теле); off — без конструкторов (отладка)",
     )
     parser.add_argument(
         "--collection-tables",
@@ -312,7 +313,7 @@ def main() -> None:
         targets_root=args.targets,
         rules_path=args.rules,
         ir_path=pool_ir_path,
-        entity_constructors_on_load=args.entity_ctors,
+        constructors=args.ctors,
         collection_tables_on_read=args.collection_tables,
         element_callbacks=args.element_callbacks,
         rabbitmq_delivery=args.rabbitmq_delivery,

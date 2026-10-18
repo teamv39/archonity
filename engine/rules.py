@@ -289,11 +289,12 @@ class RuntimeRules:
 
     DEFAULT_RULES_PATH = Path(__file__).resolve().parent.parent / "data" / "runtime_and_topology_rules.json"
 
-    # Режимы правила R7 (конструктор сущности при загрузке строк Hibernate), см. engine/entities.py:
-    # project_calls (по умолчанию) — только конструктор с вызовом проектного метода (как Order#<init>());
-    # body — любой конструктор с непустым телом (опровергнуто платформой 17.10: 0.8842 против 0.8927);
-    # off — правило выключено целиком.
-    ENTITY_CTOR_MODES = ("body", "project_calls", "off")
+    # Видимость конструкторов в ответе (R7, ADR-006), см. engine/projection.py:
+    # caller_only (по умолчанию) — конструктор в ответе, только если из него исполнился вызов метода проекта;
+    #   рёбер calls в конструктор нет (посылка 10: 0.98908);
+    # all — как до ADR-006: конструктор через new — всегда, при загрузке Hibernate — с вызовом проекта в теле;
+    # off — конструкторов в ответе нет совсем (отладка).
+    CTOR_MODES = ("all", "caller_only", "off")
 
     # Таблицы ленивых коллекций при чтении (R10), см. engine/entities.py:
     # loaded (по умолчанию) — только коллекции, которые метод загрузил, пока он на стеке;
@@ -362,7 +363,7 @@ class RuntimeRules:
     def __init__(
         self,
         rules_path: str | Path | None = None,
-        entity_constructors_on_load: str = "project_calls",
+        constructors: str = "caller_only",
         collection_tables_on_read: str = "loaded",
         element_callbacks: str = "on",
         rabbitmq_delivery: str = "on",
@@ -377,15 +378,13 @@ class RuntimeRules:
         m4_success_retry: str = "on",
         security_check_scope: str = "all",
     ) -> None:
-        if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
-            raise ValueError(
-                f"entity_constructors_on_load: {entity_constructors_on_load!r}, ожидается одно из {self.ENTITY_CTOR_MODES}"
-            )
+        if constructors not in self.CTOR_MODES:
+            raise ValueError(f"constructors: {constructors!r}, ожидается одно из {self.CTOR_MODES}")
         if collection_tables_on_read not in self.COLLECTION_TABLE_MODES:
             raise ValueError(
                 f"collection_tables_on_read: {collection_tables_on_read!r}, ожидается одно из {self.COLLECTION_TABLE_MODES}"
             )
-        self.entity_constructors_on_load = entity_constructors_on_load
+        self.constructors = constructors
         if element_callbacks not in self.ELEMENT_CALLBACK_MODES:
             raise ValueError(f"element_callbacks: {element_callbacks!r}, ожидается одно из {self.ELEMENT_CALLBACK_MODES}")
         if rabbitmq_delivery not in self.RABBITMQ_DELIVERY_MODES:
