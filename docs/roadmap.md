@@ -98,9 +98,9 @@ M0 индекс скелета и БД → M1 заземление шагов (B
 | 14 | 19.10 | Зонд S2: то же удаление ложного Шага 4 (`StationFoodController#getFoodStoresOfStation`) в S2 | **0.99374** (новый рекорд) |
 | 15 | 19.10 | Зонд S3: добавление `ConsignController#findByOrderId` (опровергнут: 0.99214) | 0.99214 |
 | 16 | 19.10 | Зонд S7: исключение `RebookServiceImpl#getAuthorizationHeadersFrom` (опровергнут: 0.99331) | 0.99331 |
-| 17 | 19.10 | Зонд S2 + S7: включение `RebookInfo#<init>()` (executes + calls `StringUtils#Date2String`) по [ADR-006](adr/adr-006_constructor_visibility.md) | **в процессе** |
+| 17 | 19.10 | Зонд S2 + S7: включение `RebookInfo#<init>()` (executes + calls `StringUtils#Date2String`) по [ADR-006](adr/adr-006_constructor_visibility.md) | **0.99457** (новый рекорд! S7=1.000, S2=0.981) |
 
-Текущий рекордный результат на платформе: **0.99374** ([`output/submission_baseline_0_99374.zip`](file:///output/submission_baseline_0_99374.zip)). По сценариям: S1 1.000, S4 1.000, S5 1.000, S6 1.000, S7 0.997, S2 0.978, S3 0.981. Оставшийся дефицит: всего 0.00626!
+Текущий рекордный результат на платформе: **0.99457** ([`output/submission_baseline_0_99457.zip`](file:///output/submission_baseline_0_99457.zip)). По сценариям: S1 1.000, S4 1.000, S5 1.000, S6 1.000, S7 1.000, S2 0.981, S3 0.981. 5 из 7 сценариев закрыты на 1.000000! Оставшийся дефицит: всего 0.00543!
 Пул задач и гипотез на 24 часа зафиксирован в [docs/researches/next_day_hypotheses_and_todo.md](researches/next_day_hypotheses_and_todo.md).
 
 ## Ответственность
