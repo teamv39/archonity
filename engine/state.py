@@ -73,6 +73,14 @@ class TrainType(str, Enum):
 TrainType.HIGH_SPEED = TrainType.GaoTie  # type: ignore[attr-defined]
 TrainType.REGULAR = TrainType.Other  # type: ignore[attr-defined]
 
+# edu.fudan.common.entity.Type: порядковый номер константы — значение колонки type в trip/trip2
+_TRIP_TYPE_ORDINAL = {"G": 0, "D": 1, "Z": 2, "T": 3, "K": 4}
+
+
+def _db_name(name: Any) -> str:
+    """Имя станции, как его хранят сервисы: без пробелов, строчными."""
+    return str(name or "").replace(" ", "").lower()
+
 
 @dataclass
 class RefusalEvent:
@@ -361,7 +369,7 @@ class ScenarioState:
     def has_custom_station(self, name: str) -> bool:
         """Checks if an admin station exists."""
         stations = self.admin_entities.get("stations", [])
-        return any(s.get("name") == name for s in stations)
+        return any(s.get("name") == _db_name(name) for s in stations)
 
     def is_refused(self, action: str) -> bool:
         """Checks if an action was marked refused."""
@@ -423,17 +431,20 @@ class ScenarioState:
         if (handler and "createNewContacts" in handler) or re.search(r"\badd\b.*?\bcontact\b", t):
             return self._mutate_add_contact(step_index, action_name, p)
 
-        # 4. Admin Entity Creation (S6)
-        if (handler and "addStation" in handler) or re.search(r"\badd\b.*?\bstation\b", t):
-            return self._mutate_admin_station(step_index, action_name, p)
-        if (handler and "addPrice" in handler) or re.search(r"\badd\b.*?\bprice\b", t):
-            return self._mutate_admin_price(step_index, action_name, p)
-        if (handler and "addTrain" in handler) or re.search(r"\badd\b.*?\b(?:new\s+)?train\b", t):
-            return self._mutate_admin_train(step_index, action_name, p)
-        if (handler and "addRoute" in handler) or re.search(r"\badd\b.*?\broute\b", t):
-            return self._mutate_admin_route(step_index, action_name, p)
-        if (handler and "addTravel" in handler) or re.search(r"\badd\b.*?\b(?:trip|travel)\b", t):
-            return self._mutate_admin_travel(step_index, action_name, p)
+        # 4. Admin Entity Creation (S6). Обработчик важнее текста: «Add a new trip ... on the new route» — поездка
+        admin = (
+            ("addStation", r"\badd\b.*?\bstation\b", self._mutate_admin_station),
+            ("addPrice", r"\badd\b.*?\bprice\b", self._mutate_admin_price),
+            ("addTrain", r"\badd\b.*?\b(?:new\s+)?train\b", self._mutate_admin_train),
+            ("addRoute", r"\badd\b.*?\broute\b", self._mutate_admin_route),
+            ("addTravel", r"\badd\b.*?\b(?:trip|travel)\b", self._mutate_admin_travel),
+        )
+        for key, rx, mutate in admin:
+            if handler and key in handler:
+                return mutate(step_index, action_name, p)
+        for key, rx, mutate in admin:
+            if not handler and re.search(rx, t):
+                return mutate(step_index, action_name, p)
 
         # 5. Order Booking (S1–S7)
         if (handler and "preserve" in handler.lower()) or re.search(r"\b(?:book|reserve)\b.*?\b(?:seat|ticket|trip)\b", t):
@@ -816,9 +827,14 @@ class ScenarioState:
             [f"order_rebooked:{order['id']}:second_class:{cheaper_price}", f"difference_refunded:{diff}:balance_{self.balance}"],
         )
 
+    # Админские сущности (S6). Параметры — поля DTO запроса от M1 (camelCase), иначе значения S6 по умолчанию.
+    # В БД строки пишутся с колонками дампа: по ним их читает исполнитель M4. Имена станций сервисы хранят
+    # без пробелов строчными (Station#setName, Trip, StringUtils.String2Lower).
+
     def _mutate_admin_station(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
         station_name = payload.get("name", "Ning Bo")
-        st_data = {"id": f"station-{station_name.lower().replace(' ', '')}", "name": station_name, "stay_time": 5}
+        key = _db_name(station_name)
+        st_data = {"id": f"station-{key}", "name": key, "stay_time": payload.get("stayTime", 5)}
         self.admin_entities["stations"].append(st_data)
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("station", st_data)
@@ -826,40 +842,60 @@ class ScenarioState:
 
     def _mutate_admin_train(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
         name = payload.get("name", "GaoTieSix")
-        tt_data = {"id": name, "name": name, "economy_class": 100, "confort_class": 30, "avg_speed": 300}
+        tt_data = {"id": f"train-type-{name}", "name": name, "economy_class": payload.get("economyClass", 100),
+                   "confort_class": payload.get("confortClass", 30), "average_speed": payload.get("averageSpeed", 300)}
         self.admin_entities["train_types"].append(tt_data)
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("train_type", tt_data)
         return StepMutationResult(step_index, action, "SUCCESS", [f"train_type_created:{name}"])
 
     def _mutate_admin_route(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
-        r_id = payload.get("id", "route-sh-sz-nb")
-        stations = payload.get("stations", ["Shanghai", "Suzhou", "Ning Bo"])
-        distances = payload.get("distances", [0, 100, 250])
+        r_id = payload.get("id") or "route-sh-sz-nb"
+        stations = payload.get("stations") or payload.get("stationList") or ["Shanghai", "Suzhou", "Ning Bo"]
+        distances = payload.get("distances") or payload.get("distanceList") or [0, 100, 250]
+        if isinstance(stations, str):
+            stations = [s.strip() for s in stations.split(",") if s.strip()]
+        if isinstance(distances, str):
+            distances = [int(float(d)) for d in distances.split(",") if d.strip()]
         r_data = {"id": r_id, "start_station_id": stations[0], "terminal_station_id": stations[-1], "stations": stations, "distances": distances}
         self.admin_entities["routes"].append(r_data)
         if hasattr(self.db_state, "insert"):
-            self.db_state.insert("route", {"id": r_id, "start_station_id": stations[0], "terminal_station_id": stations[-1]})
+            self.db_state.insert("route", {"id": r_id, "start_station": _db_name(stations[0]),
+                                           "end_station": _db_name(stations[-1])})
+            for i, s in enumerate(stations):
+                self.db_state.insert("route_stations", {"route_id": r_id, "stations": _db_name(s), "stations_order": i})
+            for i, d in enumerate(distances):
+                self.db_state.insert("route_distances", {"route_id": r_id, "distances": d, "distances_order": i})
         return StepMutationResult(step_index, action, "SUCCESS", [f"route_created:{r_id}"])
 
     def _mutate_admin_price(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
-        p_id = payload.get("id", "price-gt6")
-        p_data = {"id": p_id, "train_type": "GaoTieSix", "basic_price_rate": 0.5, "first_class_price_rate": 1.2}
+        p_id = payload.get("id") or "price-gt6"
+        routes = self.admin_entities["routes"]
+        p_data = {"id": p_id, "train_type": payload.get("trainType", "GaoTieSix"),
+                  "basic_price_rate": payload.get("basicPriceRate", 0.5),
+                  "first_class_price_rate": payload.get("firstClassPriceRate", 1.2),
+                  "route_id": payload.get("routeId") or (routes[-1]["id"] if routes else "route-sh-sz-nb")}
         self.admin_entities["price_configs"].append(p_data)
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("price_config", p_data)
         return StepMutationResult(step_index, action, "SUCCESS", [f"price_config_created:{p_id}"])
 
     def _mutate_admin_travel(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
-        trip_id = payload.get("trip_id", "G9101")
+        trip_id = payload.get("tripId") or payload.get("trip_id") or "G9101"
+        routes = self.admin_entities["routes"]
         tr_data = {
-            "id": trip_id, "train_type_name": "GaoTieSix", "route_id": "route-sh-sz-nb",
-            "start_station_name": "Shanghai", "terminal_station_name": "Ning Bo",
-            "departure_time": "09:00", "arrival_time": "12:00",
+            "id": f"trip-{trip_id}", "type": _TRIP_TYPE_ORDINAL.get(trip_id[:1], 0), "number": trip_id[1:],
+            "train_type_name": payload.get("trainTypeName", "GaoTieSix"),
+            "route_id": payload.get("routeId") or (routes[-1]["id"] if routes else "route-sh-sz-nb"),
+            "start_station_name": _db_name(payload.get("startStationName", "Shanghai")),
+            "stations_name": _db_name(payload.get("stationsName", "")),
+            "terminal_station_name": _db_name(payload.get("terminalStationName", "Ning Bo")),
+            "start_time": payload.get("startTime", "09:00"), "end_time": payload.get("endTime", "12:00"),
         }
         self.admin_entities["trips"].append(tr_data)
         if hasattr(self.db_state, "insert"):
-            self.db_state.insert("trip", tr_data)
+            # Скоростные (G/D) — таблица trip сервиса travel, остальные — trip2 сервиса travel2
+            self.db_state.insert("trip" if trip_id[:1] in ("G", "D") else "trip2", tr_data)
         return StepMutationResult(step_index, action, "SUCCESS", [f"trip_created:{trip_id}"])
 
     def _mutate_update_consignee(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
