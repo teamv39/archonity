@@ -1,17 +1,22 @@
-"""Модели вызовов библиотеки для исполнителя M4: Java, Spring, Lombok (ADR-005, M4).
+"""Модели вызовов библиотеки для исполнителя M4: Java, Spring, Lombok, Jackson, даты (ADR-005, M4).
 
 Вызов без рёбер скелета и без цели в IR — библиотека или сгенерированный метод (R4): геттеры и сеттеры Lombok
 работают с полями объекта, коллекции и Optional — со своими элементами, лямбды исполняет хост (R16).
-Немоделируемый вызов даёт `Unknown` с происхождением.
+JSON-круг Jackson (`writeValueAsString` -> `readValue`, `convertValue`) переносит значение без потерь.
+Часы — системная дата сценария (`ScenarioState.system_date`, контекст скелета). Немоделируемый вызов даёт
+`Unknown` с происхождением.
 """
 from __future__ import annotations
 
+import calendar
+import datetime as dt
 import re
+import sys
 from typing import TYPE_CHECKING, Any
 
 from engine.executor.values import (
-    MISSING, NONNULL, Coll, Iter, Lambda, Obj, Opt, Sym, TypeRef, Unknown, is_unknown, java_str, not_, simple_name,
-    truth,
+    MISSING, NONNULL, Coll, Iter, Lambda, Obj, Opt, Sym, TypeRef, Unknown, is_unknown, java_str, not_, or_,
+    simple_name, truth,
 )
 
 if TYPE_CHECKING:
@@ -22,6 +27,22 @@ PH = "\x00"
 LIST_TYPES = frozenset({"ArrayList", "LinkedList", "HashSet", "TreeSet", "LinkedHashSet", "Vector", "ArrayDeque",
                         "CopyOnWriteArrayList", "PriorityQueue"})
 MAP_TYPES = frozenset({"HashMap", "LinkedHashMap", "TreeMap", "ConcurrentHashMap", "Hashtable"})
+# Статические константы библиотеки, которые участвуют в арифметике и сравнениях
+CONSTANTS: dict[tuple[str, str], Any] = {
+    ("Integer", "MAX_VALUE"): 2**31 - 1, ("Integer", "MIN_VALUE"): -2**31,
+    ("Long", "MAX_VALUE"): 2**63 - 1, ("Long", "MIN_VALUE"): -2**63,
+    ("Short", "MAX_VALUE"): 2**15 - 1, ("Short", "MIN_VALUE"): -2**15,
+    ("Byte", "MAX_VALUE"): 127, ("Byte", "MIN_VALUE"): -128,
+    ("Float", "MAX_VALUE"): 3.4028234663852886e38, ("Float", "MIN_VALUE"): 1.401298464324817e-45,
+    ("Double", "MAX_VALUE"): sys.float_info.max, ("Double", "MIN_VALUE"): 5e-324,
+}
+JSON_TYPE = "#json"  # строка JSON, полученная writeValueAsString: хранит исходное значение
+DATE_TYPE = "java.util.Date"
+CALENDAR_TYPE = "java.util.Calendar"
+EPOCH = dt.datetime(1970, 1, 1)
+NOW_TIME = dt.time(15, 1)  # сразу после прогрева: последние bought_date дампа — 15.09.2026 15:00:18
+DATE_TOKENS = {"yyyy": ("y", r"\d{4}"), "MM": ("M", r"\d{1,2}"), "dd": ("d", r"\d{1,2}"), "HH": ("H", r"\d{1,2}"),
+               "mm": ("m", r"\d{1,2}"), "ss": ("s", r"\d{1,2}")}
 
 
 def unbox(v: Any) -> Any:
@@ -113,8 +134,9 @@ def construct(run: StepRun, fqn: str, args: list[Any], frame: Frame) -> Any:
     if s in ("StringBuilder", "StringBuffer"):
         return Obj("java.lang.StringBuilder", {"v": args[0] if args and isinstance(args[0], str) else ""}, src="new")
     if s == "Date":
-        return Obj("java.util.Date", {"v": args[0] if args else Unknown("current date", "number", src="library")},
-                   src="new")
+        return new_date(run, args)
+    if s in ("SimpleDateFormat", "DecimalFormat"):
+        return Obj(fqn, {"pattern": args[0] if args else None}, src="library", origin=f"new {s}")
     if s.endswith("Exception") or s.endswith("Error"):
         return Obj(fqn, {"message": args[0] if args else None}, src="new")
     return Obj(fqn, src="library", origin=f"new {s}")
@@ -186,6 +208,9 @@ def _static(run: StepRun, frame: Frame, node: dict[str, Any], t: TypeRef, callee
     a0 = args[0] if args else None
     p = run.program
     tn = p.type_node(fqn, p.module_of(frame.method_id)) if p.is_project_type(fqn) else None
+    if tn and callee == "builder" and not args and "Builder" in p.type_annotations(tn):
+        # Lombok @Builder: User.builder().userId(..).password(..).build()
+        return Obj(f"{fqn}$Builder", {"__builds__": fqn}, src="new", origin=f"{simple_name(fqn)}.builder()")
     if tn and p.N[tn].get("type_kind") == "enum":
         if callee == "values":
             return Coll([run.ex.enum_value(fqn, c, None, run) for c in p.enum_constants(tn)], src="enum")
@@ -250,6 +275,10 @@ def _static(run: StepRun, frame: Frame, node: dict[str, Any], t: TypeRef, callee
         return Obj("org.springframework.http.ResponseEntity", {"body": a0}, src="new")
     if s == "Thread" and callee == "sleep":
         return None
+    if s == "Calendar" and callee == "getInstance":
+        return Obj(CALENDAR_TYPE, {"v": now(run)}, src="new", origin="Calendar.getInstance()")
+    if s == "System" and callee == "currentTimeMillis":
+        return _millis(now(run))
     return Unknown(f"{s}.{callee}({', '.join(_desc(a) for a in args)})", "object", src="library")
 
 
@@ -369,10 +398,14 @@ def _collection(run: StepRun, frame: Frame, c: Coll, callee: str, args: list[Any
         if items is not None and isinstance(a0, Coll) and a0.items is not None:
             items.extend(a0.items)
         else:
-            other = a0.nonempty if isinstance(a0, Coll) else MISSING
+            # Добавили неизвестные элементы: непустота — «было непусто или добавленное непусто» (с D4 добавленного)
+            mine = c.nonempty
+            other = a0.nonempty if isinstance(a0, Coll) else (
+                _nonempty_of(a0) if isinstance(a0, Unknown) else MISSING)
+            if other is MISSING:
+                other = Unknown(f"{c.origin} is not empty after addAll", "bool", src=c.src)
             c.items = None
-            c.nonempty = True if (c.nonempty is True or other is True) else Unknown(
-                f"{c.origin} is not empty after addAll", "bool", src=c.src)
+            c.nonempty = other if mine is MISSING else or_(mine, lambda: other)
         return True
     if callee == "size":
         if items is not None:
@@ -424,7 +457,13 @@ def _collection(run: StepRun, frame: Frame, c: Coll, callee: str, args: list[Any
     if callee == "subList" and items is not None and len(args) == 2 and all(isinstance(a, int) for a in args):
         return Coll(items[args[0]:args[1]], src=c.src)
     if callee == "indexOf" and items is not None:
-        return next((i for i, x in enumerate(items) if _equals(x, a0) is True), -1)
+        eq = [_equals(x, a0) for x in items]
+        hit = next((i for i, e in enumerate(eq) if e is True), None)
+        if hit is not None:
+            return hit
+        if any(e is not False for e in eq):
+            return Unknown(f"index of {_desc(a0)} in {c.origin or 'list'}", "number", src=c.src)
+        return -1
     if callee in ("sum",):
         if items is not None and all(isinstance(unbox(x), (int, float)) for x in items):
             return sum(unbox(x) for x in items)
@@ -566,13 +605,28 @@ def _object(run: StepRun, frame: Frame, o: Obj, callee: str, args: list[Any]) ->
             return o
         if callee == "toString":
             return o.fields.get("v")
-    if s == "Date":
-        if callee in ("before", "after", "equals"):
-            return Unknown(f"date comparison Date.{callee}", "bool", src="library")
-        if callee == "getTime":
-            return Unknown("Date.getTime", "number")
-        if callee == "toString":
-            return Unknown("date string", "string", NONNULL)
+    if "__builds__" in o.fields:
+        if callee == "build":
+            built = {k: v for k, v in o.fields.items() if not k.startswith("__")}
+            return Obj(o.fields["__builds__"], built, src="new", origin=f"built {simple_name(o.fields['__builds__'])}")
+        if len(args) == 1:
+            o.fields[callee] = a0
+            return o
+    if o.type == DATE_TYPE:
+        return _date(o, callee, args)
+    if o.type == CALENDAR_TYPE:
+        return _calendar(o, callee, args)
+    if s == "SimpleDateFormat" and callee in ("parse", "format"):
+        return _date_format(o, callee, a0, frame)
+    if s == "DecimalFormat" and callee == "format":
+        return _decimal_format(o, a0)
+    if s == "ObjectMapper":
+        if callee == "writeValueAsString":
+            return Obj(JSON_TYPE, {"v": a0}, src="json", origin=f"JSON of {_desc(a0)}")
+        if callee in ("readValue", "convertValue") and args:
+            return from_json(run, frame, a0, args[1] if len(args) > 1 else None)
+    if o.type == JSON_TYPE:
+        return Unknown(f"String.{callee} of {o.origin}", "string" if callee != "length" else "number", NONNULL)
     if isinstance(o.fields.get("__map__"), dict):
         return _map(o, callee, args)
     if o.src == "enum":
@@ -602,35 +656,310 @@ def _object(run: StepRun, frame: Frame, o: Obj, callee: str, args: list[Any]) ->
 
 
 def _map(o: Obj, callee: str, args: list[Any]) -> Any:
+    """Карта: известные записи в `__map__`; `__more__` — были записи с неизвестным ключом (содержимое неполно)."""
     m: dict[Any, Any] = o.fields["__map__"]
+    more = o.fields.get("__more__") is True
     a0 = args[0] if args else None
-    key = a0 if isinstance(a0, (str, int, float, bool)) else None
-    if callee in ("put", "add", "set"):
+    key = a0 if isinstance(a0, (str, int, float, bool)) or (isinstance(a0, Obj) and a0.src == "enum") else None
+    if callee in ("put", "add", "set", "putIfAbsent"):
         if key is not None:
-            m[key] = args[1] if len(args) > 1 else None
+            if callee != "putIfAbsent" or key not in m:
+                m[key] = args[1] if len(args) > 1 else None
         else:
-            o.fields["__map__"] = m  # ключ неизвестен: содержимое неточно
+            o.fields["__more__"] = True
         return None
     if callee in ("get", "getOrDefault"):
         if key is not None and key in m:
             return m[key]
-        return args[1] if callee == "getOrDefault" and len(args) > 1 else Unknown(f"map value for {_desc(a0)}",
-                                                                                 "object")
+        if key is not None and not more:
+            return args[1] if callee == "getOrDefault" and len(args) > 1 else None  # нет ключа: null
+        return Unknown(f"map value for {_desc(a0)}", "object")
     if callee == "containsKey":
-        return key in m if key is not None else Unknown("map contains key", "bool")
-    if callee in ("keySet",):
-        return Coll(list(m.keys()), src="new")
-    if callee in ("values",):
-        return Coll(list(m.values()), src="new")
-    if callee == "entrySet":
+        if key is not None and (key in m or not more):
+            return key in m
+        return Unknown(f"map contains key {_desc(a0)}", "bool")
+    if callee in ("keySet", "values", "entrySet"):
+        if more:
+            return Coll(None, True, f"{callee}() of a map with unknown keys", "library")
+        if callee == "keySet":
+            return Coll(list(m.keys()), src="new")
+        if callee == "values":
+            return Coll(list(m.values()), src="new")
         return Coll([Obj("java.util.Map$Entry", {"key": k, "value": v}, src="new") for k, v in m.items()], src="new")
     if callee == "size":
-        return len(m)
+        return len(m) if not more else Unknown("size of a map with unknown keys", "number")
     if callee == "isEmpty":
-        return not m
+        return not m and not more
     if callee == "remove" and key is not None:
         return m.pop(key, None)
     return Unknown(f"Map.{callee}", "object")
+
+
+# --- Jackson ------------------------------------------------------------------------------------------------------
+
+def from_json(run: StepRun, frame: Frame, src: Any, target: Any) -> Any:
+    """`readValue(json, T)` и `convertValue(x, T)`: значение до JSON, приведённое к типу T (копия полей)."""
+    v = src.fields.get("v") if isinstance(src, Obj) and src.type == JSON_TYPE else src
+    if isinstance(v, str):
+        return Unknown(f"object read from JSON text {v[:30]!r}", "object")
+    tname = target.fields.get("name") if isinstance(target, Obj) and target.simple == "Class" else None
+    return _as_type(run, frame, v, tname)
+
+
+def wire(v: Any, depth: int = 0) -> Any:
+    """Значение после JSON между сервисами: `Optional` развёрнут (jackson-datatype-jdk8 пишет само значение или null).
+
+    Объекты с Optional внутри копируются, остальные возвращаются как есть.
+    """
+    if isinstance(v, Opt):
+        present = truth(v.present)
+        return None if present is False else wire(v.value, depth + 1)
+    if depth >= 4:
+        return v
+    if isinstance(v, Obj) and v.src not in ("bean", "enum"):
+        fields = {k: wire(x, depth + 1) for k, x in v.fields.items()}
+        if any(fields[k] is not v.fields[k] for k in fields):
+            return Obj(v.type, fields, src=v.src, origin=v.origin)
+    elif isinstance(v, Coll) and v.items is not None:
+        items = [wire(x, depth + 1) for x in v.items]
+        if any(a is not b for a, b in zip(items, v.items)):
+            return Coll(items, MISSING, v.origin, v.src, v.elem_type)
+    return v
+
+
+def _as_type(run: StepRun, frame: Frame, v: Any, tname: str | None) -> Any:
+    """Значение, прочитанное Jackson как тип tname (`Route`, `Route[]`, `Map`); None — тип как был."""
+    v = wire(v)
+    if v is None or is_unknown(v):
+        return v
+    if isinstance(v, Coll):
+        elem = tname[:-2] if tname and tname.endswith("[]") else None
+        items = [_as_type(run, frame, x, elem) for x in v.items] if v.items is not None else None
+        return Coll(items, v.nonempty if items is None else MISSING, v.origin, v.src, v.elem_type)
+    if not isinstance(v, Obj) or v.src in ("bean", "enum"):
+        return v
+    fields = dict(v.fields.get("__map__") or {}) if isinstance(v.fields.get("__map__"), dict) else {
+        k: x for k, x in v.fields.items() if not k.startswith("__")}
+    more = {"__more__": True} if v.fields.get("__more__") is True else {}
+    s = simple_name(tname)
+    if s in MAP_TYPES or s == "Map":
+        return Obj("java.util.LinkedHashMap", {"__map__": fields, **more}, src=v.src, origin=v.origin)
+    p = run.program
+    fqn = p.resolve_simple(tname.split("<", 1)[0], p.module_of(frame.method_id)) if tname else v.type
+    if not p.is_project_type(fqn):
+        fqn = v.type
+    if isinstance(v.fields.get("__map__"), dict) and not p.is_project_type(fqn):
+        return Obj(v.type, {"__map__": fields, **more}, src=v.src, origin=v.origin)
+    return Obj(fqn, fields, src=v.src, origin=v.origin)
+
+
+# --- даты ---------------------------------------------------------------------------------------------------------
+
+def now(run: StepRun) -> dt.datetime:
+    """Системные часы сценария: дата из состояния M3 (контекст скелета), время — сразу после прогрева."""
+    day = getattr(run.state, "system_date", None) or "2026-09-15"
+    return dt.datetime.combine(dt.date.fromisoformat(str(day)[:10]), NOW_TIME)
+
+
+def _millis(t: dt.datetime) -> int:
+    return int((t - EPOCH).total_seconds() * 1000)
+
+
+def date_obj(t: Any, origin: str = "") -> Obj:
+    return Obj(DATE_TYPE, {"v": t}, src="new", origin=origin or "date")
+
+
+def new_date(run: StepRun, args: list[Any]) -> Obj:
+    """`new Date()`, `new Date(millis)`, устаревший `new Date(year - 1900, month, day[, h, m, s])`.
+
+    Если известны год, месяц и день, а время нет, дата помечается `day_only`: сравнение с другим днём решается.
+    """
+    if not args:
+        return date_obj(now(run), "new Date()")
+    vals = [unbox(a) for a in args]
+    known = [not is_unknown(a) and isinstance(a, (int, float)) and not isinstance(a, bool) for a in vals]
+    if not all(known[:3]):
+        return date_obj(Unknown(f"date from {', '.join(_desc(a) for a in args)}", "object"), "new Date(...)")
+    try:
+        if len(vals) == 1:
+            return date_obj(EPOCH + dt.timedelta(milliseconds=vals[0]), "new Date(millis)")
+        y, mo, d, *hms = [int(x) if k else 0 for x, k in zip(vals, known)] + [0, 0, 0]
+        base = dt.datetime(1900 + y, 1, 1) + dt.timedelta(days=d - 1)
+        base = _add_months(base, mo) if mo else base
+        obj = date_obj(base + dt.timedelta(hours=hms[0], minutes=hms[1], seconds=hms[2]), "new Date(y, m, d)")
+        if not all(known):
+            obj.fields["day_only"] = True
+        return obj
+    except (OverflowError, ValueError):
+        return date_obj(Unknown("date out of range", "object"), "new Date(...)")
+
+
+def _add_months(t: dt.datetime, n: int) -> dt.datetime:
+    m = t.month - 1 + n
+    y, m = t.year + m // 12, m % 12 + 1
+    return t.replace(year=y, month=m, day=min(t.day, calendar.monthrange(y, m)[1]))
+
+
+def _dt_of(v: Any) -> Any:
+    return v.fields.get("v") if isinstance(v, Obj) and v.type in (DATE_TYPE, CALENDAR_TYPE) else v
+
+
+def _date(o: Obj, callee: str, args: list[Any]) -> Any:
+    t = o.fields.get("v")
+    other = _dt_of(args[0]) if args else None
+    known = isinstance(t, dt.datetime)
+    day_only = o.fields.get("day_only") or (isinstance(args[0], Obj) and args[0].fields.get("day_only") if args else False)
+    if callee in ("before", "after", "compareTo", "equals"):
+        if not known or not isinstance(other, dt.datetime) or (day_only and t.date() == other.date()):
+            return Unknown(f"date comparison Date.{callee}", "bool" if callee != "compareTo" else "number",
+                           src="library")
+        if callee == "before":
+            return t < other
+        if callee == "after":
+            return t > other
+        if callee == "equals":
+            return t == other
+        return (t > other) - (t < other)
+    if not known:
+        return Unknown(f"Date.{callee}() of {o.origin}", "number" if callee.startswith("get") else "object")
+    if callee == "getTime":
+        return _millis(t)
+    legacy = {"getYear": t.year - 1900, "getMonth": t.month - 1, "getDate": t.day, "getHours": t.hour,
+              "getMinutes": t.minute, "getSeconds": t.second, "getDay": t.isoweekday() % 7}
+    if callee in legacy:
+        return legacy[callee]
+    if callee == "toString":
+        return t.strftime("%a %b %d %H:%M:%S CST %Y")
+    if callee == "hashCode":
+        return Unknown("Date.hashCode()", "number")
+    return Unknown(f"Date.{callee}()", "object")
+
+
+CAL_FIELDS = ("YEAR", "MONTH", "DATE", "DAY_OF_MONTH", "HOUR", "HOUR_OF_DAY", "MINUTE", "SECOND", "MILLISECOND",
+              "DAY_OF_WEEK", "DAY_OF_YEAR", "AM_PM", "WEEK_OF_YEAR")
+
+
+def _cal_get(t: dt.datetime, f: str) -> Any:
+    return {"YEAR": t.year, "MONTH": t.month - 1, "DATE": t.day, "DAY_OF_MONTH": t.day, "HOUR_OF_DAY": t.hour,
+            "HOUR": t.hour % 12, "MINUTE": t.minute, "SECOND": t.second, "MILLISECOND": t.microsecond // 1000,
+            "DAY_OF_WEEK": t.isoweekday() % 7 + 1, "DAY_OF_YEAR": t.timetuple().tm_yday, "AM_PM": int(t.hour >= 12),
+            "WEEK_OF_YEAR": t.isocalendar()[1]}.get(f, MISSING)
+
+
+def _cal_add(t: dt.datetime, f: str, n: int) -> Any:
+    if f == "YEAR":
+        return _add_months(t, 12 * n)
+    if f == "MONTH":
+        return _add_months(t, n)
+    unit = {"DATE": "days", "DAY_OF_MONTH": "days", "DAY_OF_YEAR": "days", "DAY_OF_WEEK": "days",
+            "WEEK_OF_YEAR": "weeks", "HOUR": "hours", "HOUR_OF_DAY": "hours", "MINUTE": "minutes",
+            "SECOND": "seconds", "MILLISECOND": "milliseconds"}.get(f)
+    return t + dt.timedelta(**{unit: n}) if unit else MISSING
+
+
+def _cal_set(t: dt.datetime, f: str, n: int) -> Any:
+    part = {"YEAR": "year", "DATE": "day", "DAY_OF_MONTH": "day", "HOUR_OF_DAY": "hour", "MINUTE": "minute",
+            "SECOND": "second"}.get(f)
+    if f == "MONTH":
+        return _add_months(t.replace(month=1), n)
+    if f == "MILLISECOND":
+        return t.replace(microsecond=n * 1000)
+    return t.replace(**{part: n}) if part else MISSING
+
+
+def _calendar(o: Obj, callee: str, args: list[Any]) -> Any:
+    t = o.fields.get("v")
+    vals = [unbox(a) for a in args]
+    if callee == "setTime":
+        o.fields["v"] = _dt_of(args[0]) if args else Unknown("calendar time", "object")
+        return None
+    if callee == "setTimeInMillis":
+        o.fields["v"] = EPOCH + dt.timedelta(milliseconds=vals[0]) if vals and isinstance(vals[0], int) else Unknown(
+            "calendar time", "object")
+        return None
+    if callee == "getTime":
+        return date_obj(t, f"time of {o.origin}")
+    known = isinstance(t, dt.datetime) and all(isinstance(v, (int, str)) and not isinstance(v, bool) for v in vals)
+    if callee == "getTimeInMillis":
+        return _millis(t) if known else Unknown("Calendar.getTimeInMillis()", "number")
+    if callee == "get":
+        r = _cal_get(t, vals[0]) if known and vals else MISSING
+        return r if r is not MISSING else Unknown(f"Calendar.get({_desc(args[0]) if args else ''}) of {o.origin}",
+                                                  "number", src="library")
+    if callee in ("add", "set", "roll"):
+        r: Any = MISSING
+        try:
+            if known and len(vals) == 2 and isinstance(vals[0], str):
+                r = (_cal_add if callee != "set" else _cal_set)(t, vals[0], int(vals[1]))
+            elif known and callee == "set" and len(vals) >= 3:
+                y, mo, d, *hms = [int(v) for v in vals] + [t.hour, t.minute, t.second][len(vals) - 3:]
+                r = _add_months(dt.datetime(y, 1, d, *hms[:3]), mo)
+        except (OverflowError, ValueError):
+            r = MISSING
+        o.fields["v"] = r if r is not MISSING else Unknown(f"calendar after {callee}", "object")
+        return None
+    return Unknown(f"Calendar.{callee}()", "object")
+
+
+def _pattern_regex(pattern: str) -> str | None:
+    out, i = [], 0
+    while i < len(pattern):
+        ch = pattern[i]
+        j = i
+        while j < len(pattern) and pattern[j] == ch:
+            j += 1
+        run = pattern[i:j]
+        if ch.isalpha():
+            if run not in DATE_TOKENS:
+                return None
+            g, rx = DATE_TOKENS[run]
+            out.append(f"(?P<{g}>{rx})")
+        else:
+            out.append(re.escape(run))
+        i = j
+    return "".join(out)
+
+
+def _date_format(o: Obj, callee: str, a0: Any, frame: Frame) -> Any:
+    """SimpleDateFormat: parse и format для шаблонов из цифровых полей (yyyy-MM-dd HH:mm:ss)."""
+    pattern = o.fields.get("pattern")
+    rx = _pattern_regex(pattern) if isinstance(pattern, str) else None
+    if callee == "format":
+        t = _dt_of(a0)
+        if rx is None or not isinstance(t, dt.datetime):
+            return Unknown(f"date formatted as {pattern!r}", "string", NONNULL)
+        out = pattern
+        for tok, val in (("yyyy", f"{t.year:04d}"), ("MM", f"{t.month:02d}"), ("dd", f"{t.day:02d}"),
+                         ("HH", f"{t.hour:02d}"), ("mm", f"{t.minute:02d}"), ("ss", f"{t.second:02d}")):
+            out = out.replace(tok, val)
+        return out
+    if not isinstance(a0, str) or rx is None:
+        return date_obj(Unknown(f"date parsed from {_desc(a0)}", "object", src=getattr(a0, "src", "library")),
+                        "parsed date")
+    m = re.match(rx, a0)  # Java разбирает начало строки, хвост не проверяет
+    try:
+        if m is None:
+            raise ValueError(a0)
+        g = {k: int(v) for k, v in m.groupdict().items()}
+        return date_obj(dt.datetime(g.get("y", 1970), g.get("M", 1), g.get("d", 1), g.get("H", 0), g.get("m", 0),
+                                    g.get("s", 0)), f"date {a0!r}")
+    except ValueError:
+        from engine.executor.interp import ThrowSignal
+
+        raise ThrowSignal(Obj("java.text.ParseException", {"message": f"Unparseable date: {a0}"}, src="new"),
+                          frame.line) from None
+
+
+def _decimal_format(o: Obj, a0: Any) -> Any:
+    """DecimalFormat("0.00").format(x): число знаков после точки по шаблону."""
+    pattern, x = o.fields.get("pattern"), unbox(a0)
+    if not isinstance(pattern, str) or not isinstance(x, (int, float)) or isinstance(x, bool):
+        return Unknown(f"number formatted as {pattern!r}", "string", NONNULL)
+    frac = pattern.split(".", 1)[1] if "." in pattern else ""
+    s = f"{x:.{len(frac)}f}"
+    if frac and set(frac) == {"#"}:
+        s = s.rstrip("0").rstrip(".")
+    return s
 
 
 def _unknown(run: StepRun, u: Any, callee: str, args: list[Any]) -> Any:

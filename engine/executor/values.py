@@ -100,18 +100,25 @@ class Obj:
 class Coll:
     """Коллекция: известные элементы или только признак непустоты."""
 
-    __slots__ = ("items", "nonempty", "origin", "src", "elem_type", "uid")
+    __slots__ = ("items", "_nonempty", "origin", "src", "elem_type", "uid")
 
     def __init__(self, items: list[Any] | None = None, nonempty: Any = MISSING, origin: str = "", src: str = "new",
                  elem_type: str | None = None) -> None:
         self.items = items
-        if items is not None:
-            nonempty = bool(items)
-        self.nonempty = nonempty  # bool или Unknown
+        self._nonempty = nonempty
         self.origin = origin
         self.src = src
         self.elem_type = elem_type
         self.uid = next(_uids)
+
+    @property
+    def nonempty(self) -> Any:
+        """bool или Unknown; при известных элементах — по ним (список меняется после создания: add, remove)."""
+        return bool(self.items) if self.items is not None else self._nonempty
+
+    @nonempty.setter
+    def nonempty(self, value: Any) -> None:
+        self._nonempty = value
 
     def __repr__(self) -> str:
         return f"Coll({len(self.items) if self.items is not None else '?'}, {self.src})"
@@ -248,6 +255,8 @@ def java_str(v: Any) -> str | None:
         return str(v)
     if isinstance(v, float):
         return repr(v)
+    if isinstance(v, Obj) and v.type == "java.util.Date" and hasattr(v.fields.get("v"), "strftime"):
+        return v.fields["v"].strftime("%a %b %d %H:%M:%S CST %Y")  # Date.toString() в конкатенации
     return None
 
 

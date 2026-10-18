@@ -104,6 +104,13 @@ class Program:
         for mid, _, pi in sorted(param_rows, key=lambda r: (r[0], r[1])):
             self.params_by_method[mid].append(pi)
 
+        # Суперклассы проекта: тип -> [тип] (рёбра extends между узлами типов)
+        self.supertypes: dict[str, list[str]] = collections.defaultdict(list)
+        for e in index.sk.get("edges", []):
+            if e["type"] == "extends" and self.N.get(e["source"], {}).get("kind") == "type" \
+                    and self.N.get(e["target"], {}).get("kind") == "type":
+                self.supertypes[e["source"]].append(e["target"])
+
         # Обработчики: метод -> [(глагол, сегменты шаблона пути)]
         self.handler_templates: dict[str, list[tuple[str | None, list[str]]]] = collections.defaultdict(list)
         for nid, verb, segs in index.handlers:
@@ -114,7 +121,9 @@ class Program:
         for m in self.methods.values():
             for node in _walk(m.get("body")):
                 if "enum" in node and "constant" in node:
-                    self.enum_args[node["enum"]].setdefault(node["constant"], node.get("args") or [])
+                    known = self.enum_args[node["enum"]].get(node["constant"])
+                    if not known:  # ссылка без аргументов не затирает аргументы, найденные в другом месте
+                        self.enum_args[node["enum"]][node["constant"]] = node.get("args") or []
 
     # --- методы и типы --------------------------------------------------------------------------------------------
 
@@ -187,6 +196,33 @@ class Program:
         fqn = self.N.get(type_node, {}).get("fqn", "")
         return [f.name for f in self.fields_by_type.get(type_node, []) if f.static and f.type == fqn]
 
+    def enum_source_args(self, type_node: str | None, root: Path) -> dict[str, list[dict[str, Any]]]:
+        """Литералы аргументов констант из объявления enum в исходнике: `TRAFFIC_ACCIDENT(1, "...", 3.0)`.
+
+        Нужны для констант, на которые в телах методов нет прямой ссылки (берутся через `values()`), — в IR их
+        аргументов нет. Аргумент не литерал — константы в ответе нет.
+        """
+        if not hasattr(self, "_enum_src"):
+            self._enum_src: dict[str, dict[str, list[dict[str, Any]]]] = {}
+        if not type_node:
+            return {}
+        if type_node not in self._enum_src:
+            n = self.N.get(type_node, {})
+            out: dict[str, list[dict[str, Any]]] = {}
+            try:
+                text = (root / n.get("file", "")).read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                text = ""
+            m = re.search(r"\benum\s+" + re.escape(n.get("fqn", "").rsplit(".", 1)[-1].rsplit("$", 1)[-1]) + r"\b[^{]*\{",
+                          text)
+            body = _strip_comments(text[m.end():]) if m else ""
+            for name, raw in _enum_constants(body):
+                args = [_java_literal(a) for a in _split_args(raw)] if raw is not None else []
+                if all(a is not None for a in args):
+                    out[name] = args
+            self._enum_src[type_node] = out
+        return self._enum_src[type_node]
+
     def find_methods(self, type_node: str | None, name: str, argc: int | None = None) -> list[str]:
         out = []
         for mid in self.methods_by_owner.get(type_node or "", []):
@@ -197,6 +233,20 @@ class Program:
                 continue
             out.append(mid)
         return out
+
+    def lookup_method(self, type_node: str | None, name: str, argc: int) -> str | None:
+        """Явный (не Lombok) неабстрактный метод типа или его суперкласса: цель вызова по фактическому типу."""
+        seen: set[str] = set()
+        while type_node and type_node not in seen:
+            seen.add(type_node)
+            found = [m for m in self.find_methods(type_node, name, argc) if not self.is_abstract(m)]
+            if len(found) == 1:
+                return found[0]
+            if found:
+                return None  # перегрузки с тем же числом аргументов: по типам аргументов не выбираем
+            supers = self.supertypes.get(type_node) or []
+            type_node = supers[0] if len(supers) == 1 else None
+        return None
 
     def implementations(self, method_id: str) -> list[str]:
         """Реализации абстрактного метода по `overrides` (CHA), без абстрактных."""
@@ -229,6 +279,92 @@ def _walk(x: Any):
 def walk(x: Any):
     """Все узлы-словари поддерева IR."""
     return _walk(x)
+
+
+def _strip_comments(text: str) -> str:
+    return re.sub(r"//[^\n]*|/\*.*?\*/", " ", text, flags=re.S)
+
+
+def _enum_constants(body: str) -> list[tuple[str, str | None]]:
+    """Константы enum до первой `;` верхнего уровня: [(имя, текст аргументов или None)]."""
+    out: list[tuple[str, str | None]] = []
+    i, depth, n = 0, 0, len(body)
+    while i < n:
+        m = re.match(r"\s*(?:@\w+(?:\([^)]*\))?\s*)*([A-Z_][A-Z0-9_]*)\s*", body[i:])
+        if not m:
+            break
+        name, i = m.group(1), i + m.end()
+        raw = None
+        if i < n and body[i] == "(":
+            start, depth = i + 1, 1
+            i += 1
+            in_str = None
+            while i < n and depth:
+                ch = body[i]
+                if in_str:
+                    if ch == "\\":
+                        i += 1
+                    elif ch == in_str:
+                        in_str = None
+                elif ch in "\"'":
+                    in_str = ch
+                elif ch == "(":
+                    depth += 1
+                elif ch == ")":
+                    depth -= 1
+                i += 1
+            raw = body[start:i - 1]
+        out.append((name, raw))
+        rest = body[i:].lstrip()
+        if rest.startswith("{"):  # тело константы: в Train Ticket не встречается
+            break
+        if rest.startswith(","):
+            i = n - len(rest) + 1
+            continue
+        break
+    return out
+
+
+def _split_args(raw: str) -> list[str]:
+    parts, cur, in_str, depth = [], "", None, 0
+    for i, ch in enumerate(raw):
+        if in_str:
+            cur += ch
+            if ch == in_str and raw[i - 1] != "\\":
+                in_str = None
+            continue
+        if ch in "\"'":
+            in_str = ch
+        elif ch in "([{":
+            depth += 1
+        elif ch in ")]}":
+            depth -= 1
+        elif ch == "," and depth == 0:
+            parts.append(cur.strip())
+            cur = ""
+            continue
+        cur += ch
+    if cur.strip():
+        parts.append(cur.strip())
+    return parts
+
+
+def _java_literal(s: str) -> dict[str, Any] | None:
+    """Литерал Java как узел IR `lit` (README archparse 3.6); не литерал — None."""
+    if re.fullmatch(r'"(?:[^"\\]|\\.)*"', s):
+        return {"lit": re.sub(r"\\(.)", lambda m: {"n": "\n", "t": "\t"}.get(m.group(1), m.group(1)), s[1:-1]),
+                "type": "String"}
+    if re.fullmatch(r"'(?:[^'\\]|\\.)'", s):
+        return {"lit": s[1:-1], "type": "char"}
+    if s in ("true", "false"):
+        return {"lit": s == "true", "type": "boolean"}
+    if s == "null":
+        return {"lit": None, "type": "null"}
+    if re.fullmatch(r"-?\d+[lL]?", s):
+        return {"lit": int(s.rstrip("lL")), "type": "int"}
+    if re.fullmatch(r"-?(?:\d+\.\d*|\.\d+|\d+)(?:[eE][-+]?\d+)?[dDfF]?", s):
+        return {"lit": float(s.rstrip("dDfF")), "type": "double"}
+    return None
 
 
 def _ann_name_arg(args: str) -> str | None:

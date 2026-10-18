@@ -696,6 +696,8 @@ class StepRun:
                 return Obj("org.slf4j.Logger", src="bean")
             if of.simple == "HttpHeaders" and name.isupper():
                 return "-".join(w.capitalize() for w in name.split("_"))  # AUTHORIZATION -> "Authorization"
+            if (of.simple, name) in library.CONSTANTS:
+                return library.CONSTANTS[(of.simple, name)]  # Float.MAX_VALUE
             if name.isupper():
                 return name  # константа библиотечного enum: HttpMethod.GET -> "GET"
             return Unknown(f"static field {of.simple}.{name}", "object", src="field")
@@ -836,12 +838,24 @@ class StepRun:
                 return self.remote_call(frame, node, recv, args, remote, line, col)
             mq = p.edges(cs, "message_delivery")
             if mq:
-                return self.mq_call(frame, mq, line, col)
+                return self.mq_call(frame, mq, line, col, args)
             targets = [node["target"]] if node.get("target") else (
                 p.edges(cs, "runtime_dispatch") or p.edges(cs, "calls"))
             if targets:
                 return self.project_call(frame, node, targets, recv, args, line, col)
+            dyn = self.runtime_target(node, recv, len(args))
+            if dyn is not None:
+                return self.project_call(frame, node, [dyn], recv, args, line, col, extra=("IR_CALL", "R2:runtime_type"))
         return library.call(self, frame, node, recv, args)
+
+    def runtime_target(self, node: dict[str, Any], recv: Any, argc: int) -> str | None:
+        """Цель call_site без рёбер скелета по фактическому типу получателя (тип не вывел парсер скелета:
+        `trip.getTripId().toString()` -> `TripId#toString`). Только явные методы проекта (R2, R4)."""
+        if node.get("recv") is None or not isinstance(recv, Obj) or recv.src in ("bean", "library", "json"):
+            return None
+        p = self.program
+        target = p.lookup_method(p.type_node(recv.type), node.get("callee", ""), argc)
+        return target if target is not None and self.ex.wants(target) else None
 
     # --- вызовы ----------------------------------------------------------------------------------------------------
 
@@ -865,12 +879,12 @@ class StepRun:
         return out
 
     def project_call(self, frame: Frame, node: dict[str, Any], targets: list[str], recv: Any, args: list[Any],
-                     line: int, col: int) -> Any:
+                     line: int, col: int, extra: tuple[str, str] | None = None) -> Any:
         result: Any = MISSING
         for x in self.dispatch(targets, recv, frame):
             if self.cross_unit(frame, x):
                 continue
-            if not self.emit("calls", frame, x, line=line, col=col) and not self.silent:
+            if not self.emit("calls", frame, x, line=line, col=col, extra=extra) and not self.silent:
                 continue
             this = self.receiver_for(x, recv, frame)
             v = self.invoke(x, frame.unit, args, this=this, caller=frame, via=f"calls|{frame.method_id}|{x}",
@@ -935,7 +949,7 @@ class StepRun:
             except ThrowSignal:
                 raise ThrowSignal(Obj("org.springframework.web.client.HttpServerErrorException", src="new"), line)
             if result is MISSING:
-                result = hv
+                result = library.wire(hv)  # ответ прошёл через JSON: Optional развёрнут
         if result is MISSING or len(chosen) > 1:
             body_v: Any = unknown_of(f"response of {verb or ''} {library.url_text(url)} (remote)", None, "remote")
         else:
@@ -983,10 +997,12 @@ class StepRun:
                 out.append(body if body is not None else unknown_of(f"request body of {short(handler)}", p.type,
                                                                     "remote", success_defaults=False))
             elif "PathVariable" in ann and name in pvars:
-                out.append(pvars[name] if pvars[name] is not None else unknown_of(
-                    f"path variable {name}", p.type, "remote", success_defaults=False))
+                # Spring приводит сегмент URL к типу параметра (@PathVariable int typeIndex)
+                out.append(repo.convert(pvars[name], p.type) if isinstance(pvars[name], str) else (
+                    pvars[name] if pvars[name] is not None else unknown_of(
+                        f"path variable {name}", p.type, "remote", success_defaults=False)))
             elif "RequestParam" in ann and name in query:
-                out.append(query[name])
+                out.append(repo.convert(query[name], p.type) if isinstance(query[name], str) else query[name])
             elif "RequestHeader" in ann or simple_name(p.type) == "HttpHeaders":
                 out.append(headers if headers is not None else Obj("org.springframework.http.HttpHeaders",
                                                                    src="library"))
@@ -995,12 +1011,14 @@ class StepRun:
                                       success_defaults=False))
         return out
 
-    def mq_call(self, frame: Frame, targets: list[str], line: int, col: int) -> Any:
-        """Отправка в очередь: потребитель исполняется (R13), ребро remote от метода с отправкой."""
+    def mq_call(self, frame: Frame, targets: list[str], line: int, col: int, args: list[Any]) -> Any:
+        """Отправка в очередь: потребитель исполняется (R13) с отправленным сообщением (последний аргумент
+        convertAndSend), ребро remote от метода с отправкой."""
         for t in targets:
             if not self.emit("remote", frame, t, line=line, col=col):
                 continue
-            msg = Unknown(f"message sent at line {line} of {short(frame.method_id)}", "string", src="remote")
+            msg = library.wire(args[-1]) if args else Unknown(f"message sent at line {line} of {short(frame.method_id)}",
+                                                              "string", NONNULL, src="remote", rule="D2")
             try:
                 self.invoke(t, self.index.unit_of(t), [msg], this=self.ex.singleton(self.program.owner_of(t)),
                             caller=frame, via=f"remote|{frame.method_id}|{t}", call_line=line)

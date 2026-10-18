@@ -21,6 +21,32 @@ if TYPE_CHECKING:
 TRIP_TYPES = ("G", "D", "Z", "T", "K")  # edu.fudan.common.entity.Type, порядок констант = ordinal в БД
 REF = re.compile(r"^(first|second|new)_of_step_(\d+)$")
 USER_FIELDS = ("accountId", "loginId", "userId")
+DATE_FIELDS = ("travelDate", "departureTime", "date")  # дата поездки в DTO запросов (TripAllDetailInfo, TripInfo, ...)
+# Колонки consign_record -> поля Consign (тело PUT /consigns)
+CONSIGN_COLUMNS = {"user_id": "accountId", "handle_date": "handleDate", "target_date": "targetDate",
+                   "from_place": "from", "to_place": "to", "consignee": "consignee", "consign_record_phone": "phone",
+                   "weight": "weight", "consign_record_price": "price"}
+
+
+def _station(name: Any) -> str:
+    """Имя станции как в БД: без пробелов, строчными (StringUtils проекта)."""
+    return str(name or "").replace(" ", "").lower()
+
+
+def _trip_table(module: str) -> str | None:
+    """Таблица рейсов сервиса шага: travel2 и сервисы обычных поездов — trip2, скоростных — trip."""
+    if any(x in module for x in ("travel2", "other")):
+        return "trip2"
+    if any(x in module for x in ("travel-service", "preserve-service", "order-service")):
+        return "trip"
+    return None
+
+
+def _trip_id(row: dict[str, Any]) -> str | None:
+    try:
+        return f"{TRIP_TYPES[int(row.get('type'))]}{row.get('number')}"
+    except (TypeError, ValueError, IndexError):
+        return None
 
 
 class RefResolver:
@@ -80,47 +106,77 @@ class RefResolver:
                 "accountId": order.get("account_id"), "travelDate": order.get("travel_date"),
                 "from": order.get("from_station") or order.get("from"), "to": order.get("to_station") or order.get("to")}
 
+    def _trip_chain(self, pick: str, n: int) -> tuple[list[StepRequest], str]:
+        """Шаг N и шаги, на рейс которых он ссылается (детали -> поиск), и итоговый выбор first/second."""
+        chain: list[StepRequest] = []
+        picks = [pick]
+        while n in self.steps and len(chain) < 8:
+            step = self.steps[n]
+            chain.append(step)
+            ref = next((r for k, r in (step.refs or {}).items() if k in ("trip", "train")), None)
+            m = REF.match(ref or "")
+            if not m or int(m.group(2)) >= n:
+                break
+            picks.append(m.group(1))
+            n = int(m.group(2))
+        return chain, "second" if "second" in picks else pick
+
     def _trip(self, pick: str, n: int, state: Any) -> dict[str, Any]:
-        step = self.steps.get(n)
-        if step is None:
+        """Рейс по ссылке. Станции, дата и таблица (trip или trip2) — по цепочке ссылок прошлых шагов: шаг деталей
+        рейса ссылается на поиск, бронирование — на детали. `new_of_step_N` — рейс, созданный шагом N (tripId)."""
+        chain, pick = self._trip_chain(pick, n)
+        if not chain:
             return {}
-        params = step.params or {}
-        start = str(params.get("startPlace") or params.get("startingPlace") or "").lower()
-        end = str(params.get("endPlace") or "").lower()
-        module = self.program.module_of(step.handler)
-        table = "trip2" if "travel2" in module or "other" in module else "trip"
+        start = end = date = table = None
+        for step in chain:
+            p = step.params or {}
+            start = start or p.get("startPlace") or p.get("startingPlace") or p.get("startStation") or p.get(
+                "startStationName") or p.get("from")
+            end = end or p.get("endPlace") or p.get("endStation") or p.get("terminalStationName") or p.get("to")
+            date = date or p.get("departureTime") or p.get("travelDate") or p.get("date")
+            table = table or _trip_table(self.program.module_of(step.handler))
         db = getattr(state, "db_state", None)
-        if db is None:
+        new_id = (chain[0].params or {}).get("tripId") if pick == "new" else None
+        row = None
+        if db is not None and new_id:
+            row = self._trip_row(db, str(new_id))
+        elif db is not None:
+            row = self._find_trip(db, table or "trip", _station(start), _station(end), 1 if pick == "second" else 0)
+        trip_id = str(new_id) if new_id else (_trip_id(row) if row else None)
+        if trip_id is None:
             return {}
+        out: dict[str, Any] = {"tripId": trip_id, "trainNumber": trip_id}
+        if row and row.get("train_type_name"):
+            out["trainTypeName"] = row.get("train_type_name")
+        if start:
+            out["from"] = out["startPlace"] = out["startStation"] = start
+        if end:
+            out["to"] = out["endPlace"] = out["endStation"] = end
+        if date:
+            out["date"] = out["departureTime"] = date
+        return out
+
+    @staticmethod
+    def _find_trip(db: Any, table: str, start: str, end: str, idx: int) -> dict[str, Any] | None:
+        """Рейс таблицы, маршрут которого проходит start раньше end (как фильтр поиска рейсов); idx — первый/второй."""
         stations: dict[str, list[str]] = {}
         for r in sorted(db.get_table("route_stations"), key=lambda r: int(r.get("stations_order") or 0)):
-            stations.setdefault(r.get("route_id"), []).append(str(r.get("stations", "")).lower())
+            stations.setdefault(r.get("route_id"), []).append(_station(r.get("stations")))
         hits = []
         for row in db.get_table(table):
             st = stations.get(row.get("route_id"), [])
             if start and end and (start not in st or end not in st or st.index(start) >= st.index(end)):
                 continue
             hits.append(row)
-        idx = 1 if pick == "second" else 0
-        if len(hits) <= idx:
-            return {}
-        row = hits[idx]
-        try:
-            letter = TRIP_TYPES[int(row.get("type"))]
-        except (TypeError, ValueError, IndexError):
-            return {}
-        trip_id = f"{letter}{row.get('number')}"
-        out = {"tripId": trip_id, "trainNumber": trip_id, "trainTypeName": row.get("train_type_name")}
-        if start:
-            out["from"], out["startPlace"], out["startStation"] = params.get("startPlace"), params.get(
-                "startPlace"), params.get("startPlace")
-        if end:
-            out["to"], out["endPlace"], out["endStation"] = params.get("endPlace"), params.get(
-                "endPlace"), params.get("endPlace")
-        date = params.get("departureTime") or params.get("travelDate")
-        if date:
-            out["date"] = out["departureTime"] = date
-        return out
+        return hits[idx] if len(hits) > idx else None
+
+    @staticmethod
+    def _trip_row(db: Any, trip_id: str) -> dict[str, Any] | None:
+        for table in ("trip", "trip2"):
+            for row in db.get_table(table):
+                if _trip_id(row) == trip_id:
+                    return row
+        return None
 
     def _contact(self, pick: str, n: int, state: Any) -> dict[str, Any]:
         contacts = state.get_contacts() if hasattr(state, "get_contacts") else []
@@ -133,12 +189,20 @@ class RefResolver:
         return {"contactsId": c.get("id"), "contactId": c.get("id"), "contactsName": c.get("name")}
 
     def _consign(self, state: Any) -> dict[str, Any]:
+        """Запись багажа целиком: UI правит найденную запись и отправляет все её поля (client_order_list.js)."""
         created = [c.get("order_id") for _, c in sorted(self.created.items()) if c.get("order_id")]
         records = [c for c in getattr(state, "consignments", []) if not created or c.get("order_id") in created]
         if not records:
             return {}
         r = records[-1]
-        return {"id": r.get("id") or r.get("consign_record_id"), "orderId": r.get("order_id")}
+        rid = r.get("id") or r.get("consign_record_id")
+        out = {"id": rid, "orderId": r.get("order_id")}
+        db = getattr(state, "db_state", None)
+        row = next((x for x in db.get_table("consign_record") if x.get("consign_record_id") == rid), None) if db else None
+        for col, name in CONSIGN_COLUMNS.items():
+            if row is not None and row.get(col) is not None:
+                out[name] = row[col]
+        return out
 
     # --- привязка входа шага ---------------------------------------------------------------------------------------
 
@@ -154,7 +218,8 @@ class RefResolver:
             ent = self.entity(kind, ref, state)
             if ent:
                 ref_fields[kind] = ent
-        user = {"accountId": getattr(state, "account_id", None)}
+        # Пользователь сценария и дата поездки из контекста (все поездки ищут и бронируют на одну дату)
+        user = {"accountId": getattr(state, "account_id", None), "travelDate": getattr(state, "travel_date", None)}
         out: list[Any] = []
         for p in self.program.params_by_method.get(handler, []):
             ann = p.annotations
@@ -209,4 +274,6 @@ class RefResolver:
                     return v
         if name in USER_FIELDS and user.get("accountId"):
             return user["accountId"]
+        if name in DATE_FIELDS and user.get("travelDate"):
+            return user["travelDate"]
         return None

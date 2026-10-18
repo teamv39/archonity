@@ -175,6 +175,8 @@ class M4Executor:
         self._enums[key] = obj
         if args is None:
             args = p.enum_args.get(fqn, {}).get(constant)
+        if args is None:  # на константу нет ссылки с аргументами в IR (values()): объявление enum в исходнике
+            args = p.enum_source_args(tn, self.targets_root).get(constant)
         if args is None:
             return obj
         values = [_literal(a) for a in args]

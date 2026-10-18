@@ -12,6 +12,7 @@ import re
 from typing import TYPE_CHECKING, Any
 
 from engine.entities import RepositoryCall, hydration
+from engine.executor import library
 from engine.executor.values import MISSING, NONNULL, Coll, Obj, Opt, Unknown, is_unknown, simple_name
 
 if TYPE_CHECKING:
@@ -79,7 +80,8 @@ def result(run: StepRun, frame: Frame, node: dict[str, Any], args: list[Any], rc
         return Unknown(f"rows updated by {callee}", "number", src="repo")
     entity_type = rc.entity.type if rc is not None and rc.entity else None
     table = (rc.main_table if rc is not None else None) or (sorted(tables)[0] if tables else None)
-    rows = query_rows(run, frame, table, entity_type, callee, args)
+    target = next(iter(run.program.edges(node.get("call"), "calls")), None)
+    rows = query_rows(run, frame, table, entity_type, callee, args, target)
     origin = f"{callee}({', '.join(_desc(a) for a in args)}) in {simple_name(entity_type) or 'repository'}"
     if rows is None:
         return _unknown_result(op, shape, rc, origin, entity_type)
@@ -155,8 +157,9 @@ def _unknown_result(op: str, shape: str, rc: RepositoryCall | None, origin: str,
 
 
 def query_rows(run: StepRun, frame: Frame, table: str | None, entity_type: str | None, callee: str,
-               args: list[Any]) -> list[dict[str, Any]] | None:
-    """Строки таблицы по finder-методу Spring Data; None — не определить (аргумент неизвестен, свой @Query)."""
+               args: list[Any], target: str | None = None) -> list[dict[str, Any]] | None:
+    """Строки таблицы по finder-методу Spring Data или простому нативному @Query; None — не определить
+    (аргумент неизвестен, сложный запрос)."""
     db = getattr(run.state, "db_state", None)
     if table is None or db is None or not hasattr(db, "get_table"):
         return None
@@ -165,6 +168,16 @@ def query_rows(run: StepRun, frame: Frame, table: str | None, entity_type: str |
     columns = set(db.get_columns(name)) if hasattr(db, "get_columns") else set()
     if callee in ("findAll", "count") and not args:
         return list(rows)
+    native = native_query(run, target)
+    if native is not None:
+        filters: list[tuple[str, Any]] = []
+        for col, op, i in native:
+            arg = args[i - 1] if 0 < i <= len(args) else None
+            value = _in_values(arg) if op == "in" else (None if is_unknown(arg) or isinstance(arg, (Obj, Coll)) else arg)
+            if value is None or (columns and col not in columns):
+                return None
+            filters.append((col, value))
+        return [r for r in rows if all(cell_matches(r.get(c), v) for c, v in filters)]
     if callee in ("findById", "existsById", "deleteById", "getById", "getOne"):
         props = ["Id"]
     else:
@@ -175,21 +188,117 @@ def query_rows(run: StepRun, frame: Frame, table: str | None, entity_type: str |
         if OR_SPLIT.search(body):
             return None
         props = [p for p in re.split(r"And(?=[A-Z])", body) if p]
-        if any(OPERATOR_SUFFIX.search(p) for p in props):
+        if any(OPERATOR_SUFFIX.search(p) and not (p.endswith("In") and not p.endswith("NotIn")) for p in props):
             return None
     if len(props) != len(args):
         return None
     tn = run.program.type_node(entity_type or "", run.program.module_of(frame.method_id)) if entity_type else None
-    filters: list[tuple[str, Any]] = []
+    filters = []
     for prop, arg in zip(props, args):
         arg = arg.fields.get("v") if isinstance(arg, Obj) and arg.simple == "UUID" else arg
-        if is_unknown(arg) or isinstance(arg, (Obj, Coll)):
+        if prop.endswith("In"):  # findByStationNameIn(List): IN по свойству
+            col, value = column_of(run, tn, prop[:-2]), _in_values(arg)
+            if col is None or value is None or (columns and col not in columns):
+                return None
+            filters.append((col, value))
+            continue
+        if isinstance(arg, Obj) and arg.src not in ("enum", "bean") and arg.type != library.DATE_TYPE:
+            # Встроенный объект (@Embedded TripId): колонки его полей в строке сущности
+            sub = embedded_filters(run, tn, prop, arg, columns)
+            if sub is None:
+                return None
+            filters.extend(sub)
+            continue
+        if is_unknown(arg) or isinstance(arg, Coll) or (isinstance(arg, Obj) and not _comparable(arg)):
             return None
         col = column_of(run, tn, prop)
         if col is None or (columns and col not in columns):
             return None
         filters.append((col, arg))
-    return [r for r in rows if all(str(r.get(c)) == str(v) for c, v in filters)]
+    return [r for r in rows if all(cell_matches(r.get(c), v) for c, v in filters)]
+
+
+class InValues:
+    """Условие `колонка IN (...)` нативного @Query или finder'а с суффиксом In."""
+
+    def __init__(self, values: list[Any]) -> None:
+        self.values = {_key(x) for x in values}
+
+
+def _in_values(arg: Any) -> InValues | None:
+    if not isinstance(arg, Coll) or arg.items is None or any(
+            x is None or is_unknown(x) or isinstance(x, (Obj, Coll)) for x in arg.items):
+        return None
+    return InValues(arg.items)
+
+
+NATIVE_SELECT = re.compile(r"^\s*SELECT\s+\*\s+FROM\s+(\w+)\s+WHERE\s+(.+?)\s*$", re.I)
+NATIVE_COND = re.compile(r"^(\w+)\s*(=|IN)\s*\?(\d+)$", re.I)
+
+
+def native_query(run: StepRun, method_id: str | None) -> list[tuple[str, str, int]] | None:
+    """Условия простого нативного @Query: `SELECT * FROM t WHERE a = ?1 AND b IN ?2` -> [(колонка, =|in, номер)]."""
+    if not method_id:
+        return None
+    ann = next((a for a in run.program.N.get(method_id, {}).get("annotations") or [] if a.get("name") == "Query"), None)
+    m = re.search(r'value\s*=\s*"([^"]*)"', (ann or {}).get("args") or "") if ann else None
+    sel = NATIVE_SELECT.match(m.group(1)) if m else None
+    if sel is None:
+        return None
+    out = []
+    for cond in re.split(r"\s+AND\s+", sel.group(2), flags=re.I):
+        c = NATIVE_COND.match(cond.strip())
+        if c is None:
+            return None
+        out.append((c.group(1), c.group(2).lower() if c.group(2).lower() == "in" else "=", int(c.group(3))))
+    return out
+
+
+def embedded_filters(run: StepRun, entity_tn: str | None, prop: str, obj: Obj,
+                     columns: set[str]) -> list[tuple[str, Any]] | None:
+    """Фильтры по колонкам полей встроенного объекта (поле сущности @Embedded или тип @Embeddable).
+
+    None — объект не встроенный, поле неизвестно или колонки нет в таблице.
+    """
+    p = run.program
+    fi = p.field_info(entity_tn, prop[:1].lower() + prop[1:])
+    tn = p.type_node(obj.type)
+    embedded = fi is not None and ({"Embedded", "EmbeddedId"} & set(fi.annotations)
+                                   or "Embeddable" in p.type_annotations(tn))
+    if tn is None or not embedded:
+        return None
+    out: list[tuple[str, Any]] = []
+    for f in p.instance_fields(tn):
+        v = obj.fields.get(f.name)
+        col = f.column or snake(f.name)
+        if v is None or is_unknown(v) or (columns and col not in columns) or (isinstance(v, Obj) and not _comparable(v)):
+            return None
+        out.append((col, v))
+    return out or None
+
+
+def _comparable(v: Obj) -> bool:
+    return v.src == "enum" or (v.type == library.DATE_TYPE and not is_unknown(v.fields.get("v")))
+
+
+def cell_matches(cell: Any, v: Any) -> bool:
+    """Значение колонки равно аргументу finder'а: enum — по порядковому номеру или имени, дата — по значению,
+    InValues — одному из значений списка."""
+    if isinstance(v, InValues):
+        return _key(cell) in v.values
+    if isinstance(v, Obj) and v.src == "enum":
+        return str(cell) in (str(v.fields.get("__ordinal__")), str(v.fields.get("__name__")))
+    if isinstance(v, Obj) and v.type == library.DATE_TYPE:
+        t = v.fields.get("v")
+        s = str(cell)
+        return s == t.strftime("%Y-%m-%d %H:%M:%S") or (len(s) == 10 and s == t.strftime("%Y-%m-%d")
+                                                         and t.time() == library.dt.time())
+    return _key(cell) == _key(v)
+
+
+def _key(v: Any) -> str:
+    """Строка для сравнения с колонкой: MySQL 8 сравнивает строки без учёта регистра (collation utf8mb4_0900_ai_ci)."""
+    return str(v).lower()
 
 
 def column_of(run: StepRun, type_node: str | None, prop: str) -> str | None:
@@ -234,8 +343,36 @@ def row_obj(run: StepRun, frame: Frame, entity_type: str | None, row: dict[str, 
             fields[f.name] = convert(row[col], f.type)
     if not fields:
         fields = {_camel(k): v for k, v in row.items()}
+    ent = run.index.entities.entities.get(entity_type or "") if depth == 0 else None
+    for table, (fname, _fetch) in (ent.collections.items() if ent is not None else ()):
+        items = collection_items(run, tn, table, fname, row)
+        if items is not None:
+            fields[fname] = items
     rid = row.get("id") or next(iter(row.values()), "")
     return Obj(entity_type or "row", fields, src="state", origin=f"{simple_name(entity_type) or 'row'} {rid}")
+
+
+def collection_items(run: StepRun, type_node: str | None, table: str, fname: str, row: dict[str, Any]) -> Coll | None:
+    """Элементы коллекции сущности (`@ElementCollection`) из её таблицы: первая колонка — ключ владельца,
+    колонка `<поле>` — значение (иначе элемент — встраиваемый объект по колонкам), `<поле>_order` — порядок.
+    Значения нужны условиям; ребро data к таблице коллекции решает R10 отдельно."""
+    db = getattr(run.state, "db_state", None)
+    cols = list(db.get_columns(table)) if db is not None and hasattr(db, "get_columns") else []
+    if not cols:
+        return None
+    key = row.get(column_of(run, type_node, "Id") or "id")
+    join, value_col, order_col = cols[0], snake(fname), f"{snake(fname)}_order"
+    rows = [r for r in db.get_table(table) if str(r.get(join)) == str(key)]
+    if order_col in cols:
+        rows.sort(key=lambda r: int(r.get(order_col) or 0))
+    fi = run.program.field_info(type_node, fname)
+    elem = fi.type.split("<", 1)[1].rstrip(">").strip() if fi and "<" in fi.type else None
+    if value_col in cols:
+        items = [convert(r.get(value_col), elem) for r in rows]
+    else:
+        items = [Obj(elem or "row", {_camel(c): v for c, v in r.items() if c != join}, src="state",
+                     origin=f"{simple_name(elem) or 'element'} of {fname}") for r in rows]
+    return Coll(items, origin=f"{fname} of the database row", src="state", elem_type=elem)
 
 
 def _enum_from_db(run: StepRun, fqn: str, type_node: str, raw: Any) -> Any:
