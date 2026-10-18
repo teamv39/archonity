@@ -74,6 +74,7 @@ class M4Executor:
         self.decisions: collections.Counter[str] = collections.Counter()
         self.counters: collections.Counter[str] = collections.Counter()
         self.branch_log: list[dict[str, Any]] = []
+        self.last_run: StepRun | None = None
 
     # --- конвейер --------------------------------------------------------------------------------------------------
 
@@ -99,6 +100,7 @@ class M4Executor:
         """Исполнение шага: (executes, calls, remote, data), решения пишутся в ledger."""
         self.refs.remember_step(step_req)
         run = StepRun(self, step_req, scenario_state, profile, scenario_meta)
+        self.last_run = run
         return self.builder.traverse(
             [step_req.handler],
             is_admin_scenario=bool(getattr(profile, "is_admin", False)),
@@ -108,6 +110,34 @@ class M4Executor:
             ledger=ledger,
             interceptor=run,
         )
+
+    def state_params(self, step_req: StepRequest, state: ScenarioState) -> dict[str, Any]:
+        """Поля для мутации M3, которые шаг задал не параметром: рейс бронирования (tripId) и цена заказа.
+
+        Берутся из заказа, который исполнитель сохранил на этом шаге (save в orders/orders_other), иначе рейс —
+        из refs. Без этого M3 пишет заказ на рейс и цену по умолчанию, и следующие шаги (пересадка, возврат)
+        сравнивают не те значения.
+        """
+        out: dict[str, Any] = {}
+        run = self.last_run if self.last_run is not None and self.last_run.step is step_req else None
+        for table, obj in (run.saved if run is not None else ()):
+            if table and table.rsplit(".", 1)[-1] in ("orders", "orders_other"):
+                train, price = obj.fields.get("trainNumber"), obj.fields.get("price")
+                if isinstance(train, str):
+                    out["tripId"] = train
+                if isinstance(price, (str, int, float)) and not isinstance(price, bool):
+                    try:
+                        out["price"] = float(price)
+                    except ValueError:
+                        pass
+        if "tripId" not in out:
+            for kind in ("trip", "train"):
+                ref = (step_req.refs or {}).get(kind)
+                trip_id = self.refs.entity(kind, ref, state).get("tripId") if ref else None
+                if trip_id:
+                    out["tripId"] = trip_id
+                    break
+        return out
 
     def end_step(self, step_req: StepRequest, mutation: StepMutationResult | None) -> None:
         """После мутации M3: запомнить сущности, созданные шагом (для refs вида new_of_step_N)."""

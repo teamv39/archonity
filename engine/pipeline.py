@@ -175,6 +175,9 @@ class ArchonityPipeline:
             if step_req is not None:
                 # M3 читает params через .get(k, default): пустые значения не передаём, чтобы сработал default
                 params = {k: v for k, v in step_req.params.items() if v is not None}
+                if self.m4 is not None:
+                    # Рейс, который шаг задал ссылкой (refs), — тот же, что исполнял M4
+                    params = {**self.m4.state_params(step_req, scenario_state), **params}
                 mutation = scenario_state.apply_step(
                     dataclasses.replace(step_req, params=params), scenario_dict=scenario_dict
                 )

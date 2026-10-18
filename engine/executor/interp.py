@@ -151,6 +151,7 @@ class StepRun:
         self.runs: collections.Counter[str] = collections.Counter()
         self.silent = 0
         self.taint = False
+        self.saved: list[tuple[str | None, Any]] = []  # (таблица, сущность) из save репозиториев: для M3
 
     # --- MethodInterceptor -----------------------------------------------------------------------------------------
 

@@ -73,6 +73,8 @@ def result(run: StepRun, frame: Frame, node: dict[str, Any], args: list[Any], rc
     op = rc.operation if rc is not None else _operation(callee)
     shape = _shape(run, node, callee)
     if op == "SAVE":
+        if args and isinstance(args[0], Obj) and not run.silent:
+            run.saved.append((rc.main_table if rc is not None else None, args[0]))
         return args[0] if args else None
     if op == "DELETE" or shape == "void":
         return None
