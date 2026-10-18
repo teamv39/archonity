@@ -50,6 +50,8 @@ class Obj:
     fields: dict[str, Any] = field(default_factory=dict)
     # open=True: поля, которых нет в fields, неизвестны; False — объект создан через new, отсутствующее поле = null
     open: bool = True
+    # maybe_null=True: результат неточного запроса к БД без Optional — есть ли строка, неизвестно (сравнение с null — UNKNOWN)
+    maybe_null: bool = False
     uid: int = field(default_factory=lambda: next(_ids))
 
     def get(self, name: str) -> Any:
@@ -275,6 +277,8 @@ def same_value(a: Any, b: Any) -> Any:
     if a is None or b is None:
         if isinstance(a, OptionalV) or isinstance(b, OptionalV):
             return False
+        if (isinstance(a, Obj) and a.maybe_null) or (isinstance(b, Obj) and b.maybe_null):
+            return UNKNOWN
         return a is None and b is None
     if isinstance(a, EnumV) and isinstance(b, EnumV):
         return a.type == b.type and a.constant == b.constant

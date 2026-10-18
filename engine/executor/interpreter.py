@@ -1145,9 +1145,11 @@ class Interpreter:
         if exact:
             return (objs[0] if objs else None), rows
         # неточное условие: строка может быть любой из подходящих (или ни одной) — значения полей неизвестны
-        if len(objs) == 1:
-            return objs[0], rows
-        return (Obj(entity, {}, open=True) if objs else None), rows
+        if not objs:
+            return None, rows
+        obj = objs[0] if len(objs) == 1 else Obj(entity, {}, open=True)
+        obj.maybe_null = True
+        return obj, rows
 
     def _hydrate(self, fr: Frame, rc: Any, rows: Any) -> None:
         """Конструкторы сущности при загрузке строк Hibernate (R7) и equals из list.contains."""
