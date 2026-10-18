@@ -74,8 +74,7 @@ class ScenarioSession:
     def ground(self, st: dict[str, Any]) -> StepRequest:
         req = self.grounder.ground_step(self.scenario, st, self.ranked[st["n"]], self.history)
         h = self.grounder.cat.handlers[req.handler]
-        hist_line = getattr(req, "_history_line", None) or P.history_line(st["n"], req.http["method"], req.http["path"], h, req.expected_outcome)
-        self.history.append(hist_line)
+        self.history.append(P.history_line(st["n"], req.http["method"], req.http["path"], h, req.expected_outcome))
         self.requests.append(req)
         return req
 
@@ -147,13 +146,6 @@ class StepGrounder:
             refs = {}
             grounding["source"] = "RETRIEVAL"
 
-        raw_handler = handler
-        # R-FOOD: в UI Train Ticket (food.js, client_ticket_book.js) просмотр станционной еды всегда обслуживается
-        # FoodController#getAllFood (/api/v1/foodservice/foods/...). StationFoodController#getFoodStoresOfStation —
-        # внутренний эндпоинт без UI (UI: none), не вызываемый фронтендом.
-        if handler == "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)":
-            handler = "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
-
         h = self.cat.handlers[handler]
         ui = self._ui_for(h)
         ui_req = ui[0][0] if ui else None
@@ -179,16 +171,12 @@ class StepGrounder:
         grounding["param_sources"] = sources
         grounding["ranks"] = {"bm25": _rank(ranked.bm25, handler), "dense": _rank(ranked.dense, handler),
                               "fused": _rank(ranked.fused, handler)}
-        req = StepRequest(
+        return StepRequest(
             scenario=sc.get("id", "S?"), step=n, action=action, handler=handler,
             http={"method": verb, "path": path}, params=params, expected_outcome=outcome, refs=refs,
             ui_source={"file": ui_req.file, "line": ui_req.line} if ui_req is not None else None,
             grounding=grounding,
         )
-        if raw_handler != handler:
-            raw_h = self.cat.handlers[raw_handler]
-            req._history_line = P.history_line(n, raw_h.routes[0][0], raw_h.routes[0][1], raw_h, outcome)
-        return req
 
 
 def _rank(lst: list[str], h: str) -> int | None:
