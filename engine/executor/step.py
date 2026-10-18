@@ -70,7 +70,13 @@ class StepExecutor:
     def __init__(self, index: Any, rules: Any, ir_dir: str | Path, targets_root: str | Path | None,
                  judge: Any = None) -> None:
         self.index = index
-        self.it = Interpreter(index, rules, Path(ir_dir), Path(targets_root) if targets_root else None, judge)
+        self.judge = judge  # engine.executor.judge.Judge (кеш, бюджет вызовов сервера) или None
+        self.it = Interpreter(index, rules, Path(ir_dir), Path(targets_root) if targets_root else None,
+                              self._ask_judge if judge is not None else None)
+        self.targets_root = Path(targets_root) if targets_root else None
+        self._scenario: dict[str, Any] = {}
+        self._step_req: Any = None
+        self._src: dict[str, list[str]] = {}
         self.results: dict[int, Any] = {}
         self.current_user: str | None = None
         self.registered_username: str | None = None
@@ -300,8 +306,11 @@ class StepExecutor:
 
     # --- шаг -----------------------------------------------------------------
 
-    def run_step(self, step_req: Any, state: Any, ledger: Any = None) -> tuple[set, set, set, set]:
+    def run_step(self, step_req: Any, state: Any, ledger: Any = None,
+                 scenario: dict[str, Any] | None = None) -> tuple[set, set, set, set]:
         n = getattr(step_req, "step", None)
+        self._scenario = scenario or {}
+        self._step_req = step_req
         handler = step_req.handler
         params = {k: v for k, v in (getattr(step_req, "params", None) or {}).items() if v is not None}
         self._user_name = getattr(state, "user_name", None)
@@ -353,6 +362,90 @@ class StepExecutor:
         for u in sink.unknowns:
             self.unknowns[self.sid].append(dict(u, step=n))
         return self._emit(sink, ledger)
+
+    # --- судья -----------------------------------------------------------------
+
+    def stats(self) -> dict[str, Any]:
+        """Счётчики M4 для run_eval: решения по UNKNOWN и судья."""
+        import collections
+
+        decided = collections.Counter(u["decided"].split(":")[0] for us in self.unknowns.values() for u in us)
+        out: dict[str, Any] = {"unknown_conditions": dict(sorted(decided.items()))}
+        if self.judge is not None:
+            out["judge"] = self.judge.stats.to_dict()
+        return out
+
+    def _lines(self, file: str) -> list[str]:
+        if file not in self._src:
+            try:
+                self._src[file] = (self.targets_root / file).read_text(encoding="utf-8", errors="replace").splitlines()
+            except (OSError, TypeError):
+                self._src[file] = []
+        return self._src[file]
+
+    def _condition_text(self, file: str, line: int) -> tuple[str, int]:
+        """Текст условия `if (...)` из исходника и последняя строка условия (по балансу скобок)."""
+        lines = self._lines(file)
+        if not 0 < line <= len(lines):
+            return "", line
+        text, depth, started, end = "", 0, False, line
+        for i in range(line - 1, min(len(lines), line + 8)):
+            chunk = lines[i] if i > line - 1 else lines[i][lines[i].find("if") if "if" in lines[i] else 0:]
+            for ch in chunk:
+                if ch == "(":
+                    depth += 1
+                    started = True
+                    if depth == 1:
+                        continue
+                elif ch == ")":
+                    depth -= 1
+                    if started and depth == 0:
+                        return " ".join(text.split()), i + 1
+                if started:
+                    text += ch
+            text += " "
+            end = i + 1
+        return " ".join(text.split()), end
+
+    def _state_lines(self) -> tuple[str, ...]:
+        """Сводка мира для судьи: пассажир и его заказы (ID, статус, поезд)."""
+        user = self.current_user
+        out = [f"passenger account id: {user}"] if user else []
+        w = self.it.world
+        for table in ("orders", "orders_other"):
+            for r in w.rows(table):
+                if user and r.get("account_id") == user:
+                    out.append(f"order {r.get('id')}: status {r.get('status')}, train {r.get('train_number')}, "
+                               f"travel date {r.get('travel_date')}")
+        return tuple(out[:9])
+
+    def _ask_judge(self, fr: Any, stmt: dict[str, Any]) -> bool | None:
+        """Вердикт судьи по условию UNKNOWN; None — ответа нет (режим, бюджет, промах кеша)."""
+        from engine.executor.interpreter import facts_lines
+        from engine.executor.judge import JudgeQuery
+
+        node = self.index.N.get(fr.method, {})
+        file = node.get("file", "")
+        line = stmt.get("line") or node.get("line", 1)
+        cond, cond_end = self._condition_text(file, line)
+        sr = self._step_req
+        sc = self._scenario
+        q = JudgeQuery(
+            scenario_id=sc.get("id", ""), scenario_title=sc.get("title", ""),
+            scenario_description=sc.get("description", ""),
+            step_n=getattr(sr, "step", 0) or 0, step_action=getattr(sr, "action", ""),
+            expected_outcome=getattr(sr, "expected_outcome", "success"),
+            step_params={k: v for k, v in (getattr(sr, "params", None) or {}).items() if v is not None},
+            step_refs=dict(getattr(sr, "refs", None) or {}),
+            method_id=fr.method, file=file, method_line=node.get("line", line), method_end=node.get("end", line),
+            cond_line=line, cond_end=cond_end, condition=cond, kind="if",
+            path=tuple(f"in {m.split(':', 2)[-1]}" for m in self.it.stack),
+            facts=tuple(facts_lines(fr.env)), state=self._state_lines(),
+        )
+        v = self.judge.ask(q)
+        if v is None or v.verdict == "UNKNOWN":
+            return None
+        return v.verdict == "TRUE"
 
     def _emit(self, sink: Sink, ledger: Any) -> tuple[set, set, set, set]:
         methods = set(sink.methods)

@@ -255,12 +255,23 @@ class MethodPoolIR:
     def has_method(self, method_id: str) -> bool:
         return method_id in self.methods
 
-    def get_enum_target(self, call: CallIR) -> str | None:
+    def get_enum_target(
+        self, call: CallIR, skeleton_nodes: dict[str, Any] | None = None
+    ) -> str | None:
         """Определение канонического метода enum в скелете для CallIR."""
         if not call.enum_constant:
             return None
         type_fqn = call.enum_constant.type_fqn
         callee = call.callee
+
+        # 1. Динамический поиск по узлам скелета по FQN класса и имени метода
+        if skeleton_nodes:
+            pattern = f":{type_fqn}#{callee}("
+            for nid, n in skeleton_nodes.items():
+                if n.get("kind") == "method" and pattern in nid:
+                    return nid
+
+        # 2. Fallback для автономных прогонов без скелета
         if type_fqn == "edu.fudan.common.entity.OrderStatus":
             if callee == "getCode":
                 return ORDER_STATUS_GET_CODE

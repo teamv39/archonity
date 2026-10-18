@@ -30,6 +30,9 @@ class ScenarioProfile:
     is_new_user: bool = False
     has_order_filter: bool = False
     has_status_filter: bool = False
+    has_rebook_downgrade: bool = True
+    has_rebook_upgrade: bool = False
+    has_cross_family_rebook: bool = False
 
     @classmethod
     def from_scenario(cls, scenario_dict: dict[str, Any]) -> ScenarioProfile:
@@ -133,6 +136,24 @@ class ScenarioProfile:
             re.search(r"\b(?:filtered\b|filter\w*\s+by)[^\n.;]*?\bstatus\b", text)
         )
 
+        # 11. Перебронирование: разница цен и семейство поезда
+        rebook_steps = [
+            st.get("action", "").lower()
+            for st in scenario_dict.get("steps") or []
+            if "rebook" in (st.get("action") or "").lower()
+        ]
+        has_rebook_upgrade = any(
+            "more expensive" in act or "pay difference" in act for act in rebook_steps
+        )
+        has_rebook_downgrade = not has_rebook_upgrade
+        has_cross_family_rebook = any(
+            ("high-speed" in act or "gaotie" in act)
+            and ("regular" in act or "other" in act)
+            and "same" not in act
+            and "refuse" not in act
+            for act in rebook_steps
+        )
+
         return cls(
             id=sid,
             is_admin=is_admin,
@@ -148,6 +169,9 @@ class ScenarioProfile:
             is_new_user=is_new_user,
             has_order_filter=has_order_filter,
             has_status_filter=has_status_filter,
+            has_rebook_downgrade=has_rebook_downgrade,
+            has_rebook_upgrade=has_rebook_upgrade,
+            has_cross_family_rebook=has_cross_family_rebook,
         )
 
     def for_step(self, step_dict: dict[str, Any]) -> ScenarioProfile:
@@ -210,6 +234,25 @@ class ScenarioProfile:
             re.search(r"\b(?:filtered\b|filter\w*\s+by)[^\n.;]*?\bstatus\b", act)
         )
 
+        step_has_rebook_downgrade = self.has_rebook_downgrade
+        step_has_rebook_upgrade = self.has_rebook_upgrade
+        step_has_cross_family_rebook = self.has_cross_family_rebook
+        if "rebook" in act:
+            if "more expensive" in act or "pay difference" in act:
+                step_has_rebook_upgrade = True
+                step_has_rebook_downgrade = False
+            elif "cheaper" in act or "refund" in act or "second-class" in act:
+                step_has_rebook_downgrade = True
+                step_has_rebook_upgrade = False
+            if (
+                (("high-speed" in act or "gaotie" in act) and ("regular" in act or "other" in act))
+                and "same" not in act
+                and "refuse" not in act
+            ):
+                step_has_cross_family_rebook = True
+            else:
+                step_has_cross_family_rebook = False
+
         return ScenarioProfile(
             id=self.id,
             is_admin=self.is_admin,
@@ -225,6 +268,9 @@ class ScenarioProfile:
             is_new_user=self.is_new_user,
             has_order_filter=step_has_order_filter,
             has_status_filter=step_has_status_filter,
+            has_rebook_downgrade=step_has_rebook_downgrade,
+            has_rebook_upgrade=step_has_rebook_upgrade,
+            has_cross_family_rebook=step_has_cross_family_rebook,
         )
 
 
@@ -251,29 +297,31 @@ class RuntimeRules:
     RABBITMQ_DELIVERY_MODES = ("on", "off")
 
     # Таблица коллекции блюд station_food_list:
-    # step4_store_only (по умолчанию) — на шаге 4 в S2/S3 (listFoodStoresByStationName) читаются только магазины, в S1/S4 — меню;
+    # store_browse_only (по умолчанию) — при просмотре каталога магазинов станции (listFoodStoresByStationName)
+    # читаются только метаданные магазинов без позиций блюд; при запросе меню поездки (getFoodStoresByStationNames) — меню;
+    # step4_store_only — устаревший псевдоним store_browse_only;
     # all — учитывать таблицу коллекции везде;
     # off — исключить таблицу коллекции везде.
-    STATION_FOOD_COLLECTION_MODES = ("step4_store_only", "all", "off")
+    STATION_FOOD_COLLECTION_MODES = ("store_browse_only", "store_only", "step4_store_only", "all", "off")
 
-    # Зондирующий SELECT в S2 (шаги 9 и 10 к ts-order-service.orders при regular_only):
+    # Зондирующий SELECT к ts-order-service.orders при regular_only (поведение CancelServiceImpl):
     # on (по умолчанию) — учитывать SELECT к таблице orders даже при 0 возвращенных строк;
-    # off — абляция (исключить ребро data к orders при probe в regular_only).
+    # off — абляция (исключить ребро data к orders при зондирующем запросе в regular_only).
     PROBE_ORDERS_DATA_MODES = ("on", "off")
 
     # Вызовы методов перечисления AssuranceType (Гипотеза 3.1):
     # on (по умолчанию) — учитывать вызовы геттеров AssuranceType в getAllAssuranceTypes;
-    # off — абляция (исключить вызовы геттеров перечисления на шаге 15 в S3).
+    # off — абляция (исключить вызовы геттеров перечисления из getAllAssuranceTypes).
     ENUM_MEMBER_CALLS_MODES = ("on", "off")
 
     # Режим запроса еды поездки в getAllFood (Гипотеза 1.1 / 4.1):
     # cascade (по умолчанию) — опрашивать станционную еду по маршруту следования поезда;
-    # direct_train_food — абляция (пассажир запрашивает только поездное меню в S1/S4).
+    # direct_train_food — абляция (прямой запрос меню поезда без каскадного опроса станционных магазинов).
     TRIP_FOOD_QUERY_MODES = ("cascade", "direct_train_food")
 
     # Таблица коллекции route_distances в ts-route-service (Гипотеза 5.1):
     # pruned (по умолчанию) — отсекать route_distances при getRouteByStartAndEnd (дистанции не читаются, R10);
-    # included — абляция (включать route_distances на поиске маршрута в S5).
+    # included — абляция (включать route_distances при поиске маршрута).
     ROUTE_DISTANCES_COLLECTION_MODES = ("pruned", "included")
 
     # Исполнитель M4 (engine/executor), гипотезы под флагами:
@@ -291,7 +339,7 @@ class RuntimeRules:
         collection_tables_on_read: str = "loaded",
         element_callbacks: str = "on",
         rabbitmq_delivery: str = "on",
-        station_food_collection: str = "step4_store_only",
+        station_food_collection: str = "store_browse_only",
         probe_orders_data: str = "on",
         enum_member_calls: str = "on",
         trip_food_query: str = "cascade",
@@ -463,12 +511,17 @@ class RuntimeRules:
                     return True
 
             # 6. Rebook и Cancel методы в рантайме:
-            # - В RebookServiceImpl смена типа поезда (createOrder / deleteOrder) и доплата (payDifferentMoney) не выполняются
-            # - В InsidePaymentController метод payDifference никогда не вызывается (в S2 возврат, в S7 отказ)
+            # - В RebookServiceImpl смена типа поезда (createOrder / deleteOrder) исполняется только при смене семейства поезда
+            # - Доплата (payDifferentMoney / payDifference) исполняется только при перебронировании на более дорогой билет
             if "RebookServiceImpl" in method_id:
-                if any(x in method_id for x in ("createOrder", "deleteOrder", "payDifferentMoney")):
+                blocked = []
+                if not getattr(profile, "has_cross_family_rebook", False):
+                    blocked.extend(("createOrder", "deleteOrder"))
+                if not getattr(profile, "has_rebook_upgrade", False):
+                    blocked.append("payDifferentMoney")
+                if any(x in method_id for x in blocked):
                     return True
-            if "InsidePaymentController#payDifference" in method_id:
+            if "InsidePaymentController#payDifference" in method_id and not getattr(profile, "has_rebook_upgrade", False):
                 return True
 
             # 7. Отказы в отмене и перебронировании
@@ -555,9 +608,9 @@ class RuntimeRules:
                 if "CancelServiceImpl" in source and any(b in target for b in ("NotifyInfo#<init>", "SeatClass#getNameByCode")):
                     return True
 
-            # R17: Для нового пользователя (S4) в БД нет существующих заказов,
-            # поэтому цикл по заказам в checkSecurityAboutOrder не выполняется (0 итераций)
-            if profile.is_new_user:
+            # R17: Если у пользователя нет существующих заказов (новый пользователь / пустая БД),
+            # цикл по коллекции заказов в проверках безопасности содержит 0 итераций
+            if getattr(profile, "is_new_user", False):
                 if "checkSecurityAboutOrder" in source and "String2Date" in target:
                     return True
 

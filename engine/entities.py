@@ -32,7 +32,17 @@ LOGGER = logging.getLogger(__name__)
 DEFAULT_ENTITY_IR_PATH = Path(__file__).resolve().parent.parent / "data" / "entity_ir.json"
 
 # Колонки владельца строки: по ним строки таблицы относятся к пользователю сценария
-OWNER_COLUMNS = ("account_id", "user_id")
+OWNER_COLUMNS = (
+    "account_id",
+    "user_id",
+    "owner_id",
+    "account",
+    "user",
+    "customer_id",
+    "member_id",
+    "client_id",
+    "author_id",
+)
 
 # Таблицы, строки которых модель состояния ведёт сама (создаются шагами сценария)
 STATE_TRACKED_TABLES = ("orders", "orders_other", "contacts")
@@ -312,12 +322,14 @@ def rows_exist(call: RepositoryCall, state: Any, table_db_name: Any, is_new_user
 
 def _state_rows(name: str, state: Any, account: str | None) -> list[dict[str, Any]]:
     """Строки таблицы, которые ведёт модель состояния (account=None — без фильтра по пользователю)."""
-    if name in ("orders", "orders_other"):
+    if name in ("orders", "orders_other") and hasattr(state, "get_orders"):
         from engine.state import TrainType
 
         other = TrainType.from_table(name) == TrainType.Other
         return [o for o in state.get_orders(account_id=account) if (o.get("train_type") == TrainType.Other) == other]
-    return state.get_contacts("all" if account is None else account)
+    if hasattr(state, "get_contacts"):
+        return state.get_contacts("all" if account is None else account)
+    return []
 
 
 def _snake(name: str) -> str:

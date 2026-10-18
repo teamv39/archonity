@@ -11,13 +11,39 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Protocol
 
 from engine.adapters.skeleton import SkeletonIndex
 from engine.decisions import DecisionLedger, rules_return_line
 from engine.entities import RepositoryCall, hydration, rows_exist
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
+
+
+@dataclass
+class TraversalContext:
+    """Состояние одного обхода шага: общее для legacy-раскрытия и перехватчика M4."""
+
+    seen_methods: set[tuple[str, str]]
+    edges_calls: set[tuple[str, str]]
+    edges_remote: set[tuple[str, str]]
+    edges_data: set[tuple[str, str]]
+    reached_via: dict[str, tuple[str, str, str | None]]
+    stack: list[tuple[str, str]]
+    ledger: DecisionLedger | None
+    profile: ScenarioProfile | None
+    scenario_state: ScenarioState | None
+    is_admin_scenario: bool
+    entries: frozenset[str]
+
+
+class MethodInterceptor(Protocol):
+    """Перехватчик методов обхода (M4): исполняет метод сам вместо раскрытия по скелету."""
+
+    def wants(self, method_id: str) -> bool: ...
+
+    def run(self, method_id: str, unit: str, ctx: TraversalContext, entry: bool) -> None: ...
 
 
 class GraphBuilder:
@@ -36,6 +62,7 @@ class GraphBuilder:
         profile: ScenarioProfile | None = None,
         scenario_state: ScenarioState | None = None,
         ledger: DecisionLedger | None = None,
+        interceptor: MethodInterceptor | None = None,
     ) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
         """Обход графа от точек входа.
 
@@ -46,6 +73,8 @@ class GraphBuilder:
             data: обращения к таблицам БД (method -> res:table:...)
 
         Если передан ledger, каждое решение по ребру (включение, отсев, удаление) пишется в журнал.
+        Если передан interceptor, методы, которые он хочет, исполняет он (через TraversalContext),
+        а legacy-раскрытие по скелету для них пропускается; остальные методы раскрываются как раньше.
         """
         self._ledger = ledger
         seen_methods: set[tuple[str, str]] = set()
@@ -58,7 +87,9 @@ class GraphBuilder:
         # Фильтруем сами точки входа от заведомого мертвого кода
         valid_entries = []
         for m in entry_methods:
-            if self.rules.is_dead_code_method(m, profile=profile, is_admin_scenario=is_admin_scenario):
+            # Точку входа, которую исполняет перехватчик, на мёртвый код не проверяем: решает M4
+            intercepted = interceptor is not None and interceptor.wants(m)
+            if not intercepted and self.rules.is_dead_code_method(m, profile=profile, is_admin_scenario=is_admin_scenario):
                 if ledger:
                     ledger.prune(
                         "executes", f"scenario:{ledger.scenario_id}", m, "DEFAULT_RULE",
@@ -72,18 +103,38 @@ class GraphBuilder:
         # Очередь обхода: (текущий_метод, deployment_unit)
         stack = [(m, self.index.unit_of(m)) for m in valid_entries]
 
+        # Контекст ссылается на те же объекты, что использует цикл: перехватчик пишет прямо в них
+        ctx = TraversalContext(
+            seen_methods=seen_methods,
+            edges_calls=edges_calls,
+            edges_remote=edges_remote,
+            edges_data=edges_data,
+            reached_via=reached_via,
+            stack=stack,
+            ledger=ledger,
+            profile=profile,
+            scenario_state=scenario_state,
+            is_admin_scenario=is_admin_scenario,
+            entries=frozenset(valid_entries),
+        )
+
         while stack:
             m, u = stack.pop()
             if (m, u) in seen_methods:
                 continue
             seen_methods.add((m, u))
 
+            # M4: метод исполняет перехватчик, раскрытие по скелету (в том числе R7) пропускается
+            if interceptor is not None and interceptor.wants(m):
+                interceptor.run(m, u, ctx, entry=m in ctx.entries)
+                continue
+
             # 0. Enum-вызовы по правилу R7 из AST IR пула методов
             if hasattr(self.index, "pool_ir") and self.index.pool_ir.has_method(m):
                 for c_enum in self.index.pool_ir.enum_calls_by_method.get(m, []):
                     trace: list[str] = []
                     active = self.index.pool_ir.evaluate_guard(m, c_enum.guard, profile, scenario_state, trace=trace)
-                    enum_target = self.index.pool_ir.get_enum_target(c_enum)
+                    enum_target = self.index.pool_ir.get_enum_target(c_enum, skeleton_nodes=self.index.N)
                     if not active:
                         if ledger and enum_target:
                             ledger.prune("calls", m, enum_target, "IR_BRANCH", ";".join(trace),
@@ -129,7 +180,7 @@ class GraphBuilder:
                         continue
 
                     # Вызовы методов перечисления AssuranceType (Гипотеза 3.1):
-                    # off — исключить вызовы геттеров AssuranceType из getAllAssuranceTypes на шаге 15 в S3
+                    # off — абляция (исключить вызовы геттеров перечисления из getAllAssuranceTypes)
                     if (
                         getattr(self.rules, "enum_member_calls", "on") == "off"
                         and "getAllAssuranceTypes" in m
@@ -180,8 +231,8 @@ class GraphBuilder:
                     self._prune_by_rule(self.rules.is_dead_code_edge, "remote", m, t, profile, is_admin_scenario)
                     continue
 
-                # Каскадный запрос станционной еды из getAllFood (Гипотеза 1.1 / 4.1):
-                # direct_train_food — пассажир запрашивает только поездное меню в S1/S4
+                # Каскадный запрос станционной еды из getAllFood:
+                # direct_train_food — запрос только поездного меню без станционных магазинов
                 if (
                     getattr(self.rules, "trip_food_query", "cascade") == "direct_train_food"
                     and "FoodServiceImpl#getAllFood" in m
@@ -221,17 +272,20 @@ class GraphBuilder:
                     self._prune_by_rule(self.rules.is_dead_code_edge, "data", m, t, profile, is_admin_scenario)
                     continue
 
-                # Таблица коллекции блюд station_food_list: шаг 4 в S2/S3 (listFoodStoresByStationName) читает
-                # только информацию о магазинах без позиций блюд, в отличие от шагов с просмотром меню в S1/S4.
-                sf_mode = getattr(self.rules, "station_food_collection", "step4_store_only")
+                # Таблица коллекции блюд station_food_list: при просмотре каталога магазинов станции
+                # (listFoodStoresByStationName) возвращаются метаданные магазинов без позиций блюд.
+                sf_mode = getattr(self.rules, "station_food_collection", "store_browse_only")
                 if "station_food_list" in t:
-                    if sf_mode == "off" or (sf_mode == "step4_store_only" and "listFoodStoresByStationName" in m):
+                    if sf_mode == "off" or (
+                        sf_mode in ("store_browse_only", "store_only", "step4_store_only")
+                        and "listFoodStoresByStationName" in m
+                    ):
                         if ledger:
-                            ledger.prune("data", m, t, "FRAMEWORK_RULE", "station_store_browse_no_food_list")
+                            ledger.prune("data", m, t, "FRAMEWORK_RULE", "store_browse_no_food_items")
                         continue
 
-                # Зондирующий SELECT в S2 (шаги 9 и 10): в сценариях обычных поездов (regular_only)
-                # заказ находится в ts-order-other-service, запрос в ts-order-service возвращает 0 строк
+                # Зондирующий SELECT к ts-order-service.orders при regular_only (поведение CancelServiceImpl):
+                # в штатном режиме выполняется SELECT (0 строк); off — абляция
                 if (
                     getattr(self.rules, "probe_orders_data", "on") == "off"
                     and getattr(profile, "train_mode", "") == "regular_only"
@@ -301,6 +355,7 @@ class GraphBuilder:
             scenario_meta,
             profile=profile,
             scenario_state=scenario_state,
+            interceptor=interceptor,
         )
 
         return active_methods, edges_calls, edges_remote, edges_data
@@ -455,47 +510,71 @@ class GraphBuilder:
         edges_data: set[tuple[str, str]],
     ) -> None:
         """Методы и рёбра, которые исполняет Spring Security при логине (их не видно в теле getToken)."""
-        # 1. Spring Security Authentication Flow при логине через ts-auth-service
-        auth_tokens = [m for m in active_methods if "TokenServiceImpl#getToken" in m]
+        # 1. Spring Security Authentication Flow при логине через сервис аутентификации
+        auth_tokens = [m for m in active_methods if "TokenService" in m and "getToken" in m]
         if auth_tokens:
             token_method = auth_tokens[0]
-            user_details_method = (
-                "method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)"
-            )
-            self._activate(active_methods, user_details_method, "FRAMEWORK_RULE", "spring_security")
-            self._add_edge(edges_data, "data", user_details_method, "res:table:ts-auth-service.auth_user",
-                           "FRAMEWORK_RULE", "spring_security")
+            auth_module = self.index.N.get(token_method, {}).get("module", "")
 
-            # Прохождение через фильтр JWT
-            jwt_filter = (
-                "method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal("
-                "javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)"
-            )
-            if jwt_filter in self.index.N:
-                self._activate(active_methods, jwt_filter, "FRAMEWORK_RULE", "spring_security")
-
-            # Вызовы методов сущности User со стороны Spring Security и токена
-            user_methods = [
-                "method:ts-auth-service:auth.entity.User#getAuthorities()",
-                "method:ts-auth-service:auth.entity.User#getPassword()",
-                "method:ts-auth-service:auth.entity.User#getUsername()",
-                "method:ts-auth-service:auth.entity.User#isAccountNonExpired()",
-                "method:ts-auth-service:auth.entity.User#isAccountNonLocked()",
-                "method:ts-auth-service:auth.entity.User#isCredentialsNonExpired()",
-                "method:ts-auth-service:auth.entity.User#isEnabled()",
+            # 1a. UserDetailsService (стандартный контракт Spring Security loadUserByUsername)
+            user_details_methods = [
+                nid for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("name") == "loadUserByUsername" and n.get("module") == auth_module
             ]
-            for um in user_methods:
-                if um in self.index.N:
-                    self._activate(active_methods, um, "FRAMEWORK_RULE", "spring_security")
+            for ud_method in user_details_methods:
+                self._activate(active_methods, ud_method, "FRAMEWORK_RULE", "spring_security")
+                target_table = next(
+                    (t for t in self.index.table_nodes if auth_module in t and ("auth_user" in t or "user" in t)),
+                    None,
+                )
+                if target_table:
+                    self._add_edge(edges_data, "data", ud_method, target_table, "FRAMEWORK_RULE", "spring_security")
 
-            user_pwd = "method:ts-auth-service:auth.entity.User#getPassword()"
-            if user_pwd in self.index.N:
+            # 1b. Веб-фильтр запросов (OncePerRequestFilter стандартный метод doFilterInternal)
+            jwt_filters = [
+                nid for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("name") == "doFilterInternal"
+            ]
+            for jf in jwt_filters:
+                self._activate(active_methods, jf, "FRAMEWORK_RULE", "spring_security")
+
+            # 1c. Сущность UserDetails (стандартный интерфейсный контракт методов состояния)
+            user_details_classes = {
+                n.get("owner") for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("module") == auth_module and n.get("name") in (
+                    "isAccountNonExpired", "isCredentialsNonExpired", "isAccountNonLocked"
+                )
+            }
+            standard_user_methods = {
+                "getAuthorities", "getPassword", "getUsername",
+                "isAccountNonExpired", "isAccountNonLocked",
+                "isCredentialsNonExpired", "isEnabled",
+            }
+            user_methods: list[str] = []
+            user_pwd: str | None = None
+            user_name: str | None = None
+            for nid, n in self.index.N.items():
+                if n.get("owner") in user_details_classes and n.get("name") in standard_user_methods:
+                    user_methods.append(nid)
+                    if n.get("name") == "getPassword":
+                        user_pwd = nid
+                    elif n.get("name") == "getUsername":
+                        user_name = nid
+
+            for um in user_methods:
+                self._activate(active_methods, um, "FRAMEWORK_RULE", "spring_security")
+
+            if user_pwd:
                 self._add_edge(edges_calls, "calls", token_method, user_pwd, "FRAMEWORK_RULE", "spring_security")
 
-            jwt_prov = "method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)"
-            user_name = "method:ts-auth-service:auth.entity.User#getUsername()"
-            if jwt_prov in self.index.N and user_name in self.index.N:
-                self._add_edge(edges_calls, "calls", jwt_prov, user_name, "FRAMEWORK_RULE", "spring_security")
+            # 1d. Вызов createToken в JWTProvider
+            token_creators = [
+                nid for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("module") == auth_module and n.get("name") == "createToken"
+            ]
+            for tc in token_creators:
+                if user_name:
+                    self._add_edge(edges_calls, "calls", tc, user_name, "FRAMEWORK_RULE", "spring_security")
 
     def _apply_framework_and_entity_lifecycle(
         self,
@@ -505,6 +584,7 @@ class GraphBuilder:
         scenario_meta: dict[str, Any] | None = None,
         profile: ScenarioProfile | None = None,
         scenario_state: ScenarioState | None = None,
+        interceptor: MethodInterceptor | None = None,
     ) -> None:
         """Применение семантики Spring Security и гидрации JPA/MongoDB сущностей."""
         self.apply_spring_security(active_methods, edges_calls, edges_data)
@@ -514,20 +594,19 @@ class GraphBuilder:
 
         # Фильтрация неактивного условия по дате в queryOrders
         table_targets = {t for _, t in edges_data}
-        if any("ts-order-other-service.orders_other" in t for t in table_targets):
-            query_orders = (
-                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders("
-                "other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)"
-            )
+        query_orders = (
+            "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders("
+            "other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+        # Если queryOrders исполняет перехватчик, ветку по дате решает его IR, а не эта эвристика
+        query_orders_intercepted = interceptor is not None and interceptor.wants(query_orders)
+        if not query_orders_intercepted and any("ts-order-other-service.orders_other" in t for t in table_targets):
             string2date = "method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)"
-            # Если сценарий не фильтрует явно по датам поездки (как S0)
+            # Если сценарий не фильтрует явно по датам поездки
             if scenario_state is not None:
                 if not scenario_state.has_date_filter_query():
                     self._discard_edge(edges_calls, "calls", query_orders, string2date, "STATE", "date_filter")
-            elif scenario_meta and not any(
-                "travel date" in s.lower() or "bought date" in s.lower()
-                for s in scenario_meta.get("step_texts", [])
-            ):
+            elif not getattr(profile, "has_order_filter", False):
                 self._discard_edge(edges_calls, "calls", query_orders, string2date, "DEFAULT_RULE", "date_filter")
 
     def _discard_edge(

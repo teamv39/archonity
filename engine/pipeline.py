@@ -15,7 +15,6 @@ from engine.ir import MethodPoolIR
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
 
-
 class ArchonityPipeline:
     """Оркестратор полного цикла статического анализа и сборки графа."""
 
@@ -32,7 +31,7 @@ class ArchonityPipeline:
         collection_tables_on_read: str = "loaded",
         element_callbacks: str = "on",
         rabbitmq_delivery: str = "on",
-        station_food_collection: str = "step4_store_only",
+        station_food_collection: str = "store_browse_only",
         probe_orders_data: str = "on",
         enum_member_calls: str = "on",
         trip_food_query: str = "cascade",
@@ -43,7 +42,8 @@ class ArchonityPipeline:
         method_ir_dir: str | Path | None = None,
         unresolved_receiver_calls: str = "mute",
         m4_success_retry: str = "on",
-        m4_judge: Any = None,
+        m4_judge: str = "off",
+        m4_judge_budget: int = 400,
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -105,10 +105,13 @@ class ArchonityPipeline:
 
             ir_dir = Path(method_ir_dir) if method_ir_dir else Path(__file__).resolve().parent.parent / "data" / "ir"
             judge = None
-            if m4_judge is not None:
+            llm = (m1_options or {}).get("llm")
+            if m4_judge != "off" and llm is not None:
+                # Судья M4 с кешем и бюджетом вызовов сервера (engine/executor/judge.py)
                 from engine.executor.judge import Judge
 
-                judge = Judge(m4_judge, self.index.N, self.targets_root)
+                judge = Judge(self.targets_root, self.index.sk.get("context"), llm, mode=m4_judge,
+                              budget=m4_judge_budget)
             self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root, judge=judge)
         elif executor != "legacy":
             raise ValueError(f"неизвестный executor: {executor}")
@@ -126,9 +129,11 @@ class ArchonityPipeline:
         # Шаг 1: Инициализация изолированного состояния сценария (M3)
         if scenario_state is None:
             db_state = getattr(self.index, "db_state", None)
+            context = getattr(self.index, "context", None)
             scenario_state = ScenarioState.create_initial(
                 db_state=db_state.fork() if db_state else None,
                 scenario_profile=profile,
+                context=context,
             )
 
         step_texts = [st.get("action", "") for st in scenario_dict.get("steps") or []]
@@ -171,9 +176,8 @@ class ArchonityPipeline:
                 continue
 
             if self.m4 is not None and step_req is not None:
-                if self.m4.it.judge is not None:
-                    self.m4.it.judge.step_text = st.get("action", "")
-                m, c, r, d = self.m4.run_step(step_req, scenario_state, ledger=self.ledger)
+                m, c, r, d = self.m4.run_step(step_req, scenario_state, ledger=self.ledger,
+                                              scenario=scenario_dict)
                 self.builder._ledger = self.ledger
                 self.builder.apply_spring_security(m, c, d)
             else:

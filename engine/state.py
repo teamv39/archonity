@@ -238,13 +238,15 @@ class ScenarioState:
         cls,
         db_state: Any = None,
         scenario_profile: Any = None,
+        context: dict[str, Any] | None = None,
     ) -> ScenarioState:
-        """Constructs canonical initial state from DatabaseState loaded via M0."""
-        user_name = cls.DEFAULT_USERNAME
+        """Constructs canonical initial state from DatabaseState loaded via M0 and execution context."""
+        context = context or {}
+        user_name = context.get("user_name", cls.DEFAULT_USERNAME)
         account_id = cls.DEFAULT_ACCOUNT_ID
-        balance = cls.DEFAULT_BALANCE
-        travel_date = cls.DEFAULT_TRAVEL_DATE
-        system_date = cls.DEFAULT_SYSTEM_DATE
+        balance = float(context.get("balance", cls.DEFAULT_BALANCE))
+        travel_date = context.get("travel_date", cls.DEFAULT_TRAVEL_DATE)
+        system_date = context.get("system_date", cls.DEFAULT_SYSTEM_DATE)
 
         scenario_id = getattr(scenario_profile, "id", "S?") if scenario_profile else "S?"
         is_admin = getattr(scenario_profile, "is_admin", False) if scenario_profile else False
@@ -259,8 +261,13 @@ class ScenarioState:
             user_rows = db_state.get_table("user") if hasattr(db_state, "get_table") else []
             for u in user_rows:
                 users.append(dict(u))
-                if u.get("user_name") == cls.DEFAULT_USERNAME:
-                    account_id = u.get("user_id", cls.DEFAULT_ACCOUNT_ID)
+                if u.get("user_name") == user_name:
+                    account_id = u.get("user_id", account_id)
+
+            # If user_name not found by exact match, but users exist and account_id is still default
+            if user_rows and account_id == cls.DEFAULT_ACCOUNT_ID and not any(u.get("user_id") == account_id for u in user_rows):
+                account_id = user_rows[0].get("user_id", account_id)
+                user_name = user_rows[0].get("user_name", user_name)
 
             # Contacts table
             for c in (db_state.get_table("contacts") if hasattr(db_state, "get_table") else []):
@@ -724,7 +731,17 @@ class ScenarioState:
             trip_id = p.get("tripId") or p.get("trip_id") or (m_trip.group(1) if m_trip else None)
             if not trip_id:
                 is_regular = ("regular" in t or "other" in t) and "high-speed" not in t
-                trip_id = "K1235" if is_regular else "G1234"
+                if self.db_state is not None and hasattr(self.db_state, "get_table"):
+                    tbl = "trip2" if is_regular else "trip"
+                    rows = self.db_state.get_table(tbl)
+                    if rows:
+                        num = rows[0].get("number")
+                        if num:
+                            trip_id = f"K{num}" if is_regular else f"G{num}"
+                        else:
+                            trip_id = str(rows[0].get("id", ""))
+                if not trip_id:
+                    trip_id = "K1235" if is_regular else "G1234"
             trip_data = {
                 "id": trip_id,
                 "trip_id": trip_id,
@@ -738,7 +755,13 @@ class ScenarioState:
         # 15. Store / Food Query
         if re.search(r"\b(?:food\s+store|store\s+in|food\s+menu)\b", t):
             m_station = re.search(r"\b(?:in|at)\s+([A-Za-z\s]+)", action_name)
-            st_name = m_station.group(1).strip() if m_station else "Shanghai"
+            st_name = m_station.group(1).strip() if m_station else None
+            if not st_name and self.db_state is not None and hasattr(self.db_state, "get_table"):
+                st_rows = self.db_state.get_table("station")
+                if st_rows:
+                    st_name = st_rows[0].get("name")
+            if not st_name:
+                st_name = "Shanghai"
             store_data = {"id": f"store-{st_name.lower().replace(' ', '')}", "station_name": st_name, "created_at_step": step_index}
             self.record_step_entity(step_index, "store", store_data)
             self.record_step_entity(step_index, "food", {"id": f"food-{st_name.lower().replace(' ', '')}", "created_at_step": step_index})
@@ -853,6 +876,8 @@ class ScenarioState:
             db_row = dict(order)
             db_row["status"] = int(OrderStatus.NOTPAID)
             db_row["price"] = str(price)
+            # Колонки дампа (Order.from/to — @Column from_station/to_station): по ним читает строки исполнитель M4
+            db_row["from_station"], db_row["to_station"] = order["from"], order["to"]
             self.db_state.insert(tbl, db_row)
 
         mutations = [f"order_created:{order_id}:{tbl}:NOTPAID"]
@@ -892,7 +917,13 @@ class ScenarioState:
             }
             self.consignments.append(cs)
             if hasattr(self.db_state, "insert"):
-                self.db_state.insert("consign_record", cs)
+                # Строка таблицы с колонками дампа (ConsignRecord: @Column consign_record_id, user_id, ...)
+                self.db_state.insert("consign_record", {
+                    "consign_record_id": cs["id"], "user_id": self.account_id, "order_id": order_id,
+                    "consignee": cs["consignee"], "consign_record_phone": cs["phone"],
+                    "consign_record_price": cs["price"], "weight": w, "from_place": order["from"],
+                    "to_place": order["to"], "handle_date": self.system_date, "target_date": self.travel_date,
+                })
             self.record_step_entity(step_index, "consign", cs)
             mutations.append(f"consign_created:{order_id}:{w}kg")
 
@@ -1195,8 +1226,8 @@ class ScenarioState:
 
         if hasattr(self.db_state, "update"):
             self.db_state.update("consign_record", {
-                "consignee": new_name, "phone": new_phone,
-            }, id=cs.get("id"))
+                "consignee": new_name, "consign_record_phone": new_phone,
+            }, consign_record_id=cs.get("id") or cs.get("consign_record_id"))
 
         return StepMutationResult(
             step_index, action, "SUCCESS",

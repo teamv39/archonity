@@ -398,7 +398,7 @@ class Interpreter:
                 return comp
         verdict = None
         if self.judge is not None and not self.sink.muted:
-            verdict = self.judge.decide(fr.method, s, self.step, facts=_facts(fr.env))
+            verdict = self.judge(fr, s)
         if verdict in (True, False):
             arm = "then" if verdict else "else"
             why = ("LLM_JUDGE", f"{short}@{bid}:{arm}")
@@ -1014,10 +1014,11 @@ class Interpreter:
         return result
 
     def _data_table_allowed(self, fr: Frame, t: str) -> tuple[bool, tuple[str, str]]:
-        sf_mode = getattr(self.rules, "station_food_collection", "step4_store_only")
-        if "station_food_list" in t and (sf_mode == "off" or (sf_mode == "step4_store_only"
-                                                              and "listFoodStoresByStationName" in fr.method)):
-            return False, ("FRAMEWORK_RULE", "station_store_browse_no_food_list")
+        sf_mode = getattr(self.rules, "station_food_collection", "store_browse_only")
+        if "station_food_list" in t and (sf_mode == "off" or (
+                sf_mode in ("store_browse_only", "store_only", "step4_store_only")
+                and "listFoodStoresByStationName" in fr.method)):
+            return False, ("FRAMEWORK_RULE", "store_browse_no_food_items")
         if (getattr(self.rules, "route_distances_collection", "pruned") == "included"
                 and "getRouteByStartAndEnd" in fr.method and "route_distances" in t):
             return True, ("STATE", "ablation:route_distances_included")
@@ -1167,8 +1168,8 @@ class Interpreter:
 _MISSING = object()
 
 
-def _facts(env: dict[str, Any], limit: int = 12) -> str:
-    """Известные значения переменных для судьи (только конкретные)."""
+def facts_lines(env: dict[str, Any], limit: int = 12) -> list[str]:
+    """Известные значения переменных для судьи (только конкретные), по порядку появления в кадре."""
     out = []
     for k, v in env.items():
         if isinstance(v, (str, int, float, bool)) or v is None:
@@ -1179,7 +1180,7 @@ def _facts(env: dict[str, Any], limit: int = 12) -> str:
                 out.append(f"{k} = {v!r} {known}")
         if len(out) >= limit:
             break
-    return "\n".join(out)
+    return out
 
 
 def _current(o: Any, f: str) -> Any:

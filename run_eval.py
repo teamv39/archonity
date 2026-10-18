@@ -92,9 +92,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--station-food-collection",
-        choices=("step4_store_only", "all", "off"),
-        default="step4_store_only",
-        help="Таблица коллекции блюд station_food_list: step4_store_only — на шаге 4 в S2/S3 только магазины (по умолчанию), all — учитывать везде, off — исключить везде",
+        choices=("store_browse_only", "store_only", "step4_store_only", "all", "off"),
+        default="store_browse_only",
+        help="Таблица коллекции блюд station_food_list: store_browse_only — при просмотре каталога магазинов только магазины (по умолчанию), all — учитывать везде, off — исключить везде",
     )
     parser.add_argument(
         "--probe-orders-data",
@@ -139,17 +139,17 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--executor",
-        choices=("legacy", "ir"),
+        choices=("legacy", "ir", "m4"),
         default="legacy",
-        help="Исполнитель шага: legacy — обход скелета с правилами (по умолчанию), ir — M4 по IR тел методов "
-             "data/ir (ADR-005, трёхзначная логика, мир БД сценария); требует --grounder m1",
+        help="Исполнитель шага: legacy — обход скелета с правилами (по умолчанию), ir (синоним m4) — M4 по IR тел "
+             "методов data/ir (ADR-005, трёхзначная логика, мир БД сценария); требует --grounder m1",
     )
     parser.add_argument(
         "--m4-unresolved-calls",
         choices=("mute", "emit"),
         default="mute",
         help="M4: метод проекта на получателе известного типа без ребра в скелете (TripId#toString): mute — только "
-             "значение (по умолчанию), emit — писать рёбра calls/executes (гипотеза)",
+             "значение, emit — писать рёбра calls/executes (подтверждено платформой: 0.93625)",
     )
     parser.add_argument(
         "--m4-success-retry",
@@ -158,17 +158,18 @@ def parse_args() -> argparse.Namespace:
         help="M4: шаг ожидает успех, а по значениям M1 отказал — повтор с нормализованными, затем неизвестными "
              "строковыми параметрами (on по умолчанию)",
     )
-    parser.add_argument(
-        "--m4-judge",
-        choices=("off", "on"),
-        default="off",
-        help="M4: судья LLM для условий UNKNOWN, где иначе исполнились бы оба плеча (кеш cache/llm, сервер по "
-             "--no-server); off по умолчанию",
-    )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
     parser.add_argument("--no-embed", action="store_true", help="M1 без dense-ретривера (только BM25)")
+    parser.add_argument(
+        "--judge",
+        choices=("on", "cache", "off"),
+        default="off",
+        help="Судья M4 для условий UNKNOWN, где иначе исполнились бы оба плеча: on — кеш, на промахе сервер; "
+             "cache — только кеш; off — без судьи (по умолчанию)",
+    )
+    parser.add_argument("--judge-budget", type=int, default=400, help="M4: вызовов сервера судьи на прогон")
     return parser.parse_args()
 
 
@@ -182,6 +183,18 @@ def resolve_scenario_paths(args_scenarios: list[str] | None) -> list[Path]:
 
     default_pattern = str(ROOT_DIR / "hackaton" / "tt-challenge" / "scenarios" / "*.json")
     return [Path(p) for p in sorted(glob.glob(default_pattern), key=lambda x: Path(x).name)]
+
+
+def print_m4_stats(stats: dict) -> None:
+    """Счётчики M4: плоские значения в строку, вложенные словари построчно с отступом."""
+    print("Статистика M4:")
+    for key, value in stats.items():
+        if isinstance(value, dict):
+            print(f"  {key}:")
+            for k, v in value.items():
+                print(f"    {k}: {v}")
+        else:
+            print(f"  {key}: {value}")
 
 
 def print_evaluation_summary(eval_res: dict) -> None:
@@ -232,6 +245,11 @@ def print_evaluation_summary(eval_res: dict) -> None:
 def main() -> None:
     args = parse_args()
 
+    if args.executor == "m4" and args.grounder != "m1":
+        print("Ошибка: --executor m4 требует --grounder m1 (нужны params и expected_outcome из StepRequest)",
+              file=sys.stderr)
+        sys.exit(2)
+
     scenarios = resolve_scenario_paths(args.scenarios)
     if not scenarios:
         print("Ошибка: не найдено ни одного файла сценариев!", file=sys.stderr)
@@ -252,8 +270,6 @@ def main() -> None:
     print(f"AST IR:     {pool_ir_path}")
 
     # Запуск пайплайна
-    from engine.grounding.llm import LLMClient
-
     m1_options = None
     if args.grounder == "m1":
         from engine.grounding.llm import LLMClient
@@ -263,6 +279,9 @@ def main() -> None:
             "llm": None if args.no_llm else LLMClient(use_server=not args.no_server, refresh=args.no_cache),
         }
     print(f"Grounder:   {args.grounder}")
+    if args.executor == "m4":
+        args.executor = "ir"
+    print(f"Executor:   {args.executor}")
     pipeline = ArchonityPipeline(
         skeleton_path=args.skeleton,
         targets_root=args.targets,
@@ -282,13 +301,15 @@ def main() -> None:
         executor=args.executor,
         unresolved_receiver_calls=args.m4_unresolved_calls,
         m4_success_retry=args.m4_success_retry,
-        m4_judge=(LLMClient(use_server=not args.no_server, refresh=args.no_cache)
-                  if args.executor == "ir" and args.m4_judge == "on" else None),
+        m4_judge=args.judge,
+        m4_judge_budget=args.judge_budget,
     )
 
     print("Генерация графов для сценариев...")
     adapter = pipeline.run_all(scenarios, output_path=args.out)
     print(f"Сабмишн успешно сохранен в: {args.out}")
+    if pipeline.m4 is not None:
+        print_m4_stats(pipeline.m4.stats())
 
     canonical_out = args.out.parent / "canonical_graph.json"
     adapter.save_canonical_graph(canonical_out)
