@@ -33,6 +33,7 @@ class ScenarioProfile:
     has_rebook_downgrade: bool = True
     has_rebook_upgrade: bool = False
     has_cross_family_rebook: bool = False
+    has_preserve: bool = False
 
     @classmethod
     def from_scenario(cls, scenario_dict: dict[str, Any]) -> ScenarioProfile:
@@ -154,6 +155,13 @@ class ScenarioProfile:
             for act in rebook_steps
         )
 
+        has_preserve = any(
+            bool(re.search(r"\b(?:book\s+(?:a|an|one|another|\d+)|book\b.*?seat|reserve|preserve)\b", st.get("action", "").lower()))
+            and "contact book" not in st.get("action", "").lower()
+            and "address book" not in st.get("action", "").lower()
+            for st in scenario_dict.get("steps") or []
+        )
+
         return cls(
             id=sid,
             is_admin=is_admin,
@@ -172,6 +180,7 @@ class ScenarioProfile:
             has_rebook_downgrade=has_rebook_downgrade,
             has_rebook_upgrade=has_rebook_upgrade,
             has_cross_family_rebook=has_cross_family_rebook,
+            has_preserve=has_preserve,
         )
 
     def for_step(self, step_dict: dict[str, Any]) -> ScenarioProfile:
@@ -271,6 +280,7 @@ class ScenarioProfile:
             has_rebook_downgrade=step_has_rebook_downgrade,
             has_rebook_upgrade=step_has_rebook_upgrade,
             has_cross_family_rebook=step_has_cross_family_rebook,
+            has_preserve=self.has_preserve,
         )
 
 
@@ -523,7 +533,7 @@ class RuntimeRules:
                     if any(b in method_id for b in blocked_cancel):
                         return True
             if profile.has_refused_rebook:
-                if "SeatController#create" in method_id:
+                if not getattr(profile, "has_preserve", False) and "SeatController#create" in method_id:
                     return True
                 if "RebookServiceImpl" in method_id:
                     blocked_rebook = (
@@ -619,11 +629,11 @@ class RuntimeRules:
                         return True
                     if "order-other" in target or "orderother" in target.lower():
                         return True
+                if "RebookServiceImpl" in source and "SeatController#create" in target:
+                    return True
                 if (
                     "InsidePaymentController#payDifference" in target
-                    or "SeatController#create" in target
                     or "InsidePaymentController#payDifference" in source
-                    or "SeatController#create" in source
                 ):
                     return True
 
