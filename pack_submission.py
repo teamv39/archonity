@@ -75,6 +75,7 @@ def pack() -> Path:
         _add_dir_to_zip(z, "code")
         _add_dir_to_zip(z, "code/engine")
         _add_dir_to_zip(z, "code/engine/adapters")
+        _add_dir_to_zip(z, "code/engine/executor")
         _add_dir_to_zip(z, "code/engine/graph")
         _add_dir_to_zip(z, "code/engine/grounding")
         _add_dir_to_zip(z, "code/data")

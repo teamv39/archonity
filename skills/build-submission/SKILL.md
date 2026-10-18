@@ -66,6 +66,12 @@ uv run python run_eval.py
 4. Синхронизацию данных с графовым визуализатором (`visualizer/public/data/`).
 5. Автоматический запуск официального валидатора `evaluate_golden.py`.
 
+**Сдача с исполнителем M4** (ADR-005; по умолчанию пока legacy): ответы судьи берутся из `cache/llm/`, сервер LLM не нужен:
+```bash
+uv run python run_eval.py --grounder m1 --executor m4 --judge cache --no-server
+```
+Этой же командой код из архива воспроизводит `submission.json` байт в байт. Проверь в выводе `Статистика M4`: `misses: 0`, `server_calls: 0`.
+
 *Критерии валидации в выводе консоли:*
 * **Калибровка $S_0$:** итоговый балл обязан быть строго **`1.0000`** (65 из 65 рёбер: 34 `executes`, 24 `calls`, 0 `remote`, 7 `data`).
 * **Скрытые сценарии $S_1 \dots S_7$:** статус `format_only`, отклонено рёбер: строго **`0`**.
@@ -92,7 +98,7 @@ unzip -l output/submission.zip
 Убедись, что:
 1. В корне присутствуют `submission.json` и `evidence.json`.
 2. В каталоге `code/` присутствуют `code/run_eval.py`, `code/engine/`, `code/data/pool_ir.json`, `code/data/entity_ir.json`, `code/data/ir/` (IR тел методов, 42 файла), `code/cache/llm/` и `code/cache/emb/qwen3-4b/` (кеши M1).
-3. Отсутствуют сторонние мусорные файлы и размер архива составляет около 3.5 MB (из них около 3 MB — кеши M1).
+3. Отсутствуют сторонние мусорные файлы и размер архива составляет около 3.8 MB (из них около 3 MB — кеши M1 и судьи M4).
 
 ---
 
