@@ -18,7 +18,7 @@ from typing import Any
 
 from engine.grounding.llm import LLMClient
 
-JUDGE_PROMPT_VERSION = "m4-judge-v1"
+JUDGE_PROMPT_VERSION = "m4-judge-v3"
 VERDICTS = ("TRUE", "FALSE", "UNKNOWN")
 MODES = ("on", "cache", "off")
 MAX_METHOD_LINES = 160  # метод длиннее показываем окном вокруг условия
@@ -27,8 +27,9 @@ WINDOW_LINES = 60  # строк окна до и после условия
 JUDGE_SCHEMA: dict[str, Any] = {
     "type": "object",
     "properties": {
-        "cited_line": {"type": "string"},
-        "reasoning": {"type": "string"},
+        # Длина ограничена: ответ всегда укладывается в MAX_TOKENS клиента (v1 обрывался на длинном reasoning)
+        "cited_line": {"type": "string", "maxLength": 200},
+        "reasoning": {"type": "string", "maxLength": 400},
         "verdict": {"type": "string", "enum": list(VERDICTS)},
     },
     "required": ["cited_line", "reasoning", "verdict"],
