@@ -514,47 +514,71 @@ class GraphBuilder:
         interceptor: MethodInterceptor | None = None,
     ) -> None:
         """Применение семантики Spring Security и гидрации JPA/MongoDB сущностей."""
-        # 1. Spring Security Authentication Flow при логине через ts-auth-service
-        auth_tokens = [m for m in active_methods if "TokenServiceImpl#getToken" in m]
+        # 1. Spring Security Authentication Flow при логине через сервис аутентификации
+        auth_tokens = [m for m in active_methods if "TokenService" in m and "getToken" in m]
         if auth_tokens:
             token_method = auth_tokens[0]
-            user_details_method = (
-                "method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)"
-            )
-            self._activate(active_methods, user_details_method, "FRAMEWORK_RULE", "spring_security")
-            self._add_edge(edges_data, "data", user_details_method, "res:table:ts-auth-service.auth_user",
-                           "FRAMEWORK_RULE", "spring_security")
+            auth_module = self.index.N.get(token_method, {}).get("module", "")
 
-            # Прохождение через фильтр JWT
-            jwt_filter = (
-                "method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal("
-                "javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)"
-            )
-            if jwt_filter in self.index.N:
-                self._activate(active_methods, jwt_filter, "FRAMEWORK_RULE", "spring_security")
-
-            # Вызовы методов сущности User со стороны Spring Security и токена
-            user_methods = [
-                "method:ts-auth-service:auth.entity.User#getAuthorities()",
-                "method:ts-auth-service:auth.entity.User#getPassword()",
-                "method:ts-auth-service:auth.entity.User#getUsername()",
-                "method:ts-auth-service:auth.entity.User#isAccountNonExpired()",
-                "method:ts-auth-service:auth.entity.User#isAccountNonLocked()",
-                "method:ts-auth-service:auth.entity.User#isCredentialsNonExpired()",
-                "method:ts-auth-service:auth.entity.User#isEnabled()",
+            # 1a. UserDetailsService (стандартный контракт Spring Security loadUserByUsername)
+            user_details_methods = [
+                nid for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("name") == "loadUserByUsername" and n.get("module") == auth_module
             ]
-            for um in user_methods:
-                if um in self.index.N:
-                    self._activate(active_methods, um, "FRAMEWORK_RULE", "spring_security")
+            for ud_method in user_details_methods:
+                self._activate(active_methods, ud_method, "FRAMEWORK_RULE", "spring_security")
+                target_table = next(
+                    (t for t in self.index.table_nodes if auth_module in t and ("auth_user" in t or "user" in t)),
+                    None,
+                )
+                if target_table:
+                    self._add_edge(edges_data, "data", ud_method, target_table, "FRAMEWORK_RULE", "spring_security")
 
-            user_pwd = "method:ts-auth-service:auth.entity.User#getPassword()"
-            if user_pwd in self.index.N:
+            # 1b. Веб-фильтр запросов (OncePerRequestFilter стандартный метод doFilterInternal)
+            jwt_filters = [
+                nid for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("name") == "doFilterInternal"
+            ]
+            for jf in jwt_filters:
+                self._activate(active_methods, jf, "FRAMEWORK_RULE", "spring_security")
+
+            # 1c. Сущность UserDetails (стандартный интерфейсный контракт методов состояния)
+            user_details_classes = {
+                n.get("owner") for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("module") == auth_module and n.get("name") in (
+                    "isAccountNonExpired", "isCredentialsNonExpired", "isAccountNonLocked"
+                )
+            }
+            standard_user_methods = {
+                "getAuthorities", "getPassword", "getUsername",
+                "isAccountNonExpired", "isAccountNonLocked",
+                "isCredentialsNonExpired", "isEnabled",
+            }
+            user_methods: list[str] = []
+            user_pwd: str | None = None
+            user_name: str | None = None
+            for nid, n in self.index.N.items():
+                if n.get("owner") in user_details_classes and n.get("name") in standard_user_methods:
+                    user_methods.append(nid)
+                    if n.get("name") == "getPassword":
+                        user_pwd = nid
+                    elif n.get("name") == "getUsername":
+                        user_name = nid
+
+            for um in user_methods:
+                self._activate(active_methods, um, "FRAMEWORK_RULE", "spring_security")
+
+            if user_pwd:
                 self._add_edge(edges_calls, "calls", token_method, user_pwd, "FRAMEWORK_RULE", "spring_security")
 
-            jwt_prov = "method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)"
-            user_name = "method:ts-auth-service:auth.entity.User#getUsername()"
-            if jwt_prov in self.index.N and user_name in self.index.N:
-                self._add_edge(edges_calls, "calls", jwt_prov, user_name, "FRAMEWORK_RULE", "spring_security")
+            # 1d. Вызов createToken в JWTProvider
+            token_creators = [
+                nid for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("module") == auth_module and n.get("name") == "createToken"
+            ]
+            for tc in token_creators:
+                if user_name:
+                    self._add_edge(edges_calls, "calls", tc, user_name, "FRAMEWORK_RULE", "spring_security")
 
         # 2. Конструкторы сущностей при загрузке строк (R7) решает обход по фактам archparse
         #    (_hydrated_constructors), вызовы внутри конструкторов дают IR и скелет.
