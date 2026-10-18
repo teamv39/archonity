@@ -889,6 +889,13 @@ class Interpreter:
         chosen = self.select_handlers(cands, url, verb)
         rets: list[Any] = []
         for h, binding in chosen:
+            if (
+                getattr(self.rules, "security_check_scope", "all") == "target_train_only"
+                and "SecurityServiceImpl" in fr.method
+                and "OrderOtherController#securityInfoCheck" in h
+            ):
+                self.sink.prune("remote", fr.method, h, "DEFAULT_RULE", "ablate_security_check_order_other")
+                continue
             why = fr.why if len(chosen) == len(cands) else ("IR_BRANCH", f"R3:url_dispatch@{cs.rsplit('@', 1)[-1]}")
             self.sink.edge("remote", fr.method, h, why)
             self.sink.execute(h, why, f"remote|{fr.method}|{h}")

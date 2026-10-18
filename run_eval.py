@@ -121,6 +121,13 @@ def parse_args() -> argparse.Namespace:
         help="Таблица коллекции route_distances (Гипотеза 5.1): pruned — отсекать при getRouteByStartAndEnd (по умолчанию), included — абляция (включать в S5)",
     )
     parser.add_argument(
+        "--security-check-scope",
+        choices=("all", "target_train_only"),
+        default="all",
+        help="Режим проверки безопасности (Гипотеза 4.1): all — опрашивать оба сервиса заказов (по умолчанию), "
+             "target_train_only — абляция (опрашивать только сервис заказов целевого типа поезда, отсекая чужой)",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -296,6 +303,7 @@ def main() -> None:
         enum_member_calls=args.enum_member_calls,
         trip_food_query=args.trip_food_query,
         route_distances_collection=args.route_distances_collection,
+        security_check_scope=args.security_check_scope,
         grounder=args.grounder,
         m1_options=m1_options,
         executor=args.executor,

@@ -334,6 +334,11 @@ class RuntimeRules:
     # included — абляция (включать route_distances при поиске маршрута).
     ROUTE_DISTANCES_COLLECTION_MODES = ("pruned", "included")
 
+    # Режим проверки безопасности SecurityServiceImpl#check (Гипотеза 4.1):
+    # all (по умолчанию) — опрашивать оба сервиса заказов (ts-order-service и ts-order-other-service);
+    # target_train_only — абляция (опрашивать только сервис заказов целевого типа поезда, отсекая чужой).
+    SECURITY_CHECK_SCOPE_MODES = ("all", "target_train_only")
+
     # Исполнитель M4 (engine/executor), гипотезы под флагами:
     # unresolved_receiver_calls: метод проекта на получателе известного типа, у вызова которого в скелете нет
     #   ребра (TripId#toString в BasicServiceImpl): mute (по умолчанию) — только значение, без рёбер; emit — рёбра.
@@ -354,6 +359,7 @@ class RuntimeRules:
         enum_member_calls: str = "on",
         trip_food_query: str = "cascade",
         route_distances_collection: str = "pruned",
+        security_check_scope: str = "all",
         unresolved_receiver_calls: str = "mute",
         m4_success_retry: str = "on",
     ) -> None:
@@ -384,6 +390,10 @@ class RuntimeRules:
             raise ValueError(
                 f"route_distances_collection: {route_distances_collection!r}, ожидается одно из {self.ROUTE_DISTANCES_COLLECTION_MODES}"
             )
+        if security_check_scope not in self.SECURITY_CHECK_SCOPE_MODES:
+            raise ValueError(
+                f"security_check_scope: {security_check_scope!r}, ожидается одно из {self.SECURITY_CHECK_SCOPE_MODES}"
+            )
         self.collection_tables_on_read = collection_tables_on_read
         self.element_callbacks = element_callbacks
         self.rabbitmq_delivery = rabbitmq_delivery
@@ -392,6 +402,7 @@ class RuntimeRules:
         self.enum_member_calls = enum_member_calls
         self.trip_food_query = trip_food_query
         self.route_distances_collection = route_distances_collection
+        self.security_check_scope = security_check_scope
         if unresolved_receiver_calls not in self.UNRESOLVED_RECEIVER_MODES:
             raise ValueError(f"unresolved_receiver_calls: {unresolved_receiver_calls!r}, "
                              f"ожидается одно из {self.UNRESOLVED_RECEIVER_MODES}")
@@ -659,21 +670,27 @@ class RuntimeRules:
                 s_svc = self.extract_service(source)
                 t_svc = self.extract_service(target)
                 if profile.train_mode == "high_speed_only":
-                    if s_svc in (
-                        "ts-inside-payment-service",
-                        "ts-seat-service",
-                        "ts-execute-service",
-                        "ts-cancel-service",
-                        "ts-rebook-service",
-                        "ts-preserve-service",
+                    if (
+                        s_svc in (
+                            "ts-inside-payment-service",
+                            "ts-seat-service",
+                            "ts-execute-service",
+                            "ts-cancel-service",
+                            "ts-rebook-service",
+                            "ts-preserve-service",
+                        )
+                        or (self.security_check_scope == "target_train_only" and s_svc == "ts-security-service")
                     ) and t_svc == "ts-order-other-service":
                         return True
                 elif profile.train_mode == "regular_only":
-                    if s_svc in (
-                        "ts-inside-payment-service",
-                        "ts-seat-service",
-                        "ts-rebook-service",
-                        "ts-preserve-other-service",
+                    if (
+                        s_svc in (
+                            "ts-inside-payment-service",
+                            "ts-seat-service",
+                            "ts-rebook-service",
+                            "ts-preserve-other-service",
+                        )
+                        or (self.security_check_scope == "target_train_only" and s_svc == "ts-security-service")
                     ) and t_svc == "ts-order-service":
                         return True
                     if s_svc == "ts-cancel-service" and t_svc == "ts-order-service":
@@ -715,7 +732,8 @@ class RuntimeRules:
                     if target_svc in ("ts-preserve-other-service", "ts-travel2-service"):
                         return True
                     if target_svc == "ts-order-other-service":
-                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source or "getAllOrders" in source):
+                        allowed_other = ("queryOrders", "getAllOrders") if self.security_check_scope == "target_train_only" else ("queryOrders", "securityInfoCheck", "checkSecurity", "getAllOrders")
+                        if not any(m in source for m in allowed_other):
                             return True
                 elif profile.train_mode == "regular_only":
                     if target_svc == "ts-preserve-service":
@@ -723,7 +741,8 @@ class RuntimeRules:
                     if target_svc == "ts-travel-service" and not getattr(profile, "has_advanced_search", False):
                         return True
                     if target_svc == "ts-order-service":
-                        if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source or "getOrderById" in source):
+                        allowed_order = ("queryOrders", "getOrderById") if self.security_check_scope == "target_train_only" else ("queryOrders", "securityInfoCheck", "checkSecurity", "getOrderById")
+                        if not any(m in source for m in allowed_order):
                             return True
 
             return False

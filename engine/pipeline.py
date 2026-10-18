@@ -37,6 +37,7 @@ class ArchonityPipeline:
         enum_member_calls: str = "on",
         trip_food_query: str = "cascade",
         route_distances_collection: str = "pruned",
+        security_check_scope: str = "all",
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
         executor: str = "legacy",
@@ -75,6 +76,7 @@ class ArchonityPipeline:
             enum_member_calls=enum_member_calls,
             trip_food_query=trip_food_query,
             route_distances_collection=route_distances_collection,
+            security_check_scope=security_check_scope,
             unresolved_receiver_calls=unresolved_receiver_calls,
             m4_success_retry=m4_success_retry,
         )
