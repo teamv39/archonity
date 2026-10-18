@@ -14,11 +14,17 @@
 |---|---|---|:---:|---|
 | **2.1** | Ошибка заземления M1: `payDifference` $\rightarrow$ `rebook` | **$S_2$ Шаг 14** | **ПОДТВЕРЖДЕНА И ВНЕДРЕНА** | Исправлено заземление на `RebookController#rebook`. $S_2$: 462 $\rightarrow$ 472 рёбер. Устранены ложные вызовы `payDifference`/`inside_payment`, добавлены истинные `rebook`, `drawBackMoney`, `updateOrder`. Точность M1 выросла до 100% (103/103). |
 | **2.2** | Селекция сервиса распределения мест при перебронировании | **$S_2$ Шаг 14** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | `SeatServiceImpl#distributeSeat` для поезда Z1234 вызывает только `ts-order-other-service`. Проверено: лишние вызовы к `ts-order-service` отсутствуют. |
-| **7.1** | Построчная логика отказа в `calculateRefund` при `COLLECTED` | **$S_7$ Шаг 8** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | При статусе 2 (`COLLECTED`) `CancelServiceImpl` возвращает ответ со статусом 0 без вызова вспомогательного `calculateRefund(Order)` и `drawBackMoney`. Ограничение уже строго исполняется в графе. |
-| **7.2** | Полный обрыв перебронирования при `COLLECTED` | **$S_7$ Шаг 10** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | Метод `RebookServiceImpl#rebook` обрывается сразу после `getOrderByRebookInfo`. Любые дальнейшие вызовы к `ts-seat-service`, `ts-train-service`, `ts-travel-service` полностью исключены (R15). |
+| **2.3** | Таблица коллекции блюд `station_food_list` на шагах 6 и 11 | **$S_2$ Шаги 6, 11** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | `FoodServiceImpl#createFoodOrder` пишет только в `food_order` и шлет событие в RabbitMQ; таблица `station_food_list` не затрагивается. В графе $S_2$ ровно 0 обращений к `station_food_list`. |
+| **2.4** | Изоляция зондирующего расчета возврата на шаге 9 | **$S_2$ Шаг 9** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | `CancelController#calculate` делает только зондирующее чтение заказов и расчет процента; мутации и обращения к `ts-inside-payment-service` полностью отсутствуют. |
+| **3.2** | Запрос багажного тарифа без лишних сервисов цен | **$S_3$ Шаг 14** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | `ConsignPriceController#getPriceByWeightAndRegion` читает только `ts-consign-price-service.consign_price`. Лишние обращения к `ts-price-service` отсутствуют. |
+| **3.3** | Конструктор сущности `Contacts#<init>()` при создании контакта | **$S_3$ Шаг 6** | **ОПРОВЕРГНУТА** | Сущность передается через `@RequestBody Contacts` (десериализация Jackson). В коде `ContactsServiceImpl` нет `new Contacts()`. По правилу R7 и исследованию `r7_score_drop.md` добавление конструкторов без проектного `new` снижает скор на -0.0085. |
+| **1.2** | Точечные чтения багажа и страховки (шаги 13 и 14) | **$S_1$ Шаги 13, 14** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | Точечные чтения `consign_record` и `assurance` без каскадных запросов к сервису заказов (ровно по 4 ребра на шаг). |
 | **4.2** | Внешняя оплата нового пользователя (`ts-payment-service`) | **$S_4$ Шаг 11** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | При нулевом балансе `InsidePaymentServiceImpl#pay` вызывает внешний `PaymentController#pay` (`ts-payment-service.payment`) и делает `SELECT` из `inside_money` (`findByUserId`). Граф строго соответствует коду. |
 | **5.2** | Исключение сервиса `ts-seat-service` при поиске маршрутов | **$S_5$ Шаги 2–5** | **ОПРОВЕРГНУТА** | `TravelPlanServiceImpl` в методах `getCheapest`, `getQuickest`, `getMinStation` реально шлет REST-запросы `POST /api/v1/seatservice/seats/left_tickets`. Отсечение создаст тяжелые False Negatives (FN). |
-| **3.3** | Конструктор сущности `Contacts#<init>()` при создании контакта | **$S_3$ Шаг 6** | **ОПРОВЕРГНУТА** | Сущность передается через `@RequestBody Contacts` (десериализация Jackson). В коде `ContactsServiceImpl` нет `new Contacts()`. По правилу R7 и исследованию `r7_score_drop.md` добавление конструкторов без проектного `new` снижает скор на -0.0085. |
+| **7.1** | Построчная логика отказа в `calculateRefund` при `COLLECTED` | **$S_7$ Шаг 8** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | При статусе 2 (`COLLECTED`) `CancelServiceImpl` возвращает ответ со статусом 0 без вызова вспомогательного `calculateRefund(Order)` и `drawBackMoney`. Ограничение уже строго исполняется в графе. |
+| **7.2** | Полный обрыв перебронирования при `COLLECTED` | **$S_7$ Шаг 10** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | Метод `RebookServiceImpl#rebook` обрывается сразу после `getOrderByRebookInfo`. Любые дальнейшие вызовы к `ts-seat-service`, `ts-train-service`, `ts-travel-service` полностью исключены (R15). |
+| **7.3** | Фильтры дат на шагах 13 и 14 (`travelDate` и `boughtDate`) | **$S_7$ Шаги 13, 14** | **ВЕРИФИЦИРОВАНА (АКТИВНА)** | M1 точно выставляет флаги фильтрации, генерируя истинные вызовы `StringUtils#String2Date` в `OrderServiceImpl#queryOrders`. |
+
 
 ---
 
@@ -104,6 +110,33 @@ if (isGaoTieOrDongChe(seatRequest.getTrainNumber())) {
 2. Ветка `totalExpand.compareTo(money) > 0` вызывает `ts-payment-service:PaymentController#pay`.
 3. Сохраняется запись в `ts-payment-service.payment` и статус `PaymentType.O` в `inside_payment`.
 Аудит графа $S_4$ подтвердил наличие всех трех истинных рёбер: удаленный вызов `PaymentController#pay`, запись в `payment` и чтение `inside_money`.
+
+### 3.4. Гипотеза 2.3: Таблица station_food_list на шагах 6 и 11 в $S_2$
+На шагах 6 и 11 оформляется заказ с питанием со станции: `FoodServiceImpl#createFoodOrder`.
+- В коде метода сущность сохраняется в `food_orderRepository.save(fo)` и отправляется событие в RabbitMQ (`delivery`). Таблица `station_food_list` методом не читается.
+- В сгенерированном графе $S_2$ содержится ровно **0** обращений к таблице `station_food_list` (она читается только при просмотре меню, но отсекается на шаге 4 по правилу `step4_store_only`). Граф чист от ложных обращений.
+
+### 3.5. Гипотеза 2.4: Изоляция зондирующего расчета возврата на шаге 9 в $S_2$
+Шаг 9: расчет возврата при отмене билета (`CancelController#calculate`).
+- Метод опрашивает оба сервиса заказов для получения сущности заказа (`getOrderByIdFromOrder` и `getOrderByIdFromOrderOther`) и вычисляет `0.8 * price`.
+- Проверка журнала решений `decisions.json` подтвердила: на шаге 9 отсутствуют любые вызовы `drawBackMoney`, мутации `inside_payment` или обращения к `ts-inside-payment-service`. Зондирующий расчет изолирован.
+
+### 3.6. Гипотеза 7.3: Фильтры дат на шагах 13 и 14 в $S_7$
+Шаги 13 и 14 фильтруют список заказов:
+- Шаг 13: `enableTravelDateQuery: true` $\rightarrow$ парсинг `travelDate` через `StringUtils.String2Date`.
+- Шаг 14: `enableBoughtDateQuery: true` $\rightarrow$ парсинг `boughtDate` через `StringUtils.String2Date`.
+- В графе $S_7$ на шагах 13 и 14 зафиксированы строго истинные вызовы `OrderServiceImpl#queryOrders` $\rightarrow$ `StringUtils#String2Date` (ровно по 23 ребра на шаг).
+
+### 3.7. Гипотеза 3.2: Запрос багажного тарифа на шаге 14 в $S_3$
+Шаг 14: запрос стоимости багажа весом 0.5 кг (`ConsignPriceController#getPriceByWeightAndRegion`).
+- Метод читает строго таблицу `ts-consign-price-service.consign_price`.
+- Проверка графа $S_3$ подтвердила: шаг 14 содержит ровно 4 ребра (`calls`, `data`, 2 `executes`). Никаких лишних обращений к справочникам цен поездов `ts-price-service` не порождается.
+
+### 3.8. Гипотеза 1.2: Точечные чтения багажа и страховки на шагах 13 и 14 в $S_1$
+Шаги 13 и 14 в $S_1$:
+- Шаг 13: чтение записи багажа (`ConsignController#findByOrderId` $\rightarrow$ `consign_record`).
+- Шаг 14: чтение страховки (`AssuranceController#findAssuranceByOrderId` $\rightarrow$ `assurance`).
+- Проверка графа $S_1$ подтвердила: каскадные вызовы к сервису заказов отсутствуют, шаги содержат строго по 4 истинных ребра.
 
 ---
 
