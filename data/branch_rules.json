@@ -96,14 +96,16 @@
     {
       "id": "BR_REBOOK_SAME_FAMILY",
       "code": "R11",
-      "description": "RebookServiceImpl#updateOrder: перебронирование всегда происходит внутри одного семейства поездов",
+      "description": "RebookServiceImpl#updateOrder: перебронирование внутри одного семейства поездов (tripGD == oldTripGD)",
       "enabled": true,
       "matcher": {
         "condition_contains_all": ["tripGD", "&&"]
       },
       "resolver": {
-        "type": "constant",
-        "value": true
+        "type": "profile_flag",
+        "flag": "has_cross_family_rebook",
+        "invert": true,
+        "default": true
       }
     },
     {
@@ -278,8 +280,9 @@
         "condition_contains": "priceOld.compareTo(priceNew) > 0"
       },
       "resolver": {
-        "type": "constant",
-        "value": true
+        "type": "profile_flag",
+        "flag": "has_rebook_downgrade",
+        "default": true
       }
     },
     {

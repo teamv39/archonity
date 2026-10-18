@@ -180,7 +180,7 @@ class GraphBuilder:
                         continue
 
                     # Вызовы методов перечисления AssuranceType (Гипотеза 3.1):
-                    # off — исключить вызовы геттеров AssuranceType из getAllAssuranceTypes на шаге 15 в S3
+                    # off — абляция (исключить вызовы геттеров перечисления из getAllAssuranceTypes)
                     if (
                         getattr(self.rules, "enum_member_calls", "on") == "off"
                         and "getAllAssuranceTypes" in m
@@ -272,17 +272,20 @@ class GraphBuilder:
                     self._prune_by_rule(self.rules.is_dead_code_edge, "data", m, t, profile, is_admin_scenario)
                     continue
 
-                # Таблица коллекции блюд station_food_list: шаг 4 в S2/S3 (listFoodStoresByStationName) читает
-                # только информацию о магазинах без позиций блюд, в отличие от шагов с просмотром меню в S1/S4.
-                sf_mode = getattr(self.rules, "station_food_collection", "step4_store_only")
+                # Таблица коллекции блюд station_food_list: при просмотре каталога магазинов станции
+                # (listFoodStoresByStationName) возвращаются метаданные магазинов без позиций блюд.
+                sf_mode = getattr(self.rules, "station_food_collection", "store_browse_only")
                 if "station_food_list" in t:
-                    if sf_mode == "off" or (sf_mode == "step4_store_only" and "listFoodStoresByStationName" in m):
+                    if sf_mode == "off" or (
+                        sf_mode in ("store_browse_only", "store_only", "step4_store_only")
+                        and "listFoodStoresByStationName" in m
+                    ):
                         if ledger:
-                            ledger.prune("data", m, t, "FRAMEWORK_RULE", "station_store_browse_no_food_list")
+                            ledger.prune("data", m, t, "FRAMEWORK_RULE", "store_browse_no_food_items")
                         continue
 
-                # Зондирующий SELECT в S2 (шаги 9 и 10): в сценариях обычных поездов (regular_only)
-                # заказ находится в ts-order-other-service, запрос в ts-order-service возвращает 0 строк
+                # Зондирующий SELECT к ts-order-service.orders при regular_only (поведение CancelServiceImpl):
+                # в штатном режиме выполняется SELECT (0 строк); off — абляция
                 if (
                     getattr(self.rules, "probe_orders_data", "on") == "off"
                     and getattr(profile, "train_mode", "") == "regular_only"
@@ -566,14 +569,11 @@ class GraphBuilder:
         query_orders_intercepted = interceptor is not None and interceptor.wants(query_orders)
         if not query_orders_intercepted and any("ts-order-other-service.orders_other" in t for t in table_targets):
             string2date = "method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)"
-            # Если сценарий не фильтрует явно по датам поездки (как S0)
+            # Если сценарий не фильтрует явно по датам поездки
             if scenario_state is not None:
                 if not scenario_state.has_date_filter_query():
                     self._discard_edge(edges_calls, "calls", query_orders, string2date, "STATE", "date_filter")
-            elif scenario_meta and not any(
-                "travel date" in s.lower() or "bought date" in s.lower()
-                for s in scenario_meta.get("step_texts", [])
-            ):
+            elif not getattr(profile, "has_order_filter", False):
                 self._discard_edge(edges_calls, "calls", query_orders, string2date, "DEFAULT_RULE", "date_filter")
 
     def _discard_edge(

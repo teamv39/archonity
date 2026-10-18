@@ -35,7 +35,7 @@ class ArchonityPipeline:
         collection_tables_on_read: str = "loaded",
         element_callbacks: str = "on",
         rabbitmq_delivery: str = "on",
-        station_food_collection: str = "step4_store_only",
+        station_food_collection: str = "store_browse_only",
         probe_orders_data: str = "on",
         enum_member_calls: str = "on",
         trip_food_query: str = "cascade",
