@@ -347,14 +347,10 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
                 "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)"
             )
 
-    # 13. Просмотр меню питания в поезде и точек питания на вокзале
-    if re.search(r"\b(?:food\s+menu|menu\s+offered)\b", t):
+    # 13. Просмотр меню питания в поезде и точек питания на вокзале (в UI Train Ticket всегда через FoodController#getAllFood)
+    if re.search(r"\b(?:food\s+menu|menu\s+offered|food\s+stores?|stores?\s+at.*?station)\b", t):
         intent_eps.add(
             "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
-        )
-    if re.search(r"\b(?:food\s+stores?|stores?\s+at.*?station)\b", t):
-        intent_eps.add(
-            "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
         )
 
     # 14. Запросы багажа и страховок к конкретным заказам

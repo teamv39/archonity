@@ -211,12 +211,12 @@
    {
     "n": 4,
     "action": "Browse the food stores at Suzhou station",
-    "handler": "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)",
+    "handler": "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
     "alt": [
-     "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+     "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
     ],
-    "status": "disputed",
-    "note": "UI получает магазины станций через FoodController#getAllFood; формулировка шага ближе к StationFoodController"
+    "status": "confirmed",
+    "note": "UI Train Ticket (food.js, client_ticket_book.js) получает магазины станций через FoodController#getAllFood; StationFoodController#getFoodStoresOfStation — мёртвый API без UI"
    },
    {
     "n": 5,
@@ -344,12 +344,12 @@
    {
     "n": 4,
     "action": "Browse the food stores at Suzhou station",
-    "handler": "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)",
+    "handler": "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
     "alt": [
-     "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+     "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
     ],
-    "status": "disputed",
-    "note": "UI получает магазины станций через FoodController#getAllFood; формулировка шага ближе к StationFoodController"
+    "status": "confirmed",
+    "note": "UI Train Ticket (food.js, client_ticket_book.js) получает магазины станций через FoodController#getAllFood; StationFoodController#getFoodStoresOfStation — мёртвый API без UI"
    },
    {
     "n": 5,
