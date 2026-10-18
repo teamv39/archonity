@@ -137,40 +137,39 @@ def parse_args() -> argparse.Namespace:
         help="Заземление шагов: m1 (engine/grounding, ADR-005; ответы LLM из cache/, без сервера — только кеш) "
              "или legacy (engine/resolver.py)",
     )
+    parser.add_argument(
+        "--executor",
+        choices=("legacy", "ir", "m4"),
+        default="legacy",
+        help="Исполнитель шага: legacy — обход скелета с правилами (по умолчанию), ir (синоним m4) — M4 по IR тел "
+             "методов data/ir (ADR-005, трёхзначная логика, мир БД сценария); требует --grounder m1",
+    )
+    parser.add_argument(
+        "--m4-unresolved-calls",
+        choices=("mute", "emit"),
+        default="mute",
+        help="M4: метод проекта на получателе известного типа без ребра в скелете (TripId#toString): mute — только "
+             "значение, emit — писать рёбра calls/executes (подтверждено платформой: 0.93625)",
+    )
+    parser.add_argument(
+        "--m4-success-retry",
+        choices=("on", "off"),
+        default="on",
+        help="M4: шаг ожидает успех, а по значениям M1 отказал — повтор с нормализованными, затем неизвестными "
+             "строковыми параметрами (on по умолчанию)",
+    )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
     parser.add_argument("--no-embed", action="store_true", help="M1 без dense-ретривера (только BM25)")
     parser.add_argument(
-        "--executor",
-        choices=("legacy", "m4"),
-        default="legacy",
-        help="Исполнитель шагов: legacy (обход скелета, rules.py) или m4 (IR тел методов, ADR-005; требует --grounder m1)",
-    )
-    parser.add_argument(
         "--judge",
         choices=("on", "cache", "off"),
-        default="on",
-        help="Судья M4: on — кеш, на промахе сервер; cache — только кеш; off — без судьи",
+        default="off",
+        help="Судья M4 для условий UNKNOWN, где иначе исполнились бы оба плеча: on — кеш, на промахе сервер; "
+             "cache — только кеш; off — без судьи (по умолчанию)",
     )
     parser.add_argument("--judge-budget", type=int, default=400, help="M4: вызовов сервера судьи на прогон")
-    parser.add_argument(
-        "--m4-only",
-        metavar="SUBSTR",
-        default=None,
-        help="M4 исполняет только методы, чей ID содержит подстроку; остальные раскрывает legacy (поиск регрессий)",
-    )
-    parser.add_argument(
-        "--m4-legacy-rules",
-        action="store_true",
-        help="M4, абляция: эвристики rules.py поверх решений IR",
-    )
-    parser.add_argument(
-        "--no-signal-arm",
-        choices=("continue", "then"),
-        default="continue",
-        help="M4, плечо без сигнала исхода: continue — без раннего выхода, then — всегда then",
-    )
     return parser.parse_args()
 
 
@@ -280,17 +279,8 @@ def main() -> None:
             "llm": None if args.no_llm else LLMClient(use_server=not args.no_server, refresh=args.no_cache),
         }
     print(f"Grounder:   {args.grounder}")
-    m4_options = None
     if args.executor == "m4":
-        from engine.executor.executor import M4Options
-
-        m4_options = M4Options(
-            judge=args.judge,
-            judge_budget=args.judge_budget,
-            only=args.m4_only,
-            legacy_rules=args.m4_legacy_rules,
-            no_signal_arm=args.no_signal_arm,
-        )
+        args.executor = "ir"
     print(f"Executor:   {args.executor}")
     pipeline = ArchonityPipeline(
         skeleton_path=args.skeleton,
@@ -309,7 +299,10 @@ def main() -> None:
         grounder=args.grounder,
         m1_options=m1_options,
         executor=args.executor,
-        m4_options=m4_options,
+        unresolved_receiver_calls=args.m4_unresolved_calls,
+        m4_success_retry=args.m4_success_retry,
+        m4_judge=args.judge,
+        m4_judge_budget=args.judge_budget,
     )
 
     print("Генерация графов для сценариев...")
@@ -331,6 +324,12 @@ def main() -> None:
         with open(steps_out, "w", encoding="utf-8") as f:
             json.dump(pipeline.step_requests, f, ensure_ascii=False, indent=1)
         print(f"StepRequest (M1) сохранены в: {steps_out}")
+
+    if pipeline.m4 is not None:
+        unknowns_out = args.out.parent / "m4_unknowns.json"
+        with open(unknowns_out, "w", encoding="utf-8") as f:
+            json.dump(pipeline.m4.unknowns, f, ensure_ascii=False, indent=1)
+        print(f"Условия UNKNOWN исполнителя M4 сохранены в: {unknowns_out}")
 
     decisions_out = args.out.parent / "decisions.json"
     with open(decisions_out, "w", encoding="utf-8") as f:

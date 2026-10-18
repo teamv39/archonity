@@ -10,6 +10,7 @@ ZIP-архив с кодом и обязательным файлом submission
 """
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 import zipfile
 
@@ -50,15 +51,16 @@ def _add_dir_to_zip(zf: zipfile.ZipFile, arcname: str) -> None:
     zf.writestr(zinfo, b"")
 
 
-def pack() -> Path:
+def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
+    """Архив сдачи. run_cmd — команда, которой получен submission.json (кладётся в RUN.md архива)."""
     if not SUBMISSION_JSON.is_file():
         raise FileNotFoundError(
             f"Файл {SUBMISSION_JSON} не найден. Сначала выполните: uv run python run_eval.py"
         )
 
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    zip_out.parent.mkdir(parents=True, exist_ok=True)
 
-    with zipfile.ZipFile(ZIP_OUT, "w") as z:
+    with zipfile.ZipFile(zip_out, "w") as z:
         # 1. Обязательный файл submission.json в корне архива (строго Unix LF)
         _add_file_to_zip(z, SUBMISSION_JSON, "submission.json", normalize_lf=True)
 
@@ -70,6 +72,13 @@ def pack() -> Path:
         readme_path = ROOT / "README.md"
         if readme_path.is_file():
             _add_file_to_zip(z, readme_path, "README.md", normalize_lf=True)
+        if run_cmd:
+            zinfo = zipfile.ZipInfo("RUN.md")
+            zinfo.create_system = 3
+            zinfo.external_attr = 0o100644 << 16
+            zinfo.compress_type = zipfile.ZIP_DEFLATED
+            run_md = f"# Воспроизведение\n\nИз каталога code/:\n\n    {run_cmd}\n"
+            z.writestr(zinfo, run_md.encode("utf-8"))
 
         # 4. Каталоги кода
         _add_dir_to_zip(z, "code")
@@ -120,13 +129,17 @@ def pack() -> Path:
                             normalize_lf=full_p.suffix in (".json", ".txt", ".md"),
                         )
 
-    file_count = len(zipfile.ZipFile(ZIP_OUT).infolist())
-    size_kb = ZIP_OUT.stat().st_size / 1024
-    print(f"Архив успешно создан: {ZIP_OUT}")
+    file_count = len(zipfile.ZipFile(zip_out).infolist())
+    size_kb = zip_out.stat().st_size / 1024
+    print(f"Архив успешно создан: {zip_out}")
     print(f"Всего записей: {file_count}, Размер: {size_kb:.1f} KB")
-    return ZIP_OUT
+    return zip_out
 
 
 if __name__ == "__main__":
-    pack()
+    ap = argparse.ArgumentParser(description="Упаковка output/submission.json и кода в архив сдачи")
+    ap.add_argument("--out", type=Path, default=ZIP_OUT, help="Путь архива (по умолчанию output/submission.zip)")
+    ap.add_argument("--cmd", default=None, help="Команда, которой получен submission.json (в RUN.md архива)")
+    a = ap.parse_args()
+    pack(a.out, a.cmd)
 

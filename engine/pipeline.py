@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import dataclasses
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex, load_json
 from engine.adapters.submission import SubmissionAdapter
@@ -14,10 +14,6 @@ from engine.resolver import ScenarioGrounder
 from engine.ir import MethodPoolIR
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
-
-if TYPE_CHECKING:
-    from engine.executor.executor import M4Options
-
 
 class ArchonityPipeline:
     """Оркестратор полного цикла статического анализа и сборки графа."""
@@ -43,7 +39,11 @@ class ArchonityPipeline:
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
         executor: str = "legacy",
-        m4_options: M4Options | None = None,
+        method_ir_dir: str | Path | None = None,
+        unresolved_receiver_calls: str = "mute",
+        m4_success_retry: str = "on",
+        m4_judge: str = "off",
+        m4_judge_budget: int = 400,
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -73,6 +73,8 @@ class ArchonityPipeline:
             enum_member_calls=enum_member_calls,
             trip_food_query=trip_food_query,
             route_distances_collection=route_distances_collection,
+            unresolved_receiver_calls=unresolved_receiver_calls,
+            m4_success_retry=m4_success_retry,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
@@ -93,16 +95,24 @@ class ArchonityPipeline:
         # 6. Журнал решений по рёбрам (evidence.json v2): пишет сам builder
         self.ledger = DecisionLedger()
 
-        # 7. Исполнитель шагов: legacy (обход builder.traverse) или M4 (IR тел методов, ADR-005)
+        # 7. Исполнитель шага: legacy (обход скелета, builder) или ir (M4 по data/ir, ADR-005; нужен M1)
         self.executor_mode = executor
         self.m4 = None
-        if executor == "m4":
+        if executor == "ir":
             if grounder != "m1":
-                raise ValueError("M4 требует --grounder m1: нужны params и expected_outcome из StepRequest")
-            from engine.executor.executor import M4Executor
+                raise ValueError("executor=ir работает от StepRequest M1: нужен grounder=m1")
+            from engine.executor.step import StepExecutor
 
-            self.m4 = M4Executor(self.index, self.builder, self.targets_root, options=m4_options,
-                                 llm=(m1_options or {}).get("llm"))
+            ir_dir = Path(method_ir_dir) if method_ir_dir else Path(__file__).resolve().parent.parent / "data" / "ir"
+            judge = None
+            llm = (m1_options or {}).get("llm")
+            if m4_judge != "off" and llm is not None:
+                # Судья M4 с кешем и бюджетом вызовов сервера (engine/executor/judge.py)
+                from engine.executor.judge import Judge
+
+                judge = Judge(self.targets_root, self.index.sk.get("context"), llm, mode=m4_judge,
+                              budget=m4_judge_budget)
+            self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root, judge=judge)
         elif executor != "legacy":
             raise ValueError(f"неизвестный executor: {executor}")
 
@@ -115,8 +125,6 @@ class ArchonityPipeline:
         sid = scenario_dict.get("id", "S?")
         profile = ScenarioProfile.from_scenario(scenario_dict)
         self.ledger.begin_scenario(sid)
-        if self.m4 is not None:
-            self.m4.begin_scenario(scenario_dict)
 
         # Шаг 1: Инициализация изолированного состояния сценария (M3)
         if scenario_state is None:
@@ -144,6 +152,8 @@ class ArchonityPipeline:
         prev_files: set[str] = set()
         session = self.m1.begin(scenario_dict) if self.m1 is not None else None
         self.step_requests[sid] = []
+        if self.m4 is not None:
+            self.m4.begin_scenario(sid)
 
         # Шаг 2: Пошаговый обход графа (Step-by-step Execution)
         for st in scenario_dict.get("steps") or []:
@@ -166,13 +176,10 @@ class ArchonityPipeline:
                 continue
 
             if self.m4 is not None and step_req is not None:
-                m, c, r, d = self.m4.run_step(
-                    step_req,
-                    profile=step_profile,
-                    scenario_state=scenario_state,
-                    scenario_meta=scenario_meta,
-                    ledger=self.ledger,
-                )
+                m, c, r, d = self.m4.run_step(step_req, scenario_state, ledger=self.ledger,
+                                              scenario=scenario_dict)
+                self.builder._ledger = self.ledger
+                self.builder.apply_spring_security(m, c, d)
             else:
                 m, c, r, d = self.builder.traverse(
                     step_entries,
@@ -191,11 +198,7 @@ class ArchonityPipeline:
             if step_req is not None:
                 # M3 читает params через .get(k, default): пустые значения не передаём, чтобы сработал default
                 params = {k: v for k, v in step_req.params.items() if v is not None}
-                mutation = scenario_state.apply_step(
-                    dataclasses.replace(step_req, params=params), scenario_dict=scenario_dict
-                )
-                if self.m4 is not None:
-                    self.m4.end_step(step_req, mutation)
+                scenario_state.apply_step(dataclasses.replace(step_req, params=params), scenario_dict=scenario_dict)
             else:
                 scenario_state.apply_step(st, scenario_dict=scenario_dict)
 

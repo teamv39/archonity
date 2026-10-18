@@ -503,17 +503,13 @@ class GraphBuilder:
         if self._ledger:
             self._ledger.include(relation, s, t, source_type, rule)
 
-    def _apply_framework_and_entity_lifecycle(
+    def apply_spring_security(
         self,
         active_methods: set[str],
         edges_calls: set[tuple[str, str]],
         edges_data: set[tuple[str, str]],
-        scenario_meta: dict[str, Any] | None = None,
-        profile: ScenarioProfile | None = None,
-        scenario_state: ScenarioState | None = None,
-        interceptor: MethodInterceptor | None = None,
     ) -> None:
-        """Применение семантики Spring Security и гидрации JPA/MongoDB сущностей."""
+        """Методы и рёбра, которые исполняет Spring Security при логине (их не видно в теле getToken)."""
         # 1. Spring Security Authentication Flow при логине через сервис аутентификации
         auth_tokens = [m for m in active_methods if "TokenService" in m and "getToken" in m]
         if auth_tokens:
@@ -579,6 +575,19 @@ class GraphBuilder:
             for tc in token_creators:
                 if user_name:
                     self._add_edge(edges_calls, "calls", tc, user_name, "FRAMEWORK_RULE", "spring_security")
+
+    def _apply_framework_and_entity_lifecycle(
+        self,
+        active_methods: set[str],
+        edges_calls: set[tuple[str, str]],
+        edges_data: set[tuple[str, str]],
+        scenario_meta: dict[str, Any] | None = None,
+        profile: ScenarioProfile | None = None,
+        scenario_state: ScenarioState | None = None,
+        interceptor: MethodInterceptor | None = None,
+    ) -> None:
+        """Применение семантики Spring Security и гидрации JPA/MongoDB сущностей."""
+        self.apply_spring_security(active_methods, edges_calls, edges_data)
 
         # 2. Конструкторы сущностей при загрузке строк (R7) решает обход по фактам archparse
         #    (_hydrated_constructors), вызовы внутри конструкторов дают IR и скелет.

@@ -1,353 +1,315 @@
-"""Абстрактные значения исполнителя M4 и трёхзначная логика (ADR-005, M4).
+"""Значения исполнителя M4 (ADR-005): конкретные, частично известные и UNKNOWN.
 
-Известное значение — обычный объект Python: int, float, str, bool, None (Java null) или объекты ниже.
-Неизвестное — `Unknown` (лист с происхождением) или `Sym` (выражение над неизвестными). Условие считается TRUE,
-FALSE или неизвестным; неизвестное разрешают правила по умолчанию (`default` у листьев), судья или исход шага.
+Конкретные значения Java представлены значениями Python: int/float/str/bool/None (null).
+Остальное — классы ниже. Всё, чего исполнитель не знает, — UNKNOWN; условие с UNKNOWN решают
+правила по умолчанию (успешный путь) или берутся оба плеча.
 """
 from __future__ import annotations
 
 import itertools
 from dataclasses import dataclass, field
-from typing import Any, Callable
+from typing import Any
 
 
-class _Missing:
-    def __repr__(self) -> str:
-        return "MISSING"
+class _Unknown:
+    """Неизвестное значение. Одно на весь процесс."""
 
+    _inst: _Unknown | None = None
 
-MISSING: Any = _Missing()  # у листа нет значения по умолчанию
-
-
-class _NonNull:
-    def __repr__(self) -> str:
-        return "NONNULL"
-
-
-NONNULL: Any = _NonNull()  # по умолчанию «не null», в остальном неизвестно
-
-_uids = itertools.count(1)
-
-
-class Unknown:
-    """Неизвестное значение с происхождением.
-
-    kind: object, status, bool, number, string, collection, optional — от вида зависят модели библиотеки
-    и значение по умолчанию. src: request, remote, call, repo, library, field, loop, state.
-    default — значение на успешном пути (D1–D4); MISSING — правила по умолчанию его не знают.
-    """
-
-    __slots__ = ("origin", "kind", "default", "src", "type", "rule", "children", "uid")
-
-    def __init__(self, origin: str, kind: str = "object", default: Any = MISSING, src: str = "library",
-                 type: str | None = None, rule: str | None = None) -> None:
-        self.origin = origin
-        self.kind = kind
-        self.default = default
-        self.src = src
-        self.type = type
-        self.rule = rule  # имя правила по умолчанию, которое даёт default (D1…D4)
-        self.children: dict[str, Unknown] = {}
-        self.uid = next(_uids)
-
-    def child(self, key: str, make: Callable[[], Unknown]) -> Unknown:
-        """Одно и то же производное значение для одного ключа: `x.getStatus()` дважды — один лист."""
-        if key not in self.children:
-            self.children[key] = make()
-        return self.children[key]
+    def __new__(cls) -> _Unknown:
+        if cls._inst is None:
+            cls._inst = super().__new__(cls)
+        return cls._inst
 
     def __repr__(self) -> str:
-        return f"Unknown({self.kind}: {self.origin})"
+        return "UNKNOWN"
+
+    def __bool__(self) -> bool:  # защита от случайного truthiness
+        raise TypeError("UNKNOWN нельзя приводить к bool, используйте tri()")
 
 
-@dataclass(frozen=True)
-class Sym:
-    """Значение, выведенное из неизвестных: операция и аргументы."""
+UNKNOWN: Any = _Unknown()
 
-    op: str
-    args: tuple[Any, ...]
+_ids = itertools.count(1)
 
-    def __repr__(self) -> str:
-        if len(self.args) == 2:
-            return f"({self.args[0]!r} {self.op} {self.args[1]!r})"
-        return f"{self.op}({', '.join(repr(a) for a in self.args)})"
+
+def next_uid() -> int:
+    """Следующий номер объекта: объекты с номером не меньше созданы позже этого момента."""
+    return next(_ids)
 
 
 def is_unknown(v: Any) -> bool:
-    return isinstance(v, (Unknown, Sym))
+    return v is UNKNOWN
 
 
+@dataclass(eq=False)
 class Obj:
-    """Объект: DTO, сущность, Response, бин. Поля — по имени поля Java."""
+    """Объект класса проекта или DTO. Неизвестные поля — UNKNOWN (если объект пришёл извне)."""
 
-    __slots__ = ("type", "fields", "src", "origin", "uid")
+    type: str | None
+    fields: dict[str, Any] = field(default_factory=dict)
+    # open=True: поля, которых нет в fields, неизвестны; False — объект создан через new, отсутствующее поле = null
+    open: bool = True
+    uid: int = field(default_factory=lambda: next(_ids))
 
-    def __init__(self, type: str, fields: dict[str, Any] | None = None, src: str = "new", origin: str = "") -> None:
-        self.type = type
-        self.fields: dict[str, Any] = fields if fields is not None else {}
-        self.src = src  # new, request, state, enum, bean, library
-        self.origin = origin
-        self.uid = next(_uids)
-
-    @property
-    def simple(self) -> str:
-        return simple_name(self.type)
+    def get(self, name: str) -> Any:
+        if name in self.fields:
+            return self.fields[name]
+        return UNKNOWN if self.open else None
 
     def __repr__(self) -> str:
-        return f"Obj({self.simple}, {self.src})"
+        short = (self.type or "?").rsplit(".", 1)[-1]
+        return f"Obj<{short}#{self.uid}>"
 
 
-class Coll:
-    """Коллекция: известные элементы или только признак непустоты."""
+@dataclass(eq=False)
+class EnumV:
+    """Константа enum: тип, имя, порядковый номер, поля из конструктора."""
 
-    __slots__ = ("items", "nonempty", "origin", "src", "elem_type", "uid")
+    type: str
+    constant: str
+    ordinal: int | None = None
+    fields: dict[str, Any] = field(default_factory=dict)
 
-    def __init__(self, items: list[Any] | None = None, nonempty: Any = MISSING, origin: str = "", src: str = "new",
-                 elem_type: str | None = None) -> None:
-        self.items = items
-        if items is not None:
-            nonempty = bool(items)
-        self.nonempty = nonempty  # bool или Unknown
-        self.origin = origin
-        self.src = src
-        self.elem_type = elem_type
-        self.uid = next(_uids)
+    def get(self, name: str) -> Any:
+        return self.fields.get(name, UNKNOWN)
 
     def __repr__(self) -> str:
-        return f"Coll({len(self.items) if self.items is not None else '?'}, {self.src})"
+        return f"{self.type.rsplit('.', 1)[-1]}.{self.constant}"
 
 
-class Opt:
-    """java.util.Optional."""
+@dataclass(eq=False)
+class ListV:
+    """Список или множество. exact=False — элементы известны не все (размер неизвестен)."""
 
-    __slots__ = ("present", "value", "origin", "src")
+    items: list[Any] = field(default_factory=list)
+    exact: bool = True
+    elem_type: str | None = None
+    is_set: bool = False
+    uid: int = field(default_factory=lambda: next(_ids))
 
-    def __init__(self, present: Any, value: Any = None, origin: str = "", src: str = "new") -> None:
-        self.present = present  # bool или Unknown
-        self.value = value
-        self.origin = origin
-        self.src = src
-
-
-class Iter:
-    """Итератор по коллекции."""
-
-    __slots__ = ("coll", "pos")
-
-    def __init__(self, coll: Coll) -> None:
-        self.coll = coll
-        self.pos = 0
+    def __repr__(self) -> str:
+        return f"{'Set' if self.is_set else 'List'}[{len(self.items)}{'' if self.exact else '+?'}]"
 
 
-@dataclass
-class TypeRef:
-    """Имя класса как получатель статического вызова или поля."""
-
-    name: str  # FQN, если известен, иначе как написано
-    simple: str
+@dataclass(eq=False)
+class MapV:
+    data: dict[Any, Any] = field(default_factory=dict)
+    exact: bool = True
 
 
-@dataclass
+@dataclass(eq=False)
+class OptionalV:
+    """Optional: value — значение, None — пусто, UNKNOWN — неизвестно, есть ли значение.
+
+    maybe=True: значение value, если оно есть, но есть ли оно — неизвестно (неточный запрос к БД).
+    """
+
+    value: Any
+    maybe: bool = False
+
+
+@dataclass(eq=False)
+class Wrapper:
+    """HttpEntity / ResponseEntity: тело запроса или ответа."""
+
+    body: Any
+    kind: str = "entity"
+
+
+@dataclass(eq=False)
 class Lambda:
-    """Лямбда или ссылка на метод: отложенный блок (R16), исполняется, только когда её вызывают."""
+    """Отложенный блок (R16): исполняется, только когда его вызывают."""
 
-    node: dict[str, Any]
+    params: list[str]
+    body: list[dict[str, Any]]
     env: dict[str, Any]
     this: Any
-    method_id: str  # объемлющий метод: вызовы внутри лямбды принадлежат ему (R1)
-    targets: tuple[str, ...] = field(default=())  # цели ссылки на метод проекта
+    method: str
+    line: int
 
 
-def simple_name(t: str | None) -> str:
-    """`java.util.List<Order>` -> `List`, `a.b.C$D` -> `D`."""
-    if not t:
-        return ""
-    t = t.split("<", 1)[0].strip()
-    t = t.rsplit(".", 1)[-1]
-    return t.rsplit("$", 1)[-1]
+@dataclass(eq=False)
+class MethodRef:
+    target: str | None
+    call: str | None
 
 
-# --- трёхзначная логика -------------------------------------------------------------------------------------------
+@dataclass(eq=False)
+class Bean:
+    """Поле-зависимость Spring (@Autowired): сервис, репозиторий, RestTemplate."""
 
-def truth(v: Any) -> bool | None:
-    """Значение условия: True, False или None (неизвестно)."""
-    if is_unknown(v):
-        return None
-    if isinstance(v, bool):
+    type: str | None
+    name: str
+
+
+@dataclass(eq=False)
+class TypeRef:
+    """Имя класса в выражении (StringUtils, OrderStatus)."""
+
+    fqn: str
+
+
+@dataclass(eq=False)
+class DateV:
+    """java.util.Date / Calendar: момент времени (datetime) или UNKNOWN."""
+
+    value: Any
+    calendar: bool = False
+
+
+@dataclass(eq=False)
+class JsonV:
+    """Строка JSON с известным исходным значением (toJSONString / writeValueAsString)."""
+
+    value: Any
+
+
+@dataclass(eq=False)
+class Concat:
+    """Строка из известных и неизвестных частей (URL запроса)."""
+
+    parts: list[Any]
+
+    def render(self, hole: str = "\x00") -> str:
+        return "".join(p if isinstance(p, str) else hole for p in self.parts)
+
+
+def concat(a: Any, b: Any) -> Any:
+    """Конкатенация строк Java: известные части склеиваются, неизвестные сохраняются как дыры."""
+    pa = a.parts if isinstance(a, Concat) else [to_jstr(a)]
+    pb = b.parts if isinstance(b, Concat) else [to_jstr(b)]
+    parts: list[Any] = []
+    for p in pa + pb:
+        if isinstance(p, str) and parts and isinstance(parts[-1], str):
+            parts[-1] += p
+        else:
+            parts.append(p)
+    if all(isinstance(p, str) for p in parts):
+        return "".join(parts)
+    return Concat(parts)
+
+
+def to_jstr(v: Any) -> Any:
+    """String.valueOf: строка или UNKNOWN."""
+    if isinstance(v, str):
         return v
-    if v is None:
-        return False
-    if isinstance(v, (int, float)):
-        return v != 0
-    return True
-
-
-def not_(v: Any) -> Any:
-    t = truth(v)
-    return Sym("!", (v,)) if t is None else (not t)
-
-
-def and_(a: Any, b: Callable[[], Any]) -> Any:
-    """`a && b`, b — ленивый: исполняется, только если a не FALSE (вызовы в b дают события)."""
-    ta = truth(a)
-    if ta is False:
-        return False
-    bv = b()
-    tb = truth(bv)
-    if ta is True:
-        return bv if tb is None else tb
-    if tb is False:
-        return False
-    return a if tb is True else Sym("&&", (a, bv))
-
-
-def or_(a: Any, b: Callable[[], Any]) -> Any:
-    ta = truth(a)
-    if ta is True:
-        return True
-    bv = b()
-    tb = truth(bv)
-    if ta is False:
-        return bv if tb is None else tb
-    if tb is True:
-        return True
-    return a if tb is False else Sym("||", (a, bv))
-
-
-_CMP: dict[str, Callable[[Any, Any], bool]] = {
-    "==": lambda a, b: a == b,
-    "!=": lambda a, b: a != b,
-    "<": lambda a, b: a < b,
-    "<=": lambda a, b: a <= b,
-    ">": lambda a, b: a > b,
-    ">=": lambda a, b: a >= b,
-}
-
-_ARITH: dict[str, Callable[[Any, Any], Any]] = {
-    "+": lambda a, b: a + b,
-    "-": lambda a, b: a - b,
-    "*": lambda a, b: a * b,
-    "/": lambda a, b: a // b if isinstance(a, int) and isinstance(b, int) and not isinstance(a, bool) else a / b,
-    "%": lambda a, b: a % b,
-    "&": lambda a, b: a & b,
-    "|": lambda a, b: a | b,
-    "^": lambda a, b: a ^ b,
-    "<<": lambda a, b: a << b,
-    ">>": lambda a, b: a >> b,
-    ">>>": lambda a, b: a >> b,
-}
-
-
-def java_str(v: Any) -> str | None:
-    """Строковое представление известного значения для конкатенации; None — не представить."""
-    if isinstance(v, bool):
-        return "true" if v else "false"
     if v is None:
         return "null"
-    if isinstance(v, (int, str)):
+    if isinstance(v, bool):
+        return "true" if v else "false"
+    if isinstance(v, int):
         return str(v)
     if isinstance(v, float):
-        return repr(v)
-    return None
+        return repr(v) if v != int(v) or abs(v) >= 1e7 else f"{v:.1f}"
+    if isinstance(v, EnumV):
+        return v.constant
+    return UNKNOWN
 
 
-def binop(op: str, a: Any, b: Any) -> Any:
-    """Бинарная операция без `&&`/`||` (их считают and_/or_)."""
-    if is_unknown(a) or is_unknown(b):
-        return Sym(op, (a, b))
-    if op in ("==", "!="):
-        eq = _equal(a, b)
-        if eq is None:
-            return Sym(op, (a, b))
-        return eq if op == "==" else not eq
-    if op == "+" and (isinstance(a, str) or isinstance(b, str)):
-        sa, sb = java_str(a), java_str(b)
-        if sa is None or sb is None:
-            return Sym(op, (a, b))
-        return sa + sb
-    fn = _CMP.get(op) or _ARITH.get(op)
-    if fn is None:
-        return Sym(op, (a, b))
-    try:
-        return fn(a, b)
-    except (TypeError, ZeroDivisionError, ValueError):
-        return Sym(op, (a, b))
+# --- трёхзначная логика -----------------------------------------------------
+
+TRUE, FALSE = True, False
 
 
-def _equal(a: Any, b: Any) -> bool | None:
-    """`==` Java: примитивы по значению, объекты по ссылке; None — не определить."""
+def tri(v: Any) -> Any:
+    """Значение условия: True, False или UNKNOWN."""
+    if v is True or v is False:
+        return v
+    return UNKNOWN
+
+
+def t_not(a: Any) -> Any:
+    return UNKNOWN if a is UNKNOWN else (not a)
+
+
+def t_and(a: Any, b: Any) -> Any:
+    if a is False or b is False:
+        return False
+    if a is True and b is True:
+        return True
+    return UNKNOWN
+
+
+def t_or(a: Any, b: Any) -> Any:
+    if a is True or b is True:
+        return True
+    if a is False and b is False:
+        return False
+    return UNKNOWN
+
+
+def join(a: Any, b: Any) -> Any:
+    """Слияние значений двух путей: совпадает — значение, иначе UNKNOWN (объекты одного типа — по полям)."""
+    if a is b:
+        return a
+    if a is UNKNOWN or b is UNKNOWN:
+        return UNKNOWN
+    if type(a) in (int, float, str, bool) and type(a) is type(b) and a == b:
+        return a
+    if isinstance(a, EnumV) and isinstance(b, EnumV) and a.type == b.type and a.constant == b.constant:
+        return a
+    if isinstance(a, Obj) and isinstance(b, Obj) and a.type == b.type:
+        keys = set(a.fields) | set(b.fields)
+        return Obj(a.type, {k: join(a.get(k), b.get(k)) for k in keys}, open=a.open or b.open)
+    if isinstance(a, Wrapper) and isinstance(b, Wrapper):
+        return Wrapper(join(a.body, b.body), a.kind)
+    if isinstance(a, OptionalV) and isinstance(b, OptionalV):
+        if a.value is None and b.value is None:
+            return a
+        if a.value is None or b.value is None:
+            return OptionalV(UNKNOWN)
+        return OptionalV(join(a.value, b.value))
+    if isinstance(a, ListV) and isinstance(b, ListV):
+        if a.exact and b.exact and len(a.items) == len(b.items) and all(x is y for x, y in zip(a.items, b.items)):
+            return a
+        items = list(a.items) + [x for x in b.items if all(x is not y for y in a.items)]
+        return ListV(items, exact=False, elem_type=a.elem_type or b.elem_type)
+    return UNKNOWN
+
+
+def same_value(a: Any, b: Any) -> Any:
+    """Сравнение == (для объектов — тождество, для строк и чисел — значение)."""
+    if a is UNKNOWN or b is UNKNOWN or isinstance(a, Concat) or isinstance(b, Concat):
+        return UNKNOWN
     if a is None or b is None:
-        return a is b
-    if isinstance(a, (Obj, Coll, Opt)) or isinstance(b, (Obj, Coll, Opt)):
-        return a is b
-    if isinstance(a, (bool, int, float, str)) and isinstance(b, (bool, int, float, str)):
-        if isinstance(a, str) != isinstance(b, str):
-            return None
+        if isinstance(a, OptionalV) or isinstance(b, OptionalV):
+            return False
+        return a is None and b is None
+    if isinstance(a, EnumV) and isinstance(b, EnumV):
+        return a.type == b.type and a.constant == b.constant
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)) and not isinstance(a, bool) and not isinstance(b, bool):
         return a == b
-    return None
+    if isinstance(a, (str, bool)) and isinstance(b, (str, bool)):
+        return a == b
+    if isinstance(a, (int, float, str, bool)) or isinstance(b, (int, float, str, bool)):
+        if isinstance(a, EnumV) or isinstance(b, EnumV):
+            return UNKNOWN
+        if type(a) is not type(b) and not (isinstance(a, (int, float)) and isinstance(b, (int, float))):
+            return UNKNOWN
+        return a == b
+    return a is b
 
 
-def unop(op: str, v: Any) -> Any:
-    if op == "!":
-        return not_(v)
-    if is_unknown(v):
-        return Sym(op, (v,))
-    if op == "-" and isinstance(v, (int, float)):
-        return -v
-    if op == "+" and isinstance(v, (int, float)):
+def equals_value(a: Any, b: Any) -> Any:
+    """Object.equals для значений без проектного equals."""
+    r = same_value(a, b)
+    if r is not False:
+        return r
+    if isinstance(a, Obj) and isinstance(b, Obj):
+        return UNKNOWN
+    return r
+
+
+def num(v: Any) -> Any:
+    """Число из значения (BigDecimal, Double.parseDouble, строки с ценой)."""
+    if isinstance(v, bool):
+        return UNKNOWN
+    if isinstance(v, (int, float)):
         return v
-    if op == "~" and isinstance(v, int):
-        return ~v
-    return Sym(op, (v,))
-
-
-# --- правила по умолчанию: подстановка значений листьев ----------------------------------------------------------
-
-def resolve(v: Any, leaf: Callable[[Unknown], Any], used: list[Unknown] | None = None) -> Any:
-    """Пересчёт выражения над неизвестными, где лист заменяет `leaf(u)` (MISSING — лист остаётся неизвестным).
-
-    `used` собирает листья, значения которых повлияли на результат.
-    """
-    if isinstance(v, Unknown):
-        x = leaf(v)
-        if x is MISSING:
-            return v
-        if used is not None:
-            used.append(v)
-        return x
-    if not isinstance(v, Sym):
-        return v
-    op, args = v.op, v.args
-    if op == "!":
-        return not_(resolve(args[0], leaf, used))
-    if op in ("&&", "||"):
-        a = resolve(args[0], leaf, used)
-        b = resolve(args[1], leaf, used)
-        return and_(a, lambda: b) if op == "&&" else or_(a, lambda: b)
-    if len(args) == 2:
-        a = resolve(args[0], leaf, used)
-        b = resolve(args[1], leaf, used)
-        if op in ("==", "!=") and (a is NONNULL or b is NONNULL):
-            other = b if a is NONNULL else a
-            if other is None:
-                return op == "!="
-            return Sym(op, (args[0], args[1]))
-        if a is NONNULL or b is NONNULL:
-            return Sym(op, (args[0], args[1]))
-        return binop(op, a, b)
-    if len(args) == 1:
-        a = resolve(args[0], leaf, used)
-        return Sym(op, (args[0],)) if a is NONNULL else unop(op, a)
-    return v
-
-
-def leaves(v: Any, out: list[Unknown] | None = None) -> list[Unknown]:
-    """Листья-неизвестные выражения в порядке появления, без повторов."""
-    out = [] if out is None else out
-    if isinstance(v, Unknown):
-        if all(u is not v for u in out):
-            out.append(v)
-    elif isinstance(v, Sym):
-        for a in v.args:
-            leaves(a, out)
-    return out
+    if isinstance(v, str):
+        try:
+            return int(v) if v.strip().lstrip("-").isdigit() else float(v)
+        except ValueError:
+            return UNKNOWN
+    return UNKNOWN

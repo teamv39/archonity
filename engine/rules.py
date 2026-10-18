@@ -334,6 +334,14 @@ class RuntimeRules:
     # included — абляция (включать route_distances при поиске маршрута).
     ROUTE_DISTANCES_COLLECTION_MODES = ("pruned", "included")
 
+    # Исполнитель M4 (engine/executor), гипотезы под флагами:
+    # unresolved_receiver_calls: метод проекта на получателе известного типа, у вызова которого в скелете нет
+    #   ребра (TripId#toString в BasicServiceImpl): mute (по умолчанию) — только значение, без рёбер; emit — рёбра.
+    # m4_success_retry: шаг ожидает успех, а по значениям M1 отказал — повтор с нормализованными/неизвестными
+    #   строковыми параметрами: on (по умолчанию) или off.
+    UNRESOLVED_RECEIVER_MODES = ("mute", "emit")
+    M4_SUCCESS_RETRY_MODES = ("on", "off")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -346,6 +354,8 @@ class RuntimeRules:
         enum_member_calls: str = "on",
         trip_food_query: str = "cascade",
         route_distances_collection: str = "pruned",
+        unresolved_receiver_calls: str = "mute",
+        m4_success_retry: str = "on",
     ) -> None:
         if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
             raise ValueError(
@@ -382,6 +392,13 @@ class RuntimeRules:
         self.enum_member_calls = enum_member_calls
         self.trip_food_query = trip_food_query
         self.route_distances_collection = route_distances_collection
+        if unresolved_receiver_calls not in self.UNRESOLVED_RECEIVER_MODES:
+            raise ValueError(f"unresolved_receiver_calls: {unresolved_receiver_calls!r}, "
+                             f"ожидается одно из {self.UNRESOLVED_RECEIVER_MODES}")
+        if m4_success_retry not in self.M4_SUCCESS_RETRY_MODES:
+            raise ValueError(f"m4_success_retry: {m4_success_retry!r}, ожидается одно из {self.M4_SUCCESS_RETRY_MODES}")
+        self.unresolved_receiver_calls = unresolved_receiver_calls
+        self.m4_success_retry = m4_success_retry
         self.rules_path = Path(rules_path) if rules_path else self.DEFAULT_RULES_PATH
         self.data: dict[str, Any] = {}
         self.admin_services: set[str] = set()
