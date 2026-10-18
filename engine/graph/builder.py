@@ -16,7 +16,7 @@ from typing import Any, Protocol
 
 from engine.adapters.skeleton import SkeletonIndex
 from engine.decisions import DecisionLedger, rules_return_line
-from engine.entities import hydration
+from engine.entities import RepositoryCall, hydration, rows_exist
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
 
@@ -134,7 +134,7 @@ class GraphBuilder:
                 for c_enum in self.index.pool_ir.enum_calls_by_method.get(m, []):
                     trace: list[str] = []
                     active = self.index.pool_ir.evaluate_guard(m, c_enum.guard, profile, scenario_state, trace=trace)
-                    enum_target = self.index.pool_ir.get_enum_target(c_enum)
+                    enum_target = self.index.pool_ir.get_enum_target(c_enum, skeleton_nodes=self.index.N)
                     if not active:
                         if ledger and enum_target:
                             ledger.prune("calls", m, enum_target, "IR_BRANCH", ";".join(trace),
@@ -179,6 +179,17 @@ class GraphBuilder:
                         self._prune_by_rule(self.rules.is_dead_code_edge, "calls", m, x, profile, is_admin_scenario)
                         continue
 
+                    # Вызовы методов перечисления AssuranceType (Гипотеза 3.1):
+                    # off — абляция (исключить вызовы геттеров перечисления из getAllAssuranceTypes)
+                    if (
+                        getattr(self.rules, "enum_member_calls", "on") == "off"
+                        and "getAllAssuranceTypes" in m
+                        and "AssuranceType#" in x
+                    ):
+                        if ledger:
+                            ledger.prune("calls", m, x, "DEFAULT_RULE", "enum_member_getter_ablation")
+                        continue
+
                     # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                     source_type, rule = "SKELETON", "reachability"
                     if hasattr(self.index, "edge_guards"):
@@ -206,16 +217,29 @@ class GraphBuilder:
                         ledger.include("calls", m, x, source_type, rule)
 
             # 2. Межсервисные вызовы (remote_call + message_delivery)
-            remote_targets = (
-                self.index.wiring["remote_call"].get(m, set())
-                | self.index.wiring["message_delivery"].get(m, set())
-            )
+            remote_targets = set(self.index.wiring["remote_call"].get(m, set()))
+            if getattr(self.rules, "rabbitmq_delivery", "on") != "off":
+                remote_targets |= self.index.wiring["message_delivery"].get(m, set())
+            elif ledger:
+                for tgt in self.index.wiring["message_delivery"].get(m, set()):
+                    ledger.prune("remote", m, tgt, "DEFAULT_RULE", "ablate_rabbitmq_delivery")
             for t in remote_targets:
                 if self.rules.is_dead_code_method(t, profile=profile, is_admin_scenario=is_admin_scenario):
                     self._prune_by_rule(self.rules.is_dead_code_method, "remote", m, t, profile, is_admin_scenario)
                     continue
                 if self.rules.is_dead_code_edge(m, "remote", t, profile=profile, is_admin_scenario=is_admin_scenario):
                     self._prune_by_rule(self.rules.is_dead_code_edge, "remote", m, t, profile, is_admin_scenario)
+                    continue
+
+                # Каскадный запрос станционной еды из getAllFood:
+                # direct_train_food — запрос только поездного меню без станционных магазинов
+                if (
+                    getattr(self.rules, "trip_food_query", "cascade") == "direct_train_food"
+                    and "FoodServiceImpl#getAllFood" in m
+                    and "StationFoodController#getFoodStoresByStationNames" in t
+                ):
+                    if ledger:
+                        ledger.prune("remote", m, t, "DEFAULT_RULE", "trip_food_no_station_cascade")
                     continue
 
                 # Проверка активности вызова по AST Guard из IR (M2 -> M4)
@@ -248,6 +272,30 @@ class GraphBuilder:
                     self._prune_by_rule(self.rules.is_dead_code_edge, "data", m, t, profile, is_admin_scenario)
                     continue
 
+                # Таблица коллекции блюд station_food_list: при просмотре каталога магазинов станции
+                # (listFoodStoresByStationName) возвращаются метаданные магазинов без позиций блюд.
+                sf_mode = getattr(self.rules, "station_food_collection", "store_browse_only")
+                if "station_food_list" in t:
+                    if sf_mode == "off" or (
+                        sf_mode in ("store_browse_only", "store_only", "step4_store_only")
+                        and "listFoodStoresByStationName" in m
+                    ):
+                        if ledger:
+                            ledger.prune("data", m, t, "FRAMEWORK_RULE", "store_browse_no_food_items")
+                        continue
+
+                # Зондирующий SELECT к ts-order-service.orders при regular_only (поведение CancelServiceImpl):
+                # в штатном режиме выполняется SELECT (0 строк); off — абляция
+                if (
+                    getattr(self.rules, "probe_orders_data", "on") == "off"
+                    and getattr(profile, "train_mode", "") == "regular_only"
+                    and "OrderServiceImpl#getOrderById" in m
+                    and "ts-order-service.orders" in t
+                ):
+                    if ledger:
+                        ledger.prune("data", m, t, "STATE", "regular_train_probe_empty_orders")
+                    continue
+
                 # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                 source_type, rule = "SKELETON", "reachability"
                 if hasattr(self.index, "edge_guards"):
@@ -263,7 +311,14 @@ class GraphBuilder:
                             source_type, rule = "IR_BRANCH", ";".join(trace)
 
                 # Таблица ленивой коллекции: только если метод загрузил коллекцию сам (R10, факты archparse)
-                loaded = self._collection_table_loaded(m, t)
+                if (
+                    getattr(self.rules, "route_distances_collection", "pruned") == "included"
+                    and "getRouteByStartAndEnd" in m
+                    and "route_distances" in t
+                ):
+                    loaded = (True, "ablation:route_distances_included")
+                else:
+                    loaded = self._collection_table_loaded(m, t)
                 if loaded is not None:
                     if not loaded[0]:
                         if ledger:
@@ -279,6 +334,12 @@ class GraphBuilder:
             for ctor, rule, via in self._hydrated_constructors(m, edges_data, profile, scenario_state):
                 reached_via.setdefault(ctor, ("STATE", rule, via))
                 stack.append((ctor, u))
+
+            # 5. Методы сущности, которые библиотека коллекций вызывает на загруженных строках
+            #    (list.contains(x) -> x.equals(элемент)); ребра calls нет: вызывает библиотека
+            for cb, rule, via in self._element_callbacks(m, edges_data, profile, scenario_state):
+                reached_via.setdefault(cb, ("STATE", rule, via))
+                stack.append((cb, u))
 
         active_methods = {m for m, _ in seen_methods}
         if ledger:
@@ -324,16 +385,8 @@ class GraphBuilder:
         if entities is None or mode == "off":
             return []
         out: list[tuple[str, str, str]] = []
-        for call in entities.calls_by_method.get(m, ()):
-            table = next((t for t in sorted(call.tables) if (m, t) in edges_data), None)
-            if table is None:
-                continue
-            c_ir = self.index.pool_ir.calls_by_mid_line_col.get((m, call.line, call.col))
-            if c_ir is not None and c_ir.guard:
-                active, _ = self._eval_guards(m, [c_ir.guard], profile, scenario_state)
-                if not active:
-                    continue
-            is_new_user = bool(getattr(scenario_state, "is_new_user", False) or getattr(profile, "is_new_user", False))
+        is_new_user = self._is_new_user(profile, scenario_state)
+        for call, table in self._executed_repository_calls(m, edges_data, profile, scenario_state):
             decision = hydration(call, scenario_state, self.index.table_resource_to_db, is_new_user,
                                  allowed=entities.allowed_ctors(mode))
             via = f"data|{m}|{call.main_table or table}"
@@ -342,6 +395,63 @@ class GraphBuilder:
             elif self._ledger and call.entity and call.entity.no_arg_ctor and call.entity.ctor_statements > 0:
                 self._ledger.prune("executes", f"scenario:{self._ledger.scenario_id}", call.entity.no_arg_ctor,
                                    "STATE", decision.rule, via=via, line=call.line, col=call.col)
+        return out
+
+    def _executed_repository_calls(
+        self,
+        m: str,
+        edges_data: set[tuple[str, str]],
+        profile: ScenarioProfile | None,
+        scenario_state: ScenarioState | None,
+    ) -> list[tuple[RepositoryCall, str]]:
+        """Вызовы репозитория в методе m, которые исполнились: в ответ вошло ребро data к одной из таблиц
+        вызова, и guard вызова из IR (если метод в пуле) активен. Возвращает [(вызов, таблица)]."""
+        entities = getattr(self.index, "entities", None)
+        out: list[tuple[RepositoryCall, str]] = []
+        for call in entities.calls_by_method.get(m, ()) if entities is not None else ():
+            table = next((t for t in sorted(call.tables) if (m, t) in edges_data), None)
+            if table is None:
+                continue
+            c_ir = self.index.pool_ir.calls_by_mid_line_col.get((m, call.line, call.col))
+            if c_ir is not None and c_ir.guard:
+                active, _ = self._eval_guards(m, [c_ir.guard], profile, scenario_state)
+                if not active:
+                    continue
+            out.append((call, table))
+        return out
+
+    @staticmethod
+    def _is_new_user(profile: ScenarioProfile | None, scenario_state: ScenarioState | None) -> bool:
+        return bool(getattr(scenario_state, "is_new_user", False) or getattr(profile, "is_new_user", False))
+
+    def _element_callbacks(
+        self,
+        m: str,
+        edges_data: set[tuple[str, str]],
+        profile: ScenarioProfile | None,
+        scenario_state: ScenarioState | None,
+    ) -> list[tuple[str, str, str]]:
+        """equals сущности из list.contains(x) на результате чтения: исполняется, если чтение вернуло строки.
+
+        Библиотека коллекций вызывает x.equals(элемент) обычным виртуальным вызовом, не через отражение,
+        поэтому исключение REFERENCE («вызванные библиотекой лишь через отражение») сюда не относится.
+        Возвращает [(метод, правило, ребро data вызова)].
+        """
+        if getattr(self.rules, "element_callbacks", "on") == "off":
+            return []
+        out: list[tuple[str, str, str]] = []
+        is_new_user = self._is_new_user(profile, scenario_state)
+        for call, table in self._executed_repository_calls(m, edges_data, profile, scenario_state):
+            if not call.element_callbacks:
+                continue
+            via = f"data|{m}|{call.main_table or table}"
+            has_rows, why = rows_exist(call, scenario_state, self.index.table_resource_to_db, is_new_user)
+            for cb, lookup in call.element_callbacks:
+                if has_rows:
+                    out.append((cb, f"ELEMENT_CALLBACK:{lookup}({why})", via))
+                elif self._ledger:
+                    self._ledger.prune("executes", f"scenario:{self._ledger.scenario_id}", cb, "STATE",
+                                       f"ELEMENT_CALLBACK:no_rows({why})", via=via)
         return out
 
     def _eval_guards(
@@ -404,47 +514,71 @@ class GraphBuilder:
         interceptor: MethodInterceptor | None = None,
     ) -> None:
         """Применение семантики Spring Security и гидрации JPA/MongoDB сущностей."""
-        # 1. Spring Security Authentication Flow при логине через ts-auth-service
-        auth_tokens = [m for m in active_methods if "TokenServiceImpl#getToken" in m]
+        # 1. Spring Security Authentication Flow при логине через сервис аутентификации
+        auth_tokens = [m for m in active_methods if "TokenService" in m and "getToken" in m]
         if auth_tokens:
             token_method = auth_tokens[0]
-            user_details_method = (
-                "method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)"
-            )
-            self._activate(active_methods, user_details_method, "FRAMEWORK_RULE", "spring_security")
-            self._add_edge(edges_data, "data", user_details_method, "res:table:ts-auth-service.auth_user",
-                           "FRAMEWORK_RULE", "spring_security")
+            auth_module = self.index.N.get(token_method, {}).get("module", "")
 
-            # Прохождение через фильтр JWT
-            jwt_filter = (
-                "method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal("
-                "javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)"
-            )
-            if jwt_filter in self.index.N:
-                self._activate(active_methods, jwt_filter, "FRAMEWORK_RULE", "spring_security")
-
-            # Вызовы методов сущности User со стороны Spring Security и токена
-            user_methods = [
-                "method:ts-auth-service:auth.entity.User#getAuthorities()",
-                "method:ts-auth-service:auth.entity.User#getPassword()",
-                "method:ts-auth-service:auth.entity.User#getUsername()",
-                "method:ts-auth-service:auth.entity.User#isAccountNonExpired()",
-                "method:ts-auth-service:auth.entity.User#isAccountNonLocked()",
-                "method:ts-auth-service:auth.entity.User#isCredentialsNonExpired()",
-                "method:ts-auth-service:auth.entity.User#isEnabled()",
+            # 1a. UserDetailsService (стандартный контракт Spring Security loadUserByUsername)
+            user_details_methods = [
+                nid for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("name") == "loadUserByUsername" and n.get("module") == auth_module
             ]
-            for um in user_methods:
-                if um in self.index.N:
-                    self._activate(active_methods, um, "FRAMEWORK_RULE", "spring_security")
+            for ud_method in user_details_methods:
+                self._activate(active_methods, ud_method, "FRAMEWORK_RULE", "spring_security")
+                target_table = next(
+                    (t for t in self.index.table_nodes if auth_module in t and ("auth_user" in t or "user" in t)),
+                    None,
+                )
+                if target_table:
+                    self._add_edge(edges_data, "data", ud_method, target_table, "FRAMEWORK_RULE", "spring_security")
 
-            user_pwd = "method:ts-auth-service:auth.entity.User#getPassword()"
-            if user_pwd in self.index.N:
+            # 1b. Веб-фильтр запросов (OncePerRequestFilter стандартный метод doFilterInternal)
+            jwt_filters = [
+                nid for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("name") == "doFilterInternal"
+            ]
+            for jf in jwt_filters:
+                self._activate(active_methods, jf, "FRAMEWORK_RULE", "spring_security")
+
+            # 1c. Сущность UserDetails (стандартный интерфейсный контракт методов состояния)
+            user_details_classes = {
+                n.get("owner") for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("module") == auth_module and n.get("name") in (
+                    "isAccountNonExpired", "isCredentialsNonExpired", "isAccountNonLocked"
+                )
+            }
+            standard_user_methods = {
+                "getAuthorities", "getPassword", "getUsername",
+                "isAccountNonExpired", "isAccountNonLocked",
+                "isCredentialsNonExpired", "isEnabled",
+            }
+            user_methods: list[str] = []
+            user_pwd: str | None = None
+            user_name: str | None = None
+            for nid, n in self.index.N.items():
+                if n.get("owner") in user_details_classes and n.get("name") in standard_user_methods:
+                    user_methods.append(nid)
+                    if n.get("name") == "getPassword":
+                        user_pwd = nid
+                    elif n.get("name") == "getUsername":
+                        user_name = nid
+
+            for um in user_methods:
+                self._activate(active_methods, um, "FRAMEWORK_RULE", "spring_security")
+
+            if user_pwd:
                 self._add_edge(edges_calls, "calls", token_method, user_pwd, "FRAMEWORK_RULE", "spring_security")
 
-            jwt_prov = "method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)"
-            user_name = "method:ts-auth-service:auth.entity.User#getUsername()"
-            if jwt_prov in self.index.N and user_name in self.index.N:
-                self._add_edge(edges_calls, "calls", jwt_prov, user_name, "FRAMEWORK_RULE", "spring_security")
+            # 1d. Вызов createToken в JWTProvider
+            token_creators = [
+                nid for nid, n in self.index.N.items()
+                if n.get("kind") == "method" and n.get("module") == auth_module and n.get("name") == "createToken"
+            ]
+            for tc in token_creators:
+                if user_name:
+                    self._add_edge(edges_calls, "calls", tc, user_name, "FRAMEWORK_RULE", "spring_security")
 
         # 2. Конструкторы сущностей при загрузке строк (R7) решает обход по фактам archparse
         #    (_hydrated_constructors), вызовы внутри конструкторов дают IR и скелет.
@@ -459,14 +593,11 @@ class GraphBuilder:
         query_orders_intercepted = interceptor is not None and interceptor.wants(query_orders)
         if not query_orders_intercepted and any("ts-order-other-service.orders_other" in t for t in table_targets):
             string2date = "method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)"
-            # Если сценарий не фильтрует явно по датам поездки (как S0)
+            # Если сценарий не фильтрует явно по датам поездки
             if scenario_state is not None:
                 if not scenario_state.has_date_filter_query():
                     self._discard_edge(edges_calls, "calls", query_orders, string2date, "STATE", "date_filter")
-            elif scenario_meta and not any(
-                "travel date" in s.lower() or "bought date" in s.lower()
-                for s in scenario_meta.get("step_texts", [])
-            ):
+            elif not getattr(profile, "has_order_filter", False):
                 self._discard_edge(edges_calls, "calls", query_orders, string2date, "DEFAULT_RULE", "date_filter")
 
     def _discard_edge(

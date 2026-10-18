@@ -477,3 +477,35 @@ class TestRuntimeRules:
             profile=prof_s7,
         )
 
+    def test_rebook_universality_profile_and_rules(self) -> None:
+        rules = RuntimeRules()
+        # По умолчанию: same family, downgrade (нет доплаты, нет смены семейства)
+        prof_default = ScenarioProfile("S2", False, False, False, True, train_mode="regular_only")
+        assert rules.is_dead_code_method("method:ts-rebook-service:rebook.service.RebookServiceImpl#createOrder()", profile=prof_default)
+        assert rules.is_dead_code_method("method:ts-rebook-service:rebook.service.RebookServiceImpl#deleteOrder()", profile=prof_default)
+        assert rules.is_dead_code_method("method:ts-rebook-service:rebook.service.RebookServiceImpl#payDifferentMoney()", profile=prof_default)
+        assert rules.is_dead_code_method("method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#payDifference()", profile=prof_default)
+
+        # Сценарий со сменой семейства и доплатой (upgrade + cross family)
+        prof_cross_up = ScenarioProfile(
+            "S_CUSTOM", False, False, False, True, train_mode="both",
+            has_rebook_downgrade=False, has_rebook_upgrade=True, has_cross_family_rebook=True,
+        )
+        assert not rules.is_dead_code_method("method:ts-rebook-service:rebook.service.RebookServiceImpl#createOrder()", profile=prof_cross_up)
+        assert not rules.is_dead_code_method("method:ts-rebook-service:rebook.service.RebookServiceImpl#deleteOrder()", profile=prof_cross_up)
+        assert not rules.is_dead_code_method("method:ts-rebook-service:rebook.service.RebookServiceImpl#payDifferentMoney()", profile=prof_cross_up)
+        assert not rules.is_dead_code_method("method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#payDifference()", profile=prof_cross_up)
+
+    def test_station_food_collection_modes(self) -> None:
+        rules_def = RuntimeRules()
+        assert rules_def.station_food_collection == "store_browse_only"
+
+        rules_alias = RuntimeRules(station_food_collection="step4_store_only")
+        assert rules_alias.station_food_collection == "step4_store_only"
+
+        rules_all = RuntimeRules(station_food_collection="all")
+        assert rules_all.station_food_collection == "all"
+
+        with pytest.raises(ValueError):
+            RuntimeRules(station_food_collection="invalid_mode")
+

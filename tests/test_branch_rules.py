@@ -176,3 +176,54 @@ def test_rule_ablation_disable_enable(sample_profile: ScenarioProfile):
     assert rule3.id == rule_id
     assert val3 is True
 
+
+def test_rebook_branch_rules_dynamic():
+    """Проверка динамического разрешения правил перебронирования через флаги профиля."""
+    registry = BranchRulesRegistry.load()
+
+    prof_downgrade = ScenarioProfile(
+        id="S_DOWN", is_admin=False, has_assurance=False, has_consign=False, has_food=False,
+        train_mode="regular_only", has_rebook_downgrade=True, has_cross_family_rebook=False,
+    )
+    val_diff, rule_diff = registry.evaluate_branch(
+        method_id="rebook.service.RebookServiceImpl#rebook",
+        bid="b100",
+        arm="then",
+        cond="priceOld.compareTo(priceNew) > 0",
+        profile=prof_downgrade,
+    )
+    assert rule_diff is not None and rule_diff.id == "BR_REBOOK_PRICE_DIFFERENCE"
+    assert val_diff is True
+
+    val_family, rule_family = registry.evaluate_branch(
+        method_id="rebook.service.RebookServiceImpl#updateOrder",
+        bid="b101",
+        arm="then",
+        cond="tripGD && oldTripGD",
+        profile=prof_downgrade,
+    )
+    assert rule_family is not None and rule_family.id == "BR_REBOOK_SAME_FAMILY"
+    assert val_family is True
+
+    prof_upgrade_cross = ScenarioProfile(
+        id="S_UP", is_admin=False, has_assurance=False, has_consign=False, has_food=False,
+        train_mode="both", has_rebook_downgrade=False, has_rebook_upgrade=True, has_cross_family_rebook=True,
+    )
+    val_diff2, _ = registry.evaluate_branch(
+        method_id="rebook.service.RebookServiceImpl#rebook",
+        bid="b100",
+        arm="then",
+        cond="priceOld.compareTo(priceNew) > 0",
+        profile=prof_upgrade_cross,
+    )
+    assert val_diff2 is False
+
+    val_family2, _ = registry.evaluate_branch(
+        method_id="rebook.service.RebookServiceImpl#updateOrder",
+        bid="b101",
+        arm="then",
+        cond="tripGD && oldTripGD",
+        profile=prof_upgrade_cross,
+    )
+    assert val_family2 is False
+

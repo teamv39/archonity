@@ -152,6 +152,7 @@ public class EntityScanner {
                     EntityReportIR.RepositoryCall rc = describeCall(sf, call, repo, entity);
                     if ("READ".equals(rc.operation) && entity != null) {
                         loadedCollections(call, entity, methodsByModule.getOrDefault(sf.module(), Map.of()), rc);
+                        elementCallbacks(call, entity, rc);
                     }
                     report.repositoryCalls.add(rc);
                 }
@@ -501,6 +502,53 @@ public class EntityScanner {
         }
         rc.collectionsLoaded = new ArrayList<>(loaded);
         rc.collectionsLoadedReason = reasons;
+    }
+
+    private static final Set<String> EQUALITY_LOOKUPS = Set.of("contains", "indexOf", "lastIndexOf", "remove");
+
+    /**
+     * Вызовы библиотеки коллекций на результате чтения, которые сравнивают элементы через equals:
+     * `list.contains(x)` вызывает `x.equals(элемент)` для элементов списка обычным виртуальным вызовом.
+     * Берём, только если аргумент того же типа, что сущность, и у сущности рукописный equals(Object).
+     */
+    private static void elementCallbacks(MethodCallExpr call, EntityDecl entity, EntityReportIR.RepositoryCall rc) {
+        boolean ownEquals = entity.cid().getMethodsByName("equals").stream()
+                .anyMatch(m -> m.getParameters().size() == 1 && m.getBody().isPresent());
+        Optional<MethodDeclaration> md = call.findAncestor(MethodDeclaration.class);
+        String var = resultVariable(call);
+        if (!ownEquals || md.isEmpty() || var == null) {
+            return;
+        }
+        String entitySimple = simpleName(entity.ir().type);
+        Map<String, Type> types = declaredTypes(md.get());
+        List<EntityReportIR.ElementCallback> out = new ArrayList<>();
+        for (MethodCallExpr c : md.get().findAll(MethodCallExpr.class)) {
+            if (!EQUALITY_LOOKUPS.contains(c.getNameAsString()) || c.getArguments().size() != 1
+                    || c.getScope().isEmpty() || !(c.getScope().get() instanceof NameExpr s) || !s.getNameAsString().equals(var)
+                    || !isEntityValue(c.getArgument(0), types, entitySimple) || !before(call, c)) {
+                continue;
+            }
+            EntityReportIR.ElementCallback cb = new EntityReportIR.ElementCallback();
+            cb.method = "method:" + entity.ir().module + ":" + entity.ir().type + "#equals(java.lang.Object)";
+            cb.via = c.getNameAsString();
+            cb.line = line(c.getName());
+            cb.col = AstAnalyzer.skeletonCol(c.getName());
+            out.add(cb);
+        }
+        if (!out.isEmpty()) {
+            rc.elementCallbacks = out;
+        }
+    }
+
+    /** Локальная переменная, в которую сохранён результат вызова: `List<X> xs = repo.find(...)` или `xs = repo.find(...)`. */
+    private static String resultVariable(MethodCallExpr call) {
+        if (call.getParentNode().orElse(null) instanceof VariableDeclarator vd) {
+            return vd.getNameAsString();
+        }
+        if (call.getParentNode().orElse(null) instanceof AssignExpr a && a.getTarget() instanceof NameExpr n) {
+            return n.getNameAsString();
+        }
+        return null;
     }
 
     /** Обращения к ленивым коллекциям сущности в теле метода, кроме геттера внутри return. */

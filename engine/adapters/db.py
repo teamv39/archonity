@@ -267,6 +267,26 @@ class DatabaseState:
             r.update(updates)
         return len(matching_rows)
 
+    def get_user_by_name(self, user_name: str) -> dict[str, Any] | None:
+        """Finds user row in 'user' table by user_name."""
+        return self.find_one("user", user_name=user_name)
+
+    def get_user_balance(self, user_id: str) -> float | None:
+        """Computes current balance for user_id from inside_money deposits and inside_payment records.
+
+        Matches InsidePaymentServiceImpl logic:
+        money = sum(inside_money.money)
+        expand = sum(inside_payment.price)
+        balance = max(0.0, money - expand)
+        """
+        add_monies = self.query("inside_money", user_id=user_id)
+        payments = self.query("inside_payment", user_id=user_id)
+        if not add_monies and not payments:
+            return None
+        total_money = sum(float(m.get("money") or 0.0) for m in add_monies)
+        total_expand = sum(float(p.get("price") or 0.0) for p in payments)
+        return max(0.0, total_money - total_expand)
+
     def fork(self) -> DatabaseState:
         """Creates an isolated deep copy in < 0.1 ms for scenario isolation."""
         cloned_tables = {
@@ -416,3 +436,59 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
         table_aliases=table_aliases,
         table_columns=table_cols,
     )
+
+
+def parse_context_readme(readme_path: str | Path) -> dict[str, Any]:
+    """Extracts benchmark execution context from context/README.md.
+
+    Parses:
+      - travel_date (e.g. '1 October 2026' or '2026-10-01')
+      - system_date (e.g. '15 September 2026' or '2026-09-15')
+      - user_name (e.g. 'fdse_microservice')
+      - balance (e.g. 10000.0)
+    """
+    path = Path(readme_path)
+    if not path.is_file():
+        return {}
+
+    text = path.read_text(encoding="utf-8", errors="replace")
+    info: dict[str, Any] = {}
+
+    months = {
+        "january": "01", "february": "02", "march": "03", "april": "04",
+        "may": "05", "june": "06", "july": "07", "august": "08",
+        "september": "09", "october": "10", "november": "11", "december": "12",
+    }
+
+    # Travel date (e.g. "booked for 1 October 2026")
+    m_travel = re.search(r"booked for\s+([0-9]{1,2})\s+([A-Za-z]+)\s+([0-9]{4})", text, re.IGNORECASE)
+    if m_travel:
+        day, month_name, year = m_travel.group(1), m_travel.group(2).lower(), m_travel.group(3)
+        month = months.get(month_name)
+        if month:
+            info["travel_date"] = f"{year}-{month}-{int(day):02d}"
+    elif m_iso := re.search(r"booked for\s+([0-9]{4}-[0-9]{2}-[0-9]{2})", text, re.IGNORECASE):
+        info["travel_date"] = m_iso.group(1)
+
+    # System clock date (e.g. "system clock is 15 September 2026")
+    m_sys = re.search(r"system clock is\s+([0-9]{1,2})\s+([A-Za-z]+)\s+([0-9]{4})", text, re.IGNORECASE)
+    if m_sys:
+        day, month_name, year = m_sys.group(1), m_sys.group(2).lower(), m_sys.group(3)
+        month = months.get(month_name)
+        if month:
+            info["system_date"] = f"{year}-{month}-{int(day):02d}"
+    elif m_iso := re.search(r"system clock is\s+([0-9]{4}-[0-9]{2}-[0-9]{2})", text, re.IGNORECASE):
+        info["system_date"] = m_iso.group(1)
+
+    # Pre-registered account
+    m_user = re.search(r"pre-registered user\s+([a-zA-Z0-9_-]+)", text, re.IGNORECASE)
+    if m_user:
+        info["user_name"] = m_user.group(1)
+
+    # Balance (e.g. "internal account balance 10 000")
+    m_bal = re.search(r"(?:account balance|balance)\s+([0-9]+(?:[\s,][0-9]{3})*(?:\.[0-9]+)?)", text, re.IGNORECASE)
+    if m_bal:
+        info["balance"] = float(m_bal.group(1).replace(" ", "").replace(",", ""))
+
+    return info
+

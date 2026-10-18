@@ -1360,7 +1360,13 @@
     "entity" : "other.entity.Order",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable accountOrders not checked"
+    "expects_reason" : "variable accountOrders not checked",
+    "element_callbacks" : [ {
+      "method" : "method:ts-order-other-service:other.entity.Order#equals(java.lang.Object)",
+      "via" : "contains",
+      "line" : 94,
+      "col" : 27
+    } ]
   }, {
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
     "line" : 99,
@@ -1568,7 +1574,13 @@
     "entity" : "other.entity.Order",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable accountOrders not checked"
+    "expects_reason" : "variable accountOrders not checked",
+    "element_callbacks" : [ {
+      "method" : "method:ts-order-other-service:other.entity.Order#equals(java.lang.Object)",
+      "via" : "contains",
+      "line" : 434,
+      "col" : 27
+    } ]
   }, {
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
     "line" : 439,
@@ -1626,7 +1638,13 @@
     "entity" : "order.entity.Order",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable accountOrders not checked"
+    "expects_reason" : "variable accountOrders not checked",
+    "element_callbacks" : [ {
+      "method" : "method:ts-order-service:order.entity.Order#equals(java.lang.Object)",
+      "via" : "contains",
+      "line" : 90,
+      "col" : 27
+    } ]
   }, {
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
     "line" : 95,
@@ -1824,7 +1842,13 @@
     "entity" : "order.entity.Order",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable accountOrders not checked"
+    "expects_reason" : "variable accountOrders not checked",
+    "element_callbacks" : [ {
+      "method" : "method:ts-order-service:order.entity.Order#equals(java.lang.Object)",
+      "via" : "contains",
+      "line" : 428,
+      "col" : 27
+    } ]
   }, {
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
     "line" : 433,

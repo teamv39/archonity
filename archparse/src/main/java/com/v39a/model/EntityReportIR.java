@@ -137,5 +137,28 @@ public class EntityReportIR {
 
         @JsonProperty("collections_loaded_reason")
         public List<String> collectionsLoadedReason;
+
+        /**
+         * Для READ: методы сущности, которые библиотека коллекций вызывает обычным вызовом на элементах
+         * результата (`list.contains(x)` -> `x.equals(элемент)`), если у сущности рукописный equals.
+         */
+        @JsonProperty("element_callbacks")
+        public List<ElementCallback> elementCallbacks;
+    }
+
+    public static class ElementCallback {
+        /** ID метода скелета: method:<module>:<сущность>#equals(java.lang.Object). */
+        @JsonProperty("method")
+        public String method;
+
+        /** Вызов библиотеки: contains, indexOf, lastIndexOf, remove. */
+        @JsonProperty("via")
+        public String via;
+
+        @JsonProperty("line")
+        public int line;
+
+        @JsonProperty("col")
+        public int col;
     }
 }

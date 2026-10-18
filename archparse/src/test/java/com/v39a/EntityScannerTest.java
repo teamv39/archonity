@@ -151,6 +151,19 @@ public class EntityScannerTest {
     }
 
     @Test
+    public void testElementCallbacks() {
+        // accountOrders.contains(order) вызывает order.equals(элемент): рукописный equals сущности
+        EntityReportIR.RepositoryCall create = call("order/service/OrderServiceImpl.java", 89, "findByAccountId");
+        assertNotNull(create.elementCallbacks);
+        assertEquals("method:ts-order-service:order.entity.Order#equals(java.lang.Object)", create.elementCallbacks.get(0).method);
+        assertEquals("contains", create.elementCallbacks.get(0).via);
+        assertEquals(90, create.elementCallbacks.get(0).line);
+        assertNotNull(call("other/service/OrderOtherServiceImpl.java", 93, "findByAccountId").elementCallbacks);
+        // Чтение без contains: поля нет
+        assertNull(call("order/service/OrderServiceImpl.java", 128, "findByAccountId").elementCallbacks);
+    }
+
+    @Test
     public void testSpringPhysicalNaming() {
         assertEquals("station_food_store", springName("StationFoodStore"));
         assertEquals("price_config", springName("PriceConfig"));

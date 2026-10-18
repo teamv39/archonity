@@ -14,6 +14,9 @@ archparse (`--mode entities`) пишет `data/entity_ir.json`: сущности
 
 Таблица ленивой коллекции при чтении (правило R10) идёт в ответ, только если метод загрузил коллекцию сам
 (`collection_table_loaded`).
+
+`list.contains(x)` на результате чтения вызывает рукописный `x.equals(элемент)` сущности (блок 8 плана archparse):
+исполняется, если чтение вернуло строки (`element_callbacks`, решение в `GraphBuilder._element_callbacks`).
 """
 from __future__ import annotations
 
@@ -29,7 +32,17 @@ LOGGER = logging.getLogger(__name__)
 DEFAULT_ENTITY_IR_PATH = Path(__file__).resolve().parent.parent / "data" / "entity_ir.json"
 
 # Колонки владельца строки: по ним строки таблицы относятся к пользователю сценария
-OWNER_COLUMNS = ("account_id", "user_id")
+OWNER_COLUMNS = (
+    "account_id",
+    "user_id",
+    "owner_id",
+    "account",
+    "user",
+    "customer_id",
+    "member_id",
+    "client_id",
+    "author_id",
+)
 
 # Таблицы, строки которых модель состояния ведёт сама (создаются шагами сценария)
 STATE_TRACKED_TABLES = ("orders", "orders_other", "contacts")
@@ -68,6 +81,8 @@ class RepositoryCall:
     # Для READ: поля ленивых коллекций, которые метод загрузил сам (None — archparse не определил)
     collections_loaded: tuple[str, ...] | None = None
     collections_loaded_reason: tuple[str, ...] = field(default=())
+    # Для READ: (метод сущности, вызов библиотеки) — list.contains(x) вызывает x.equals(элемент)
+    element_callbacks: tuple[tuple[str, str], ...] = field(default=())
 
 
 @dataclass(frozen=True)
@@ -173,6 +188,9 @@ class EntityFacts:
                 lazy_tables=lazy_tables,
                 collections_loaded=None if loaded is None else tuple(loaded),
                 collections_loaded_reason=tuple(d.get("collections_loaded_reason") or ()),
+                element_callbacks=tuple(
+                    (cb["method"], cb.get("via", "")) for cb in d.get("element_callbacks") or () if cb.get("method") in nodes
+                ),
             )
             self.calls_by_method.setdefault(method, []).append(call)
         if unmatched:
@@ -304,12 +322,14 @@ def rows_exist(call: RepositoryCall, state: Any, table_db_name: Any, is_new_user
 
 def _state_rows(name: str, state: Any, account: str | None) -> list[dict[str, Any]]:
     """Строки таблицы, которые ведёт модель состояния (account=None — без фильтра по пользователю)."""
-    if name in ("orders", "orders_other"):
+    if name in ("orders", "orders_other") and hasattr(state, "get_orders"):
         from engine.state import TrainType
 
         other = TrainType.from_table(name) == TrainType.Other
         return [o for o in state.get_orders(account_id=account) if (o.get("train_type") == TrainType.Other) == other]
-    return state.get_contacts("all" if account is None else account)
+    if hasattr(state, "get_contacts"):
+        return state.get_contacts("all" if account is None else account)
+    return []
 
 
 def _snake(name: str) -> str:

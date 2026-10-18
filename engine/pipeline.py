@@ -33,6 +33,13 @@ class ArchonityPipeline:
         entity_ir_path: str | Path | None = None,
         entity_constructors_on_load: str = "project_calls",
         collection_tables_on_read: str = "loaded",
+        element_callbacks: str = "on",
+        rabbitmq_delivery: str = "on",
+        station_food_collection: str = "store_browse_only",
+        probe_orders_data: str = "on",
+        enum_member_calls: str = "on",
+        trip_food_query: str = "cascade",
+        route_distances_collection: str = "pruned",
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
         executor: str = "legacy",
@@ -59,6 +66,13 @@ class ArchonityPipeline:
             rules_path,
             entity_constructors_on_load=entity_constructors_on_load,
             collection_tables_on_read=collection_tables_on_read,
+            element_callbacks=element_callbacks,
+            rabbitmq_delivery=rabbitmq_delivery,
+            station_food_collection=station_food_collection,
+            probe_orders_data=probe_orders_data,
+            enum_member_calls=enum_member_calls,
+            trip_food_query=trip_food_query,
+            route_distances_collection=route_distances_collection,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
@@ -107,9 +121,11 @@ class ArchonityPipeline:
         # Шаг 1: Инициализация изолированного состояния сценария (M3)
         if scenario_state is None:
             db_state = getattr(self.index, "db_state", None)
+            context = getattr(self.index, "context", None)
             scenario_state = ScenarioState.create_initial(
                 db_state=db_state.fork() if db_state else None,
                 scenario_profile=profile,
+                context=context,
             )
 
         step_texts = [st.get("action", "") for st in scenario_dict.get("steps") or []]
