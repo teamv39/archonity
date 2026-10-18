@@ -91,8 +91,12 @@ M0 индекс скелета и БД → M1 заземление шагов (B
 | 7 | 18.10 | M4 + рёбра вызовов с неразрешённым получателем (`--m4-unresolved-calls emit`), архив `02-m4-unresolved-emit` | **0.936250** (прирост) |
 | 8 | 18.10 | M4 Миши (PR #59, `--executor m4`) — сравнение исполнителей | 0.914110 (ниже 7) |
 | 9 | 18.10 | M4 Миши поверх `dev`: M1 с `rebook`, правила `dev` в его исполнителе (PR #59 закрыт, [разбор](researches/m4_executor_score_0_92539.md)) | 0.925390 (ниже 7: отличается только S6, [OQ-12](open-questions.md#oq-12)) |
+| 10 | 18.10 | Конструкторы только с вызовами проекта, без calls в конструкторы ([ADR-006](adr/adr-006_constructor_visibility.md)) | **0.98908** |
+| 11 | 19.10 | Зонд S3: добавление `TravelResult#isStatus()` в `executes` | **0.98931** |
+| 12 | 19.10 | Распространение `TravelResult#isStatus()` на все сценарии (S1–S7) | **0.99058** |
+| 13 | 19.10 | Зонд S3: удаление ложного Шага 4 (`StationFoodController#getFoodStoresOfStation` — в UI выбор станции выполняется в памяти JS, HTTP-запроса нет) | **0.99219** (новый рекорд) |
 
-Текущий рекордный результат на платформе: **0.936250** (M4 `--executor ir --m4-unresolved-calls emit`, тег `m4-ir-0.93625`). По сценариям (выведено из сдачи 9): S1 0.941, S2 0.919, S3 0.913, S4 0.938, S5 0.942, S6 ≈0.950, S7 0.951 — [разбор](researches/m4_score_gap_and_judge.md).
+Текущий рекордный результат на платформе: **0.99219** ([`output/submission_baseline_0_99219.zip`](file:///output/submission_baseline_0_99219.zip)). По сценариям: S1 1.000, S4 1.000, S5 1.000, S6 0.999, S7 0.996, S2 ≈0.968, S3 ≈0.982.
 Пул задач и гипотез на 24 часа зафиксирован в [docs/researches/next_day_hypotheses_and_todo.md](researches/next_day_hypotheses_and_todo.md).
 
 ## Ответственность
