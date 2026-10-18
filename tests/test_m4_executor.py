@@ -302,3 +302,17 @@ def test_judge_path_hides_arbitrary_arms() -> None:
     lines = path_lines(frame)
     assert "not determined" in lines[1] and "TRUE" not in lines[1]
     assert lines[2].endswith("-> FALSE")
+
+
+def test_list_contains_runs_entity_equals(runs: dict[str, Any]) -> None:
+    """S1.6: OrderServiceImpl#create проверяет accountOrders.contains(order) — библиотека вызывает
+    order.Order#equals (тело запроса Jackson читает в тип параметра обработчика); executes без ребра calls (R5)."""
+    r = runs["S1"]
+    assert "method:ts-order-service:order.entity.Order#equals(java.lang.Object)" in r.methods
+    assert not any(d.endswith("Order#equals(java.lang.Object)") for _, d in r.calls)
+    assert not any("common.entity.Order#equals" in m for m in r.methods)
+
+
+def test_station_store_browse_has_no_food_items_table(runs: dict[str, Any]) -> None:
+    """Как в legacy (station_food_collection=store_browse_only): каталог магазинов без таблицы блюд."""
+    assert not has_edge(runs["S3"].data, "StationFoodServiceImpl#listFoodStoresByStationName", "station_food_list")

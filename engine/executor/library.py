@@ -417,6 +417,8 @@ def _collection(run: StepRun, frame: Frame, c: Coll, callee: str, args: list[Any
         if items is not None and isinstance(a0, int) and 0 <= a0 < len(items):
             return items[a0]
         return _element(c)
+    if callee in ("contains", "indexOf", "lastIndexOf"):
+        _equals_callback(run, frame, c, a0, callee)
     if callee == "contains":
         if items is not None and not is_unknown(a0):
             return any(_equals(x, a0) is True for x in items) or (
@@ -468,6 +470,19 @@ def _collection(run: StepRun, frame: Frame, c: Coll, callee: str, args: list[Any
         if items is not None and all(isinstance(unbox(x), (int, float)) for x in items):
             return sum(unbox(x) for x in items)
     return Unknown(f"{callee}() of {c.origin}", "object", src=c.src)
+
+
+def _equals_callback(run: StepRun, frame: Frame, c: Coll, a0: Any, via: str) -> None:
+    """`list.contains(o)`: библиотека вызывает `o.equals(элемент)` обычным виртуальным вызовом. Явный `equals`
+    типа проекта исполняется, если список непуст: executes без ребра calls (R5). Флаг `element_callbacks`."""
+    if not isinstance(a0, Obj) or a0.src in ("bean", "enum", "library") or truth(c.nonempty) is not True:
+        return
+    if getattr(run.ex.builder.rules, "element_callbacks", "on") == "off":
+        return
+    p = run.program
+    eq = p.lookup_method(p.type_node(a0.type, p.module_of(frame.method_id)), "equals", 1)
+    if eq is not None:
+        run.mark(eq, frame.unit, ("STATE", f"ELEMENT_CALLBACK:{via}"), None)
 
 
 def _element(c: Coll) -> Any:

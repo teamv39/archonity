@@ -1002,8 +1002,11 @@ class StepRun:
             ann = p.annotations
             name = ann_value(ann.get("PathVariable") or ann.get("RequestParam") or "") or p.name
             if "RequestBody" in ann:
-                out.append(body if body is not None else unknown_of(f"request body of {short(handler)}", p.type,
-                                                                    "remote", success_defaults=False))
+                # Тело прошло JSON: Jackson читает его в объявленный тип параметра обработчика
+                target = Frame(handler, "", None, {}, 0)
+                out.append(library.from_json(self, target, body, Obj("java.lang.Class", {"name": p.type}))
+                           if body is not None else unknown_of(f"request body of {short(handler)}", p.type,
+                                                               "remote", success_defaults=False))
             elif "PathVariable" in ann and name in pvars:
                 # Spring приводит сегмент URL к типу параметра (@PathVariable int typeIndex)
                 out.append(repo.convert(pvars[name], p.type) if isinstance(pvars[name], str) else (

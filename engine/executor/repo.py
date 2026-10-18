@@ -30,7 +30,15 @@ OR_SPLIT = re.compile(r"Or(?=[A-Z])")
 def call(run: StepRun, frame: Frame, node: dict[str, Any], recv: Any, args: list[Any], rc: RepositoryCall | None,
          tables: list[str], line: int, col: int) -> Any:
     included: list[str] = []
+    sf_mode = getattr(run.ex.builder.rules, "station_food_collection", "store_browse_only")
     for t in sorted(tables):
+        # Как в legacy (GraphBuilder, гипотеза station_food_list, подтверждена платформой 0.92006): каталог магазинов
+        # станции отдаёт метаданные магазинов без блюд
+        if "station_food_list" in t and (sf_mode == "off" or (
+                sf_mode in ("store_browse_only", "store_only", "step4_store_only")
+                and "listFoodStoresByStationName" in frame.method_id)):
+            run.prune("data", frame.method_id, t, "FRAMEWORK_RULE", "store_browse_no_food_items", line=line, col=col)
+            continue
         loaded = run.ex.collection_table_loaded(frame.method_id, t)
         if loaded is not None and not loaded[0]:
             run.prune("data", frame.method_id, t, "STATE", loaded[1], line=line, col=col)
