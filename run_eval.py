@@ -123,6 +123,11 @@ def parse_args() -> argparse.Namespace:
         help="M4, абляция: эвристики rules.py поверх решений IR",
     )
     parser.add_argument(
+        "--m4-no-runtime-type-edges",
+        action="store_true",
+        help="M4, абляция R2: вызов по фактическому типу (call_site без рёбер скелета) исполняется без рёбер",
+    )
+    parser.add_argument(
         "--no-signal-arm",
         choices=("continue", "then"),
         default="continue",
@@ -247,6 +252,7 @@ def main() -> None:
             only=args.m4_only,
             legacy_rules=args.m4_legacy_rules,
             no_signal_arm=args.no_signal_arm,
+            runtime_type_edges=not args.m4_no_runtime_type_edges,
         )
     print(f"Executor:   {args.executor}")
     pipeline = ArchonityPipeline(

@@ -104,6 +104,10 @@ def path_lines(frame: Frame) -> tuple[str, ...]:
         else:
             out.append(f"-> {name} (called at line {fr.call_line})")
         for d in fr.history[-6:]:
+            if d.label == "NO_EFFECT":
+                # Плечо выбрано без расчёта (оба без вызовов): это не факт о значениях, судья не должен на него опираться
+                out.append(f"   line {d.line}: {d.text or d.bid} -> not determined (no calls in either branch)")
+                continue
             verdict = {"then": "TRUE", "else": "FALSE", "body": "runs", "skip": "skipped"}.get(d.arm, d.arm)
             out.append(f"   line {d.line}: {d.text or d.bid} -> {verdict}")
     return tuple(out)

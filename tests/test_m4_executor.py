@@ -289,3 +289,16 @@ def test_unknown_conditions_left_for_the_judge(runs: dict[str, Any]) -> None:
     assert ("SeatServiceImpl", 122) in asked  # случайное место: Random.nextInt
     assert ("PreserveServiceImpl", 218) in asked  # имя получателя багажа: текст шага
 
+
+
+def test_judge_path_hides_arbitrary_arms() -> None:
+    """Плечо NO_EFFECT выбрано без расчёта: в пути для судьи оно не выдаётся за факт."""
+    from engine.executor.facts import path_lines
+    from engine.executor.interp import Decision, Frame
+
+    frame = Frame("method:svc:a.B#m()", "u", None, {}, 0)
+    frame.history = [Decision("b9", "then", 9, "DEFAULT_RULE", "NO_EFFECT", "if (x < 6) {"),
+                     Decision("b12", "else", 12, "IR_BRANCH", "IR", "if (y == null) {")]
+    lines = path_lines(frame)
+    assert "not determined" in lines[1] and "TRUE" not in lines[1]
+    assert lines[2].endswith("-> FALSE")

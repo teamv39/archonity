@@ -41,6 +41,7 @@ class M4Options:
     only: str | None = None  # подстрока ID: M4 исполняет только такие методы, остальные раскрывает legacy
     legacy_rules: bool = False  # абляция: rules.py поверх решений IR
     no_signal_arm: str = "continue"  # плечо без сигнала исхода: continue — без раннего выхода, then — всегда then
+    runtime_type_edges: bool = True  # абляция R2: вызов по фактическому типу без рёбер скелета даёт рёбра (иначе тихо)
     ir_dir: Path = DEFAULT_IR_DIR
 
 

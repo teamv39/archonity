@@ -846,7 +846,14 @@ class StepRun:
                 return self.project_call(frame, node, targets, recv, args, line, col)
             dyn = self.runtime_target(node, recv, len(args))
             if dyn is not None:
-                return self.project_call(frame, node, [dyn], recv, args, line, col, extra=("IR_CALL", "R2:runtime_type"))
+                if self.ex.options.runtime_type_edges:
+                    return self.project_call(frame, node, [dyn], recv, args, line, col,
+                                             extra=("IR_CALL", "R2:runtime_type"))
+                self.silent += 1  # абляция: значение нужно условиям, рёбер нет
+                try:
+                    return self.project_call(frame, node, [dyn], recv, args, line, col)
+                finally:
+                    self.silent -= 1
         return library.call(self, frame, node, recv, args)
 
     def runtime_target(self, node: dict[str, Any], recv: Any, argc: int) -> str | None:
