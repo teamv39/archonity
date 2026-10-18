@@ -46,6 +46,8 @@ class ArchonityPipeline:
         m4_success_retry: str = "on",
         m4_judge: str = "off",
         m4_judge_budget: int = 400,
+        security_check_scope: str = "all",
+        route_stations_usage: str = "pruned",
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -76,9 +78,11 @@ class ArchonityPipeline:
             enum_member_calls=enum_member_calls,
             trip_food_query=trip_food_query,
             route_distances_collection=route_distances_collection,
+            route_stations_usage=route_stations_usage,
             preserve_notification_lookup=preserve_notification_lookup,
             unresolved_receiver_calls=unresolved_receiver_calls,
             m4_success_retry=m4_success_retry,
+            security_check_scope=security_check_scope,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
