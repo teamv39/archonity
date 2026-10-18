@@ -304,9 +304,9 @@ flowchart TD
 ## 5. Актуальный TODO-лист (Backlog)
 
 ### Приоритет P0 (Первые 4 часа, немедленный эффект)
-- [ ] **TASK-01:** Исправить заземление шага 14 в $S_2$ (`RebookController#rebook` вместо `payDifference`). Проверить вызовы `drawBackMoney` и `updateOrder`.
+- [x] **TASK-01:** Исправить заземление шага 14 в $S_2$ (`RebookController#rebook` вместо `payDifference`). Проверить вызовы `drawBackMoney` и `updateOrder`. (Выполнено в ветке `feature/50-hypotheses-verification`, M1 top-1 = 100%, отчет: `docs/researches/m1_s2_step14_rebook_and_hypotheses_audit.md`).
 - [ ] **TASK-02:** Собрать сабмишн, запустить валидацию на платформе NSUTS, зафиксировать рост скора $S_2$ и общий балл.
-- [ ] **TASK-03:** Проверить отсечение `calculateRefund(order)` на шаге 8 в $S_7$ при статусе `COLLECTED`.
+- [x] **TASK-03:** Проверить отсечение `calculateRefund(order)` на шаге 8 в $S_7$ при статусе `COLLECTED`. (Верифицировано: ветка отсечена по R15, вызовы `calculateRefund(Order)` отсутствуют).
 
 ### Приоритет P1 (Часы 4–14, ядро M4 и абляции)
 - [ ] **TASK-04:** Реализовать модуль `engine/interpreter.py` (M4.1): символический разбор AST IR выражений с трёхзначной логикой (`TRUE`, `FALSE`, `UNKNOWN`).

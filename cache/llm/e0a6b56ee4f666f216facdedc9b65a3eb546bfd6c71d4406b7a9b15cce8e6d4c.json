@@ -838,8 +838,8 @@
   "additionalProperties": false
  },
  "response": {
-  "reasoning": "The step requires rebooking a paid ticket to a cheaper seat class, which triggers a refund of the difference. According to the UI logic described in H173, when a rebook operation results in a price difference (specifically a refund/difference money), the UI sends the POST /api/v1/rebookservice/rebook/difference request to handle the financial adjustment. This matches the scenario's requirement to ",
-  "handler": "H173",
+  "reasoning": "The user initiates rebooking of the paid ticket to a second-class seat on the regular train. The web UI action triggers POST /api/v1/rebookservice/rebook (H174). Since the new seat is cheaper, RebookServiceImpl refunds the difference directly via drawBackMoney, so payDifference is not called.",
+  "handler": "H174",
   "expected_outcome": "success",
   "refs": {
    "order": "new_of_step_11"
