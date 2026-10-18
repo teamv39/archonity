@@ -454,3 +454,235 @@ class TestPipelineAndGraphBuilderIntegration:
         assert len(calls) == 24
         assert len(remote) == 0
         assert len(data) == 7
+
+
+# =============================================================================
+# 8. TestStepArtifactsAndRefsResolution (10 tests)
+# =============================================================================
+
+
+class TestStepArtifactsAndRefsResolution:
+    """Verifies ADR-005 refs resolution and step artifacts recording (Milestone M3)."""
+
+    def test_record_and_get_step_artifacts(self) -> None:
+        state = ScenarioState()
+        ent = {"id": "ord-1", "price": 100.0}
+        rec = state.record_step_entity(4, "order", ent)
+        assert rec["created_at_step"] == 4
+        artifacts_step4 = state.get_step_artifacts(4)
+        assert "order" in artifacts_step4
+        assert artifacts_step4["order"][0]["id"] == "ord-1"
+
+    def test_resolve_ref_order_new_and_first(self) -> None:
+        state = ScenarioState()
+        # Step 4: First order created
+        state.apply_step({
+            "step": 4,
+            "action": "Book one seat on GaoTie train G1234",
+            "params": {"price": "100.0", "orderId": "ord-step-4"},
+        })
+        # Step 6: Second order created
+        state.apply_step({
+            "step": 6,
+            "action": "Book another seat on regular train K1235",
+            "params": {"price": "120.0", "orderId": "ord-step-6"},
+        })
+
+        # Resolve refs
+        o4 = state.resolve_ref("order", "new_of_step_4")
+        assert o4 is not None
+        assert o4["id"] == "ord-step-4"
+
+        o6 = state.resolve_ref("order", "new_of_step_6")
+        assert o6 is not None
+        assert o6["id"] == "ord-step-6"
+
+        # first_of_step_4
+        o4_first = state.resolve_ref("order", "first_of_step_4")
+        assert o4_first is not None
+        assert o4_first["id"] == "ord-step-4"
+
+    def test_resolve_ref_contact_first_and_second(self) -> None:
+        state = ScenarioState()
+        state.apply_step({
+            "step": 3,
+            "action": "Add new contact for passenger",
+            "params": {"name": "Passenger_A", "id": "c-1"},
+        })
+        state.apply_step({
+            "step": 3,
+            "action": "Add another companion contact",
+            "params": {"name": "Passenger_B", "id": "c-2"},
+        })
+
+        c1 = state.resolve_ref("contact", "first_of_step_3")
+        assert c1 is not None
+        assert c1["name"] == "Passenger_A"
+
+        c2 = state.resolve_ref("contact", "second_of_step_3")
+        assert c2 is not None
+        assert c2["name"] == "Passenger_B"
+
+        c_new = state.resolve_ref("contact", "new_of_step_3")
+        assert c_new is not None
+        assert c_new["name"] == "Passenger_B"
+
+    def test_resolve_ref_trip_and_store_search(self) -> None:
+        state = ScenarioState()
+        # Step 2: Search train
+        state.apply_step({
+            "step": 2,
+            "action": "Search high-speed trains from Shanghai to Beijing on 2026-10-01 (train G1234)",
+            "params": {"tripId": "G1234"},
+        })
+        # Step 5: Query food store
+        state.apply_step({
+            "step": 5,
+            "action": "Look at the food store in Shanghai",
+        })
+
+        tr = state.resolve_ref("trip", "first_of_step_2")
+        assert tr is not None
+        assert tr["id"] == "G1234"
+
+        st = state.resolve_ref("store", "first_of_step_5")
+        assert st is not None
+        assert "shanghai" in st["id"]
+
+    def test_resolve_ref_user_registration(self) -> None:
+        state = ScenarioState()
+        state.apply_step({
+            "step": 1,
+            "action": "Register a new passenger account MRK-reg-430",
+            "params": {"username": "MRK-reg-430", "user_id": "u-430"},
+        })
+        u = state.resolve_ref("user", "new_of_step_1")
+        assert u is not None
+        assert u["user_id"] == "u-430"
+        assert u["user_name"] == "MRK-reg-430"
+
+    def test_resolve_ref_admin_entities(self) -> None:
+        state = ScenarioState()
+        state.apply_step({
+            "step": 2,
+            "action": "Admin add station Ning Bo",
+            "params": {"name": "Ning Bo"},
+        })
+        state.apply_step({
+            "step": 3,
+            "action": "Admin add train GaoTieSix",
+            "params": {"name": "GaoTieSix"},
+        })
+        state.apply_step({
+            "step": 4,
+            "action": "Admin add route route-sh-sz-nb",
+            "params": {"id": "route-sh-sz-nb"},
+        })
+        state.apply_step({
+            "step": 5,
+            "action": "Admin add price price-gt6",
+            "params": {"id": "price-gt6"},
+        })
+        state.apply_step({
+            "step": 6,
+            "action": "Admin add travel trip G9101",
+            "params": {"trip_id": "G9101"},
+        })
+
+        assert state.resolve_ref("station", "new_of_step_2")["name"] == "Ning Bo"
+        assert state.resolve_ref("train", "new_of_step_3")["name"] == "GaoTieSix"
+        assert state.resolve_ref("route", "new_of_step_4")["id"] == "route-sh-sz-nb"
+        assert state.resolve_ref("price", "new_of_step_5")["id"] == "price-gt6"
+        assert state.resolve_ref("trip", "new_of_step_6")["id"] == "G9101"
+
+    def test_resolve_step_refs_batch(self) -> None:
+        state = ScenarioState()
+        state.apply_step({
+            "step": 2,
+            "action": "Search high-speed train G1234",
+            "params": {"tripId": "G1234"},
+        })
+        state.apply_step({
+            "step": 4,
+            "action": "Add contact Companion_One",
+            "params": {"name": "Companion_One", "id": "c-comp"},
+        })
+
+        batch = state.resolve_step_refs({
+            "trip": "first_of_step_2",
+            "contact": "first_of_step_4",
+        })
+        assert "trip" in batch
+        assert batch["trip"]["id"] == "G1234"
+        assert "contact" in batch
+        assert batch["contact"]["id"] == "c-comp"
+
+    def test_resolve_ref_id_helper(self) -> None:
+        state = ScenarioState()
+        state.apply_step({
+            "step": 4,
+            "action": "Book seat",
+            "params": {"orderId": "order-custom-xyz"},
+        })
+        assert state.resolve_ref_id("order", "new_of_step_4") == "order-custom-xyz"
+        assert state.resolve_ref_id("order", "invalid_ref") is None
+        assert state.resolve_ref_id("order", "") is None
+
+    def test_refs_in_apply_step_payment_and_cancellation(self) -> None:
+        state = ScenarioState()
+        # Step 4: Book order without explicit orderId in payment step
+        state.apply_step({
+            "step": 4,
+            "action": "Book seat on train G1234",
+            "params": {"price": "150.0", "orderId": "ord-target-step4"},
+        })
+        # Step 5: Book second order
+        state.apply_step({
+            "step": 5,
+            "action": "Book seat on train G1234",
+            "params": {"price": "200.0", "orderId": "ord-other-step5"},
+        })
+
+        # Step 6: Pay specifically for order from step 4 using refs
+        pay_res = state.apply_step({
+            "step": 6,
+            "action": "Pay for the order",
+            "params": {},
+            "refs": {"order": "new_of_step_4"},
+        })
+        assert pay_res.status == "SUCCESS"
+        assert pay_res.affected_entities["order_id"] == "ord-target-step4"
+        assert state.get_order_by_id("ord-target-step4")["status"] == OrderStatus.PAID
+        assert state.get_order_by_id("ord-other-step5")["status"] == OrderStatus.NOTPAID
+
+        # Step 7: Cancel order from step 4 using refs
+        cancel_res = state.apply_step({
+            "step": 7,
+            "action": "Cancel the paid order",
+            "params": {},
+            "refs": {"order": "new_of_step_4"},
+        })
+        assert cancel_res.status == "SUCCESS"
+        assert state.get_order_by_id("ord-target-step4")["status"] == OrderStatus.CANCEL
+
+    def test_fork_preserves_step_artifacts_and_isolation(self) -> None:
+        state = ScenarioState()
+        state.apply_step({
+            "step": 4,
+            "action": "Book seat",
+            "params": {"orderId": "ord-parent-4"},
+        })
+
+        forked = state.fork()
+        assert forked.resolve_ref_id("order", "new_of_step_4") == "ord-parent-4"
+
+        # Mutate forked state step 6
+        forked.apply_step({
+            "step": 6,
+            "action": "Book seat",
+            "params": {"orderId": "ord-fork-6"},
+        })
+
+        # Parent should not have step 6 artifact
+        assert state.resolve_ref("order", "new_of_step_6") is None
+        assert forked.resolve_ref_id("order", "new_of_step_6") == "ord-fork-6"

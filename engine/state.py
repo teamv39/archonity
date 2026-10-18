@@ -74,6 +74,41 @@ TrainType.HIGH_SPEED = TrainType.GaoTie  # type: ignore[attr-defined]
 TrainType.REGULAR = TrainType.Other  # type: ignore[attr-defined]
 
 
+# Canonical entity aliases for ADR-005 refs
+_REF_ENTITY_ALIASES: dict[str, str] = {
+    "contacts": "contact",
+    "contact": "contact",
+    "orders": "order",
+    "order": "order",
+    "consignments": "consign",
+    "consign_record": "consign",
+    "consign": "consign",
+    "assurances": "assurance",
+    "assurance": "assurance",
+    "food_orders": "food",
+    "food_order": "food",
+    "food": "food",
+    "stores": "store",
+    "store": "store",
+    "stations": "station",
+    "station": "station",
+    "trains": "train",
+    "train_types": "train",
+    "train_type": "train",
+    "train": "train",
+    "routes": "route",
+    "route": "route",
+    "trips": "trip",
+    "trip": "trip",
+    "prices": "price",
+    "price_configs": "price",
+    "price_config": "price",
+    "price": "price",
+    "users": "user",
+    "user": "user",
+}
+
+
 @dataclass
 class RefusalEvent:
     """Record of a business rule refusal during scenario execution."""
@@ -124,6 +159,7 @@ class ScenarioState:
         refusals: dict[str, str] | None = None,
         refusal_events: list[RefusalEvent] | None = None,
         extra: dict[str, Any] | None = None,
+        step_artifacts: dict[int, dict[str, list[dict[str, Any]]]] | None = None,
         db_state: Any = None,
         scenario_id: str = "S?",
         is_admin: bool = False,
@@ -156,6 +192,9 @@ class ScenarioState:
             "trips": [],
             "price_configs": [],
         }
+        self.step_artifacts: dict[int, dict[str, list[dict[str, Any]]]] = (
+            step_artifacts if step_artifacts is not None else {}
+        )
         self.refusals = refusals if refusals is not None else {}
         self.refusal_events = refusal_events if refusal_events is not None else []
         self.last_refusal: dict[str, Any] | None = None
@@ -266,6 +305,13 @@ class ScenarioState:
     def fork(self) -> ScenarioState:
         """Creates an isolated deep copy in < 50 µs for strict scenario isolation."""
         cloned_db = self.db_state.fork() if hasattr(self.db_state, "fork") else self.db_state
+        cloned_artifacts = {
+            st_idx: {
+                k: [dict(item) if isinstance(item, dict) else item for item in v]
+                for k, v in ent_map.items()
+            }
+            for st_idx, ent_map in self.step_artifacts.items()
+        }
         return ScenarioState(
             user_name=self.user_name,
             account_id=self.account_id,
@@ -283,6 +329,7 @@ class ScenarioState:
             refusals=dict(self.refusals),
             refusal_events=list(self.refusal_events),
             extra=dict(self.extra),
+            step_artifacts=cloned_artifacts,
             db_state=cloned_db,
             scenario_id=self.scenario_id,
             is_admin=self.is_admin,
@@ -296,6 +343,176 @@ class ScenarioState:
             has_food=self.has_food,
             has_date_filtering=self.has_date_filtering,
         )
+
+    # -------------------------------------------------------------------------
+    # Step Artifacts & Refs Resolution (ADR-005 Contract)
+    # -------------------------------------------------------------------------
+
+    def record_step_entity(
+        self,
+        step_index: int,
+        entity_type: str,
+        entity_data: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Records an entity created or discovered during a specific scenario step.
+
+        Args:
+            step_index: Scenario step index (e.g. 1, 4, 6).
+            entity_type: Entity category (e.g. 'order', 'contact', 'trip', 'user').
+            entity_data: Entity dictionary.
+
+        Returns:
+            The recorded entity dictionary (with 'created_at_step' populated).
+        """
+        norm_type = _REF_ENTITY_ALIASES.get(entity_type.lower(), entity_type.lower())
+        if "created_at_step" not in entity_data:
+            entity_data["created_at_step"] = step_index
+        step_dict = self.step_artifacts.setdefault(step_index, {})
+        step_dict.setdefault(norm_type, []).append(entity_data)
+        return entity_data
+
+    def get_step_artifacts(
+        self,
+        step_index: int | None = None,
+    ) -> dict[str, list[dict[str, Any]]] | dict[int, dict[str, list[dict[str, Any]]]]:
+        """Returns step artifacts for a specific step or all steps."""
+        if step_index is not None:
+            return dict(self.step_artifacts.get(step_index, {}))
+        return self.step_artifacts
+
+    def resolve_ref(self, entity_type: str, ref: str) -> dict[str, Any] | None:
+        """Resolves reference formatted as '<pick>_of_step_<n>' (ADR-005 contract).
+
+        Args:
+            entity_type: Entity category (e.g. 'order', 'contact', 'trip', 'user').
+            ref: Reference string, e.g. 'new_of_step_4', 'first_of_step_2'.
+
+        Returns:
+            Resolved entity dict or None if reference cannot be matched.
+        """
+        if not ref or not isinstance(ref, str):
+            return None
+
+        norm_type = _REF_ENTITY_ALIASES.get(entity_type.lower(), entity_type.lower())
+        m = re.match(r"^(first|second|new)_of_step_(\d+)$", ref.strip())
+        if not m:
+            return None
+
+        pick, step_str = m.groups()
+        step_num = int(step_str)
+
+        # 1. Exact match in recorded step_artifacts
+        entities = self.step_artifacts.get(step_num, {}).get(norm_type, [])
+        if entities:
+            if pick == "new":
+                return entities[-1]
+            elif pick == "first":
+                return entities[0]
+            elif pick == "second":
+                return entities[1] if len(entities) > 1 else entities[0]
+
+        # 2. Fallback search across global collections
+        if norm_type == "order":
+            step_orders = [o for o in self.orders if o.get("created_at_step") == step_num]
+            if step_orders:
+                return step_orders[-1] if pick == "new" else step_orders[0]
+            if step_num == 0:
+                untracked = [o for o in self.orders if "created_at_step" not in o]
+                if untracked:
+                    return untracked[-1] if pick == "new" else untracked[0]
+            return None
+
+        elif norm_type == "contact":
+            step_contacts = [c for c in self.contacts if c.get("created_at_step") == step_num]
+            if step_contacts:
+                return step_contacts[-1] if pick == "new" else step_contacts[0]
+            if step_num == 0:
+                untracked = [c for c in self.contacts if "created_at_step" not in c]
+                if untracked:
+                    if pick == "second" and len(untracked) > 1:
+                        return untracked[1]
+                    return untracked[0]
+            return None
+
+        elif norm_type == "trip":
+            step_trips = self.admin_entities.get("trips", [])
+            for tr in step_trips:
+                if tr.get("created_at_step") == step_num:
+                    return tr
+            if step_num == 0:
+                return {
+                    "id": "G1234",
+                    "trip_id": "G1234",
+                    "train_number": "G1234",
+                    "train_type": TrainType.GaoTie,
+                }
+            return None
+
+        elif norm_type == "user":
+            step_users = [u for u in self.users if u.get("created_at_step") == step_num]
+            if step_users:
+                return step_users[0]
+            if step_num == 0:
+                return {"user_id": self.account_id, "username": self.user_name}
+            return None
+
+        elif norm_type == "consign":
+            step_cs = [c for c in self.consignments if c.get("created_at_step") == step_num]
+            if step_cs:
+                return step_cs[-1] if pick == "new" else step_cs[0]
+            if step_num == 0 and self.consignments:
+                return self.consignments[-1]
+            return None
+
+        elif norm_type == "assurance":
+            step_ass = [a for a in self.assurances if a.get("created_at_step") == step_num]
+            if step_ass:
+                return step_ass[-1] if pick == "new" else step_ass[0]
+            if step_num == 0 and self.assurances:
+                return self.assurances[-1]
+            return None
+
+        elif norm_type == "food":
+            step_fo = [f for f in self.food_orders if f.get("created_at_step") == step_num]
+            if step_fo:
+                return step_fo[-1] if pick == "new" else step_fo[0]
+            if step_num == 0 and self.food_orders:
+                return self.food_orders[-1]
+            return None
+
+        elif norm_type in ("station", "train", "route", "price"):
+            cat_map = {
+                "station": "stations",
+                "train": "train_types",
+                "route": "routes",
+                "price": "price_configs",
+            }
+            sub_items = self.admin_entities.get(cat_map[norm_type], [])
+            for item in sub_items:
+                if item.get("created_at_step") == step_num:
+                    return item
+            if step_num == 0 and sub_items:
+                return sub_items[-1] if pick == "new" else sub_items[0]
+            return None
+
+    def resolve_ref_id(self, entity_type: str, ref: str) -> str | None:
+        """Resolves reference to the entity's primary identifier string."""
+        ent = self.resolve_ref(entity_type, ref)
+        if not ent:
+            return None
+        return ent.get("id") or ent.get("user_id") or ent.get("order_id") or ent.get("trip_id")
+
+    def resolve_step_refs(self, refs: dict[str, str] | None) -> dict[str, dict[str, Any]]:
+        """Resolves all refs for a StepRequest into concrete entity dictionaries."""
+        if not refs:
+            return {}
+        resolved: dict[str, dict[str, Any]] = {}
+        for entity_type, ref_str in refs.items():
+            ent = self.resolve_ref(entity_type, ref_str)
+            if ent is not None:
+                resolved[entity_type] = ent
+        return resolved
+
 
     # -------------------------------------------------------------------------
     # Query Helpers
@@ -385,6 +602,7 @@ class ScenarioState:
         action_name = getattr(step, "action", "") if not isinstance(step, dict) else step.get("action", "")
         payload = getattr(step, "params", {}) if not isinstance(step, dict) else step.get("params", {}) or {}
         handler = getattr(step, "handler", None) if not isinstance(step, dict) else step.get("handler", None)
+        refs = getattr(step, "refs", {}) if not isinstance(step, dict) else step.get("refs", {}) or {}
 
         if step_index is None:
             step_index = 0
@@ -394,6 +612,7 @@ class ScenarioState:
             action_name=action_name,
             payload=payload,
             handler=handler,
+            refs=refs,
         )
 
     def apply_step_request(self, step_req: Any) -> StepMutationResult:
@@ -406,10 +625,35 @@ class ScenarioState:
         action_name: str,
         payload: dict[str, Any] | None = None,
         handler: str | None = None,
+        refs: dict[str, str] | None = None,
     ) -> StepMutationResult:
         """Applies state mutation triggered by scenario action step."""
-        p = payload or {}
+        p = dict(payload) if payload else {}
+        r = dict(refs) if refs else {}
         t = action_name.lower()
+
+        # Resolve entity references into payload parameters if omitted
+        if r:
+            if "order" in r and "orderId" not in p and "order_id" not in p:
+                r_oid = self.resolve_ref_id("order", r["order"])
+                if r_oid:
+                    p["orderId"] = r_oid
+                    p["order_id"] = r_oid
+            if "trip" in r and "tripId" not in p and "trip_id" not in p:
+                r_tid = self.resolve_ref_id("trip", r["trip"])
+                if r_tid:
+                    p["tripId"] = r_tid
+                    p["trip_id"] = r_tid
+            if "contact" in r and "contactsId" not in p and "contact_id" not in p and "id" not in p:
+                r_cid = self.resolve_ref_id("contact", r["contact"])
+                if r_cid:
+                    p["contactsId"] = r_cid
+                    p["contact_id"] = r_cid
+            if "consign" in r and "consignId" not in p and "consign_id" not in p:
+                r_csid = self.resolve_ref_id("consign", r["consign"])
+                if r_csid:
+                    p["consignId"] = r_csid
+                    p["consign_id"] = r_csid
 
         # 1. User Registration (S4)
         if (handler and "registerUser" in handler) or re.search(r"\bregister\b.*?(?:account|passenger|user)\b", t):
@@ -437,31 +681,31 @@ class ScenarioState:
 
         # 5. Order Booking (S1–S7)
         if (handler and "preserve" in handler.lower()) or re.search(r"\b(?:book|reserve)\b.*?\b(?:seat|ticket|trip)\b", t):
-            return self._mutate_booking(step_index, action_name, p)
+            return self._mutate_booking(step_index, action_name, p, refs=r)
 
         # 6. Order Payment (S1–S7)
         if (handler and "InsidePaymentController#pay" in handler) or re.search(r"\bpay\s+for\b.*?\border\b|\bpay\b", t):
-            return self._mutate_payment(step_index, action_name, p)
+            return self._mutate_payment(step_index, action_name, p, refs=r)
 
         # 7. Collect Ticket (S1, S5, S7)
         if (handler and "collectTicket" in handler) or re.search(r"\bcollect\s+(?:the\s+)?ticket\b", t):
-            return self._mutate_collect_ticket(step_index, action_name, p)
+            return self._mutate_collect_ticket(step_index, action_name, p, refs=r)
 
         # 8. Enter Station / Board (S1, S5)
         if (handler and "executeTicket" in handler) or re.search(r"\b(enter\s+the\s+station|board\s+the\s+train)\b", t):
-            return self._mutate_enter_station(step_index, action_name, p)
+            return self._mutate_enter_station(step_index, action_name, p, refs=r)
 
         # 9. Cancel Order (S2, S4, S7)
         if (handler and "cancelTicket" in handler) or re.search(r"\b(?:cancel\s+(?:the\s+)?(?:paid\s+)?order|try\s+to\s+cancel)\b", t):
-            return self._mutate_cancellation(step_index, action_name, p)
+            return self._mutate_cancellation(step_index, action_name, p, refs=r)
 
         # 10. Rebook Order (S2, S7)
         if (handler and "RebookController#rebook" in handler) or re.search(r"\b(?:rebook|try\s+to\s+rebook)\b", t):
-            return self._mutate_rebook(step_index, action_name, p)
+            return self._mutate_rebook(step_index, action_name, p, refs=r)
 
         # 11. Change Consignee (S7)
         if (handler and "updateConsign" in handler) or re.search(r"\bchange\b.*?\bconsignee\b", t):
-            return self._mutate_update_consignee(step_index, action_name, p)
+            return self._mutate_update_consignee(step_index, action_name, p, refs=r)
 
         # 12. Date Queries (S7)
         if re.search(r"\b(?:travel\s+date|purchase\s+date|bought\s+date)\b", t):
@@ -472,6 +716,33 @@ class ScenarioState:
         if re.search(r"\b(?:cheapest|quickest|fewest-stops|transfer)\b", t):
             self.has_advanced_search = True
             return StepMutationResult(step_index, action_name, "SUCCESS", ["flag_advanced_search_set"])
+
+        # 14. Trip Search / Schedule Query (S0–S7)
+        if (handler and any(h in handler for h in ("queryForTravel", "getTripAllDetailInformation", "queryAlready", "queryForStationId"))) or \
+           re.search(r"\b(?:search|query|check\s+(?:the\s+)?train\s+schedule|look\s+up|find)\b.*?\b(?:train|trip|schedule|ticket|travel)\b", t):
+            m_trip = re.search(r"\b([GDZK]\d+)\b", action_name)
+            trip_id = p.get("tripId") or p.get("trip_id") or (m_trip.group(1) if m_trip else None)
+            if not trip_id:
+                is_regular = ("regular" in t or "other" in t) and "high-speed" not in t
+                trip_id = "K1235" if is_regular else "G1234"
+            trip_data = {
+                "id": trip_id,
+                "trip_id": trip_id,
+                "train_number": trip_id,
+                "train_type": TrainType.from_train_number(trip_id),
+                "created_at_step": step_index,
+            }
+            self.record_step_entity(step_index, "trip", trip_data)
+            return StepMutationResult(step_index, action_name, "SUCCESS", [f"trip_searched:{trip_id}"])
+
+        # 15. Store / Food Query
+        if re.search(r"\b(?:food\s+store|store\s+in|food\s+menu)\b", t):
+            m_station = re.search(r"\b(?:in|at)\s+([A-Za-z\s]+)", action_name)
+            st_name = m_station.group(1).strip() if m_station else "Shanghai"
+            store_data = {"id": f"store-{st_name.lower().replace(' ', '')}", "station_name": st_name, "created_at_step": step_index}
+            self.record_step_entity(step_index, "store", store_data)
+            self.record_step_entity(step_index, "food", {"id": f"food-{st_name.lower().replace(' ', '')}", "created_at_step": step_index})
+            return StepMutationResult(step_index, action_name, "SUCCESS", [f"food_store_queried:{st_name}"])
 
         return StepMutationResult(step_index, action_name, "NOOP", [])
 
@@ -487,6 +758,14 @@ class ScenarioState:
         self.is_new_user = True
         self.orders = []
         self.contacts = []
+
+        user_data = {
+            "user_id": user_id,
+            "user_name": username,
+            "balance": 0.0,
+            "created_at_step": step_index,
+        }
+        self.record_step_entity(step_index, "user", user_data)
 
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("user", {
@@ -524,13 +803,15 @@ class ScenarioState:
             "document_type": 1,
             "document_number": payload.get("document_number", "DocumentNumber_New"),
             "phone_number": "13800000000",
+            "created_at_step": step_index,
         }
         self.contacts.append(cd)
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("contacts", cd)
-        return StepMutationResult(step_index, action, "SUCCESS", [f"contact_created:{cid}:{c_name}"])
+        self.record_step_entity(step_index, "contact", cd)
+        return StepMutationResult(step_index, action, "SUCCESS", [f"contact_created:{cid}:{c_name}"], affected_entities={"contact_id": cid})
 
-    def _mutate_booking(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
+    def _mutate_booking(self, step_index: int, action: str, payload: dict[str, Any], refs: dict[str, str] | None = None) -> StepMutationResult:
         t = action.lower()
         is_regular = ("regular" in t or "other" in t) and "high-speed" not in t
         train_type = TrainType.Other if is_regular else TrainType.GaoTie
@@ -540,13 +821,21 @@ class ScenarioState:
         order_id = payload.get("orderId") or f"order-{self.scenario_id.lower()}-{len(self.orders) + 1}"
         price = float(payload.get("price", 120.0 if is_regular else 100.0))
 
+        c_name = "Contacts_One"
+        c_doc = "DocumentNumber_One"
+        if refs and "contact" in refs:
+            c_ent = self.resolve_ref("contact", refs["contact"])
+            if c_ent:
+                c_name = c_ent.get("name", c_name)
+                c_doc = c_ent.get("document_number", c_doc)
+
         order = {
             "id": order_id,
             "train_number": trip_id,
             "train_type": train_type,
             "account_id": self.account_id,
-            "contacts_name": "Contacts_One",
-            "contacts_document_number": "DocumentNumber_One",
+            "contacts_name": payload.get("contacts_name", c_name),
+            "contacts_document_number": payload.get("contacts_document_number", c_doc),
             "seat_class": seat_class,
             "from": "Shanghai",
             "to": "Nanjing" if is_regular else ("Ning Bo" if "ning bo" in t else "Suzhou"),
@@ -554,8 +843,10 @@ class ScenarioState:
             "price": price,
             "status": OrderStatus.NOTPAID,
             "bought_date": self.system_date,
+            "created_at_step": step_index,
         }
         self.orders.append(order)
+        self.record_step_entity(step_index, "order", order)
 
         tbl = "orders_other" if is_regular else "orders"
         if hasattr(self.db_state, "insert"):
@@ -569,18 +860,20 @@ class ScenarioState:
         # Ancillary items: Food, Assurance, Luggage
         if "food" in t:
             self.has_food = True
-            fo = {"id": f"fo-{order_id}", "order_id": order_id, "food_type": 1 if "station" in t else 2, "price": 20.0}
+            fo = {"id": f"fo-{order_id}", "order_id": order_id, "food_type": 1 if "station" in t else 2, "price": 20.0, "created_at_step": step_index}
             self.food_orders.append(fo)
             if hasattr(self.db_state, "insert"):
                 self.db_state.insert("food_order", fo)
+            self.record_step_entity(step_index, "food", fo)
             mutations.append(f"food_created:{order_id}")
 
         if "assurance" in t or "insurance" in t:
             self.has_assurance = True
-            ass = {"id": f"ass-{order_id}", "order_id": order_id, "type_index": 1, "type_name": "Traffic Accident Assurance", "price": 20.0}
+            ass = {"id": f"ass-{order_id}", "order_id": order_id, "type_index": 1, "type_name": "Traffic Accident Assurance", "price": 20.0, "created_at_step": step_index}
             self.assurances.append(ass)
             if hasattr(self.db_state, "insert"):
                 self.db_state.insert("assurance", ass)
+            self.record_step_entity(step_index, "assurance", ass)
             mutations.append(f"assurance_created:{order_id}")
 
         m_weight = re.search(r"(\d+(?:\.\d+)?)\s*kg", t)
@@ -595,16 +888,21 @@ class ScenarioState:
                 "consignee": "Consignee",
                 "phone": "13800000000",
                 "price": 16.0,
+                "created_at_step": step_index,
             }
             self.consignments.append(cs)
             if hasattr(self.db_state, "insert"):
                 self.db_state.insert("consign_record", cs)
+            self.record_step_entity(step_index, "consign", cs)
             mutations.append(f"consign_created:{order_id}:{w}kg")
 
         return StepMutationResult(step_index, action, "SUCCESS", mutations, affected_entities={"order_id": order_id})
 
-    def _mutate_payment(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
+    def _mutate_payment(self, step_index: int, action: str, payload: dict[str, Any], refs: dict[str, str] | None = None) -> StepMutationResult:
         target_oid = payload.get("orderId") or payload.get("order_id")
+        if not target_oid and refs and "order" in refs:
+            target_oid = self.resolve_ref_id("order", refs["order"])
+
         if target_oid:
             unpaid = [o for o in self.orders if o.get("id") == target_oid and o.get("status") == OrderStatus.NOTPAID]
         else:
@@ -652,8 +950,11 @@ class ScenarioState:
 
         return StepMutationResult(step_index, action, "SUCCESS", mutations, affected_entities={"order_id": order["id"], "status": "PAID"})
 
-    def _mutate_collect_ticket(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
+    def _mutate_collect_ticket(self, step_index: int, action: str, payload: dict[str, Any], refs: dict[str, str] | None = None) -> StepMutationResult:
         target_oid = payload.get("orderId") or payload.get("order_id")
+        if not target_oid and refs and "order" in refs:
+            target_oid = self.resolve_ref_id("order", refs["order"])
+
         if target_oid:
             target = [o for o in self.orders if o.get("id") == target_oid and o.get("status") in (OrderStatus.PAID, OrderStatus.CHANGE)]
         else:
@@ -669,8 +970,11 @@ class ScenarioState:
             self.db_state.update(tbl, {"status": int(OrderStatus.COLLECTED)}, id=order["id"])
         return StepMutationResult(step_index, action, "SUCCESS", [f"order_status_updated:{order['id']}:COLLECTED"])
 
-    def _mutate_enter_station(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
+    def _mutate_enter_station(self, step_index: int, action: str, payload: dict[str, Any], refs: dict[str, str] | None = None) -> StepMutationResult:
         target_oid = payload.get("orderId") or payload.get("order_id")
+        if not target_oid and refs and "order" in refs:
+            target_oid = self.resolve_ref_id("order", refs["order"])
+
         if target_oid:
             target = [o for o in self.orders if o.get("id") == target_oid and o.get("status") == OrderStatus.COLLECTED]
         else:
@@ -686,8 +990,11 @@ class ScenarioState:
             self.db_state.update(tbl, {"status": int(OrderStatus.USED)}, id=order["id"])
         return StepMutationResult(step_index, action, "SUCCESS", [f"order_status_updated:{order['id']}:USED"])
 
-    def _mutate_cancellation(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
+    def _mutate_cancellation(self, step_index: int, action: str, payload: dict[str, Any], refs: dict[str, str] | None = None) -> StepMutationResult:
         target_oid = payload.get("orderId") or payload.get("order_id")
+        if not target_oid and refs and "order" in refs:
+            target_oid = self.resolve_ref_id("order", refs["order"])
+
         if target_oid:
             paid_orders = [o for o in self.orders if o.get("id") == target_oid and o.get("status") in (OrderStatus.PAID, OrderStatus.NOTPAID, OrderStatus.CHANGE)]
             collected_orders = [o for o in self.orders if o.get("id") == target_oid and o.get("status") == OrderStatus.COLLECTED]
@@ -744,8 +1051,11 @@ class ScenarioState:
             [f"order_status_updated:{order['id']}:CANCEL", f"refund_credited:{refund_amount}:new_balance_{self.balance}"],
         )
 
-    def _mutate_rebook(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
+    def _mutate_rebook(self, step_index: int, action: str, payload: dict[str, Any], refs: dict[str, str] | None = None) -> StepMutationResult:
         target_oid = payload.get("orderId") or payload.get("order_id")
+        if not target_oid and refs and "order" in refs:
+            target_oid = self.resolve_ref_id("order", refs["order"])
+
         if target_oid:
             paid_orders = [o for o in self.orders if o.get("id") == target_oid and o.get("status") == OrderStatus.PAID]
             collected_orders = [o for o in self.orders if o.get("id") == target_oid and o.get("status") == OrderStatus.COLLECTED]
@@ -785,6 +1095,8 @@ class ScenarioState:
         order["seat_class"] = 2
         order["price"] = cheaper_price
         order["status"] = OrderStatus.CHANGE
+        order["updated_at_step"] = step_index
+        self.record_step_entity(step_index, "order", order)
 
         tbl = "orders_other" if order.get("train_type") == TrainType.Other else "orders"
         if hasattr(self.db_state, "update"):
@@ -810,59 +1122,76 @@ class ScenarioState:
 
     def _mutate_admin_station(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
         station_name = payload.get("name", "Ning Bo")
-        st_data = {"id": f"station-{station_name.lower().replace(' ', '')}", "name": station_name, "stay_time": 5}
+        st_data = {"id": f"station-{station_name.lower().replace(' ', '')}", "name": station_name, "stay_time": 5, "created_at_step": step_index}
         self.admin_entities["stations"].append(st_data)
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("station", st_data)
+        self.record_step_entity(step_index, "station", st_data)
         return StepMutationResult(step_index, action, "SUCCESS", [f"station_created:{station_name}"])
 
     def _mutate_admin_train(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
         name = payload.get("name", "GaoTieSix")
-        tt_data = {"id": name, "name": name, "economy_class": 100, "confort_class": 30, "avg_speed": 300}
+        tt_data = {"id": name, "name": name, "economy_class": 100, "confort_class": 30, "avg_speed": 300, "created_at_step": step_index}
         self.admin_entities["train_types"].append(tt_data)
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("train_type", tt_data)
+        self.record_step_entity(step_index, "train", tt_data)
         return StepMutationResult(step_index, action, "SUCCESS", [f"train_type_created:{name}"])
 
     def _mutate_admin_route(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
         r_id = payload.get("id", "route-sh-sz-nb")
         stations = payload.get("stations", ["Shanghai", "Suzhou", "Ning Bo"])
         distances = payload.get("distances", [0, 100, 250])
-        r_data = {"id": r_id, "start_station_id": stations[0], "terminal_station_id": stations[-1], "stations": stations, "distances": distances}
+        r_data = {"id": r_id, "start_station_id": stations[0], "terminal_station_id": stations[-1], "stations": stations, "distances": distances, "created_at_step": step_index}
         self.admin_entities["routes"].append(r_data)
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("route", {"id": r_id, "start_station_id": stations[0], "terminal_station_id": stations[-1]})
+        self.record_step_entity(step_index, "route", r_data)
         return StepMutationResult(step_index, action, "SUCCESS", [f"route_created:{r_id}"])
 
     def _mutate_admin_price(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
         p_id = payload.get("id", "price-gt6")
-        p_data = {"id": p_id, "train_type": "GaoTieSix", "basic_price_rate": 0.5, "first_class_price_rate": 1.2}
+        p_data = {"id": p_id, "train_type": "GaoTieSix", "basic_price_rate": 0.5, "first_class_price_rate": 1.2, "created_at_step": step_index}
         self.admin_entities["price_configs"].append(p_data)
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("price_config", p_data)
+        self.record_step_entity(step_index, "price", p_data)
         return StepMutationResult(step_index, action, "SUCCESS", [f"price_config_created:{p_id}"])
 
     def _mutate_admin_travel(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
         trip_id = payload.get("trip_id", "G9101")
         tr_data = {
-            "id": trip_id, "train_type_name": "GaoTieSix", "route_id": "route-sh-sz-nb",
+            "id": trip_id, "trip_id": trip_id, "train_type_name": "GaoTieSix", "route_id": "route-sh-sz-nb",
             "start_station_name": "Shanghai", "terminal_station_name": "Ning Bo",
             "departure_time": "09:00", "arrival_time": "12:00",
+            "created_at_step": step_index,
         }
         self.admin_entities["trips"].append(tr_data)
         if hasattr(self.db_state, "insert"):
             self.db_state.insert("trip", tr_data)
+        self.record_step_entity(step_index, "trip", tr_data)
         return StepMutationResult(step_index, action, "SUCCESS", [f"trip_created:{trip_id}"])
 
-    def _mutate_update_consignee(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
+    def _mutate_update_consignee(self, step_index: int, action: str, payload: dict[str, Any], refs: dict[str, str] | None = None) -> StepMutationResult:
         if not self.consignments:
             return StepMutationResult(step_index, action, "NOOP", ["no_consignments_found"])
 
-        cs = self.consignments[-1]
+        target_cid = payload.get("consignId") or payload.get("consign_id")
+        if not target_cid and refs and "consign" in refs:
+            target_cid = self.resolve_ref_id("consign", refs["consign"])
+
+        if target_cid:
+            matches = [c for c in self.consignments if c.get("id") == target_cid]
+            cs = matches[0] if matches else self.consignments[-1]
+        else:
+            cs = self.consignments[-1]
+
         new_name = payload.get("consignee", "New Consignee")
         new_phone = payload.get("phone", "13900000000")
         cs["consignee"] = new_name
         cs["phone"] = new_phone
+        cs["updated_at_step"] = step_index
+        self.record_step_entity(step_index, "consign", cs)
 
         if hasattr(self.db_state, "update"):
             self.db_state.update("consign_record", {
@@ -878,9 +1207,11 @@ class ScenarioState:
     # Public Mutation Primitives
     # -------------------------------------------------------------------------
 
-    def add_order(self, order: dict[str, Any]) -> dict[str, Any]:
+    def add_order(self, order: dict[str, Any], step_index: int | None = None) -> dict[str, Any]:
         """Adds an order to state."""
         od = dict(order)
+        if step_index is not None:
+            od["created_at_step"] = step_index
         if "train_type" not in od and "train_number" in od:
             od["train_type"] = TrainType.from_train_number(od["train_number"])
         if "status" in od:
@@ -890,6 +1221,8 @@ class ScenarioState:
         if "price" in od:
             od["price"] = float(od["price"])
         self.orders.append(od)
+        if step_index is not None:
+            self.record_step_entity(step_index, "order", od)
         return od
 
     def update_order_status(self, order_id: str, new_status: OrderStatus | int | str) -> bool:
@@ -901,12 +1234,16 @@ class ScenarioState:
             return True
         return False
 
-    def add_contact(self, contact: dict[str, Any]) -> dict[str, Any]:
+    def add_contact(self, contact: dict[str, Any], step_index: int | None = None) -> dict[str, Any]:
         """Adds a contact to state."""
         cd = dict(contact)
+        if step_index is not None:
+            cd["created_at_step"] = step_index
         if "account_id" not in cd:
             cd["account_id"] = self.account_id
         self.contacts.append(cd)
+        if step_index is not None:
+            self.record_step_entity(step_index, "contact", cd)
         return cd
 
     def deduct_balance(self, amount: float, account_id: str | None = None) -> bool:
@@ -952,11 +1289,16 @@ class ScenarioState:
         self.balance = float(balance)
         return uid
 
-    def add_admin_entity(self, entity_type: str, data: dict[str, Any]) -> None:
+    def add_admin_entity(self, entity_type: str, data: dict[str, Any], step_index: int | None = None) -> None:
         """Records newly created station, train type, route, trip, or price config (S6)."""
         if entity_type not in self.admin_entities:
             self.admin_entities[entity_type] = []
-        self.admin_entities[entity_type].append(dict(data))
+        d = dict(data)
+        if step_index is not None:
+            d["created_at_step"] = step_index
+        self.admin_entities[entity_type].append(d)
+        if step_index is not None:
+            self.record_step_entity(step_index, entity_type, d)
 
     def set_refusal(self, action: str, reason: str = "") -> None:
         """Records business refusal (e.g. S7 cancellation/rebooking refusal on COLLECTED order)."""
