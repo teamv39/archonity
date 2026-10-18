@@ -32,7 +32,7 @@ KEYWORDS = {
     "onConfirm", "onCancel", "success", "error", "then", "callback", "done", "fail", "always", "complete"
 }
 LABEL = re.compile(
-    r"""<(\w+)[^>]*?(?:onclick|v-on:click|@click|ng-click|\(click\))\s*=\s*["']\s*([A-Za-z_$][\w$]*)\s*\(.*?>(.*?)</\1>""",
+    r"""<(button|a|span|div|p|h\d|td|th|li|label)[^>]*\b(?:onclick|v-on:click|@click|ng-click|\(click\))\s*=\s*["']\s*([A-Za-z_$][\w$]*)\s*\([^"'>]*["'][^>]*>(.{0,1000}?)</\1>""",
     re.S,
 )
 ADMIN_WORDS = {"admin", "administrator", "manager", "operator", "staff", "management"}

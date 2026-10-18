@@ -15,8 +15,8 @@ TARGETS_ROOT = ROOT / "hackaton" / "tt-challenge" / "targets" / "trainticket"
 
 
 @pytest.fixture(scope="module")
-def skeleton_index() -> SkeletonIndex:
-    return SkeletonIndex(load_json(SKELETON_PATH))
+def skeleton_index(shared_skeleton_index: SkeletonIndex) -> SkeletonIndex:
+    return shared_skeleton_index
 
 
 @pytest.fixture

@@ -312,30 +312,38 @@ class ScenarioState:
     def fork(self) -> ScenarioState:
         """Creates an isolated deep copy in < 50 µs for strict scenario isolation."""
         cloned_db = self.db_state.fork() if hasattr(self.db_state, "fork") else self.db_state
-        cloned_artifacts = {
-            st_idx: {
-                k: [dict(item) if isinstance(item, dict) else item for item in v]
-                for k, v in ent_map.items()
+        cloned_artifacts = (
+            {
+                st_idx: {
+                    k: [item.copy() if isinstance(item, dict) else item for item in v]
+                    for k, v in ent_map.items()
+                }
+                for st_idx, ent_map in self.step_artifacts.items()
             }
-            for st_idx, ent_map in self.step_artifacts.items()
-        }
+            if self.step_artifacts
+            else {}
+        )
         return ScenarioState(
             user_name=self.user_name,
             account_id=self.account_id,
             balance=self.balance,
             travel_date=self.travel_date,
             system_date=self.system_date,
-            contacts=[dict(c) for c in self.contacts],
-            orders=[dict(o) for o in self.orders],
-            consignments=[dict(c) for c in self.consignments],
-            assurances=[dict(a) for a in self.assurances],
-            food_orders=[dict(f) for f in self.food_orders],
-            balances=dict(self.balances),
-            users=[dict(u) for u in self.users],
-            admin_entities={k: [dict(item) if isinstance(item, dict) else item for item in v] for k, v in self.admin_entities.items()},
-            refusals=dict(self.refusals),
-            refusal_events=list(self.refusal_events),
-            extra=dict(self.extra),
+            contacts=[c.copy() for c in self.contacts] if self.contacts else [],
+            orders=[o.copy() for o in self.orders] if self.orders else [],
+            consignments=[c.copy() for c in self.consignments] if self.consignments else [],
+            assurances=[a.copy() for a in self.assurances] if self.assurances else [],
+            food_orders=[f.copy() for f in self.food_orders] if self.food_orders else [],
+            balances=self.balances.copy() if self.balances else {},
+            users=[u.copy() for u in self.users] if self.users else [],
+            admin_entities=(
+                {k: [item.copy() if isinstance(item, dict) else item for item in v] for k, v in self.admin_entities.items()}
+                if self.admin_entities
+                else {}
+            ),
+            refusals=self.refusals.copy() if self.refusals else {},
+            refusal_events=list(self.refusal_events) if self.refusal_events else [],
+            extra=self.extra.copy() if self.extra else {},
             step_artifacts=cloned_artifacts,
             db_state=cloned_db,
             scenario_id=self.scenario_id,

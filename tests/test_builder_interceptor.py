@@ -54,8 +54,8 @@ Result = tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[s
 
 
 @pytest.fixture(scope="module")
-def pipeline() -> ArchonityPipeline:
-    return ArchonityPipeline(skeleton_path=SKELETON_PATH, targets_root=TARGETS_ROOT)
+def pipeline(shared_pipeline: ArchonityPipeline) -> ArchonityPipeline:
+    return shared_pipeline
 
 
 class Recorder:

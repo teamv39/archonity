@@ -118,9 +118,8 @@ class TestTraversal:
         assert ROUTE_CTOR in methods
         assert not any(t == ROUTE_CTOR for _, t in calls)
 
-    def test_s0_order_constructors_from_general_rule(self) -> None:
-        pipeline = ArchonityPipeline(skeleton_path=SKELETON_PATH, targets_root=TARGETS_ROOT)
-        methods, calls, _, _ = pipeline.run_scenario(load_json(SCENARIOS / "S0.json"))
+    def test_s0_order_constructors_from_general_rule(self, shared_pipeline: ArchonityPipeline) -> None:
+        methods, calls, _, _ = shared_pipeline.run_scenario(load_json(SCENARIOS / "S0.json"))
         assert ORDER_OTHER_CTOR in methods
         assert CONTACTS_CTOR not in methods
         order_callees = {t for s, t in calls if s == ORDER_OTHER_CTOR}
@@ -202,10 +201,9 @@ class TestLazyCollections:
         assert (ROUTE_BY_ID, "res:table:ts-route-service.route") in data
         assert ((ROUTE_BY_ID, ROUTE_STATIONS) in data) == expected
 
-    def test_s0_user_roles_kept_on_get_token(self) -> None:
+    def test_s0_user_roles_kept_on_get_token(self, shared_pipeline: ArchonityPipeline) -> None:
         """getToken передаёт пользователя в createToken, тот кладёт роли в токен: коллекция грузится на стеке."""
-        pipeline = ArchonityPipeline(skeleton_path=SKELETON_PATH, targets_root=TARGETS_ROOT)
-        _, _, _, data = pipeline.run_scenario(load_json(SCENARIOS / "S0.json"))
+        _, _, _, data = shared_pipeline.run_scenario(load_json(SCENARIOS / "S0.json"))
         roles = {s for s, t in data if t == "res:table:ts-auth-service.user_roles"}
         assert len(roles) == 1 and "TokenServiceImpl#getToken" in next(iter(roles))
 
