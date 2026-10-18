@@ -12,6 +12,7 @@ from engine.evidence import EvidenceLogger
 from engine.graph.builder import GraphBuilder
 from engine.resolver import ScenarioGrounder
 from engine.ir import MethodPoolIR
+from engine.projection import project_constructors
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
 
@@ -28,7 +29,7 @@ class ArchonityPipeline:
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
         entity_ir_path: str | Path | None = None,
-        entity_constructors_on_load: str = "project_calls",
+        constructors: str = "caller_only",
         collection_tables_on_read: str = "loaded",
         element_callbacks: str = "on",
         rabbitmq_delivery: str = "on",
@@ -69,7 +70,7 @@ class ArchonityPipeline:
         # 3. Загрузка правил
         self.rules = RuntimeRules(
             rules_path,
-            entity_constructors_on_load=entity_constructors_on_load,
+            constructors=constructors,
             collection_tables_on_read=collection_tables_on_read,
             element_callbacks=element_callbacks,
             rabbitmq_delivery=rabbitmq_delivery,
@@ -199,6 +200,8 @@ class ArchonityPipeline:
                     scenario_state=scenario_state,
                     ledger=self.ledger,
                 )
+            # M5: конструктор в ответе, только если из него исполнился вызов проекта (R7, ADR-006)
+            project_constructors(m, c, r, d, self.rules.constructors, self.ledger)
             all_methods |= m
             all_calls |= c
             all_remote |= r
