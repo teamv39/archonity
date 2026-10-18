@@ -1,0 +1,9 @@
+{
+ "name": "qwen3-4b",
+ "repo": "Qwen/Qwen3-Embedding-4B",
+ "revision": "5cf2132abc99cad020ac570b19d031efec650f2b",
+ "query_fmt": "Instruct: Given a user action in a train ticket booking web app, retrieve the REST endpoint handler that implements it\nQuery: {q}",
+ "doc_fmt": "{text}",
+ "fmt_version": 1,
+ "dtype": "bfloat16"
+}

@@ -5,6 +5,19 @@ description = "Archonity: static microservice dependency graph reconstruction fo
 requires-python = ">=3.10"
 dependencies = [
     "networkx>=3.0",
+    "numpy>=2.0",
+    "tree-sitter>=0.23",
+    "tree-sitter-javascript>=0.23",
+]
+
+[project.optional-dependencies]
+# Только для пересчёта векторов M1 (бейкофф эмбеддингов); прогон из кеша cache/emb/ их не требует.
+# torch под RTX 50 (SM120) — сборка CUDA 12.8: pip install torch --index-url https://download.pytorch.org/whl/cu128
+# EmbeddingGemma 2 в sentence-transformers 6.1 требует torchvision даже в текстовом режиме.
+embed = [
+    "sentence-transformers>=6.1",
+    "torch>=2.7",
+    "torchvision>=0.22",
 ]
 
 [tool.uv]

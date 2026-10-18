@@ -1,0 +1,286 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-delivery-service",
+  "methods" : {
+    "method:ts-delivery-service:delivery.DeliveryApplication#main(java.lang.String[])" : {
+      "file" : "ts-delivery-service/src/main/java/delivery/DeliveryApplication.java",
+      "line" : 21,
+      "end" : 23,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 22,
+        "expr" : {
+          "call" : "call:method:ts-delivery-service:delivery.DeliveryApplication#main(java.lang.String[])@22:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "DeliveryApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-delivery-service:delivery.DeliveryApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-delivery-service/src/main/java/delivery/DeliveryApplication.java",
+      "line" : 25,
+      "end" : 29,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-delivery-service:delivery.DeliveryApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@28:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-delivery-service:delivery.config.Queues#emailQueue()" : {
+      "file" : "ts-delivery-service/src/main/java/delivery/config/Queues.java",
+      "line" : 12,
+      "end" : 15,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 14,
+        "expr" : {
+          "new" : "Queue",
+          "fqn" : "org.springframework.amqp.core.Queue",
+          "call" : "call:method:ts-delivery-service:delivery.config.Queues#emailQueue()@14:16",
+          "args" : [ {
+            "const" : "delivery.config.Queues.queueName",
+            "value" : {
+              "lit" : "food_delivery",
+              "type" : "string"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-delivery-service:delivery.entity.Delivery#<init>()" : {
+      "file" : "ts-delivery-service/src/main/java/delivery/entity/Delivery.java",
+      "line" : 22,
+      "end" : 24,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)" : {
+      "file" : "ts-delivery-service/src/main/java/delivery/mq/RabbitReceive.java",
+      "line" : 35,
+      "end" : 55,
+      "params" : [ {
+        "name" : "payload",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 37,
+        "target" : {
+          "name" : "delivery",
+          "ref" : "local"
+        },
+        "decl" : "Delivery",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@37:39",
+          "callee" : "json2Object",
+          "recv" : {
+            "name" : "JsonUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "payload",
+            "ref" : "param"
+          }, {
+            "class" : "Delivery"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 39,
+        "id" : "b39",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "delivery",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 40,
+          "expr" : {
+            "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@40:20",
+            "callee" : "error",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[process][json2Object][Receive delivery object is null error]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 41
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "expr",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@43:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "lit" : "[process][Receive delivery object][delivery object: {}]",
+              "type" : "string"
+            },
+            "r" : {
+              "name" : "delivery",
+              "ref" : "local"
+            }
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 45,
+        "id" : "b45",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@45:22",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "delivery",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 46,
+          "expr" : {
+            "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@46:22",
+            "callee" : "setId",
+            "recv" : {
+              "name" : "delivery",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@46:46",
+              "callee" : "toString",
+              "recv" : {
+                "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@46:33",
+                "callee" : "randomUUID",
+                "recv" : {
+                  "name" : "UUID",
+                  "ref" : "type"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "try",
+        "line" : 49,
+        "id" : "t49",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "expr",
+          "line" : 50,
+          "expr" : {
+            "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@50:32",
+            "callee" : "save",
+            "recv" : {
+              "name" : "deliveryRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "delivery",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 51,
+          "expr" : {
+            "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@51:20",
+            "callee" : "info",
+            "recv" : {
+              "name" : "logger",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "[process][Save delivery object into database success]",
+              "type" : "string"
+            } ]
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "Exception" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 53,
+            "expr" : {
+              "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@53:20",
+              "callee" : "error",
+              "recv" : {
+                "name" : "logger",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[process][deliveryRepository.save][Save delivery object into database failed][exception: {}]",
+                "type" : "string"
+              }, {
+                "call" : "call:method:ts-delivery-service:delivery.mq.RabbitReceive#process(java.lang.String)@53:124",
+                "callee" : "toString",
+                "recv" : {
+                  "name" : "e",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      } ]
+    }
+  }
+}

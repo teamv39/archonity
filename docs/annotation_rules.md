@@ -85,6 +85,9 @@ call:method:ts-inside-payment-service:inside_payment.service.InsidePaymentServic
 - `JWTFilter#doFilterInternal` (`ts-common`) исполняется на запросах, ребра от фильтра к обработчику нет.
 - Методы `UserDetails` у `auth.entity.User` (`getAuthorities`, `isAccountNonExpired`, `isAccountNonLocked`, `isCredentialsNonExpired`, `isEnabled`) вызывает Spring Security внутри `authenticationManager.authenticate(...)` — есть в `executes`, нет в `calls`.
 - `UserDetailsServiceImpl#loadUserByUsername` вызывается из `authenticate` — `executes` и `data`, без `calls`.
+- Подтверждено платформой 17.10.2026 (0.91827 против 0.91709): рукописный `equals` сущности, который вызывает библиотека коллекций. `OrderServiceImpl#create` и `OrderOtherServiceImpl#create` проверяют `accountOrders.contains(order)`, `ArrayList` вызывает `order.equals(элемент)` обычным вызовом, не через отражение. Исполняется, только если у владельца уже есть заказы: S1, S2, S3, S5, S6, S7, но не S4 (новый пользователь). `equals` вызывает только геттеры Lombok, так что это одно ребро `executes`. Факты — archparse (`element_callbacks` в `entity_ir.json`), режим `RuntimeRules(element_callbacks=...)` или `run_eval.py --element-callbacks on|off`.
+
+Другие механизмы, которые вызывает фреймворк, разобраны 17.10 (блок 8 плана archparse) и новых рёбер не дают: слушатели RabbitMQ уже идут по R13, `MyCallable#call` (пул потоков travel-service) и `@Async` не исполняются на путях сценариев, `@ExceptionHandler` — только при ошибке входа, колбэков JPA (`@PrePersist`, `@PostLoad`) и `Comparable` в проекте нет, неявного `toString` у `TripId`/`LeftTicketInfo` на путях не найдено.
 
 ### R6. Совпадение имени у ближайшего проектного кадра
 
@@ -98,7 +101,7 @@ call:method:ts-inside-payment-service:inside_payment.service.InsidePaymentServic
 
 ### R7. Конструктор сущности при загрузке из БД
 
-Статус: S0 для `Order`; обобщение на остальные сущности — Гипотеза (17.10.2026).
+Статус: README, S0. Обобщение «любой непустой конструктор» опровергнуто платформой 17.10.2026 (0.8842 против 0.8927).
 
 Явный конструктор без аргументов исполняется, когда Hibernate создаёт экземпляр сущности, вместе со своими вызовами:
 
@@ -114,7 +117,11 @@ calls:    Order#<init>() -> edu.fudan.common.entity.SeatClass#getCode()
 - Вызовы через enum-константу (`OrderStatus.PAID.getCode()`) в скелете отсутствуют — у call_site нет `receiver_type` и рёбер. Их должен разрешать наш парсер (M2).
 - Аналогично при создании нового заказа (`new Order()`) в коде сервисов `ts-preserve-service`, `ts-preserve-other-service` и `ts-rebook-service` конструктор `ts-common:edu.fudan.common.entity.Order#<init>()` выполняет те же вызовы `Date2String`, `OrderStatus#getCode()` и `SeatClass#getCode()`.
 
-Пустой конструктор в эталон не попадает: `Contacts#<init>()` (тело — только комментарий) в S0 отсутствует, хотя контакты пользователя в S0 загружаются (5 строк в дампе). Обобщение, которое сходится с обоими случаями: конструктор при загрузке идёт в `executes`, если в его теле есть хотя бы один оператор. Так попадают `Route`, `Station`, `Trip`, `Config`, `PriceConfig`, `StationFoodStore`, `TrainFood`, `Money`, `user.entity.User`, `Assurance`.
+Организаторы прямо исключают «конструкторы, вызванные библиотекой лишь через отражение» ([REFERENCE](../hackaton/tt-challenge/REFERENCE.md), «Во-вторых»). Hibernate создаёт сущности через отражение, поэтому конструктор при загрузке идёт в `executes`, только если сам вызывает методы проекта: `Order#<init>()` вызывает `Date2String` и `getCode()`. `Contacts#<init>()` (пустой) в S0 отсутствует, хотя контакты загружаются.
+
+Проверено на платформе: добавление 55 конструкторов без проектных вызовов (`Route`, `Station`, `Trip`, `Config`, `PriceConfig`, `StationFoodStore`, `TrainFood`, `Money`, `user.entity.User`, `Assurance`) опустило балл с 0.8927 до 0.8842 — величина совпадает со случаем «все 55 лишние». Разбор: [r7_score_drop.md](researches/r7_score_drop.md).
+
+Конструкторы, вызванные проектным кодом через `new`, — обычные вызовы проекта, ограничение их не касается.
 
 Когда Hibernate создаёт экземпляр (факты archparse, `data/entity_ir.json`; решение — `engine/entities.py`):
 
@@ -124,12 +131,12 @@ calls:    Order#<init>() -> edu.fudan.common.entity.SeatClass#getCode()
 - `save` сущности с заданным id: Spring Data делает `merge`, Hibernate загружает строку и создаёт управляемую копию конструктором. Без id — `persist`, конструктор не вызывается;
 - `exists*`, `count*`, `@Modifying @Query` экземпляров не создают.
 
-Встраиваемые поля (`@Embedded TripId` у `Trip`) создаются вместе с сущностью по тому же правилу непустого тела. Элементы `@ElementCollection` (`Food`) не учитываются: коллекции ленивые.
+Встраиваемые поля (`@Embedded TripId` у `Trip`) создаются вместе с сущностью по тому же правилу. Элементы `@ElementCollection` (`Food`) не учитываются: коллекции ленивые.
 
-Эталон S0 объясняют две гипотезы, режим выбирается флагом `RuntimeRules(entity_constructors_on_load=...)` или ключом `run_eval.py --entity-ctors`:
+Режим выбирается флагом `RuntimeRules(entity_constructors_on_load=...)` или ключом `run_eval.py --entity-ctors`:
 
-- `body` (по умолчанию) — конструктор с непустым телом;
-- `project_calls` — только конструктор, в теле которого есть вызов проектного метода (`Order`: `Date2String`, `getCode`). Совпадает с выдачей до обобщения R7 ребро в ребро;
+- `project_calls` (по умолчанию) — только конструктор, в теле которого есть вызов проектного метода (`Order`: `Date2String`, `getCode`). Выдача совпадает с посылкой на 0.8927 ребро в ребро;
+- `body` — любой конструктор с непустым телом. Опровергнуто платформой, оставлено для абляций;
 - `off` — правило выключено целиком, вместе с `Order` (S0 падает; только для отладки).
 
 ### R8. Отражение Jackson не учитывается
@@ -161,6 +168,16 @@ data: UserDetailsServiceImpl#loadUserByUsername(java.lang.String) -> res:table:t
 data: TokenServiceImpl#getToken(...)                             -> res:table:ts-auth-service.auth_user
 data: TokenServiceImpl#getToken(...)                             -> res:table:ts-auth-service.user_roles
 ```
+
+Обобщение на все ленивые коллекции подтверждено платформой 17.10.2026: 0.91709 против 0.90208, разница только в 17 рёбрах `data` ниже. Таблица ленивой коллекции идёт от метода с вызовом чтения, только если коллекция загрузилась, пока метод на стеке. Геттер сам коллекцию не грузит, грузит первое обращение к элементам. Если метод только вернул сущность или результат геттера, коллекцию загрузит сериализация ответа после возврата. Проектного кадра с этой таблицей в `data_access` на стеке тогда уже нет, и ребра нет. Как `loadUserByUsername` в S0.
+
+- `getRouteById` возвращает `Route`: без `route_stations` и `route_distances`.
+- `getRouteByStartAndEnd` вызывает `route.getStations().contains(...)`: `route_stations` есть, `route_distances` нет.
+- `listTrainFoodByTripId` возвращает `tf.getFoodList()` в `return`: без `train_food_list`.
+- `getToken` передаёт пользователя в `createToken`, тот кладёт роли в токен: `user_roles` есть (сходится с S0).
+- `EAGER`-коллекции (`station_food_list`) грузятся тем же запросом, запись (`save`, `delete`) трогает таблицу коллекции сама: их правило не трогает.
+
+Факты даёт archparse (`collections`, `collections_loaded` в `entity_ir.json`), решение — `engine/entities.py`. Режим: `RuntimeRules(collection_tables_on_read=...)` или `run_eval.py --collection-tables`: `loaded` (по умолчанию) или `all` — все таблицы `data_access` исполненного вызова, выдача до правила ребро в ребро.
 
 Схема в ID таблицы не всегда совпадает с сервисом: `res:table:ts-consign-mysql.consign_record`. ID копируем из `nodes`.
 
@@ -228,6 +245,8 @@ data: TokenServiceImpl#getToken(...)                             -> res:table:ts
 Статус: README, S0.
 
 Один шаг — один клиентский запрос через шлюз. Одинаковые обработчики разных шагов сливаются в множествах (в S0 6 шагов дают 5 входов: «Refresh» и «Refresh Paid» идут в один `OrderController#queryOrdersForRefresh`). Ответ — множество на весь сценарий, порядок и повторы не важны.
+
+«Refresh the list of orders» без типа поезда — один вход: `queryOrdersForRefresh` сервиса заказов по типу поезда заказа, с которым работает сценарий (`ts-order-service` для G/D, `ts-order-other-service` для остальных). UI в `queryMyOrderList` шлёт оба запроса, но второго в эталоне нет: S0 и платформа 17.10, [OQ-08](open-questions.md#oq-08).
 
 ## Цифры для ориентира
 

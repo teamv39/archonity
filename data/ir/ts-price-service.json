@@ -1,0 +1,3381 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-price-service",
+  "methods" : {
+    "method:ts-price-service:price.PriceApplication#main(java.lang.String[])" : {
+      "file" : "ts-price-service/src/main/java/price/PriceApplication.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.PriceApplication#main(java.lang.String[])@27:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "PriceApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.PriceApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-price-service/src/main/java/price/PriceApplication.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.PriceApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@33:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-price-service/src/main/java/price/config/SecurityConfig.java",
+      "line" : 66,
+      "end" : 87,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 68,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@83:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@81:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@81:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@80:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:54",
+                      "callee" : "hasAnyRole",
+                      "recv" : {
+                        "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:57",
+                          "callee" : "hasAnyRole",
+                          "recv" : {
+                            "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:18",
+                            "callee" : "antMatchers",
+                            "recv" : {
+                              "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:55",
+                              "callee" : "hasAnyRole",
+                              "recv" : {
+                                "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+                                "callee" : "antMatchers",
+                                "recv" : {
+                                  "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:57",
+                                  "callee" : "permitAll",
+                                  "recv" : {
+                                    "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+                                    "callee" : "antMatchers",
+                                    "recv" : {
+                                      "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                                      "callee" : "authorizeRequests",
+                                      "recv" : {
+                                        "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:18",
+                                        "callee" : "and",
+                                        "recv" : {
+                                          "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:38",
+                                          "callee" : "sessionCreationPolicy",
+                                          "recv" : {
+                                            "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                                            "callee" : "sessionManagement",
+                                            "recv" : {
+                                              "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:25",
+                                              "callee" : "disable",
+                                              "recv" : {
+                                                "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                                                "callee" : "csrf",
+                                                "recv" : {
+                                                  "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:34",
+                                                  "callee" : "disable",
+                                                  "recv" : {
+                                                    "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:22",
+                                                    "callee" : "httpBasic",
+                                                    "recv" : {
+                                                      "name" : "httpSecurity",
+                                                      "ref" : "param"
+                                                    },
+                                                    "args" : [ ]
+                                                  },
+                                                  "args" : [ ]
+                                                },
+                                                "args" : [ ]
+                                              },
+                                              "args" : [ ]
+                                            },
+                                            "args" : [ ]
+                                          },
+                                          "args" : [ {
+                                            "field" : "STATELESS",
+                                            "of" : {
+                                              "name" : "SessionCreationPolicy",
+                                              "ref" : "type"
+                                            }
+                                          } ]
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ {
+                                      "lit" : "/api/v1/priceservice/**",
+                                      "type" : "string"
+                                    } ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ {
+                                  "field" : "POST",
+                                  "of" : {
+                                    "name" : "HttpMethod",
+                                    "ref" : "type"
+                                  }
+                                }, {
+                                  "name" : "prices",
+                                  "ref" : "field"
+                                } ]
+                              },
+                              "args" : [ {
+                                "name" : "admin",
+                                "ref" : "field"
+                              } ]
+                            },
+                            "args" : [ {
+                              "field" : "DELETE",
+                              "of" : {
+                                "name" : "HttpMethod",
+                                "ref" : "type"
+                              }
+                            }, {
+                              "name" : "prices",
+                              "ref" : "field"
+                            } ]
+                          },
+                          "args" : [ {
+                            "name" : "admin",
+                            "ref" : "field"
+                          } ]
+                        },
+                        "args" : [ {
+                          "field" : "PUT",
+                          "of" : {
+                            "name" : "HttpMethod",
+                            "ref" : "type"
+                          }
+                        }, {
+                          "name" : "prices",
+                          "ref" : "field"
+                        } ]
+                      },
+                      "args" : [ {
+                        "name" : "admin",
+                        "ref" : "field"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
+            "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@83:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 86,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@86:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-price-service:price.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@86:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-price-service/src/main/java/price/config/SecurityConfig.java",
+      "line" : 50,
+      "end" : 63,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 52,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-price-service:price.config.SecurityConfig#corsConfigurer()@52:16",
+          "args" : [ ],
+          "anon" : "type:ts-price-service:price.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-price-service:price.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-price-service/src/main/java/price/config/SecurityConfig.java",
+      "line" : 37,
+      "end" : 40,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 39,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
+          "call" : "call:method:ts-price-service:price.config.SecurityConfig#passwordEncoder()@39:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-price-service/src/main/java/price/config/SecurityConfig.java",
+      "line" : 53,
+      "end" : 61,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@60:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-price-service:price.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@59:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@58:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-price-service:price.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@57:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-price-service:price.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-price-service:price.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.controller.PriceController#create(price.entity.PriceConfig,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/controller/PriceController.java",
+      "line" : 56,
+      "end" : 61,
+      "params" : [ {
+        "name" : "info",
+        "type" : "PriceConfig"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 59,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#create(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@59:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PriceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[createNewPriceConfig][Create price][RouteId: {}, TrainType: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-price-service:price.controller.PriceController#create(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@59:109",
+            "callee" : "getRouteId",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-price-service:price.controller.PriceController#create(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@59:127",
+            "callee" : "getTrainType",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 60,
+        "expr" : {
+          "new" : "ResponseEntity<>",
+          "fqn" : "org.springframework.http.ResponseEntity",
+          "call" : "call:method:ts-price-service:price.controller.PriceController#create(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@60:16",
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.controller.PriceController#create(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@60:45",
+            "callee" : "createNewPriceConfig",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }, {
+            "field" : "CREATED",
+            "of" : {
+              "name" : "HttpStatus",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.controller.PriceController#delete(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/controller/PriceController.java",
+      "line" : 63,
+      "end" : 67,
+      "params" : [ {
+        "name" : "pricesId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#delete(java.lang.String,org.springframework.http.HttpHeaders)@65:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PriceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deletePriceConfig][Delete price][PriceConfigId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "pricesId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 66,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#delete(java.lang.String,org.springframework.http.HttpHeaders)@66:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.controller.PriceController#delete(java.lang.String,org.springframework.http.HttpHeaders)@66:27",
+            "callee" : "deletePriceConfig",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "pricesId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.controller.PriceController#home()" : {
+      "file" : "ts-price-service/src/main/java/price/controller/PriceController.java",
+      "line" : 31,
+      "end" : 34,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "lit" : "Welcome to [ Price Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-price-service:price.controller.PriceController#query(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/controller/PriceController.java",
+      "line" : 36,
+      "end" : 41,
+      "params" : [ {
+        "name" : "routeId",
+        "type" : "String"
+      }, {
+        "name" : "trainType",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 39,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#query(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@39:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PriceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findByRouteIdAndTrainType][Query price][RouteId: {}, TrainType: {}]",
+            "type" : "string"
+          }, {
+            "name" : "routeId",
+            "ref" : "param"
+          }, {
+            "name" : "trainType",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 40,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#query(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@40:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.controller.PriceController#query(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@40:27",
+            "callee" : "findByRouteIdAndTrainType",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "routeId",
+              "ref" : "param"
+            }, {
+              "name" : "trainType",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.controller.PriceController#query(java.util.List,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/controller/PriceController.java",
+      "line" : 43,
+      "end" : 48,
+      "params" : [ {
+        "name" : "ridsAndTts",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 46,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#query(java.util.List,org.springframework.http.HttpHeaders)@46:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PriceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findByRouteIdAndTrainType][Query price][routeId and Train Type: {}]",
+            "type" : "string"
+          }, {
+            "name" : "ridsAndTts",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 47,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#query(java.util.List,org.springframework.http.HttpHeaders)@47:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.controller.PriceController#query(java.util.List,org.springframework.http.HttpHeaders)@47:27",
+            "callee" : "findByRouteIdsAndTrainTypes",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "ridsAndTts",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.controller.PriceController#queryAll(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/controller/PriceController.java",
+      "line" : 50,
+      "end" : 54,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#queryAll(org.springframework.http.HttpHeaders)@52:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PriceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findAllPriceConfig][Query all prices]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#queryAll(org.springframework.http.HttpHeaders)@53:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.controller.PriceController#queryAll(org.springframework.http.HttpHeaders)@53:27",
+            "callee" : "findAllPriceConfig",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.controller.PriceController#update(price.entity.PriceConfig,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/controller/PriceController.java",
+      "line" : 69,
+      "end" : 73,
+      "params" : [ {
+        "name" : "info",
+        "type" : "PriceConfig"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 71,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#update(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@71:32",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PriceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[updatePriceConfig][Update price][PriceConfigId: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-price-service:price.controller.PriceController#update(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@71:97",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "info",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.controller.PriceController#update(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@72:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.controller.PriceController#update(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@72:27",
+            "callee" : "updatePriceConfig",
+            "recv" : {
+              "name" : "service",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "info",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.entity.PriceConfig#<init>()" : {
+      "file" : "ts-price-service/src/main/java/price/entity/PriceConfig.java",
+      "line" : 35,
+      "end" : 38,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 37,
+        "target" : {
+          "field" : "id",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.entity.PriceConfig#<init>()@37:37",
+          "callee" : "toString",
+          "recv" : {
+            "call" : "call:method:ts-price-service:price.entity.PriceConfig#<init>()@37:24",
+            "callee" : "randomUUID",
+            "recv" : {
+              "name" : "UUID",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-price-service/src/main/java/price/init/InitData.java",
+      "line" : 24,
+      "end" : 95,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 26,
+        "target" : {
+          "name" : "priceConfig",
+          "ref" : "local"
+        },
+        "decl" : "PriceConfig",
+        "operator" : "=",
+        "expr" : {
+          "new" : "PriceConfig",
+          "fqn" : "price.entity.PriceConfig",
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@26:35",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@27:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@27:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@27:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "6d20b8cb-039c-474c-ae25-b6177ea41152",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@28:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "92708982-77af-4318-be25-57ccb0ff69ad",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@29:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "gaoTieOne",
+            "ref" : "field"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@30:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.38,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@31:21",
+          "callee" : "setFirstClassPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1.0,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@32:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 34,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@34:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@34:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@34:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "c5679b7e-4a54-4f52-9939-1ae86ba16fa7",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@35:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "aefcef3f-3f42-46e8-afd7-6cb2a928bd3d",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 36,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@36:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "gaoTieOne",
+            "ref" : "field"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@37:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.5,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@38:21",
+          "callee" : "setFirstClassPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1.0,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 39,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@39:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@41:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@41:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@41:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "719287d6-d3e7-4b54-9a92-71d039748b22",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 42,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@42:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "a3f256c1-0e43-4f7d-9c21-121bf258101f",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@43:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "gaoTieOne",
+            "ref" : "field"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@44:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.7,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 45,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@45:21",
+          "callee" : "setFirstClassPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1.0,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 46,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@46:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@48:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@48:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@48:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "7de18cf8-bb17-4bb2-aeb4-85d8176d3a93",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 49,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@49:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "084837bb-53c8-4438-87c8-0321a4d09917",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 50,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@50:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "GaoTieTwo",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@51:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.6,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@52:21",
+          "callee" : "setFirstClassPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1.0,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@53:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@55:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@55:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@55:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "d5c4523a-827c-468c-95be-e9024a40572e",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 56,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@56:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "f3d4d4ef-693b-4456-8eed-59c0d717dd08",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 57,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@57:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "DongCheOne",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 58,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@58:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.45,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 59,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@59:21",
+          "callee" : "setFirstClassPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1.0,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 60,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@60:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 62,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@62:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@62:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@62:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "b90a6ad7-ffad-4624-9655-48e9e185fa6c",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 63,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@63:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "0b23bd3e-876a-4af3-b920-c50a90c90b04",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@64:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "zhiDa",
+            "ref" : "field"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@65:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.35,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 66,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@66:21",
+          "callee" : "setFirstClassPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1.0,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 67,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@67:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 69,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@69:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@69:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@69:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "8fb01829-393f-4af4-9e96-f72866f94d14",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 70,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@70:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "9fc9c261-3263-4bfa-82f8-bb44e06b2f52",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 71,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@71:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "zhiDa",
+            "ref" : "field"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@72:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.35,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 73,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@73:21",
+          "callee" : "setFirstClassPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1.0,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 74,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@74:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 76,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@76:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@76:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@76:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "8b059dc5-01a2-4f8f-8f94-6c886b38bb34",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 77,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@77:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "d693a2c5-ef87-4a3c-bef8-600b43f62c68",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 78,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@78:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "zhiDa",
+            "ref" : "field"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@79:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.32,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 80,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@80:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 82,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@82:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@82:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@82:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "dd0e572e-7443-420c-8280-7d8215636069",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 83,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@83:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "20eb7122-3a11-423f-b10a-be0dc5bce7db",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 84,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@84:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "TeKuai",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 85,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@85:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.3,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 86,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@86:21",
+          "callee" : "setFirstClassPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1.0,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 87,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@87:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 89,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@89:21",
+          "callee" : "setId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@89:83",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@89:32",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "lit" : "0eb474c9-f8be-4119-8681-eb538a404a6a",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 90,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@90:21",
+          "callee" : "setRouteId",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "1367db1f-461e-4ab7-87ad-2bcc05fd9cb7",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 91,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@91:21",
+          "callee" : "setTrainType",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : "KuaiSu",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 92,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@92:21",
+          "callee" : "setBasicPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 0.2,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 93,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@93:21",
+          "callee" : "setFirstClassPriceRate",
+          "recv" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "lit" : 1.0,
+            "type" : "double"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 94,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.init.InitData#run(java.lang.String[])@94:17",
+          "callee" : "createNewPriceConfig",
+          "recv" : {
+            "name" : "service",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "priceConfig",
+            "ref" : "local"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+      "line" : 28,
+      "end" : 57,
+      "params" : [ {
+        "name" : "createAndModifyPriceConfig",
+        "type" : "PriceConfig"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 30,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@30:33",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PriceServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[createNewPriceConfig]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "name" : "priceConfig",
+          "ref" : "local"
+        },
+        "decl" : "PriceConfig",
+        "operator" : "=",
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      }, {
+        "op" : "if",
+        "line" : 33,
+        "id" : "b33",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@33:40",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "bin" : "<",
+            "l" : {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@33:105",
+              "callee" : "length",
+              "recv" : {
+                "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@33:94",
+                "callee" : "toString",
+                "recv" : {
+                  "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@33:86",
+                  "callee" : "getId",
+                  "recv" : {
+                    "name" : "createAndModifyPriceConfig",
+                    "ref" : "param"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "lit" : 10,
+              "type" : "int"
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 34,
+          "target" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "new" : "PriceConfig",
+            "fqn" : "price.entity.PriceConfig",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@34:27",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 35,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@35:25",
+            "callee" : "setId",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@35:49",
+              "callee" : "toString",
+              "recv" : {
+                "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@35:36",
+                "callee" : "randomUUID",
+                "recv" : {
+                  "name" : "UUID",
+                  "ref" : "type"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 36,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@36:25",
+            "callee" : "setBasicPriceRate",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@36:70",
+              "callee" : "getBasicPriceRate",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 37,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@37:25",
+            "callee" : "setFirstClassPriceRate",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@37:75",
+              "callee" : "getFirstClassPriceRate",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 38,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@38:25",
+            "callee" : "setRouteId",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@38:63",
+              "callee" : "getRouteId",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 39,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@39:25",
+            "callee" : "setTrainType",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@39:65",
+              "callee" : "getTrainType",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 40,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@40:35",
+            "callee" : "save",
+            "recv" : {
+              "name" : "priceConfigRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "priceConfig",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 43,
+          "target" : {
+            "name" : "op",
+            "ref" : "local"
+          },
+          "decl" : "Optional<PriceConfig>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@43:62",
+            "callee" : "findById",
+            "recv" : {
+              "name" : "priceConfigRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@43:98",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "if",
+          "line" : 44,
+          "id" : "b44",
+          "cond" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@44:21",
+              "callee" : "isPresent",
+              "recv" : {
+                "name" : "op",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          },
+          "then" : [ {
+            "op" : "assign",
+            "line" : 45,
+            "target" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "new" : "PriceConfig",
+              "fqn" : "price.entity.PriceConfig",
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@45:31",
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 46,
+            "expr" : {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@46:29",
+              "callee" : "setId",
+              "recv" : {
+                "name" : "priceConfig",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@46:62",
+                "callee" : "getId",
+                "recv" : {
+                  "name" : "createAndModifyPriceConfig",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ],
+          "else" : [ {
+            "op" : "assign",
+            "line" : 48,
+            "target" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "operator" : "=",
+            "expr" : {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@48:34",
+              "callee" : "get",
+              "recv" : {
+                "name" : "op",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ]
+        }, {
+          "op" : "expr",
+          "line" : 50,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@50:25",
+            "callee" : "setBasicPriceRate",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@50:70",
+              "callee" : "getBasicPriceRate",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 51,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@51:25",
+            "callee" : "setFirstClassPriceRate",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@51:75",
+              "callee" : "getFirstClassPriceRate",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 52,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@52:25",
+            "callee" : "setRouteId",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@52:63",
+              "callee" : "getRouteId",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 53,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@53:25",
+            "callee" : "setTrainType",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@53:65",
+              "callee" : "getTrainType",
+              "recv" : {
+                "name" : "createAndModifyPriceConfig",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 54,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@54:35",
+            "callee" : "save",
+            "recv" : {
+              "name" : "priceConfigRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "priceConfig",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 56,
+        "expr" : {
+          "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@56:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "Create success",
+            "type" : "string"
+          }, {
+            "name" : "priceConfig",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+      "line" : 125,
+      "end" : 136,
+      "params" : [ {
+        "name" : "pcId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 127,
+        "target" : {
+          "name" : "op",
+          "ref" : "local"
+        },
+        "decl" : "Optional<PriceConfig>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)@127:58",
+          "callee" : "findById",
+          "recv" : {
+            "name" : "priceConfigRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "pcId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 128,
+        "id" : "b128",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)@128:17",
+            "callee" : "isPresent",
+            "recv" : {
+              "name" : "op",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 129,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)@129:37",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PriceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deletePriceConfig][Delete price config error][Price config not found][PriceConfigId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "pcId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 130,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)@130:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "noThatConfig",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 132,
+          "target" : {
+            "name" : "pc",
+            "ref" : "local"
+          },
+          "decl" : "PriceConfig",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)@132:33",
+            "callee" : "get",
+            "recv" : {
+              "name" : "op",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 133,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)@133:35",
+            "callee" : "delete",
+            "recv" : {
+              "name" : "priceConfigRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "pc",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 134,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#deletePriceConfig(java.lang.String,org.springframework.http.HttpHeaders)@134:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Delete success",
+              "type" : "string"
+            }, {
+              "name" : "pc",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-price-service:price.service.PriceServiceImpl#findAllPriceConfig(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+      "line" : 109,
+      "end" : 123,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 111,
+        "target" : {
+          "name" : "list",
+          "ref" : "local"
+        },
+        "decl" : "List<PriceConfig>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findAllPriceConfig(org.springframework.http.HttpHeaders)@111:56",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "priceConfigRepository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 112,
+        "id" : "b112",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "list",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 113,
+          "target" : {
+            "name" : "list",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "new" : "ArrayList<>",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findAllPriceConfig(org.springframework.http.HttpHeaders)@113:20",
+            "args" : [ ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 116,
+        "id" : "b116",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findAllPriceConfig(org.springframework.http.HttpHeaders)@116:19",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "list",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 117,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findAllPriceConfig(org.springframework.http.HttpHeaders)@117:37",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PriceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[findAllPriceConfig][Find all price config warn][{}]",
+              "type" : "string"
+            }, {
+              "lit" : "No Content",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 118,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findAllPriceConfig(org.springframework.http.HttpHeaders)@118:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Success",
+              "type" : "string"
+            }, {
+              "name" : "list",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 120,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findAllPriceConfig(org.springframework.http.HttpHeaders)@120:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No price config",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-price-service:price.service.PriceServiceImpl#findById(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+      "line" : 59,
+      "end" : 67,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 61,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findById(java.lang.String,org.springframework.http.HttpHeaders)@61:33",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PriceServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findById][ID: {}]",
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 62,
+        "target" : {
+          "name" : "op",
+          "ref" : "local"
+        },
+        "decl" : "Optional<PriceConfig>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findById(java.lang.String,org.springframework.http.HttpHeaders)@62:58",
+          "callee" : "findById",
+          "recv" : {
+            "name" : "priceConfigRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findById(java.lang.String,org.springframework.http.HttpHeaders)@62:87",
+            "callee" : "toString",
+            "recv" : {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findById(java.lang.String,org.springframework.http.HttpHeaders)@62:72",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "name" : "id",
+                "ref" : "param"
+              } ]
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 63,
+        "id" : "b63",
+        "cond" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findById(java.lang.String,org.springframework.http.HttpHeaders)@63:15",
+          "callee" : "isPresent",
+          "recv" : {
+            "name" : "op",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 64,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findById(java.lang.String,org.springframework.http.HttpHeaders)@64:23",
+            "callee" : "get",
+            "recv" : {
+              "name" : "op",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 66,
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      } ]
+    },
+    "method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdAndTrainType(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+      "line" : 69,
+      "end" : 81,
+      "params" : [ {
+        "name" : "routeId",
+        "type" : "String"
+      }, {
+        "name" : "trainType",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 71,
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdAndTrainType(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@71:33",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "PriceServiceImpl",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findByRouteIdAndTrainType][Route: {} , Train Type: {}]",
+            "type" : "string"
+          }, {
+            "name" : "routeId",
+            "ref" : "param"
+          }, {
+            "name" : "trainType",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 72,
+        "target" : {
+          "name" : "priceConfig",
+          "ref" : "local"
+        },
+        "decl" : "PriceConfig",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdAndTrainType(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@72:57",
+          "callee" : "findByRouteIdAndTrainType",
+          "recv" : {
+            "name" : "priceConfigRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "routeId",
+            "ref" : "param"
+          }, {
+            "name" : "trainType",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 75,
+        "id" : "b75",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 76,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdAndTrainType(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@76:37",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PriceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[findByRouteIdAndTrainType][Find by route and train type warn][PricrConfig not found][RouteId: {}, TrainType: {}]",
+              "type" : "string"
+            }, {
+              "name" : "routeId",
+              "ref" : "param"
+            }, {
+              "name" : "trainType",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 77,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdAndTrainType(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@77:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "noThatConfig",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 79,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdAndTrainType(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)@79:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Success",
+              "type" : "string"
+            }, {
+              "name" : "priceConfig",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+      "line" : 83,
+      "end" : 106,
+      "params" : [ {
+        "name" : "ridsAndTts",
+        "type" : "List<String>"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 85,
+        "target" : {
+          "name" : "routeIds",
+          "ref" : "local"
+        },
+        "decl" : "List<String>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@85:33",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 86,
+        "target" : {
+          "name" : "trainTypes",
+          "ref" : "local"
+        },
+        "decl" : "List<String>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@86:35",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 87,
+        "id" : "f87:ridsAndTts",
+        "var" : "rts",
+        "var_type" : "String",
+        "iter" : {
+          "name" : "ridsAndTts",
+          "ref" : "param"
+        },
+        "body" : [ {
+          "op" : "assign",
+          "line" : 88,
+          "target" : {
+            "name" : "r_t",
+            "ref" : "local"
+          },
+          "decl" : "List<String>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@88:40",
+            "callee" : "asList",
+            "recv" : {
+              "name" : "Arrays",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@88:51",
+              "callee" : "split",
+              "recv" : {
+                "name" : "rts",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "lit" : ":",
+                "type" : "string"
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 89,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@89:22",
+            "callee" : "add",
+            "recv" : {
+              "name" : "routeIds",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@89:30",
+              "callee" : "get",
+              "recv" : {
+                "name" : "r_t",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              } ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 90,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@90:24",
+            "callee" : "add",
+            "recv" : {
+              "name" : "trainTypes",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@90:32",
+              "callee" : "get",
+              "recv" : {
+                "name" : "r_t",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              } ]
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 92,
+        "target" : {
+          "name" : "pcs",
+          "ref" : "local"
+        },
+        "decl" : "List<PriceConfig>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@92:55",
+          "callee" : "findByRouteIdsAndTrainTypes",
+          "recv" : {
+            "name" : "priceConfigRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "routeIds",
+            "ref" : "local"
+          }, {
+            "name" : "trainTypes",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 93,
+        "target" : {
+          "name" : "pcMap",
+          "ref" : "local"
+        },
+        "decl" : "Map<String,PriceConfig>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HashMap<>",
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@93:42",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 94,
+        "id" : "f94:pcs",
+        "var" : "pc",
+        "var_type" : "PriceConfig",
+        "iter" : {
+          "name" : "pcs",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "assign",
+          "line" : 95,
+          "target" : {
+            "name" : "key",
+            "ref" : "local"
+          },
+          "decl" : "String",
+          "operator" : "=",
+          "expr" : {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@95:29",
+                "callee" : "getRouteId",
+                "recv" : {
+                  "name" : "pc",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              },
+              "r" : {
+                "lit" : ":",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@95:53",
+              "callee" : "getTrainType",
+              "recv" : {
+                "name" : "pc",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        }, {
+          "op" : "if",
+          "line" : 96,
+          "id" : "b96",
+          "cond" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@96:27",
+            "callee" : "contains",
+            "recv" : {
+              "name" : "ridsAndTts",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "name" : "key",
+              "ref" : "local"
+            } ]
+          },
+          "then" : [ {
+            "op" : "expr",
+            "line" : 97,
+            "expr" : {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@97:23",
+              "callee" : "put",
+              "recv" : {
+                "name" : "pcMap",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "key",
+                "ref" : "local"
+              }, {
+                "name" : "pc",
+                "ref" : "local"
+              } ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "if",
+        "line" : 100,
+        "id" : "b100",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "pcMap",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 101,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@101:37",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PriceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[findByRouteIdsAndTrainTypes][Find by routes and train types warn][PricrConfig not found][RouteIds: {}, TrainTypes: {}]",
+              "type" : "string"
+            }, {
+              "name" : "routeIds",
+              "ref" : "local"
+            }, {
+              "name" : "trainTypes",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 102,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@102:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "noThatConfig",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "return",
+          "line" : 104,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#findByRouteIdsAndTrainTypes(java.util.List,org.springframework.http.HttpHeaders)@104:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Success",
+              "type" : "string"
+            }, {
+              "name" : "pcMap",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-price-service/src/main/java/price/service/PriceServiceImpl.java",
+      "line" : 138,
+      "end" : 154,
+      "params" : [ {
+        "name" : "c",
+        "type" : "PriceConfig"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 140,
+        "target" : {
+          "name" : "op",
+          "ref" : "local"
+        },
+        "decl" : "Optional<PriceConfig>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@140:58",
+          "callee" : "findById",
+          "recv" : {
+            "name" : "priceConfigRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@140:69",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "c",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 141,
+        "id" : "b141",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@141:17",
+            "callee" : "isPresent",
+            "recv" : {
+              "name" : "op",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 142,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@142:37",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "PriceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[updatePriceConfig][Update price config error][Price config not found][PriceConfigId: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@142:137",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "c",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 143,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@143:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "name" : "noThatConfig",
+              "ref" : "field"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 145,
+          "target" : {
+            "name" : "priceConfig",
+            "ref" : "local"
+          },
+          "decl" : "PriceConfig",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@145:42",
+            "callee" : "get",
+            "recv" : {
+              "name" : "op",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 146,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@146:25",
+            "callee" : "setId",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@146:33",
+              "callee" : "getId",
+              "recv" : {
+                "name" : "c",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 147,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@147:25",
+            "callee" : "setBasicPriceRate",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@147:45",
+              "callee" : "getBasicPriceRate",
+              "recv" : {
+                "name" : "c",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 148,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@148:25",
+            "callee" : "setFirstClassPriceRate",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@148:50",
+              "callee" : "getFirstClassPriceRate",
+              "recv" : {
+                "name" : "c",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 149,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@149:25",
+            "callee" : "setRouteId",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@149:38",
+              "callee" : "getRouteId",
+              "recv" : {
+                "name" : "c",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 150,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@150:25",
+            "callee" : "setTrainType",
+            "recv" : {
+              "name" : "priceConfig",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@150:40",
+              "callee" : "getTrainType",
+              "recv" : {
+                "name" : "c",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 151,
+          "expr" : {
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@151:35",
+            "callee" : "save",
+            "recv" : {
+              "name" : "priceConfigRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "priceConfig",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 152,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-price-service:price.service.PriceServiceImpl#updatePriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@152:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Update success",
+              "type" : "string"
+            }, {
+              "name" : "priceConfig",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    }
+  }
+}

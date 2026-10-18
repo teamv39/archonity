@@ -1,5 +1,5 @@
 {
-  "schema" : "entity_ir/1",
+  "schema" : "entity_ir/2",
   "entities" : [ {
     "type" : "assurance.entity.Assurance",
     "module" : "ts-assurance-service",
@@ -11,7 +11,8 @@
     "no_arg_ctor" : "method:ts-assurance-service:assurance.entity.Assurance#<init>()",
     "ctor_statements" : 1,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "auth.entity.User",
     "module" : "ts-auth-service",
@@ -22,7 +23,12 @@
     "id_generated" : false,
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ {
+      "field" : "roles",
+      "table" : "user_roles",
+      "fetch" : "LAZY"
+    } ]
   }, {
     "type" : "com.trainticket.entity.Money",
     "module" : "ts-payment-service",
@@ -33,7 +39,8 @@
     "id_generated" : true,
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "com.trainticket.entity.Payment",
     "module" : "ts-payment-service",
@@ -45,7 +52,8 @@
     "no_arg_ctor" : "method:ts-payment-service:com.trainticket.entity.Payment#<init>()",
     "ctor_statements" : 4,
     "ctor_assigns_id" : true,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "config.entity.Config",
     "module" : "ts-config-service",
@@ -57,7 +65,8 @@
     "no_arg_ctor" : "method:ts-config-service:config.entity.Config#<init>()",
     "ctor_statements" : 2,
     "ctor_assigns_id" : true,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "consign.entity.ConsignRecord",
     "module" : "ts-consign-service",
@@ -68,7 +77,8 @@
     "id_generated" : false,
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "consignprice.entity.ConsignPrice",
     "module" : "ts-consign-price-service",
@@ -80,7 +90,8 @@
     "no_arg_ctor" : "method:ts-consign-price-service:consignprice.entity.ConsignPrice#<init>()",
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "contacts.entity.Contacts",
     "module" : "ts-contacts-service",
@@ -92,7 +103,8 @@
     "no_arg_ctor" : "method:ts-contacts-service:contacts.entity.Contacts#<init>()",
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "delivery.entity.Delivery",
     "module" : "ts-delivery-service",
@@ -104,7 +116,8 @@
     "no_arg_ctor" : "method:ts-delivery-service:delivery.entity.Delivery#<init>()",
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "edu.fudan.common.entity.Food",
     "module" : "ts-common",
@@ -114,7 +127,8 @@
     "no_arg_ctor" : "method:ts-common:edu.fudan.common.entity.Food#<init>()",
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "fdse.microservice.entity.Station",
     "module" : "ts-station-service",
@@ -126,7 +140,8 @@
     "no_arg_ctor" : "method:ts-station-service:fdse.microservice.entity.Station#<init>()",
     "ctor_statements" : 1,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "food.entity.StationFoodStore",
     "module" : "ts-station-food-service",
@@ -138,7 +153,12 @@
     "no_arg_ctor" : "method:ts-station-food-service:food.entity.StationFoodStore#<init>()",
     "ctor_statements" : 1,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ {
+      "field" : "foodList",
+      "table" : "station_food_list",
+      "fetch" : "EAGER"
+    } ]
   }, {
     "type" : "food_delivery.entity.FoodDeliveryOrder",
     "module" : "ts-food-delivery-service",
@@ -149,7 +169,12 @@
     "id_generated" : true,
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ {
+      "field" : "foodList",
+      "table" : "food_delivery_order_food_list",
+      "fetch" : "LAZY"
+    } ]
   }, {
     "type" : "foodsearch.entity.FoodOrder",
     "module" : "ts-food-service",
@@ -161,7 +186,8 @@
     "no_arg_ctor" : "method:ts-food-service:foodsearch.entity.FoodOrder#<init>()",
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "inside_payment.entity.Money",
     "module" : "ts-inside-payment-service",
@@ -173,7 +199,8 @@
     "no_arg_ctor" : "method:ts-inside-payment-service:inside_payment.entity.Money#<init>()",
     "ctor_statements" : 2,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "inside_payment.entity.Payment",
     "module" : "ts-inside-payment-service",
@@ -185,7 +212,8 @@
     "no_arg_ctor" : "method:ts-inside-payment-service:inside_payment.entity.Payment#<init>()",
     "ctor_statements" : 3,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "notification.entity.NotifyInfo",
     "module" : "ts-notification-service",
@@ -197,7 +225,8 @@
     "no_arg_ctor" : "method:ts-notification-service:notification.entity.NotifyInfo#<init>()",
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "order.entity.Order",
     "module" : "ts-order-service",
@@ -209,7 +238,8 @@
     "no_arg_ctor" : "method:ts-order-service:order.entity.Order#<init>()",
     "ctor_statements" : 10,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "other.entity.Order",
     "module" : "ts-order-other-service",
@@ -221,7 +251,8 @@
     "no_arg_ctor" : "method:ts-order-other-service:other.entity.Order#<init>()",
     "ctor_statements" : 10,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "price.entity.PriceConfig",
     "module" : "ts-price-service",
@@ -233,7 +264,8 @@
     "no_arg_ctor" : "method:ts-price-service:price.entity.PriceConfig#<init>()",
     "ctor_statements" : 1,
     "ctor_assigns_id" : true,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "route.entity.Route",
     "module" : "ts-route-service",
@@ -245,7 +277,16 @@
     "no_arg_ctor" : "method:ts-route-service:route.entity.Route#<init>()",
     "ctor_statements" : 1,
     "ctor_assigns_id" : true,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ {
+      "field" : "stations",
+      "table" : "route_stations",
+      "fetch" : "LAZY"
+    }, {
+      "field" : "distances",
+      "table" : "route_distances",
+      "fetch" : "LAZY"
+    } ]
   }, {
     "type" : "security.entity.SecurityConfig",
     "module" : "ts-security-service",
@@ -257,7 +298,8 @@
     "no_arg_ctor" : "method:ts-security-service:security.entity.SecurityConfig#<init>()",
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "train.entity.TrainType",
     "module" : "ts-train-service",
@@ -269,7 +311,8 @@
     "no_arg_ctor" : "method:ts-train-service:train.entity.TrainType#<init>()",
     "ctor_statements" : 0,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "trainFood.entity.TrainFood",
     "module" : "ts-train-food-service",
@@ -281,7 +324,12 @@
     "no_arg_ctor" : "method:ts-train-food-service:trainFood.entity.TrainFood#<init>()",
     "ctor_statements" : 1,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ {
+      "field" : "foodList",
+      "table" : "train_food_list",
+      "fetch" : "LAZY"
+    } ]
   }, {
     "type" : "travel.entity.Trip",
     "module" : "ts-travel-service",
@@ -293,7 +341,8 @@
     "no_arg_ctor" : "method:ts-travel-service:travel.entity.Trip#<init>()",
     "ctor_statements" : 5,
     "ctor_assigns_id" : false,
-    "embedded" : [ "edu.fudan.common.entity.TripId" ]
+    "embedded" : [ "edu.fudan.common.entity.TripId" ],
+    "collections" : [ ]
   }, {
     "type" : "travel2.entity.Trip",
     "module" : "ts-travel2-service",
@@ -305,7 +354,8 @@
     "no_arg_ctor" : "method:ts-travel2-service:travel2.entity.Trip#<init>()",
     "ctor_statements" : 5,
     "ctor_assigns_id" : false,
-    "embedded" : [ "edu.fudan.common.entity.TripId" ]
+    "embedded" : [ "edu.fudan.common.entity.TripId" ],
+    "collections" : [ ]
   }, {
     "type" : "user.entity.User",
     "module" : "ts-user-service",
@@ -317,7 +367,8 @@
     "no_arg_ctor" : "method:ts-user-service:user.entity.User#<init>()",
     "ctor_statements" : 1,
     "ctor_assigns_id" : true,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   }, {
     "type" : "waitorder.entity.WaitListOrder",
     "module" : "ts-wait-order-service",
@@ -329,7 +380,8 @@
     "no_arg_ctor" : "method:ts-wait-order-service:waitorder.entity.WaitListOrder#<init>()",
     "ctor_statements" : 7,
     "ctor_assigns_id" : false,
-    "embedded" : [ ]
+    "embedded" : [ ],
+    "collections" : [ ]
   } ],
   "repository_calls" : [ {
     "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
@@ -434,7 +486,9 @@
     "entity" : "auth.entity.User",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable whetherExistUser not checked"
+    "expects_reason" : "variable whetherExistUser not checked",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-auth-service/src/main/java/auth/init/InitUser.java",
     "line" : 37,
@@ -454,7 +508,9 @@
     "entity" : "auth.entity.User",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable whetherExistAdmin not checked"
+    "expects_reason" : "variable whetherExistAdmin not checked",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-auth-service/src/main/java/auth/init/InitUser.java",
     "line" : 48,
@@ -474,7 +530,9 @@
     "entity" : "auth.entity.User",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 29: .orElseThrow()"
+    "expects_reason" : "line 29: .orElseThrow()",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
     "line" : 90,
@@ -484,7 +542,9 @@
     "entity" : "auth.entity.User",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 90: .orElseThrow()"
+    "expects_reason" : "line 90: .orElseThrow()",
+    "collections_loaded" : [ "roles" ],
+    "collections_loaded_reason" : [ "createToken line 32: user.getRoles()" ]
   }, {
     "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
     "line" : 42,
@@ -494,7 +554,9 @@
     "entity" : "auth.entity.User",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "result not checked"
+    "expects_reason" : "result not checked",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
     "line" : 65,
@@ -838,7 +900,9 @@
     "entity" : "food_delivery.entity.FoodDeliveryOrder",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 79: if (t == null): absent arm fails"
+    "expects_reason" : "line 79: if (t == null): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
     "line" : 83,
@@ -856,7 +920,9 @@
     "entity" : "food_delivery.entity.FoodDeliveryOrder",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 92: if (t == null): absent arm fails"
+    "expects_reason" : "line 92: if (t == null): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
     "line" : 103,
@@ -866,7 +932,9 @@
     "entity" : "food_delivery.entity.FoodDeliveryOrder",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 104: if (foodDeliveryOrders == null): absent arm fails"
+    "expects_reason" : "line 104: if (foodDeliveryOrders == null): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
     "line" : 115,
@@ -876,7 +944,9 @@
     "entity" : "food_delivery.entity.FoodDeliveryOrder",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 116: if (foodDeliveryOrders == null): absent arm fails"
+    "expects_reason" : "line 116: if (foodDeliveryOrders == null): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
     "line" : 129,
@@ -886,7 +956,9 @@
     "entity" : "food_delivery.entity.FoodDeliveryOrder",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 130: if (t == null): absent arm fails"
+    "expects_reason" : "line 130: if (t == null): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
     "line" : 135,
@@ -904,7 +976,9 @@
     "entity" : "food_delivery.entity.FoodDeliveryOrder",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 146: if (t == null): absent arm fails"
+    "expects_reason" : "line 146: if (t == null): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
     "line" : 151,
@@ -922,7 +996,9 @@
     "entity" : "food_delivery.entity.FoodDeliveryOrder",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 162: if (t == null): absent arm fails"
+    "expects_reason" : "line 162: if (t == null): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-food-delivery-service/src/main/java/food_delivery/service/FoodDeliveryServiceImpl.java",
     "line" : 167,
@@ -1284,7 +1360,13 @@
     "entity" : "other.entity.Order",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable accountOrders not checked"
+    "expects_reason" : "variable accountOrders not checked",
+    "element_callbacks" : [ {
+      "method" : "method:ts-order-other-service:other.entity.Order#equals(java.lang.Object)",
+      "via" : "contains",
+      "line" : 94,
+      "col" : 27
+    } ]
   }, {
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
     "line" : 99,
@@ -1492,7 +1574,13 @@
     "entity" : "other.entity.Order",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable accountOrders not checked"
+    "expects_reason" : "variable accountOrders not checked",
+    "element_callbacks" : [ {
+      "method" : "method:ts-order-other-service:other.entity.Order#equals(java.lang.Object)",
+      "via" : "contains",
+      "line" : 434,
+      "col" : 27
+    } ]
   }, {
     "file" : "ts-order-other-service/src/main/java/other/service/OrderOtherServiceImpl.java",
     "line" : 439,
@@ -1550,7 +1638,13 @@
     "entity" : "order.entity.Order",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable accountOrders not checked"
+    "expects_reason" : "variable accountOrders not checked",
+    "element_callbacks" : [ {
+      "method" : "method:ts-order-service:order.entity.Order#equals(java.lang.Object)",
+      "via" : "contains",
+      "line" : 90,
+      "col" : 27
+    } ]
   }, {
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
     "line" : 95,
@@ -1748,7 +1842,13 @@
     "entity" : "order.entity.Order",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable accountOrders not checked"
+    "expects_reason" : "variable accountOrders not checked",
+    "element_callbacks" : [ {
+      "method" : "method:ts-order-service:order.entity.Order#equals(java.lang.Object)",
+      "via" : "contains",
+      "line" : 428,
+      "col" : 27
+    } ]
   }, {
     "file" : "ts-order-service/src/main/java/order/service/OrderServiceImpl.java",
     "line" : 433,
@@ -1952,7 +2052,9 @@
     "entity" : "route.entity.Route",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "line 53: if (routeOld.isPresent()): no failing arm"
+    "expects_reason" : "line 53: if (routeOld.isPresent()): no failing arm",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
     "line" : 63,
@@ -1980,7 +2082,9 @@
     "entity" : "route.entity.Route",
     "operation" : "READ",
     "expects" : "EMPTY",
-    "expects_reason" : "line 72: if (!route.isPresent()): found arm fails"
+    "expects_reason" : "line 72: if (!route.isPresent()): found arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
     "line" : 82,
@@ -1990,7 +2094,9 @@
     "entity" : "route.entity.Route",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 83: if (!route.isPresent()): absent arm fails"
+    "expects_reason" : "line 83: if (!route.isPresent()): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
     "line" : 94,
@@ -2000,7 +2106,9 @@
     "entity" : "route.entity.Route",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 95: if (routes == null || routes.isEmpty()): absent arm fails"
+    "expects_reason" : "line 95: if (routes == null || routes.isEmpty()): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
     "line" : 105,
@@ -2010,7 +2118,9 @@
     "entity" : "route.entity.Route",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "variable routes not checked"
+    "expects_reason" : "variable routes not checked",
+    "collections_loaded" : [ "stations" ],
+    "collections_loaded_reason" : [ "getRouteByStartAndEnd line 109: route.getStations()", "getRouteByStartAndEnd line 110: route.getStations()", "getRouteByStartAndEnd line 111: route.getStations()", "getRouteByStartAndEnd line 111: route.getStations()" ]
   }, {
     "file" : "ts-route-service/src/main/java/route/service/RouteServiceImpl.java",
     "line" : 125,
@@ -2020,7 +2130,9 @@
     "entity" : "route.entity.Route",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 126: if (routes != null && !routes.isEmpty()): absent arm fails"
+    "expects_reason" : "line 126: if (routes != null && !routes.isEmpty()): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-security-service/src/main/java/security/service/SecurityServiceImpl.java",
     "line" : 54,
@@ -2288,7 +2400,9 @@
     "entity" : "trainFood.entity.TrainFood",
     "operation" : "READ",
     "expects" : "UNKNOWN",
-    "expects_reason" : "line 28: if (tfTemp != null): no failing arm"
+    "expects_reason" : "line 28: if (tfTemp != null): no failing arm",
+    "collections_loaded" : [ "foodList" ],
+    "collections_loaded_reason" : [ "createTrainFood line 29: tfTemp.getFoodList()", "createTrainFood line 29: tf.getFoodList()", "createTrainFood line 32: tf.getFoodList()" ]
   }, {
     "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
     "line" : 33,
@@ -2314,7 +2428,9 @@
     "entity" : "trainFood.entity.TrainFood",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 44: if (trainFoodList != null && !trainFoodList.isEmpty()): absent arm fails"
+    "expects_reason" : "line 44: if (trainFoodList != null && !trainFoodList.isEmpty()): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-train-food-service/src/main/java/trainFood/service/TrainFoodServiceImpl.java",
     "line" : 54,
@@ -2324,7 +2440,9 @@
     "entity" : "trainFood.entity.TrainFood",
     "operation" : "READ",
     "expects" : "ROWS",
-    "expects_reason" : "line 55: if (tf == null): absent arm fails"
+    "expects_reason" : "line 55: if (tf == null): absent arm fails",
+    "collections_loaded" : [ ],
+    "collections_loaded_reason" : [ ]
   }, {
     "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
     "line" : 29,
@@ -2342,7 +2460,9 @@
     "callee" : "save",
     "repository" : "TrainTypeRepository",
     "entity" : "train.entity.TrainType",
-    "operation" : "SAVE"
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "line 30: new TrainType(trainType.getName(), trainType.getEconomyClass(), trainType.getConfortClass())"
   }, {
     "file" : "ts-train-service/src/main/java/train/service/TrainServiceImpl.java",
     "line" : 43,
@@ -2448,7 +2568,9 @@
     "callee" : "save",
     "repository" : "TripRepository",
     "entity" : "travel.entity.Trip",
-    "operation" : "SAVE"
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "line 62: new Trip(ti, info.getTrainTypeName(), info.getStartStationName(), info.getStationsName(), info.getTerminalStationName(), info.getStartTime(), info.getEndTime())"
   }, {
     "file" : "ts-travel-service/src/main/java/travel/service/TravelServiceImpl.java",
     "line" : 78,
@@ -2642,7 +2764,9 @@
     "callee" : "save",
     "repository" : "TripRepository",
     "entity" : "travel2.entity.Trip",
-    "operation" : "SAVE"
+    "operation" : "SAVE",
+    "id_assigned" : false,
+    "id_assigned_reason" : "line 114: new Trip(ti, info.getTrainTypeName(), info.getStartStationName(), info.getStationsName(), info.getTerminalStationName(), info.getStartTime(), info.getEndTime())"
   }, {
     "file" : "ts-travel2-service/src/main/java/travel2/service/TravelServiceImpl.java",
     "line" : 128,

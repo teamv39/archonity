@@ -1,0 +1,5926 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-common",
+  "methods" : {
+    "method:ts-common:edu.fudan.common.config.SwaggerConfig#apiInfo()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/config/SwaggerConfig.java",
+      "line" : 36,
+      "end" : 43,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#apiInfo()@42:18",
+          "callee" : "build",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#apiInfo()@41:18",
+            "callee" : "version",
+            "recv" : {
+              "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#apiInfo()@40:18",
+              "callee" : "termsOfServiceUrl",
+              "recv" : {
+                "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#apiInfo()@39:18",
+                "callee" : "description",
+                "recv" : {
+                  "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#apiInfo()@38:18",
+                  "callee" : "title",
+                  "recv" : {
+                    "new" : "ApiInfoBuilder",
+                    "fqn" : "springfox.documentation.builders.ApiInfoBuilder",
+                    "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#apiInfo()@37:16",
+                    "args" : [ ]
+                  },
+                  "args" : [ {
+                    "lit" : "Springboot builds the API documentation with swagger",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ {
+                  "lit" : "Simple and elegant restful style",
+                  "type" : "string"
+                } ]
+              },
+              "args" : [ {
+                "lit" : "https://github.com/FudanSELab/train-ticket",
+                "type" : "string"
+              } ]
+            },
+            "args" : [ {
+              "lit" : "1.0",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/config/SwaggerConfig.java",
+      "line" : 26,
+      "end" : 34,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@28:30",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "SwaggerConfig",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[createRestApi][create][controllerPackagePath: {}]",
+            "type" : "string"
+          }, {
+            "name" : "controllerPackagePath",
+            "ref" : "field"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@33:18",
+          "callee" : "build",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@32:18",
+            "callee" : "paths",
+            "recv" : {
+              "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@31:27",
+              "callee" : "apis",
+              "recv" : {
+                "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@31:18",
+                "callee" : "select",
+                "recv" : {
+                  "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@30:18",
+                  "callee" : "apiInfo",
+                  "recv" : {
+                    "new" : "Docket",
+                    "fqn" : "springfox.documentation.spring.web.plugins.Docket",
+                    "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@29:16",
+                    "args" : [ {
+                      "field" : "SWAGGER_2",
+                      "of" : {
+                        "name" : "DocumentationType",
+                        "ref" : "type"
+                      }
+                    } ]
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@30:26",
+                    "callee" : "apiInfo",
+                    "recv" : null,
+                    "args" : [ ]
+                  } ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ {
+                "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@31:56",
+                "callee" : "basePackage",
+                "recv" : {
+                  "name" : "RequestHandlerSelectors",
+                  "ref" : "type"
+                },
+                "args" : [ {
+                  "name" : "controllerPackagePath",
+                  "ref" : "field"
+                } ]
+              } ]
+            },
+            "args" : [ {
+              "call" : "call:method:ts-common:edu.fudan.common.config.SwaggerConfig#createRestApi()@32:38",
+              "callee" : "any",
+              "recv" : {
+                "name" : "PathSelectors",
+                "ref" : "type"
+              },
+              "args" : [ ]
+            } ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Account#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Account.java",
+      "line" : 32,
+      "end" : 39,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 33,
+        "target" : {
+          "name" : "gender",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Account#<init>()@33:31",
+          "target" : "method:ts-common:edu.fudan.common.entity.Gender#getCode()",
+          "callee" : "getCode",
+          "recv" : {
+            "enum" : "edu.fudan.common.entity.Gender",
+            "constant" : "OTHER",
+            "args" : [ {
+              "lit" : 3,
+              "type" : "int"
+            }, {
+              "lit" : "Other",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 34,
+        "target" : {
+          "name" : "password",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "defaultPassword",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "name" : "name",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "None",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "name" : "documentType",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Account#<init>()@36:42",
+          "target" : "method:ts-common:edu.fudan.common.entity.DocumentType#getCode()",
+          "callee" : "getCode",
+          "recv" : {
+            "enum" : "edu.fudan.common.entity.DocumentType",
+            "constant" : "NONE",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Null",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 37,
+        "target" : {
+          "name" : "documentNum",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "0123456789",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 38,
+        "target" : {
+          "name" : "email",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "0123456789",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.AdminTrip#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/AdminTrip.java",
+      "line" : 14,
+      "end" : 16,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Assurance#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Assurance.java",
+      "line" : 29,
+      "end" : 31,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "field" : "orderId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Assurance#<init>()@30:29",
+          "callee" : "randomUUID",
+          "recv" : {
+            "name" : "UUID",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Assurance#<init>(java.util.UUID,java.util.UUID,edu.fudan.common.entity.AssuranceType)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Assurance.java",
+      "line" : 33,
+      "end" : 37,
+      "params" : [ {
+        "name" : "id",
+        "type" : "UUID"
+      }, {
+        "name" : "orderId",
+        "type" : "UUID"
+      }, {
+        "name" : "type",
+        "type" : "AssuranceType"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 34,
+        "target" : {
+          "field" : "id",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "id",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "field" : "orderId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "orderId",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "field" : "type",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "type",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.AssuranceType#<init>(int,java.lang.String,double)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/AssuranceType.java",
+      "line" : 28,
+      "end" : 32,
+      "params" : [ {
+        "name" : "index",
+        "type" : "int"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "price",
+        "type" : "double"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "field" : "index",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "index",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "field" : "price",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "price",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.AssuranceType#getIndex()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/AssuranceType.java",
+      "line" : 34,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "name" : "index",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.AssuranceType#getName()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/AssuranceType.java",
+      "line" : 42,
+      "end" : 44,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 43,
+        "expr" : {
+          "name" : "name",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.AssuranceType#getPrice()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/AssuranceType.java",
+      "line" : 50,
+      "end" : 52,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 51,
+        "expr" : {
+          "name" : "price",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.AssuranceType#getTypeByIndex(int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/AssuranceType.java",
+      "line" : 58,
+      "end" : 66,
+      "params" : [ {
+        "name" : "index",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 59,
+        "target" : {
+          "name" : "ats",
+          "ref" : "local"
+        },
+        "decl" : "AssuranceType[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.AssuranceType#getTypeByIndex(int)@59:46",
+          "callee" : "values",
+          "recv" : {
+            "name" : "AssuranceType",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 60,
+        "id" : "f60:ats",
+        "var" : "at",
+        "var_type" : "AssuranceType",
+        "iter" : {
+          "name" : "ats",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 61,
+          "id" : "b61",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.AssuranceType#getTypeByIndex(int)@61:20",
+              "callee" : "getIndex",
+              "recv" : {
+                "name" : "at",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "index",
+              "ref" : "param"
+            }
+          },
+          "then" : [ {
+            "op" : "return",
+            "line" : 62,
+            "expr" : {
+              "name" : "at",
+              "ref" : "local"
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 65,
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.AssuranceType#setIndex(int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/AssuranceType.java",
+      "line" : 38,
+      "end" : 40,
+      "params" : [ {
+        "name" : "index",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 39,
+        "target" : {
+          "field" : "index",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "index",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.AssuranceType#setName(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/AssuranceType.java",
+      "line" : 46,
+      "end" : 48,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 47,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.AssuranceType#setPrice(double)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/AssuranceType.java",
+      "line" : 54,
+      "end" : 56,
+      "params" : [ {
+        "name" : "price",
+        "type" : "double"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 55,
+        "target" : {
+          "field" : "price",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "price",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Contacts.java",
+      "line" : 31,
+      "end" : 48,
+      "params" : [ {
+        "name" : "obj",
+        "type" : "Object"
+      } ],
+      "body" : [ {
+        "op" : "if",
+        "line" : 33,
+        "id" : "b33",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "this" : true
+          },
+          "r" : {
+            "name" : "obj",
+            "ref" : "param"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 34,
+          "expr" : {
+            "lit" : true,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 36,
+        "id" : "b36",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "obj",
+            "ref" : "param"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 37,
+          "expr" : {
+            "lit" : false,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 39,
+        "id" : "b39",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@39:13",
+            "callee" : "getClass",
+            "recv" : null,
+            "args" : [ ]
+          },
+          "r" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@39:31",
+            "callee" : "getClass",
+            "recv" : {
+              "name" : "obj",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 40,
+          "expr" : {
+            "lit" : false,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "other",
+          "ref" : "local"
+        },
+        "decl" : "Contacts",
+        "operator" : "=",
+        "expr" : {
+          "cast" : "Contacts",
+          "e" : {
+            "name" : "obj",
+            "ref" : "param"
+          }
+        }
+      }, {
+        "op" : "return",
+        "line" : 43,
+        "expr" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "&&",
+            "l" : {
+              "bin" : "&&",
+              "l" : {
+                "bin" : "&&",
+                "l" : {
+                  "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@43:21",
+                  "callee" : "equals",
+                  "recv" : {
+                    "name" : "name",
+                    "ref" : "field"
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@43:34",
+                    "callee" : "getName",
+                    "recv" : {
+                      "name" : "other",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  } ]
+                },
+                "r" : {
+                  "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@44:31",
+                  "callee" : "equals",
+                  "recv" : {
+                    "name" : "accountId",
+                    "ref" : "field"
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@44:45",
+                    "callee" : "getAccountId",
+                    "recv" : {
+                      "name" : "other",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  } ]
+                }
+              },
+              "r" : {
+                "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@45:35",
+                "callee" : "equals",
+                "recv" : {
+                  "name" : "documentNumber",
+                  "ref" : "field"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@45:48",
+                  "callee" : "getDocumentNumber",
+                  "recv" : {
+                    "name" : "other",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                } ]
+              }
+            },
+            "r" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@46:32",
+              "callee" : "equals",
+              "recv" : {
+                "name" : "phoneNumber",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@46:45",
+                "callee" : "getPhoneNumber",
+                "recv" : {
+                  "name" : "other",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          },
+          "r" : {
+            "bin" : "==",
+            "l" : {
+              "name" : "documentType",
+              "ref" : "field"
+            },
+            "r" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#equals(java.lang.Object)@47:42",
+              "callee" : "getDocumentType",
+              "recv" : {
+                "name" : "other",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Contacts#hashCode()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Contacts.java",
+      "line" : 50,
+      "end" : 55,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 52,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "lit" : 17,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 53,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "bin" : "*",
+            "l" : {
+              "lit" : 31,
+              "type" : "int"
+            },
+            "r" : {
+              "name" : "result",
+              "ref" : "local"
+            }
+          },
+          "r" : {
+            "tern" : {
+              "bin" : "==",
+              "l" : {
+                "name" : "id",
+                "ref" : "field"
+              },
+              "r" : {
+                "lit" : null,
+                "type" : "null"
+              }
+            },
+            "then" : {
+              "lit" : 0,
+              "type" : "int"
+            },
+            "else" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.Contacts#hashCode()@53:53",
+              "callee" : "hashCode",
+              "recv" : {
+                "name" : "id",
+                "ref" : "field"
+              },
+              "args" : [ ]
+            }
+          }
+        }
+      }, {
+        "op" : "return",
+        "line" : 54,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.DocumentType#<init>(int,java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/DocumentType.java",
+      "line" : 28,
+      "end" : 31,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "field" : "code",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "code",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.DocumentType#getCode()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/DocumentType.java",
+      "line" : 33,
+      "end" : 35,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 34,
+        "expr" : {
+          "name" : "code",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.DocumentType#getName()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/DocumentType.java",
+      "line" : 37,
+      "end" : 39,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "name" : "name",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.DocumentType#getNameByCode(int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/DocumentType.java",
+      "line" : 41,
+      "end" : 49,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "documentTypeSet",
+          "ref" : "local"
+        },
+        "decl" : "DocumentType[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.DocumentType#getNameByCode(int)@42:55",
+          "callee" : "values",
+          "recv" : {
+            "name" : "DocumentType",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 43,
+        "id" : "f43:documentTypeSet",
+        "var" : "documentType",
+        "var_type" : "DocumentType",
+        "iter" : {
+          "name" : "documentTypeSet",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 44,
+          "id" : "b44",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.DocumentType#getNameByCode(int)@44:29",
+              "callee" : "getCode",
+              "recv" : {
+                "name" : "documentType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "code",
+              "ref" : "param"
+            }
+          },
+          "then" : [ {
+            "op" : "return",
+            "line" : 45,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.DocumentType#getNameByCode(int)@45:37",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "documentType",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.DocumentType#getNameByCode(int)@48:35",
+          "callee" : "getName",
+          "recv" : {
+            "index" : {
+              "lit" : 0,
+              "type" : "int"
+            },
+            "of" : {
+              "name" : "documentTypeSet",
+              "ref" : "local"
+            }
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Food#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Food.java",
+      "line" : 15,
+      "end" : 17,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.FoodOrder#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/FoodOrder.java",
+      "line" : 30,
+      "end" : 32,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Gender#<init>(int,java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Gender.java",
+      "line" : 28,
+      "end" : 31,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "field" : "code",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "code",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Gender#getCode()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Gender.java",
+      "line" : 33,
+      "end" : 35,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 34,
+        "expr" : {
+          "name" : "code",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Gender#getName()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Gender.java",
+      "line" : 37,
+      "end" : 39,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "name" : "name",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Gender#getNameByCode(int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Gender.java",
+      "line" : 41,
+      "end" : 49,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "genderSet",
+          "ref" : "local"
+        },
+        "decl" : "Gender[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Gender#getNameByCode(int)@42:37",
+          "callee" : "values",
+          "recv" : {
+            "name" : "Gender",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 43,
+        "id" : "f43:genderSet",
+        "var" : "gender",
+        "var_type" : "Gender",
+        "iter" : {
+          "name" : "genderSet",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 44,
+          "id" : "b44",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.Gender#getNameByCode(int)@44:23",
+              "callee" : "getCode",
+              "recv" : {
+                "name" : "gender",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "code",
+              "ref" : "param"
+            }
+          },
+          "then" : [ {
+            "op" : "return",
+            "line" : 45,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.Gender#getNameByCode(int)@45:31",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "gender",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Gender#getNameByCode(int)@48:29",
+          "callee" : "getName",
+          "recv" : {
+            "index" : {
+              "lit" : 0,
+              "type" : "int"
+            },
+            "of" : {
+              "name" : "genderSet",
+              "ref" : "local"
+            }
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.LeftTicketInfo#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/LeftTicketInfo.java",
+      "line" : 18,
+      "end" : 20,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.LeftTicketInfo#toString()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/LeftTicketInfo.java",
+      "line" : 22,
+      "end" : 27,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 24,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "lit" : "LeftTicketInfo{",
+                "type" : "string"
+              },
+              "r" : {
+                "lit" : "soldTickets=",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "soldTickets",
+              "ref" : "field"
+            }
+          },
+          "r" : {
+            "lit" : "}",
+            "type" : "char"
+          }
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.NotifyInfo#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/NotifyInfo.java",
+      "line" : 11,
+      "end" : 13,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Order#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 61,
+      "end" : 73,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 62,
+        "target" : {
+          "name" : "boughtDate",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@62:34",
+          "callee" : "Date2String",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "new" : "Date",
+            "fqn" : "java.util.Date",
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@62:46",
+            "args" : [ {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@62:62",
+              "callee" : "currentTimeMillis",
+              "recv" : {
+                "name" : "System",
+                "ref" : "type"
+              },
+              "args" : [ ]
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 63,
+        "target" : {
+          "name" : "travelDate",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@63:34",
+          "callee" : "Date2String",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "new" : "Date",
+            "fqn" : "java.util.Date",
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@63:46",
+            "args" : [ {
+              "lit" : 123456789,
+              "type" : "int"
+            } ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 64,
+        "target" : {
+          "name" : "trainNumber",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "G1235",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 65,
+        "target" : {
+          "name" : "coachNumber",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 5,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 66,
+        "target" : {
+          "name" : "seatClass",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@66:42",
+          "target" : "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()",
+          "callee" : "getCode",
+          "recv" : {
+            "enum" : "edu.fudan.common.entity.SeatClass",
+            "constant" : "FIRSTCLASS",
+            "args" : [ {
+              "lit" : 2,
+              "type" : "int"
+            }, {
+              "lit" : "FirstClassSeat",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 67,
+        "target" : {
+          "name" : "seatNumber",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "5A",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 68,
+        "target" : {
+          "name" : "from",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "shanghai",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 69,
+        "target" : {
+          "name" : "to",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "taiyuan",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 70,
+        "target" : {
+          "name" : "status",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Order#<init>()@70:35",
+          "target" : "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()",
+          "callee" : "getCode",
+          "recv" : {
+            "enum" : "edu.fudan.common.entity.OrderStatus",
+            "constant" : "PAID",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Paid & Not Collected",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 71,
+        "target" : {
+          "name" : "price",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "0.0",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 72,
+        "target" : {
+          "name" : "differenceMoney",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "0.0",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 75,
+      "end" : 101,
+      "params" : [ {
+        "name" : "obj",
+        "type" : "Object"
+      } ],
+      "body" : [ {
+        "op" : "if",
+        "line" : 76,
+        "id" : "b76",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "this" : true
+          },
+          "r" : {
+            "name" : "obj",
+            "ref" : "param"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 77,
+          "expr" : {
+            "lit" : true,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 79,
+        "id" : "b79",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "obj",
+            "ref" : "param"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 80,
+          "expr" : {
+            "lit" : false,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 82,
+        "id" : "b82",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@82:13",
+            "callee" : "getClass",
+            "recv" : null,
+            "args" : [ ]
+          },
+          "r" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@82:31",
+            "callee" : "getClass",
+            "recv" : {
+              "name" : "obj",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 83,
+          "expr" : {
+            "lit" : false,
+            "type" : "boolean"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 85,
+        "target" : {
+          "name" : "other",
+          "ref" : "local"
+        },
+        "decl" : "Order",
+        "operator" : "=",
+        "expr" : {
+          "cast" : "Order",
+          "e" : {
+            "name" : "obj",
+            "ref" : "param"
+          }
+        }
+      }, {
+        "op" : "return",
+        "line" : 86,
+        "expr" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "&&",
+            "l" : {
+              "bin" : "&&",
+              "l" : {
+                "bin" : "&&",
+                "l" : {
+                  "bin" : "&&",
+                  "l" : {
+                    "bin" : "&&",
+                    "l" : {
+                      "bin" : "&&",
+                      "l" : {
+                        "bin" : "&&",
+                        "l" : {
+                          "bin" : "&&",
+                          "l" : {
+                            "bin" : "&&",
+                            "l" : {
+                              "bin" : "&&",
+                              "l" : {
+                                "bin" : "&&",
+                                "l" : {
+                                  "bin" : "&&",
+                                  "l" : {
+                                    "bin" : "&&",
+                                    "l" : {
+                                      "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@86:32",
+                                      "callee" : "equals",
+                                      "recv" : {
+                                        "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@86:16",
+                                        "callee" : "getBoughtDate",
+                                        "recv" : null,
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ {
+                                        "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@86:45",
+                                        "callee" : "getBoughtDate",
+                                        "recv" : {
+                                          "name" : "other",
+                                          "ref" : "local"
+                                        },
+                                        "args" : [ ]
+                                      } ]
+                                    },
+                                    "r" : {
+                                      "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@87:36",
+                                      "callee" : "equals",
+                                      "recv" : {
+                                        "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@87:20",
+                                        "callee" : "getBoughtDate",
+                                        "recv" : null,
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ {
+                                        "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@87:49",
+                                        "callee" : "getTravelDate",
+                                        "recv" : {
+                                          "name" : "other",
+                                          "ref" : "local"
+                                        },
+                                        "args" : [ ]
+                                      } ]
+                                    }
+                                  },
+                                  "r" : {
+                                    "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@88:36",
+                                    "callee" : "equals",
+                                    "recv" : {
+                                      "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@88:20",
+                                      "callee" : "getTravelTime",
+                                      "recv" : null,
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ {
+                                      "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@88:49",
+                                      "callee" : "getTravelTime",
+                                      "recv" : {
+                                        "name" : "other",
+                                        "ref" : "local"
+                                      },
+                                      "args" : [ ]
+                                    } ]
+                                  }
+                                },
+                                "r" : {
+                                  "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@89:31",
+                                  "callee" : "equals",
+                                  "recv" : {
+                                    "name" : "accountId",
+                                    "ref" : "field"
+                                  },
+                                  "args" : [ {
+                                    "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@89:45",
+                                    "callee" : "getAccountId",
+                                    "recv" : {
+                                      "name" : "other",
+                                      "ref" : "local"
+                                    },
+                                    "args" : [ ]
+                                  } ]
+                                }
+                              },
+                              "r" : {
+                                "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@90:33",
+                                "callee" : "equals",
+                                "recv" : {
+                                  "name" : "contactsName",
+                                  "ref" : "field"
+                                },
+                                "args" : [ {
+                                  "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@90:46",
+                                  "callee" : "getContactsName",
+                                  "recv" : {
+                                    "name" : "other",
+                                    "ref" : "local"
+                                  },
+                                  "args" : [ ]
+                                } ]
+                              }
+                            },
+                            "r" : {
+                              "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@91:43",
+                              "callee" : "equals",
+                              "recv" : {
+                                "name" : "contactsDocumentNumber",
+                                "ref" : "field"
+                              },
+                              "args" : [ {
+                                "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@91:56",
+                                "callee" : "getContactsDocumentNumber",
+                                "recv" : {
+                                  "name" : "other",
+                                  "ref" : "local"
+                                },
+                                "args" : [ ]
+                              } ]
+                            }
+                          },
+                          "r" : {
+                            "bin" : "==",
+                            "l" : {
+                              "name" : "documentType",
+                              "ref" : "field"
+                            },
+                            "r" : {
+                              "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@92:42",
+                              "callee" : "getDocumentType",
+                              "recv" : {
+                                "name" : "other",
+                                "ref" : "local"
+                              },
+                              "args" : [ ]
+                            }
+                          }
+                        },
+                        "r" : {
+                          "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@93:32",
+                          "callee" : "equals",
+                          "recv" : {
+                            "name" : "trainNumber",
+                            "ref" : "field"
+                          },
+                          "args" : [ {
+                            "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@93:45",
+                            "callee" : "getTrainNumber",
+                            "recv" : {
+                              "name" : "other",
+                              "ref" : "local"
+                            },
+                            "args" : [ ]
+                          } ]
+                        }
+                      },
+                      "r" : {
+                        "bin" : "==",
+                        "l" : {
+                          "name" : "coachNumber",
+                          "ref" : "field"
+                        },
+                        "r" : {
+                          "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@94:41",
+                          "callee" : "getCoachNumber",
+                          "recv" : {
+                            "name" : "other",
+                            "ref" : "local"
+                          },
+                          "args" : [ ]
+                        }
+                      }
+                    },
+                    "r" : {
+                      "bin" : "==",
+                      "l" : {
+                        "name" : "seatClass",
+                        "ref" : "field"
+                      },
+                      "r" : {
+                        "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@95:39",
+                        "callee" : "getSeatClass",
+                        "recv" : {
+                          "name" : "other",
+                          "ref" : "local"
+                        },
+                        "args" : [ ]
+                      }
+                    }
+                  },
+                  "r" : {
+                    "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@96:32",
+                    "callee" : "equals",
+                    "recv" : {
+                      "name" : "seatNumber",
+                      "ref" : "field"
+                    },
+                    "args" : [ {
+                      "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@96:45",
+                      "callee" : "getSeatNumber",
+                      "recv" : {
+                        "name" : "other",
+                        "ref" : "local"
+                      },
+                      "args" : [ ]
+                    } ]
+                  }
+                },
+                "r" : {
+                  "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@97:25",
+                  "callee" : "equals",
+                  "recv" : {
+                    "name" : "from",
+                    "ref" : "field"
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@97:38",
+                    "callee" : "getFrom",
+                    "recv" : {
+                      "name" : "other",
+                      "ref" : "local"
+                    },
+                    "args" : [ ]
+                  } ]
+                }
+              },
+              "r" : {
+                "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@98:23",
+                "callee" : "equals",
+                "recv" : {
+                  "name" : "to",
+                  "ref" : "field"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@98:36",
+                  "callee" : "getTo",
+                  "recv" : {
+                    "name" : "other",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                } ]
+              }
+            },
+            "r" : {
+              "bin" : "==",
+              "l" : {
+                "name" : "status",
+                "ref" : "field"
+              },
+              "r" : {
+                "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@99:36",
+                "callee" : "getStatus",
+                "recv" : {
+                  "name" : "other",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              }
+            }
+          },
+          "r" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Order#equals(java.lang.Object)@100:26",
+            "callee" : "equals",
+            "recv" : {
+              "name" : "price",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "field" : "price",
+              "of" : {
+                "name" : "other",
+                "ref" : "local"
+              }
+            } ]
+          }
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Order#hashCode()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Order.java",
+      "line" : 103,
+      "end" : 108,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 105,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "lit" : 17,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 106,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "bin" : "*",
+            "l" : {
+              "lit" : 31,
+              "type" : "int"
+            },
+            "r" : {
+              "name" : "result",
+              "ref" : "local"
+            }
+          },
+          "r" : {
+            "tern" : {
+              "bin" : "==",
+              "l" : {
+                "name" : "id",
+                "ref" : "field"
+              },
+              "r" : {
+                "lit" : null,
+                "type" : "null"
+              }
+            },
+            "then" : {
+              "lit" : 0,
+              "type" : "int"
+            },
+            "else" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.Order#hashCode()@106:53",
+              "callee" : "hashCode",
+              "recv" : {
+                "name" : "id",
+                "ref" : "field"
+              },
+              "args" : [ ]
+            }
+          }
+        }
+      }, {
+        "op" : "return",
+        "line" : 107,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.OrderAlterInfo#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderAlterInfo.java",
+      "line" : 21,
+      "end" : 23,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 22,
+        "target" : {
+          "name" : "newOrderInfo",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "new" : "Order",
+          "fqn" : "edu.fudan.common.entity.Order",
+          "call" : "call:method:ts-common:edu.fudan.common.entity.OrderAlterInfo#<init>()@22:24",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.OrderSecurity#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderSecurity.java",
+      "line" : 17,
+      "end" : 19,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.OrderStatus#<init>(int,java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderStatus.java",
+      "line" : 40,
+      "end" : 43,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 41,
+        "target" : {
+          "field" : "code",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "code",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderStatus.java",
+      "line" : 45,
+      "end" : 47,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 46,
+        "expr" : {
+          "name" : "code",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.OrderStatus#getName()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderStatus.java",
+      "line" : 49,
+      "end" : 51,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 50,
+        "expr" : {
+          "name" : "name",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.OrderStatus#getNameByCode(int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderStatus.java",
+      "line" : 53,
+      "end" : 61,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 54,
+        "target" : {
+          "name" : "orderStatusSet",
+          "ref" : "local"
+        },
+        "decl" : "OrderStatus[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.OrderStatus#getNameByCode(int)@54:52",
+          "callee" : "values",
+          "recv" : {
+            "name" : "OrderStatus",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 55,
+        "id" : "f55:orderStatusSet",
+        "var" : "orderStatus",
+        "var_type" : "OrderStatus",
+        "iter" : {
+          "name" : "orderStatusSet",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 56,
+          "id" : "b56",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.OrderStatus#getNameByCode(int)@56:28",
+              "callee" : "getCode",
+              "recv" : {
+                "name" : "orderStatus",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "code",
+              "ref" : "param"
+            }
+          },
+          "then" : [ {
+            "op" : "return",
+            "line" : 57,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.OrderStatus#getNameByCode(int)@57:36",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "orderStatus",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 60,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.OrderStatus#getNameByCode(int)@60:34",
+          "callee" : "getName",
+          "recv" : {
+            "index" : {
+              "lit" : 0,
+              "type" : "int"
+            },
+            "of" : {
+              "name" : "orderStatusSet",
+              "ref" : "local"
+            }
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.OrderTicketsInfo#getFrom()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderTicketsInfo.java",
+      "line" : 56,
+      "end" : 58,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 57,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.OrderTicketsInfo#getFrom()@57:28",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "field" : "from",
+            "of" : {
+              "this" : true
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.OrderTicketsInfo#getTo()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/OrderTicketsInfo.java",
+      "line" : 60,
+      "end" : 62,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 61,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.OrderTicketsInfo#getTo()@61:28",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "field" : "to",
+            "of" : {
+              "this" : true
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.PaymentDifferenceInfo#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/PaymentDifferenceInfo.java",
+      "line" : 19,
+      "end" : 21,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.PriceConfig#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/PriceConfig.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Route#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Route.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 27,
+        "target" : {
+          "field" : "id",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Route#<init>()@27:37",
+          "callee" : "toString",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Route#<init>()@27:24",
+            "callee" : "randomUUID",
+            "recv" : {
+              "name" : "UUID",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Route#<init>(java.lang.String,java.util.List,java.util.List,java.lang.String,java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Route.java",
+      "line" : 30,
+      "end" : 36,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "stations",
+        "type" : "List<String>"
+      }, {
+        "name" : "distances",
+        "type" : "List<Integer>"
+      }, {
+        "name" : "startStationName",
+        "type" : "String"
+      }, {
+        "name" : "terminalStationName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "field" : "id",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "id",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 32,
+        "target" : {
+          "field" : "stations",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "stations",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 33,
+        "target" : {
+          "field" : "distances",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "distances",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 34,
+        "target" : {
+          "field" : "startStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "startStationName",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "field" : "endStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "terminalStationName",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Route#<init>(java.util.List,java.util.List,java.lang.String,java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Route.java",
+      "line" : 38,
+      "end" : 44,
+      "params" : [ {
+        "name" : "stations",
+        "type" : "List<String>"
+      }, {
+        "name" : "distances",
+        "type" : "List<Integer>"
+      }, {
+        "name" : "startStationName",
+        "type" : "String"
+      }, {
+        "name" : "terminalStationName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 39,
+        "target" : {
+          "field" : "id",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Route#<init>(java.util.List,java.util.List,java.lang.String,java.lang.String)@39:37",
+          "callee" : "toString",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Route#<init>(java.util.List,java.util.List,java.lang.String,java.lang.String)@39:24",
+            "callee" : "randomUUID",
+            "recv" : {
+              "name" : "UUID",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 40,
+        "target" : {
+          "field" : "stations",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "stations",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 41,
+        "target" : {
+          "field" : "distances",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "distances",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "field" : "startStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "startStationName",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "field" : "endStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "terminalStationName",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.RouteInfo#getDistances()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/RouteInfo.java",
+      "line" : 34,
+      "end" : 37,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "name" : "distances",
+          "ref" : "local"
+        },
+        "decl" : "String[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.RouteInfo#getDistances()@35:43",
+          "callee" : "split",
+          "recv" : {
+            "name" : "distanceList",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : ",",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 36,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.RouteInfo#getDistances()@36:23",
+          "callee" : "asList",
+          "recv" : {
+            "name" : "Arrays",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "distances",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.RouteInfo#getStations()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/RouteInfo.java",
+      "line" : 29,
+      "end" : 32,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "name" : "stations",
+          "ref" : "local"
+        },
+        "decl" : "String[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.RouteInfo#getStations()@30:41",
+          "callee" : "split",
+          "recv" : {
+            "name" : "stationList",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : ",",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 31,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.RouteInfo#getStations()@31:23",
+          "callee" : "asList",
+          "recv" : {
+            "name" : "Arrays",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "stations",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.RoutePlanInfo#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/RoutePlanInfo.java",
+      "line" : 24,
+      "end" : 26,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.RoutePlanInfo#getEndStation()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/RoutePlanInfo.java",
+      "line" : 32,
+      "end" : 34,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.RoutePlanInfo#getEndStation()@33:28",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "field" : "endStation",
+            "of" : {
+              "this" : true
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.RoutePlanInfo#getStartStation()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/RoutePlanInfo.java",
+      "line" : 28,
+      "end" : 30,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.RoutePlanInfo#getStartStation()@29:28",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "field" : "startStation",
+            "of" : {
+              "this" : true
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Seat#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Seat.java",
+      "line" : 43,
+      "end" : 52,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 45,
+        "target" : {
+          "field" : "travelDate",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 46,
+        "target" : {
+          "field" : "trainNumber",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 47,
+        "target" : {
+          "field" : "startStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 48,
+        "target" : {
+          "field" : "destStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 49,
+        "target" : {
+          "field" : "seatType",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 50,
+        "target" : {
+          "field" : "totalNum",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 51,
+        "target" : {
+          "field" : "stations",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.SeatClass#<init>(int,java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/SeatClass.java",
+      "line" : 48,
+      "end" : 51,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 49,
+        "target" : {
+          "field" : "code",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "code",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 50,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/SeatClass.java",
+      "line" : 53,
+      "end" : 55,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 54,
+        "expr" : {
+          "name" : "code",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.SeatClass#getName()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/SeatClass.java",
+      "line" : 57,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 58,
+        "expr" : {
+          "name" : "name",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.SeatClass#getNameByCode(int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/SeatClass.java",
+      "line" : 61,
+      "end" : 69,
+      "params" : [ {
+        "name" : "code",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 62,
+        "target" : {
+          "name" : "seatClassSet",
+          "ref" : "local"
+        },
+        "decl" : "SeatClass[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.SeatClass#getNameByCode(int)@62:46",
+          "callee" : "values",
+          "recv" : {
+            "name" : "SeatClass",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 63,
+        "id" : "f63:seatClassSet",
+        "var" : "seatClass",
+        "var_type" : "SeatClass",
+        "iter" : {
+          "name" : "seatClassSet",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 64,
+          "id" : "b64",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.SeatClass#getNameByCode(int)@64:26",
+              "callee" : "getCode",
+              "recv" : {
+                "name" : "seatClass",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "code",
+              "ref" : "param"
+            }
+          },
+          "then" : [ {
+            "op" : "return",
+            "line" : 65,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.SeatClass#getNameByCode(int)@65:34",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "seatClass",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 68,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.SeatClass#getNameByCode(int)@68:32",
+          "callee" : "getName",
+          "recv" : {
+            "index" : {
+              "lit" : 0,
+              "type" : "int"
+            },
+            "of" : {
+              "name" : "seatClassSet",
+              "ref" : "local"
+            }
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.SoldTicket#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/SoldTicket.java",
+      "line" : 35,
+      "end" : 45,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "name" : "noSeat",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 37,
+        "target" : {
+          "name" : "businessSeat",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 38,
+        "target" : {
+          "name" : "firstClassSeat",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 39,
+        "target" : {
+          "name" : "secondClassSeat",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 40,
+        "target" : {
+          "name" : "hardSeat",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 41,
+        "target" : {
+          "name" : "softSeat",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "hardBed",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "name" : "softBed",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 44,
+        "target" : {
+          "name" : "highSoftBed",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Station#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Station.java",
+      "line" : 15,
+      "end" : 17,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 16,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Station#<init>(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Station.java",
+      "line" : 23,
+      "end" : 25,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 24,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Station#<init>(java.lang.String)@24:43",
+          "callee" : "toLowerCase",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Station#<init>(java.lang.String)@24:26",
+            "callee" : "replace",
+            "recv" : {
+              "name" : "name",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "lit" : " ",
+              "type" : "string"
+            }, {
+              "lit" : "",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ {
+            "field" : "ROOT",
+            "of" : {
+              "name" : "Locale",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Station#<init>(java.lang.String,int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Station.java",
+      "line" : 28,
+      "end" : 31,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "stayTime",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Station#<init>(java.lang.String,int)@29:43",
+          "callee" : "toLowerCase",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Station#<init>(java.lang.String,int)@29:26",
+            "callee" : "replace",
+            "recv" : {
+              "name" : "name",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "lit" : " ",
+              "type" : "string"
+            }, {
+              "lit" : "",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ {
+            "field" : "ROOT",
+            "of" : {
+              "name" : "Locale",
+              "ref" : "type"
+            }
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "field" : "stayTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "stayTime",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Station#setName(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Station.java",
+      "line" : 19,
+      "end" : 21,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 20,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Station#setName(java.lang.String)@20:43",
+          "callee" : "toLowerCase",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.Station#setName(java.lang.String)@20:26",
+            "callee" : "replace",
+            "recv" : {
+              "name" : "name",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "lit" : " ",
+              "type" : "string"
+            }, {
+              "lit" : "",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ {
+            "field" : "ROOT",
+            "of" : {
+              "name" : "Locale",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.StationFoodStore#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/StationFoodStore.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Ticket#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Ticket.java",
+      "line" : 17,
+      "end" : 19,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Ticket#<init>(int,java.lang.String,java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Ticket.java",
+      "line" : 21,
+      "end" : 25,
+      "params" : [ {
+        "name" : "seatNo",
+        "type" : "int"
+      }, {
+        "name" : "startStation",
+        "type" : "String"
+      }, {
+        "name" : "destStation",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 22,
+        "target" : {
+          "field" : "seatNo",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "seatNo",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 23,
+        "target" : {
+          "field" : "startStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "startStation",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 24,
+        "target" : {
+          "field" : "destStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "destStation",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TrainFood#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TrainFood.java",
+      "line" : 12,
+      "end" : 14,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TrainType#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TrainType.java",
+      "line" : 22,
+      "end" : 24,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TrainType#<init>(java.lang.String,int,int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TrainType.java",
+      "line" : 26,
+      "end" : 30,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "economyClass",
+        "type" : "int"
+      }, {
+        "name" : "confortClass",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 27,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 28,
+        "target" : {
+          "field" : "economyClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "economyClass",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "field" : "confortClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "confortClass",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TrainType#<init>(java.lang.String,int,int,int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TrainType.java",
+      "line" : 32,
+      "end" : 37,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "economyClass",
+        "type" : "int"
+      }, {
+        "name" : "confortClass",
+        "type" : "int"
+      }, {
+        "name" : "averageSpeed",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 33,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 34,
+        "target" : {
+          "field" : "economyClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "economyClass",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "field" : "confortClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "confortClass",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "field" : "averageSpeed",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "averageSpeed",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Travel#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Travel.java",
+      "line" : 22,
+      "end" : 24,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TravelResult#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TravelResult.java",
+      "line" : 22,
+      "end" : 24,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TravelResult#isStatus()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TravelResult.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 27,
+        "expr" : {
+          "name" : "status",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Trip#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Trip.java",
+      "line" : 54,
+      "end" : 61,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 56,
+        "target" : {
+          "field" : "trainTypeName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 57,
+        "target" : {
+          "field" : "startStationName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 58,
+        "target" : {
+          "field" : "terminalStationName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 59,
+        "target" : {
+          "field" : "startTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 60,
+        "target" : {
+          "field" : "endTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Trip#<init>(edu.fudan.common.entity.TripId,java.lang.String,java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Trip.java",
+      "line" : 44,
+      "end" : 52,
+      "params" : [ {
+        "name" : "tripId",
+        "type" : "TripId"
+      }, {
+        "name" : "trainTypeName",
+        "type" : "String"
+      }, {
+        "name" : "routeId",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 45,
+        "target" : {
+          "field" : "tripId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "tripId",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 46,
+        "target" : {
+          "field" : "trainTypeName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "trainTypeName",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 47,
+        "target" : {
+          "field" : "routeId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "routeId",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 48,
+        "target" : {
+          "field" : "startStationName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 49,
+        "target" : {
+          "field" : "terminalStationName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 50,
+        "target" : {
+          "field" : "startTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 51,
+        "target" : {
+          "field" : "endTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Trip#<init>(edu.fudan.common.entity.TripId,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Trip.java",
+      "line" : 34,
+      "end" : 42,
+      "params" : [ {
+        "name" : "tripId",
+        "type" : "edu.fudan.common.entity.TripId"
+      }, {
+        "name" : "trainTypeName",
+        "type" : "String"
+      }, {
+        "name" : "startStationName",
+        "type" : "String"
+      }, {
+        "name" : "stationsName",
+        "type" : "String"
+      }, {
+        "name" : "terminalStationName",
+        "type" : "String"
+      }, {
+        "name" : "startTime",
+        "type" : "String"
+      }, {
+        "name" : "endTime",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "field" : "tripId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "tripId",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "field" : "trainTypeName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "trainTypeName",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 37,
+        "target" : {
+          "field" : "startStationName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Trip#<init>(edu.fudan.common.entity.TripId,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)@37:45",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "startStationName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 38,
+        "target" : {
+          "field" : "stationsName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Trip#<init>(edu.fudan.common.entity.TripId,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)@38:41",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "stationsName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 39,
+        "target" : {
+          "field" : "terminalStationName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Trip#<init>(edu.fudan.common.entity.TripId,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String)@39:48",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "terminalStationName",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 40,
+        "target" : {
+          "field" : "startTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "startTime",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 41,
+        "target" : {
+          "field" : "endTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "endTime",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripAllDetailInfo#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripAllDetailInfo.java",
+      "line" : 24,
+      "end" : 26,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripAllDetailInfo#getFrom()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripAllDetailInfo.java",
+      "line" : 28,
+      "end" : 30,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.TripAllDetailInfo#getFrom()@29:28",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "field" : "from",
+            "of" : {
+              "this" : true
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripAllDetailInfo#getTo()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripAllDetailInfo.java",
+      "line" : 32,
+      "end" : 34,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.TripAllDetailInfo#getTo()@33:28",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "field" : "to",
+            "of" : {
+              "this" : true
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripId#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripId.java",
+      "line" : 16,
+      "end" : 18,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripId#<init>(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripId.java",
+      "line" : 20,
+      "end" : 39,
+      "params" : [ {
+        "name" : "trainNumber",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 21,
+        "target" : {
+          "name" : "type0",
+          "ref" : "local"
+        },
+        "decl" : "char",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.TripId#<init>(java.lang.String)@21:34",
+          "callee" : "charAt",
+          "recv" : {
+            "name" : "trainNumber",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "lit" : 0,
+            "type" : "int"
+          } ]
+        }
+      }, {
+        "op" : "switch",
+        "line" : 22,
+        "selector" : {
+          "name" : "type0",
+          "ref" : "local"
+        },
+        "cases" : [ {
+          "labels" : [ {
+            "lit" : "Z",
+            "type" : "char"
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 23,
+            "target" : {
+              "field" : "type",
+              "of" : {
+                "this" : true
+              }
+            },
+            "operator" : "=",
+            "expr" : {
+              "enum" : "edu.fudan.common.entity.Type",
+              "constant" : "Z",
+              "args" : [ {
+                "lit" : "Z",
+                "type" : "string"
+              }, {
+                "lit" : 3,
+                "type" : "int"
+              } ]
+            }
+          }, {
+            "op" : "break",
+            "line" : 24
+          } ]
+        }, {
+          "labels" : [ {
+            "lit" : "T",
+            "type" : "char"
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 25,
+            "target" : {
+              "field" : "type",
+              "of" : {
+                "this" : true
+              }
+            },
+            "operator" : "=",
+            "expr" : {
+              "enum" : "edu.fudan.common.entity.Type",
+              "constant" : "T",
+              "args" : [ {
+                "lit" : "T",
+                "type" : "string"
+              }, {
+                "lit" : 4,
+                "type" : "int"
+              } ]
+            }
+          }, {
+            "op" : "break",
+            "line" : 26
+          } ]
+        }, {
+          "labels" : [ {
+            "lit" : "K",
+            "type" : "char"
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 27,
+            "target" : {
+              "field" : "type",
+              "of" : {
+                "this" : true
+              }
+            },
+            "operator" : "=",
+            "expr" : {
+              "enum" : "edu.fudan.common.entity.Type",
+              "constant" : "K",
+              "args" : [ {
+                "lit" : "K",
+                "type" : "string"
+              }, {
+                "lit" : 5,
+                "type" : "int"
+              } ]
+            }
+          }, {
+            "op" : "break",
+            "line" : 28
+          } ]
+        }, {
+          "labels" : [ {
+            "lit" : "G",
+            "type" : "char"
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 30,
+            "target" : {
+              "field" : "type",
+              "of" : {
+                "this" : true
+              }
+            },
+            "operator" : "=",
+            "expr" : {
+              "enum" : "edu.fudan.common.entity.Type",
+              "constant" : "G",
+              "args" : [ {
+                "lit" : "G",
+                "type" : "string"
+              }, {
+                "lit" : 1,
+                "type" : "int"
+              } ]
+            }
+          }, {
+            "op" : "break",
+            "line" : 31
+          } ]
+        }, {
+          "labels" : [ {
+            "lit" : "D",
+            "type" : "char"
+          } ],
+          "body" : [ {
+            "op" : "assign",
+            "line" : 33,
+            "target" : {
+              "field" : "type",
+              "of" : {
+                "this" : true
+              }
+            },
+            "operator" : "=",
+            "expr" : {
+              "enum" : "edu.fudan.common.entity.Type",
+              "constant" : "D",
+              "args" : [ {
+                "lit" : "D",
+                "type" : "string"
+              }, {
+                "lit" : 2,
+                "type" : "int"
+              } ]
+            }
+          }, {
+            "op" : "break",
+            "line" : 34
+          } ]
+        }, {
+          "labels" : [ ],
+          "body" : [ {
+            "op" : "break",
+            "line" : 35
+          } ]
+        } ]
+      }, {
+        "op" : "assign",
+        "line" : 38,
+        "target" : {
+          "field" : "number",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.TripId#<init>(java.lang.String)@38:35",
+          "callee" : "substring",
+          "recv" : {
+            "name" : "trainNumber",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripId#toString()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripId.java",
+      "line" : 41,
+      "end" : 44,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 43,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "call" : "call:method:ts-common:edu.fudan.common.entity.TripId#toString()@43:21",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "type",
+              "ref" : "field"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "name" : "number",
+            "ref" : "field"
+          }
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripInfo#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripInfo.java",
+      "line" : 29,
+      "end" : 34,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "field" : "startPlace",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 32,
+        "target" : {
+          "field" : "endPlace",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 33,
+        "target" : {
+          "field" : "departureTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripInfo#getEndPlace()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripInfo.java",
+      "line" : 40,
+      "end" : 42,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.TripInfo#getEndPlace()@41:28",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "field" : "endPlace",
+            "of" : {
+              "this" : true
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripInfo#getStartPlace()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripInfo.java",
+      "line" : 36,
+      "end" : 38,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.TripInfo#getStartPlace()@37:28",
+          "callee" : "String2Lower",
+          "recv" : {
+            "name" : "StringUtils",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "field" : "startPlace",
+            "of" : {
+              "this" : true
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.TripResponse#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/TripResponse.java",
+      "line" : 60,
+      "end" : 71,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 62,
+        "target" : {
+          "field" : "trainTypeName",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 63,
+        "target" : {
+          "field" : "startStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 64,
+        "target" : {
+          "field" : "terminalStation",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 65,
+        "target" : {
+          "field" : "startTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 66,
+        "target" : {
+          "field" : "endTime",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 67,
+        "target" : {
+          "field" : "economyClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 68,
+        "target" : {
+          "field" : "confortClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : 0,
+          "type" : "int"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 69,
+        "target" : {
+          "field" : "priceForEconomyClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 70,
+        "target" : {
+          "field" : "priceForConfortClass",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Type#<init>(java.lang.String,int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Type.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "index",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 34,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "field" : "index",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "index",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Type#getIndex()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Type.java",
+      "line" : 55,
+      "end" : 57,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 56,
+        "expr" : {
+          "name" : "index",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Type#getName()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Type.java",
+      "line" : 47,
+      "end" : 49,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "name" : "name",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Type#getName(int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Type.java",
+      "line" : 38,
+      "end" : 45,
+      "params" : [ {
+        "name" : "index",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "foreach",
+        "line" : 39,
+        "id" : "f39:Type.values()",
+        "var" : "type",
+        "var_type" : "Type",
+        "iter" : {
+          "call" : "call:method:ts-common:edu.fudan.common.entity.Type#getName(int)@39:31",
+          "callee" : "values",
+          "recv" : {
+            "name" : "Type",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 40,
+          "id" : "b40",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-common:edu.fudan.common.entity.Type#getName(int)@40:22",
+              "callee" : "getIndex",
+              "recv" : {
+                "name" : "type",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "index",
+              "ref" : "param"
+            }
+          },
+          "then" : [ {
+            "op" : "return",
+            "line" : 41,
+            "expr" : {
+              "field" : "name",
+              "of" : {
+                "name" : "type",
+                "ref" : "local"
+              }
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 44,
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Type#setIndex(int)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Type.java",
+      "line" : 59,
+      "end" : 61,
+      "params" : [ {
+        "name" : "index",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 60,
+        "target" : {
+          "field" : "index",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "index",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.entity.Type#setName(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/Type.java",
+      "line" : 51,
+      "end" : 53,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 52,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.exception.BaseException#<init>(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/exception/BaseException.java",
+      "line" : 7,
+      "end" : 9,
+      "params" : [ {
+        "name" : "message",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 8,
+        "expr" : {
+          "call" : "ircall:method:ts-common:edu.fudan.common.exception.BaseException#<init>(java.lang.String)@8:9",
+          "callee" : "super",
+          "recv" : null,
+          "args" : [ {
+            "name" : "message",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.exception.BaseException#<init>(java.lang.String,java.lang.Throwable)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/exception/BaseException.java",
+      "line" : 11,
+      "end" : 13,
+      "params" : [ {
+        "name" : "message",
+        "type" : "String"
+      }, {
+        "name" : "cause",
+        "type" : "Throwable"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 12,
+        "expr" : {
+          "call" : "ircall:method:ts-common:edu.fudan.common.exception.BaseException#<init>(java.lang.String,java.lang.Throwable)@12:9",
+          "callee" : "super",
+          "recv" : null,
+          "args" : [ {
+            "name" : "message",
+            "ref" : "param"
+          }, {
+            "name" : "cause",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.exception.TokenException#<init>(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/exception/TokenException.java",
+      "line" : 8,
+      "end" : 10,
+      "params" : [ {
+        "name" : "message",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 9,
+        "expr" : {
+          "call" : "ircall:method:ts-common:edu.fudan.common.exception.TokenException#<init>(java.lang.String)@9:9",
+          "callee" : "super",
+          "recv" : null,
+          "args" : [ {
+            "name" : "message",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTFilter.java",
+      "line" : 19,
+      "end" : 31,
+      "params" : [ {
+        "name" : "httpServletRequest",
+        "type" : "HttpServletRequest"
+      }, {
+        "name" : "httpServletResponse",
+        "type" : "HttpServletResponse"
+      }, {
+        "name" : "filterChain",
+        "type" : "FilterChain"
+      } ],
+      "body" : [ {
+        "op" : "try",
+        "line" : 22,
+        "id" : "t22",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 23,
+          "target" : {
+            "name" : "authentication",
+            "ref" : "local"
+          },
+          "decl" : "Authentication",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)@25:29",
+            "callee" : "getJWTAuthentication",
+            "recv" : {
+              "name" : "JWTUtil",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "name" : "httpServletRequest",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 26,
+          "expr" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)@26:48",
+            "callee" : "setAuthentication",
+            "recv" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)@26:35",
+              "callee" : "getContext",
+              "recv" : {
+                "name" : "SecurityContextHolder",
+                "ref" : "type"
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "name" : "authentication",
+              "ref" : "local"
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 27,
+          "expr" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)@27:25",
+            "callee" : "doFilter",
+            "recv" : {
+              "name" : "filterChain",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "name" : "httpServletRequest",
+              "ref" : "param"
+            }, {
+              "name" : "httpServletResponse",
+              "ref" : "param"
+            } ]
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "JwtException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 29,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)@29:33",
+              "callee" : "setStatus",
+              "recv" : {
+                "name" : "httpServletResponse",
+                "ref" : "param"
+              },
+              "args" : [ {
+                "field" : "SC_UNAUTHORIZED",
+                "of" : {
+                  "name" : "HttpServletResponse",
+                  "ref" : "type"
+                }
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "throw",
+        "line" : 27,
+        "expr" : {
+          "new" : "IllegalStateException",
+          "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#<init>()@27:15",
+          "args" : [ {
+            "lit" : "Utility class",
+            "type" : "string"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getClaims(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 119,
+      "end" : 121,
+      "params" : [ {
+        "name" : "token",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 120,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getClaims(java.lang.String)@120:55",
+          "callee" : "parseClaimsJws",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getClaims(java.lang.String)@120:30",
+            "callee" : "setSigningKey",
+            "recv" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getClaims(java.lang.String)@120:21",
+              "callee" : "parser",
+              "recv" : {
+                "name" : "Jwts",
+                "ref" : "type"
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "name" : "secretKey",
+              "ref" : "field"
+            } ]
+          },
+          "args" : [ {
+            "name" : "token",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getJWTAuthentication(javax.servlet.ServletRequest)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 34,
+      "end" : 78,
+      "params" : [ {
+        "name" : "request",
+        "type" : "ServletRequest"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "name" : "token",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getJWTAuthentication(javax.servlet.ServletRequest)@35:24",
+          "callee" : "getTokenFromHeader",
+          "recv" : null,
+          "args" : [ {
+            "cast" : "HttpServletRequest",
+            "e" : {
+              "name" : "request",
+              "ref" : "param"
+            }
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 36,
+        "id" : "b36",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "token",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getJWTAuthentication(javax.servlet.ServletRequest)@36:30",
+            "callee" : "validateToken",
+            "recv" : null,
+            "args" : [ {
+              "name" : "token",
+              "ref" : "local"
+            } ]
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 38,
+          "target" : {
+            "name" : "userDetails",
+            "ref" : "local"
+          },
+          "decl" : "UserDetails",
+          "operator" : "=",
+          "expr" : {
+            "new" : "UserDetails",
+            "fqn" : "org.springframework.security.core.userdetails.UserDetails",
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getJWTAuthentication(javax.servlet.ServletRequest)@38:39",
+            "args" : [ ],
+            "anon" : "type:ts-common:edu.fudan.common.security.jwt.JWTUtil$1"
+          }
+        }, {
+          "op" : "return",
+          "line" : 75,
+          "expr" : {
+            "new" : "UsernamePasswordAuthenticationToken",
+            "fqn" : "org.springframework.security.authentication.UsernamePasswordAuthenticationToken",
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getJWTAuthentication(javax.servlet.ServletRequest)@75:20",
+            "args" : [ {
+              "name" : "userDetails",
+              "ref" : "local"
+            }, {
+              "lit" : "",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getJWTAuthentication(javax.servlet.ServletRequest)@75:89",
+              "callee" : "getAuthorities",
+              "recv" : {
+                "name" : "userDetails",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 77,
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getRole(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 84,
+      "end" : 87,
+      "params" : [ {
+        "name" : "token",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 85,
+        "target" : {
+          "name" : "claimsJws",
+          "ref" : "local"
+        },
+        "decl" : "Jws<Claims>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getRole(java.lang.String)@85:33",
+          "callee" : "getClaims",
+          "recv" : null,
+          "args" : [ {
+            "name" : "token",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 86,
+        "expr" : {
+          "cast" : "List<String>",
+          "e" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getRole(java.lang.String)@86:52",
+            "callee" : "get",
+            "recv" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getRole(java.lang.String)@86:42",
+              "callee" : "getBody",
+              "recv" : {
+                "name" : "claimsJws",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "lit" : "roles",
+              "type" : "string"
+            }, {
+              "class" : "List"
+            } ]
+          }
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getTokenFromHeader(javax.servlet.http.HttpServletRequest)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 89,
+      "end" : 95,
+      "params" : [ {
+        "name" : "request",
+        "type" : "HttpServletRequest"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 90,
+        "target" : {
+          "name" : "bearerToken",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getTokenFromHeader(javax.servlet.http.HttpServletRequest)@90:38",
+          "callee" : "getHeader",
+          "recv" : {
+            "name" : "request",
+            "ref" : "param"
+          },
+          "args" : [ {
+            "lit" : "Authorization",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 91,
+        "id" : "b91",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "bearerToken",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getTokenFromHeader(javax.servlet.http.HttpServletRequest)@91:48",
+            "callee" : "startsWith",
+            "recv" : {
+              "name" : "bearerToken",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "lit" : "Bearer ",
+              "type" : "string"
+            } ]
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 92,
+          "expr" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getTokenFromHeader(javax.servlet.http.HttpServletRequest)@92:32",
+            "callee" : "substring",
+            "recv" : {
+              "name" : "bearerToken",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "lit" : 7,
+              "type" : "int"
+            }, {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getTokenFromHeader(javax.servlet.http.HttpServletRequest)@92:57",
+              "callee" : "length",
+              "recv" : {
+                "name" : "bearerToken",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 94,
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getUserName(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 80,
+      "end" : 82,
+      "params" : [ {
+        "name" : "token",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 81,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getUserName(java.lang.String)@81:43",
+          "callee" : "getSubject",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getUserName(java.lang.String)@81:33",
+            "callee" : "getBody",
+            "recv" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#getUserName(java.lang.String)@81:16",
+              "callee" : "getClaims",
+              "recv" : null,
+              "args" : [ {
+                "name" : "token",
+                "ref" : "param"
+              } ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 97,
+      "end" : 117,
+      "params" : [ {
+        "name" : "token",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "try",
+        "line" : 98,
+        "id" : "t98",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 99,
+          "target" : {
+            "name" : "claimsJws",
+            "ref" : "local"
+          },
+          "decl" : "Jws<Claims>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@99:37",
+            "callee" : "getClaims",
+            "recv" : null,
+            "args" : [ {
+              "name" : "token",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 100,
+          "expr" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@100:57",
+              "callee" : "before",
+              "recv" : {
+                "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@100:41",
+                "callee" : "getExpiration",
+                "recv" : {
+                  "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@100:31",
+                  "callee" : "getBody",
+                  "recv" : {
+                    "name" : "claimsJws",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ {
+                "new" : "Date",
+                "fqn" : "java.util.Date",
+                "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@100:64",
+                "args" : [ ]
+              } ]
+            }
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "ExpiredJwtException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 102,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@102:20",
+              "callee" : "error",
+              "recv" : {
+                "name" : "LOGGER",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[validateToken][getClaims][Token expired][ExpiredJwtException: {} ]",
+                "type" : "string"
+              }, {
+                "name" : "e",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "throw",
+            "line" : 103,
+            "expr" : {
+              "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@103:19",
+              "args" : [ {
+                "lit" : "Token expired",
+                "type" : "string"
+              } ]
+            }
+          } ]
+        }, {
+          "types" : [ "UnsupportedJwtException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 105,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@105:20",
+              "callee" : "error",
+              "recv" : {
+                "name" : "LOGGER",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[validateToken][getClaims][Token format error][UnsupportedJwtException: {}]",
+                "type" : "string"
+              }, {
+                "name" : "e",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "throw",
+            "line" : 106,
+            "expr" : {
+              "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@106:19",
+              "args" : [ {
+                "lit" : "Token format error",
+                "type" : "string"
+              } ]
+            }
+          } ]
+        }, {
+          "types" : [ "MalformedJwtException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 108,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@108:20",
+              "callee" : "error",
+              "recv" : {
+                "name" : "LOGGER",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[validateToken][getClaims][Token is not properly constructed][MalformedJwtException: {}]",
+                "type" : "string"
+              }, {
+                "name" : "e",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "throw",
+            "line" : 109,
+            "expr" : {
+              "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@109:19",
+              "args" : [ {
+                "lit" : "Token is not properly constructed",
+                "type" : "string"
+              } ]
+            }
+          } ]
+        }, {
+          "types" : [ "SignatureException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 111,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@111:20",
+              "callee" : "error",
+              "recv" : {
+                "name" : "LOGGER",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[validateToken][getClaims][Signature failure][SignatureException: {}]",
+                "type" : "string"
+              }, {
+                "name" : "e",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "throw",
+            "line" : 112,
+            "expr" : {
+              "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@112:19",
+              "args" : [ {
+                "lit" : "Signature failure",
+                "type" : "string"
+              } ]
+            }
+          } ]
+        }, {
+          "types" : [ "IllegalArgumentException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 114,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@114:20",
+              "callee" : "error",
+              "recv" : {
+                "name" : "LOGGER",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[validateToken][getClaims][Illegal parameter exception][IllegalArgumentException: {}]",
+                "type" : "string"
+              }, {
+                "name" : "e",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "throw",
+            "line" : 115,
+            "expr" : {
+              "new" : "TokenException",
+              "fqn" : "edu.fudan.common.exception.TokenException",
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil#validateToken(java.lang.String)@115:19",
+              "args" : [ {
+                "lit" : "Illegal parameter exception",
+                "type" : "string"
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getAuthorities()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 39,
+      "end" : 42,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getAuthorities()@41:85",
+          "callee" : "collect",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getAuthorities()@41:52",
+            "callee" : "map",
+            "recv" : {
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getAuthorities()@41:43",
+              "callee" : "stream",
+              "recv" : {
+                "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getAuthorities()@41:28",
+                "callee" : "getRole",
+                "recv" : null,
+                "args" : [ {
+                  "name" : "token",
+                  "ref" : "unknown"
+                } ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "method_ref" : "SimpleGrantedAuthority::new",
+              "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getAuthorities()@41:56"
+            } ]
+          },
+          "args" : [ {
+            "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getAuthorities()@41:104",
+            "callee" : "toList",
+            "recv" : {
+              "name" : "Collectors",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getPassword()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 44,
+      "end" : 47,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 46,
+        "expr" : {
+          "lit" : "",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getUsername()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 49,
+      "end" : 52,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#getUsername()@51:28",
+          "callee" : "getUserName",
+          "recv" : null,
+          "args" : [ {
+            "name" : "token",
+            "ref" : "unknown"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#isAccountNonExpired()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 54,
+      "end" : 57,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 56,
+        "expr" : {
+          "lit" : true,
+          "type" : "boolean"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#isAccountNonLocked()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 59,
+      "end" : 62,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 61,
+        "expr" : {
+          "lit" : true,
+          "type" : "boolean"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#isCredentialsNonExpired()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 64,
+      "end" : 67,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 66,
+        "expr" : {
+          "lit" : true,
+          "type" : "boolean"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.security.jwt.JWTUtil$1#isEnabled()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/security/jwt/JWTUtil.java",
+      "line" : 69,
+      "end" : 72,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 71,
+        "expr" : {
+          "lit" : true,
+          "type" : "boolean"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.util.JsonUtils#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/JsonUtils.java",
+      "line" : 17,
+      "end" : 19,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "throw",
+        "line" : 18,
+        "expr" : {
+          "new" : "IllegalStateException",
+          "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#<init>()@18:15",
+          "args" : [ {
+            "lit" : "Utility class",
+            "type" : "string"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.util.JsonUtils#conveterObject(java.lang.Object,java.lang.Class)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/JsonUtils.java",
+      "line" : 73,
+      "end" : 76,
+      "params" : [ {
+        "name" : "srcObject",
+        "type" : "Object"
+      }, {
+        "name" : "destObjectType",
+        "type" : "Class<T>"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 74,
+        "target" : {
+          "name" : "jsonContent",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#conveterObject(java.lang.Object,java.lang.Class)@74:30",
+          "callee" : "object2Json",
+          "recv" : null,
+          "args" : [ {
+            "name" : "srcObject",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 75,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#conveterObject(java.lang.Object,java.lang.Class)@75:16",
+          "callee" : "json2Object",
+          "recv" : null,
+          "args" : [ {
+            "name" : "jsonContent",
+            "ref" : "local"
+          }, {
+            "name" : "destObjectType",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.util.JsonUtils#json2Object(java.lang.String,java.lang.Class)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/JsonUtils.java",
+      "line" : 58,
+      "end" : 70,
+      "params" : [ {
+        "name" : "json",
+        "type" : "String"
+      }, {
+        "name" : "cls",
+        "type" : "Class<T>"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 59,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "T",
+        "operator" : "=",
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      }, {
+        "op" : "try",
+        "line" : 60,
+        "id" : "t60",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 61,
+          "target" : {
+            "name" : "objectMapper",
+            "ref" : "local"
+          },
+          "decl" : "ObjectMapper",
+          "operator" : "=",
+          "expr" : {
+            "new" : "ObjectMapper",
+            "fqn" : "com.fasterxml.jackson.databind.ObjectMapper",
+            "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#json2Object(java.lang.String,java.lang.Class)@61:41",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 62,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#json2Object(java.lang.String,java.lang.Class)@62:35",
+            "callee" : "readValue",
+            "recv" : {
+              "name" : "objectMapper",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "json",
+              "ref" : "param"
+            }, {
+              "name" : "cls",
+              "ref" : "param"
+            } ]
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "NullPointerException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 64,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#json2Object(java.lang.String,java.lang.Class)@64:30",
+              "callee" : "error",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "JsonUtils",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "[json2Object][objectMapper.readValue][NullPointerException: {}]",
+                "type" : "string"
+              }, {
+                "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#json2Object(java.lang.String,java.lang.Class)@64:104",
+                "callee" : "getMessage",
+                "recv" : {
+                  "name" : "e",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ]
+        }, {
+          "types" : [ "IOException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 66,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#json2Object(java.lang.String,java.lang.Class)@66:30",
+              "callee" : "error",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "JsonUtils",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "[json2Object][objectMapper.readValue][IOException: {}]",
+                "type" : "string"
+              }, {
+                "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#json2Object(java.lang.String,java.lang.Class)@66:95",
+                "callee" : "getMessage",
+                "recv" : {
+                  "name" : "e",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      }, {
+        "op" : "return",
+        "line" : 69,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.util.JsonUtils#jsonToMap(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/JsonUtils.java",
+      "line" : 49,
+      "end" : 51,
+      "params" : [ {
+        "name" : "json",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 50,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#jsonToMap(java.lang.String)@50:16",
+          "callee" : "json2Object",
+          "recv" : null,
+          "args" : [ {
+            "name" : "json",
+            "ref" : "param"
+          }, {
+            "class" : "Map"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.util.JsonUtils#object2Json(java.lang.Object)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/JsonUtils.java",
+      "line" : 26,
+      "end" : 35,
+      "params" : [ {
+        "name" : "obj",
+        "type" : "Object"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 27,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      }, {
+        "op" : "try",
+        "line" : 28,
+        "id" : "t28",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 29,
+          "target" : {
+            "name" : "objectMapper",
+            "ref" : "local"
+          },
+          "decl" : "ObjectMapper",
+          "operator" : "=",
+          "expr" : {
+            "new" : "ObjectMapper",
+            "fqn" : "com.fasterxml.jackson.databind.ObjectMapper",
+            "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#object2Json(java.lang.Object)@29:41",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 30,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#object2Json(java.lang.Object)@30:35",
+            "callee" : "writeValueAsString",
+            "recv" : {
+              "name" : "objectMapper",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "obj",
+              "ref" : "param"
+            } ]
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "IOException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 32,
+            "expr" : {
+              "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#object2Json(java.lang.Object)@32:30",
+              "callee" : "error",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "JsonUtils",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "[object2Json][writeValueAsString][IOException: {}]",
+                "type" : "string"
+              }, {
+                "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#object2Json(java.lang.Object)@32:92",
+                "callee" : "getMessage",
+                "recv" : {
+                  "name" : "e",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      }, {
+        "op" : "return",
+        "line" : 34,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.util.JsonUtils#object2Map(java.lang.Object)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/JsonUtils.java",
+      "line" : 38,
+      "end" : 42,
+      "params" : [ {
+        "name" : "obj",
+        "type" : "Object"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 39,
+        "target" : {
+          "name" : "object2Json",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#object2Map(java.lang.Object)@39:30",
+          "callee" : "object2Json",
+          "recv" : null,
+          "args" : [ {
+            "name" : "obj",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 40,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Map<?,?>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.util.JsonUtils#object2Map(java.lang.Object)@40:28",
+          "callee" : "jsonToMap",
+          "recv" : null,
+          "args" : [ {
+            "name" : "object2Json",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.util.StringUtils#Date2String(java.util.Date)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/StringUtils.java",
+      "line" : 31,
+      "end" : 34,
+      "params" : [ {
+        "name" : "date",
+        "type" : "Date"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 32,
+        "target" : {
+          "name" : "formatter",
+          "ref" : "local"
+        },
+        "decl" : "SimpleDateFormat",
+        "operator" : "=",
+        "expr" : {
+          "new" : "SimpleDateFormat",
+          "fqn" : "java.text.SimpleDateFormat",
+          "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#Date2String(java.util.Date)@32:37",
+          "args" : [ {
+            "lit" : "yyyy-MM-dd HH:mm:ss",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#Date2String(java.util.Date)@33:26",
+          "callee" : "format",
+          "recv" : {
+            "name" : "formatter",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "name" : "date",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/StringUtils.java",
+      "line" : 15,
+      "end" : 29,
+      "params" : [ {
+        "name" : "str",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 16,
+        "target" : {
+          "name" : "formatter",
+          "ref" : "local"
+        },
+        "decl" : "SimpleDateFormat",
+        "operator" : "="
+      }, {
+        "op" : "if",
+        "line" : 17,
+        "id" : "b17",
+        "cond" : {
+          "bin" : ">",
+          "l" : {
+            "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)@17:16",
+            "callee" : "length",
+            "recv" : {
+              "name" : "str",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : 10,
+            "type" : "int"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 18,
+          "target" : {
+            "name" : "formatter",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "new" : "SimpleDateFormat",
+            "fqn" : "java.text.SimpleDateFormat",
+            "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)@18:25",
+            "args" : [ {
+              "lit" : "yyyy-MM-dd HH:mm:ss",
+              "type" : "string"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 20,
+          "target" : {
+            "name" : "formatter",
+            "ref" : "local"
+          },
+          "operator" : "=",
+          "expr" : {
+            "new" : "SimpleDateFormat",
+            "fqn" : "java.text.SimpleDateFormat",
+            "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)@20:25",
+            "args" : [ {
+              "lit" : "yyyy-MM-dd",
+              "type" : "string"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "try",
+        "line" : 23,
+        "id" : "t23",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 24,
+          "target" : {
+            "name" : "d",
+            "ref" : "local"
+          },
+          "decl" : "Date",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)@24:32",
+            "callee" : "parse",
+            "recv" : {
+              "name" : "formatter",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "str",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 25,
+          "expr" : {
+            "name" : "d",
+            "ref" : "local"
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "Exception" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "return",
+            "line" : 27,
+            "expr" : {
+              "new" : "Date",
+              "fqn" : "java.util.Date",
+              "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)@27:20",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      } ]
+    },
+    "method:ts-common:edu.fudan.common.util.StringUtils#String2Lower(java.lang.String)" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/util/StringUtils.java",
+      "line" : 8,
+      "end" : 13,
+      "params" : [ {
+        "name" : "str",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "if",
+        "line" : 9,
+        "id" : "b9",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "name" : "str",
+              "ref" : "param"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Lower(java.lang.String)@9:31",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "str",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "return",
+          "line" : 10,
+          "expr" : {
+            "name" : "str",
+            "ref" : "param"
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "return",
+        "line" : 12,
+        "expr" : {
+          "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Lower(java.lang.String)@12:37",
+          "callee" : "toLowerCase",
+          "recv" : {
+            "call" : "call:method:ts-common:edu.fudan.common.util.StringUtils#String2Lower(java.lang.String)@12:20",
+            "callee" : "replace",
+            "recv" : {
+              "name" : "str",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "lit" : " ",
+              "type" : "string"
+            }, {
+              "lit" : "",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ {
+            "field" : "ROOT",
+            "of" : {
+              "name" : "Locale",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-common:rebook.entity.VerifyResult#<init>()" : {
+      "file" : "ts-common/src/main/java/edu/fudan/common/entity/VerifyResult.java",
+      "line" : 15,
+      "end" : 17,
+      "params" : [ ],
+      "body" : [ ]
+    }
+  }
+}

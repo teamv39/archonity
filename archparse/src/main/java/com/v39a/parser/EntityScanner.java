@@ -26,7 +26,8 @@ import java.util.stream.Stream;
  * Даёт движку факты для правила R7 (конструктор сущности при загрузке строк Hibernate):
  * какой сущности принадлежит вызов репозитория, читает он или пишет, ждёт ли успешный путь
  * метода найденную строку или её отсутствие, и что делает конструктор без аргументов.
- * Таблицы, данные и решение «исполнился ли конструктор» — на стороне движка.
+ * Для правила R10 — коллекции сущностей в отдельных таблицах и какие ленивые коллекции метод загружает сам.
+ * Таблицы, данные и решения — на стороне движка.
  */
 public class EntityScanner {
 
@@ -109,6 +110,17 @@ public class EntityScanner {
             report.entities.add(ed.ir());
         }
 
+        // Методы классов по модулю и имени: для захода в проектный метод, которому передана сущность
+        Map<String, Map<String, List<MethodDeclaration>>> methodsByModule = new HashMap<>();
+        for (SourceFile sf : files) {
+            for (MethodDeclaration md : sf.cu().findAll(MethodDeclaration.class)) {
+                if (md.getBody().isPresent()) {
+                    methodsByModule.computeIfAbsent(sf.module(), k -> new HashMap<>())
+                            .computeIfAbsent(md.getNameAsString(), k -> new ArrayList<>()).add(md);
+                }
+            }
+        }
+
         // Проход 2: вызовы репозиториев во всех классах проекта
         for (SourceFile sf : files) {
             for (ClassOrInterfaceDeclaration cid : sf.cu().findAll(ClassOrInterfaceDeclaration.class)) {
@@ -137,7 +149,12 @@ public class EntityScanner {
                         continue;
                     }
                     EntityDecl entity = resolveEntity(repo, entitiesByFqn);
-                    report.repositoryCalls.add(describeCall(sf, call, repo, entity));
+                    EntityReportIR.RepositoryCall rc = describeCall(sf, call, repo, entity);
+                    if ("READ".equals(rc.operation) && entity != null) {
+                        loadedCollections(call, entity, methodsByModule.getOrDefault(sf.module(), Map.of()), rc);
+                        elementCallbacks(call, entity, rc);
+                    }
+                    report.repositoryCalls.add(rc);
                 }
             }
         }
@@ -225,6 +242,15 @@ public class EntityScanner {
             }
         }
 
+        if (e.table != null) {
+            for (FieldDeclaration fd : cid.getFields()) {
+                EntityReportIR.CollectionField cf = collectionField(fd, cid.getNameAsString());
+                if (cf != null) {
+                    e.collections.add(cf);
+                }
+            }
+        }
+
         Optional<ConstructorDeclaration> ctor = noArgConstructor(cid);
         if (ctor.isPresent()) {
             e.noArgCtor = "method:" + sf.module() + ":" + fqn + "#<init>()";
@@ -232,6 +258,49 @@ public class EntityScanner {
             e.ctorAssignsId = e.idField != null && assignsField(ctor.get().getBody(), e.idField);
         }
         return e;
+    }
+
+    /**
+     * Коллекция в отдельной таблице: @ElementCollection (таблица из @CollectionTable или по умолчанию «имя класса сущности_поле»,
+     * не @Table: так у Hibernate, `User` с @Table(auth_user) даёт `user_roles`)
+     * или связь с явной @JoinTable. @OneToMany через mappedBy или @JoinColumn живёт в таблице другой сущности — не берём.
+     */
+    static EntityReportIR.CollectionField collectionField(FieldDeclaration fd, String entityName) {
+        Optional<AnnotationExpr> rel = fd.getAnnotationByName("ElementCollection")
+                .or(() -> fd.getAnnotationByName("ManyToMany"))
+                .or(() -> fd.getAnnotationByName("OneToMany"));
+        if (rel.isEmpty() || fd.isStatic()) {
+            return null;
+        }
+        String field = fd.getVariable(0).getNameAsString();
+        String table;
+        if ("ElementCollection".equals(rel.get().getNameAsString())) {
+            table = fd.getAnnotationByName("CollectionTable").map(a -> annotationAttr(a, "name")).orElse(null);
+            if (table == null || table.isEmpty()) {
+                table = springPhysicalName(entityName + "_" + field);
+            }
+        } else {
+            table = fd.getAnnotationByName("JoinTable").map(a -> annotationAttr(a, "name")).orElse(null);
+            if (table == null || table.isEmpty()) {
+                return null;
+            }
+        }
+        EntityReportIR.CollectionField cf = new EntityReportIR.CollectionField();
+        cf.field = field;
+        cf.table = table;
+        cf.fetch = fetchOf(rel.get());
+        return cf;
+    }
+
+    private static String fetchOf(AnnotationExpr a) {
+        if (a instanceof NormalAnnotationExpr na) {
+            for (MemberValuePair p : na.getPairs()) {
+                if (p.getNameAsString().equals("fetch") && p.getValue().toString().endsWith("EAGER")) {
+                    return "EAGER";
+                }
+            }
+        }
+        return "LAZY";
     }
 
     /** Имя таблицы: @Table(name) или правило SpringPhysicalNamingStrategy для имени класса. */
@@ -394,6 +463,142 @@ public class EntityScanner {
         return rc;
     }
 
+    /**
+     * Какие ленивые коллекции сущности метод с вызовом репозитория загружает, пока он на стеке.
+     * Коллекция грузится при первом обращении к её элементам; геттер сам по себе её не грузит, поэтому
+     * геттер внутри return не считается: такую коллекцию загрузит сериализация ответа после возврата.
+     * На один уровень смотрим в проектные методы того же модуля, которым передана сущность.
+     */
+    private static void loadedCollections(MethodCallExpr call, EntityDecl entity,
+                                          Map<String, List<MethodDeclaration>> methods, EntityReportIR.RepositoryCall rc) {
+        Map<String, String> lazyGetters = new LinkedHashMap<>();
+        for (EntityReportIR.CollectionField cf : entity.ir().collections) {
+            if ("LAZY".equals(cf.fetch)) {
+                lazyGetters.put("get" + Character.toUpperCase(cf.field.charAt(0)) + cf.field.substring(1), cf.field);
+            }
+        }
+        Optional<MethodDeclaration> md = call.findAncestor(MethodDeclaration.class);
+        if (lazyGetters.isEmpty() || md.isEmpty()) {
+            return;
+        }
+        String entitySimple = simpleName(entity.ir().type);
+        Set<String> loaded = new LinkedHashSet<>();
+        List<String> reasons = new ArrayList<>();
+        collectionUses(md.get(), entitySimple, lazyGetters, loaded, reasons);
+
+        Map<String, Type> types = declaredTypes(md.get());
+        for (MethodCallExpr c : md.get().findAll(MethodCallExpr.class)) {
+            for (int i = 0; i < c.getArguments().size(); i++) {
+                if (!isEntityValue(c.getArgument(i), types, entitySimple)) {
+                    continue;
+                }
+                for (MethodDeclaration callee : methods.getOrDefault(c.getNameAsString(), List.of())) {
+                    if (callee != md.get() && callee.getParameters().size() == c.getArguments().size()
+                            && baseName(callee.getParameter(i).getType().asString()).equals(entitySimple)) {
+                        collectionUses(callee, entitySimple, lazyGetters, loaded, reasons);
+                    }
+                }
+            }
+        }
+        rc.collectionsLoaded = new ArrayList<>(loaded);
+        rc.collectionsLoadedReason = reasons;
+    }
+
+    private static final Set<String> EQUALITY_LOOKUPS = Set.of("contains", "indexOf", "lastIndexOf", "remove");
+
+    /**
+     * Вызовы библиотеки коллекций на результате чтения, которые сравнивают элементы через equals:
+     * `list.contains(x)` вызывает `x.equals(элемент)` для элементов списка обычным виртуальным вызовом.
+     * Берём, только если аргумент того же типа, что сущность, и у сущности рукописный equals(Object).
+     */
+    private static void elementCallbacks(MethodCallExpr call, EntityDecl entity, EntityReportIR.RepositoryCall rc) {
+        boolean ownEquals = entity.cid().getMethodsByName("equals").stream()
+                .anyMatch(m -> m.getParameters().size() == 1 && m.getBody().isPresent());
+        Optional<MethodDeclaration> md = call.findAncestor(MethodDeclaration.class);
+        String var = resultVariable(call);
+        if (!ownEquals || md.isEmpty() || var == null) {
+            return;
+        }
+        String entitySimple = simpleName(entity.ir().type);
+        Map<String, Type> types = declaredTypes(md.get());
+        List<EntityReportIR.ElementCallback> out = new ArrayList<>();
+        for (MethodCallExpr c : md.get().findAll(MethodCallExpr.class)) {
+            if (!EQUALITY_LOOKUPS.contains(c.getNameAsString()) || c.getArguments().size() != 1
+                    || c.getScope().isEmpty() || !(c.getScope().get() instanceof NameExpr s) || !s.getNameAsString().equals(var)
+                    || !isEntityValue(c.getArgument(0), types, entitySimple) || !before(call, c)) {
+                continue;
+            }
+            EntityReportIR.ElementCallback cb = new EntityReportIR.ElementCallback();
+            cb.method = "method:" + entity.ir().module + ":" + entity.ir().type + "#equals(java.lang.Object)";
+            cb.via = c.getNameAsString();
+            cb.line = line(c.getName());
+            cb.col = AstAnalyzer.skeletonCol(c.getName());
+            out.add(cb);
+        }
+        if (!out.isEmpty()) {
+            rc.elementCallbacks = out;
+        }
+    }
+
+    /** Локальная переменная, в которую сохранён результат вызова: `List<X> xs = repo.find(...)` или `xs = repo.find(...)`. */
+    private static String resultVariable(MethodCallExpr call) {
+        if (call.getParentNode().orElse(null) instanceof VariableDeclarator vd) {
+            return vd.getNameAsString();
+        }
+        if (call.getParentNode().orElse(null) instanceof AssignExpr a && a.getTarget() instanceof NameExpr n) {
+            return n.getNameAsString();
+        }
+        return null;
+    }
+
+    /** Обращения к ленивым коллекциям сущности в теле метода, кроме геттера внутри return. */
+    private static void collectionUses(MethodDeclaration md, String entitySimple, Map<String, String> lazyGetters,
+                                       Set<String> loaded, List<String> reasons) {
+        Map<String, Type> types = declaredTypes(md);
+        for (MethodCallExpr c : md.findAll(MethodCallExpr.class)) {
+            String field = lazyGetters.get(c.getNameAsString());
+            if (field == null || c.getScope().isEmpty() || c.findAncestor(ReturnStmt.class).isPresent()
+                    || !isEntityValue(c.getScope().get(), types, entitySimple)) {
+                continue;
+            }
+            loaded.add(field);
+            reasons.add(md.getNameAsString() + " line " + line(c) + ": " + c);
+        }
+    }
+
+    /** Объявленные типы параметров и локальных переменных метода (включая переменные цикла). */
+    private static Map<String, Type> declaredTypes(MethodDeclaration md) {
+        Map<String, Type> types = new HashMap<>();
+        for (Parameter p : md.findAll(Parameter.class)) {
+            if (!p.getType().isUnknownType()) {
+                types.put(p.getNameAsString(), p.getType());
+            }
+        }
+        for (VariableDeclarator vd : md.findAll(VariableDeclarator.class)) {
+            if (!vd.getType().isVarType()) {
+                types.put(vd.getNameAsString(), vd.getType());
+            }
+        }
+        return types;
+    }
+
+    /** Выражение — экземпляр сущности: переменная её типа или get/orElse* у переменной Optional<сущность>. */
+    private static boolean isEntityValue(Expression e, Map<String, Type> types, String entitySimple) {
+        if (e instanceof NameExpr n) {
+            Type t = types.get(n.getNameAsString());
+            return t != null && baseName(t.asString()).equals(entitySimple);
+        }
+        if (e instanceof MethodCallExpr mc && mc.getNameAsString().matches("get|orElse|orElseThrow|orElseGet")
+                && mc.getScope().isPresent() && mc.getScope().get() instanceof NameExpr n) {
+            Type t = types.get(n.getNameAsString());
+            if (t instanceof ClassOrInterfaceType ct && ct.getNameAsString().equals("Optional")
+                    && ct.getTypeArguments().isPresent() && ct.getTypeArguments().get().size() == 1) {
+                return baseName(ct.getTypeArguments().get().get(0).asString()).equals(entitySimple);
+            }
+        }
+        return false;
+    }
+
     static String operationOf(String callee, Set<String> modifying) {
         if (modifying.contains(callee)) return "MODIFY";
         if (callee.startsWith("save")) return "SAVE";
@@ -464,15 +669,18 @@ public class EntityScanner {
                 Expression t = a.getTarget();
                 boolean toId = (t instanceof FieldAccessExpr f && f.getNameAsString().equals(idField))
                         || (t instanceof NameExpr ne && ne.getNameAsString().equals(idField));
-                if (toId && a.getValue() instanceof NameExpr v) {
-                    for (int i = 0; i < n; i++) {
-                        if (cd.getParameter(i).getNameAsString().equals(v.getNameAsString())) {
-                            return !(oce.getArgument(i) instanceof NullLiteralExpr);
+                if (toId) {
+                    if (a.getValue() instanceof NameExpr v) {
+                        for (int i = 0; i < n; i++) {
+                            if (cd.getParameter(i).getNameAsString().equals(v.getNameAsString())) {
+                                return !(oce.getArgument(i) instanceof NullLiteralExpr);
+                            }
                         }
                     }
+                    return null; // id присваивается не параметром: значение неизвестно
                 }
             }
-            return null;
+            return Boolean.FALSE; // конструктор id не трогает: он остаётся null, Spring Data делает persist
         }
         if (entity.cid().isAnnotationPresent("AllArgsConstructor")) {
             List<String> fields = new ArrayList<>();

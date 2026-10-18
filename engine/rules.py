@@ -234,20 +234,67 @@ class RuntimeRules:
     DEFAULT_RULES_PATH = Path(__file__).resolve().parent.parent / "data" / "runtime_and_topology_rules.json"
 
     # Режимы правила R7 (конструктор сущности при загрузке строк Hibernate), см. engine/entities.py:
-    # body — конструктор с непустым телом (по умолчанию); project_calls — только конструктор с вызовом
-    # проектного метода (как Order#<init>(), выдача до обобщения R7); off — правило выключено целиком.
+    # project_calls (по умолчанию) — только конструктор с вызовом проектного метода (как Order#<init>());
+    # body — любой конструктор с непустым телом (опровергнуто платформой 17.10: 0.8842 против 0.8927);
+    # off — правило выключено целиком.
     ENTITY_CTOR_MODES = ("body", "project_calls", "off")
+
+    # Таблицы ленивых коллекций при чтении (R10), см. engine/entities.py:
+    # loaded (по умолчанию) — только коллекции, которые метод загрузил, пока он на стеке;
+    # all — все таблицы data_access исполненного вызова (поведение до 17.10, для отката).
+    COLLECTION_TABLE_MODES = ("loaded", "all")
+
+    # equals сущности из list.contains(x) на результате чтения: on (по умолчанию) или off (до 17.10).
+    ELEMENT_CALLBACK_MODES = ("on", "off")
+
+    # Асинхронная доставка RabbitMQ (правило R13): on (по умолчанию) или off (абляция исключения потребителя).
+    RABBITMQ_DELIVERY_MODES = ("on", "off")
+
+    # Таблица коллекции блюд station_food_list:
+    # step4_store_only (по умолчанию) — на шаге 4 в S2/S3 (listFoodStoresByStationName) читаются только магазины, в S1/S4 — меню;
+    # all — учитывать таблицу коллекции везде;
+    # off — исключить таблицу коллекции везде.
+    STATION_FOOD_COLLECTION_MODES = ("step4_store_only", "all", "off")
+
+    # Зондирующий SELECT в S2 (шаги 9 и 10 к ts-order-service.orders при regular_only):
+    # on (по умолчанию) — учитывать SELECT к таблице orders даже при 0 возвращенных строк;
+    # off — абляция (исключить ребро data к orders при probe в regular_only).
+    PROBE_ORDERS_DATA_MODES = ("on", "off")
 
     def __init__(
         self,
         rules_path: str | Path | None = None,
-        entity_constructors_on_load: str = "body",
+        entity_constructors_on_load: str = "project_calls",
+        collection_tables_on_read: str = "loaded",
+        element_callbacks: str = "on",
+        rabbitmq_delivery: str = "on",
+        station_food_collection: str = "step4_store_only",
+        probe_orders_data: str = "on",
     ) -> None:
         if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
             raise ValueError(
                 f"entity_constructors_on_load: {entity_constructors_on_load!r}, ожидается одно из {self.ENTITY_CTOR_MODES}"
             )
+        if collection_tables_on_read not in self.COLLECTION_TABLE_MODES:
+            raise ValueError(
+                f"collection_tables_on_read: {collection_tables_on_read!r}, ожидается одно из {self.COLLECTION_TABLE_MODES}"
+            )
         self.entity_constructors_on_load = entity_constructors_on_load
+        if element_callbacks not in self.ELEMENT_CALLBACK_MODES:
+            raise ValueError(f"element_callbacks: {element_callbacks!r}, ожидается одно из {self.ELEMENT_CALLBACK_MODES}")
+        if rabbitmq_delivery not in self.RABBITMQ_DELIVERY_MODES:
+            raise ValueError(f"rabbitmq_delivery: {rabbitmq_delivery!r}, ожидается одно из {self.RABBITMQ_DELIVERY_MODES}")
+        if station_food_collection not in self.STATION_FOOD_COLLECTION_MODES:
+            raise ValueError(
+                f"station_food_collection: {station_food_collection!r}, ожидается одно из {self.STATION_FOOD_COLLECTION_MODES}"
+            )
+        if probe_orders_data not in self.PROBE_ORDERS_DATA_MODES:
+            raise ValueError(f"probe_orders_data: {probe_orders_data!r}, ожидается одно из {self.PROBE_ORDERS_DATA_MODES}")
+        self.collection_tables_on_read = collection_tables_on_read
+        self.element_callbacks = element_callbacks
+        self.rabbitmq_delivery = rabbitmq_delivery
+        self.station_food_collection = station_food_collection
+        self.probe_orders_data = probe_orders_data
         self.rules_path = Path(rules_path) if rules_path else self.DEFAULT_RULES_PATH
         self.data: dict[str, Any] = {}
         self.admin_services: set[str] = set()

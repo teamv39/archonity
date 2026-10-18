@@ -1,6 +1,7 @@
 """Основной конвейер сборки графа зависимостей (Archonity Pipeline)."""
 from __future__ import annotations
 
+import dataclasses
 from pathlib import Path
 from typing import Any
 
@@ -27,7 +28,14 @@ class ArchonityPipeline:
         pool_ir: MethodPoolIR | None = None,
         ir_path: str | Path | None = None,
         entity_ir_path: str | Path | None = None,
-        entity_constructors_on_load: str = "body",
+        entity_constructors_on_load: str = "project_calls",
+        collection_tables_on_read: str = "loaded",
+        element_callbacks: str = "on",
+        rabbitmq_delivery: str = "on",
+        station_food_collection: str = "step4_store_only",
+        probe_orders_data: str = "on",
+        grounder: str = "legacy",
+        m1_options: dict[str, Any] | None = None,
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -46,10 +54,27 @@ class ArchonityPipeline:
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
 
         # 3. Загрузка правил
-        self.rules = RuntimeRules(rules_path, entity_constructors_on_load=entity_constructors_on_load)
+        self.rules = RuntimeRules(
+            rules_path,
+            entity_constructors_on_load=entity_constructors_on_load,
+            collection_tables_on_read=collection_tables_on_read,
+            element_callbacks=element_callbacks,
+            rabbitmq_delivery=rabbitmq_delivery,
+            station_food_collection=station_food_collection,
+            probe_orders_data=probe_orders_data,
+        )
 
-        # 4. Инициализация резолвера шагов
+        # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
+        self.grounder_mode = grounder
         self.grounder = ScenarioGrounder(self.index, self.targets_root)
+        self.m1 = None
+        self.step_requests: dict[str, list[dict[str, Any]]] = {}
+        if grounder == "m1":
+            from engine.grounding.grounder import StepGrounder
+
+            self.m1 = StepGrounder(self.index, self.targets_root, **(m1_options or {}))
+        elif grounder != "legacy":
+            raise ValueError(f"неизвестный grounder: {grounder}")
 
         # 5. Инициализация графового строителя
         self.builder = GraphBuilder(self.index, self.rules)
@@ -89,16 +114,24 @@ class ArchonityPipeline:
         all_data: set[tuple[str, str]] = set()
 
         prev_files: set[str] = set()
+        session = self.m1.begin(scenario_dict) if self.m1 is not None else None
+        self.step_requests[sid] = []
 
         # Шаг 2: Пошаговый обход графа (Step-by-step Execution)
         for st in scenario_dict.get("steps") or []:
             self.ledger.begin_step(st.get("n"))
             step_profile = profile.for_step(st)
-            step_entries, prev_files = self.grounder.ground_step(
-                st,
-                step_profile,
-                prev_files=prev_files,
-            )
+            step_req = None
+            if session is not None:
+                step_req = session.ground(st)
+                self.step_requests[sid].append(step_req.to_dict())
+                step_entries = {step_req.handler}
+            else:
+                step_entries, prev_files = self.grounder.ground_step(
+                    st,
+                    step_profile,
+                    prev_files=prev_files,
+                )
             if not step_entries:
                 # Клиентский UI-шаг без обращения к бэкенду
                 scenario_state.apply_step(st, scenario_dict=scenario_dict)
@@ -118,7 +151,12 @@ class ArchonityPipeline:
             all_data |= d
 
             # Применение мутаций текущего шага к состоянию сценария
-            scenario_state.apply_step(st, scenario_dict=scenario_dict)
+            if step_req is not None:
+                # M3 читает params через .get(k, default): пустые значения не передаём, чтобы сработал default
+                params = {k: v for k, v in step_req.params.items() if v is not None}
+                scenario_state.apply_step(dataclasses.replace(step_req, params=params), scenario_dict=scenario_dict)
+            else:
+                scenario_state.apply_step(st, scenario_dict=scenario_dict)
 
         # Гарантия правила R19: каждый метод из связей calls/remote/data входит в executes
         r19 = {s for s, _ in all_calls | all_remote | all_data} | {t for _, t in all_calls | all_remote}

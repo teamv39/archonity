@@ -51,17 +51,30 @@ Python. Загружает скелет и строит индексы: узлы
 
 ### M1. Заземление шагов
 
-Python + LLM. Превращает шаг сценария в запрос.
+Python + LLM, код — `engine/grounding/`. Превращает шаг сценария в `StepRequest`. В конвейере по умолчанию с 17.10 (`run_eval.py --grounder m1`); старый `engine/resolver.py` — `--grounder legacy`.
 
-1. Детерминированный каталог UI из `ts-ui-dashboard/`: JS-функция → URL, HTTP-метод, поля тела, надпись кнопки, страница. Пути сопоставляются с шаблонами `@RequestMapping` (идея из `baseline_nlp.py`).
-2. Кандидаты обработчиков для шага — top-k от BM25 по каталогу и коду и top-k от плотных эмбеддингов (запрос — шаг, документ — обработчик с подписями UI); списки сливаются через RRF. Одного BM25 на входе LLM мало.
-3. LLM выбирает обработчик среди кандидатов и извлекает параметры по JSON-схеме.
+1. **Каталог UI** (`ui_catalog.py`) из `ts-ui-dashboard/` по AST tree-sitter-javascript. Запись — один запрос: JS-функция действия, страница, надписи кнопок, глагол, шаблон URL (`"/cancel/" + orderId` → `/cancel/{orderId}`), поля тела. Шаблон сопоставляется с `@RequestMapping` по полному пути. Отдельно хранятся:
+   - варианты URL с условием, когда UI выбирает путь по данным (`tripType == 'G' || tripType == 'D'` → preserve, иначе preserveOther);
+   - запросы, которые шлёт одна функция (`queryMyOrderList` → order и orderOther);
+   - литералы тела: без условия (`enableStateQuery = false`, `isWithin = false`) и под условием.
+   URL, переданный в функцию-помощник параметром, разрешается по местам её вызова в том же файле. Условия собираются до функции действия; запрос из обработчика ответа помечается («in the response handler of POST /rebook», затем `result.status == 2`).
+2. **Документ обработчика** (`docs.py`): глагол и путь, `Класс#метод(параметры)`, поля DTO тела из скелета, исходник метода с комментарием; вариант `code_ui` добавляет UI. Около 20 % шагов S0–S7 не имеют запроса в активном UI (детали рейса, открыть заказ, цена заказа, отказ в отмене), поэтому документ по коду должен находить обработчик и без UI.
+3. **Кандидаты** (`retrieval.py`): BM25 и плотные эмбеддинги (запрос — текст шага), слияние RRF (k = 60), top-10. К каждому кандидату добавляется близнец — обработчик другого модуля с тем же путём после снятия `other` и цифр (travel/travel2, order/orderOther, preserve/preserveOther): выбор между близнецами делает LLM по типу поезда.
+4. **LLM, два вызова** (`prompts.py`, `grounder.py`):
+   - выбор: схема с `enum` меток всех обработчиков (`H1`…`H262`, постоянные, по порядку ID), `expected_outcome`, `refs` и коротким `reasoning`. Подробные карточки — только у кандидатов: путь, сигнатура, поля тела, UI-запросы с условиями или явное «UI: none», у близнецов — какие поезда обслуживает, первые строки исходника. Остальные обработчики LLM видит в индексе системного промпта выбора (строка на обработчик: путь, `Класс#метод`, пометка `ui`) и выбирает оттуда, если ни один кандидат не подходит. Индекс закрывает промахи поиска («Open the new order»: эмбеддер тянет `createNewOrder`, а нужен `getOrderById`); около 7.4K токенов, префикс общий для всех вызовов выбора. Вызову параметров индекс не нужен и мешает (43/47 полей против 47/47), его системный промпт без индекса;
+   - параметры: схема строится по полям DTO и path/query-параметрам выбранного обработчика, все поля nullable. Литералы UI без условия подставляются детерминированно (источник `UI`), LLM заполняет только то, что определяет текст. Вызов пропускается, если у запроса нет тела и query-параметров.
 
-Векторы документов и шагов кешируются в репозитории так же, как ответы LLM. Без LLM (нет GPU и нет кеша) модуль работает на BM25 и кеше векторов — хуже, но работает.
+   Порядок промпта под кеш префикса: системный (правила, коды перечислений из исходников, у выбора — индекс обработчиков) → сценарий → история выбранных запросов → шаг и кандидаты. Шаги сценария идут подряд, префикс переиспользуется. Версия промпта — `PROMPT_VERSION`, входит в ключ кеша.
+
+Без LLM (нет сервера и нет кеша) берётся первый кандидат, параметры — только литералы UI, `expected_outcome` — по словам «refuse/reject/fail» в шаге. Векторы кешируются в `cache/emb/`, ответы — в `cache/llm/`. Без torch и GPU модуль работает из кеша; на промахе кеша векторов — на одном BM25.
+
+Эталон входов для оценки M1 — `eval/m1_steps.json`: черновик из `resolver.py`, сверенный с UI и контроллерами. Конвейер его не читает. Метрики: `python -m engine.grounding.bakeoff` (Recall@k ретриверов) и `python -m engine.grounding.grounder --eval eval/m1_steps.json` (top-1).
+
+Шаг «Refresh the list of orders» без уточнения типа поезда — один запрос: в сервис заказов по типу поезда заказа, с которым работает сценарий, хотя UI (`queryMyOrderList`) шлёт оба. Это неочевидно из UI и подтверждено платформой 17.10 ([OQ-08](../open-questions.md#oq-08)): без второго refresh S1, S3–S7 выросли на 0.010–0.018. На S0 так же: фильтр «Paid» в эталоне обработан только `ts-order-service`. `resolver.py` отдаёт оба обработчика.
 
 ### M2. IR тел методов
 
-Java, JavaParser. Для каждого метода проекта — дерево операторов, связанное с узлами скелета. Пишет `ir/<module>.json`.
+Java, JavaParser. Для каждого метода проекта — дерево операторов, связанное с узлами скелета. Пишет `data/ir/<module>.json`, точные поля — [archparse/README.md](../../archparse/README.md), раздел 3.6.
 
 ### M3. Состояние сценария
 
@@ -103,19 +116,26 @@ Python. Обёртка над `platform/evaluate_golden.py`: балл на S0, �
   "action": "Book one first-class seat on the trip for this contact, with food ...",
   "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
   "http": {"method": "POST", "path": "/api/v1/preserveservice/preserve"},
-  "ui_source": {"file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js", "line": 511},
-  "params": {"seatType": "SeatClass.FIRSTCLASS", "assurance": 1, "foodType": 2, "consigneeWeight": 2.0},
+  "ui_source": {"file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js", "line": 518},
+  "params": {"seatType": 2, "assurance": 1, "foodType": 2, "consigneeWeight": 2.0},
   "expected_outcome": "success",
   "refs": {"trip": "first_of_step_2", "contact": "first_of_step_5"},
-  "grounding": {"source": "LLM", "candidates": ["..."], "cache_key": "sha256:..."}
+  "grounding": {
+    "source": "LLM",
+    "reasoning": "...",
+    "candidates": ["method:..."],
+    "cache_keys": {"select": "sha256:...", "params": "sha256:..."},
+    "param_sources": {"seatType": "LLM", "isWithin": "UI"},
+    "ranks": {"bm25": 1, "dense": 2, "fused": 1}
+  }
 }
 ```
 
-`handler` — ID узла скелета, всегда. `params` — только то, что влияет на ветки; имена полей берутся из DTO обработчика (здесь `OrderTicketsInfo`), значения в примере условные. `expected_outcome`: `success` или `refused` (S7). `refs` ссылаются на результаты предыдущих шагов.
+`handler` — ID узла скелета, всегда, и всегда один: шаг — один запрос. `params` — поля DTO обработчика (здесь `OrderTicketsInfo`) и path/query-параметры, которые определил текст шага или UI; коды перечислений — числами из исходника (`SeatClass.FIRSTCLASS` = 2). `expected_outcome`: `success` или `refused` (S7). `refs` — ссылки на результаты предыдущих шагов: ключ из словаря сущностей (`trip`, `contact`, `order`, `food`, `store`, `station`, `route`, `train`, `price`, `consign`, `assurance`, `user`), значение `<first|second|new>_of_step_<n>`. `grounding.source`: `LLM` или `RETRIEVAL` (фолбэк без LLM).
 
 ### IR (выход M2)
 
-Файл на модуль: `ir/<module>.json` — словарь `method_id → тело`.
+Файл на модуль: `data/ir/<module>.json` — словарь `method_id → тело` (в обёртке со `schema` и `module`, см. README archparse, раздел 3.6).
 
 ```json
 {
@@ -201,8 +221,8 @@ Python. Обёртка над `platform/evaluate_golden.py`: балл на S0, �
 
 Выбрано ([исследование](../researches/model_selection.md), [OQ-05](../open-questions.md#oq-05)):
 
-- LLM: `Qwen3.6-35B-A3B` (Apache-2.0), GGUF `UD-IQ4_XS` (Unsloth, 17.7 ГБ), `llama-server` из llama.cpp на Windows, часть экспертов MoE в RAM (`-ncmoe 7`), контекст 32K. Замер 17.10: обработка промпта около 1500 ток/с, генерация 60–70 ток/с. Thinking выключен, вывод по JSON-схеме, `temperature = 0`, вызовы по одному (параллельные запросы не ускоряют). Постоянную часть промпта ставим в начало: кеш префикса работает.
-- Эмбеддинги (предварительно, выберет бейкофф 17.10): `Qwen3-Embedding-4B` или `EmbeddingGemma 2` (обе Apache-2.0), запасная `Qwen3-Embedding-0.6B`. CodeBERT, Jina Code и SFR-Code не берём: слабее на независимом бенчмарке поиска кода или лицензия CC-BY-NC. Рядом с LLM на GPU эмбеддер не поместится, поэтому векторы считаются отдельным прогоном и кешируются.
+- LLM: `Qwen3.6-35B-A3B` (Apache-2.0), GGUF `UD-IQ4_XS` (Unsloth, 17.7 ГБ), `llama server` из llama.cpp на Windows (`scripts/start_llm.ps1`), часть экспертов MoE в RAM (`-ncmoe 7`), контекст 32K. Замер 17.10: обработка промпта около 1500 ток/с, генерация 60–70 ток/с. Thinking выключен, вывод по JSON-схеме, `temperature = 0`, вызовы по одному (параллельные запросы не ускоряют). Постоянную часть промпта ставим в начало: кеш префикса работает.
+- Эмбеддинги: `Qwen3-Embedding-4B` (Apache-2.0), sentence-transformers, bf16; выбрана бейкоффом 17.10 ([исследование](../researches/model_selection.md), раздел 5): на документах с UI RRF даёт Recall@10 0.961 против 0.893 у одного BM25, dense сильнее EmbeddingGemma 2. Рядом с LLM на GPU эмбеддер не поместится, поэтому векторы считаются отдельным прогоном и кешируются в `cache/emb/`.
 
 ## Последствия
 

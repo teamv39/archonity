@@ -130,21 +130,27 @@ if (orderResult.getStatus() == 1) {
 
 ### 3.5. Сущности и вызовы репозиториев: `data/entity_ir.json`
 
-Второй артефакт archparse, режим `--mode entities` (`EntityScanner`). Нужен правилу R7 в движке ([annotation_rules.md](../docs/annotation_rules.md)): когда Hibernate создаёт экземпляр сущности, исполняется её конструктор без аргументов. Хардкода `Order` в `builder.py` больше нет, все такие решения идут через этот файл. Сканируются все `src/main/java` проекта, а не пул.
+Второй артефакт archparse, режим `--mode entities` (`EntityScanner`), запуск: `& .\gradlew.bat run --args="--mode entities"`. Нужен правилам R7 и R10 в движке ([annotation_rules.md](../docs/annotation_rules.md)): когда Hibernate создаёт экземпляр сущности, исполняется её конструктор без аргументов; таблица ленивой коллекции идёт в ответ, только если метод загрузил коллекцию сам. Хардкода `Order` в `builder.py` больше нет, все такие решения идут через этот файл. Сканируются все `src/main/java` проекта, а не пул.
 
 ```json
 {
-  "schema": "entity_ir/1",
+  "schema": "entity_ir/2",
   "entities": [
     {"type": "route.entity.Route", "module": "ts-route-service", "file": "...", "kind": "Entity",
      "table": "route", "id_field": "id", "id_generated": false,
      "no_arg_ctor": "method:ts-route-service:route.entity.Route#<init>()",
-     "ctor_statements": 1, "ctor_assigns_id": true, "embedded": []}
+     "ctor_statements": 1, "ctor_assigns_id": true, "embedded": [],
+     "collections": [{"field": "stations", "table": "route_stations", "fetch": "LAZY"},
+                     {"field": "distances", "table": "route_distances", "fetch": "LAZY"}]}
   ],
   "repository_calls": [
     {"file": "ts-route-service/.../RouteServiceImpl.java", "line": 82, "col": 49, "callee": "findById",
      "repository": "RouteRepository", "entity": "route.entity.Route", "operation": "READ",
-     "expects": "ROWS", "expects_reason": "line 83: if (!route.isPresent()): absent arm fails"},
+     "expects": "ROWS", "expects_reason": "line 83: if (!route.isPresent()): absent arm fails",
+     "collections_loaded": [], "collections_loaded_reason": []},
+    {"file": "ts-route-service/.../RouteServiceImpl.java", "line": 105, "col": 51, "callee": "findAll",
+     "operation": "READ", "collections_loaded": ["stations"],
+     "collections_loaded_reason": ["getRouteByStartAndEnd line 109: route.getStations()"]},
     {"file": "ts-assurance-service/.../AssuranceServiceImpl.java", "line": 64, "col": 33, "callee": "save",
      "repository": "AssuranceRepository", "entity": "assurance.entity.Assurance", "operation": "SAVE",
      "id_assigned": true, "id_assigned_reason": "line 63: new Assurance(UUID.randomUUID().toString(), ...)"}
@@ -160,11 +166,99 @@ if (orderResult.getStatus() == 1) {
 - `repository_calls[]`: каждый вызов на поле, тип которого — интерфейс, наследующий `CrudRepository`/`JpaRepository`/`PagingAndSortingRepository`/`MongoRepository`. Сущность — первый параметр типа репозитория. Позиция `(file, line, col)` стыкуется с `call_site` скелета так же, как в разделе 3.2.
 - `operation`: `READ` (всё, что не подходит ниже, включая своё `@Query`), `SAVE`, `DELETE`, `EXISTS`, `COUNT`, `MODIFY` (`@Modifying`).
 - `expects` (только `READ`): чего ждёт успешный путь метода. Находим первое условие после вызова, которое проверяет результат (`== null`, `!= null`, `isPresent()`, `isEmpty()`, `size()`, проверка прямо в `if`). Плечо отказа: `throw`, `return new Response<>(0, ...)` или `LOGGER.error/warn` на верхнем уровне плеча. «Найдено» ведёт к отказу, «не найдено» нет — `EMPTY`; наоборот — `ROWS`; `orElseThrow()`/`get()` — `ROWS`; иначе `UNKNOWN`, тогда решает состояние БД в движке.
-- `id_assigned` (только `SAVE`): задан ли id до вызова. Признаки: сеттер id на той же переменной до `save`, конструктор без аргументов присваивает id, аргумент конструктора с параметрами (явного или `@AllArgsConstructor`) попадает в id, билдер задаёт id. Не определено — поля нет.
+- `id_assigned` (только `SAVE`): задан ли id до вызова. Признаки: сеттер id на той же переменной до `save`, конструктор без аргументов присваивает id, аргумент конструктора с параметрами (явного или `@AllArgsConstructor`) попадает в id, билдер задаёт id. Явный конструктор с параметрами, который id не трогает, даёт `false`. Не определено (сущность пришла параметром метода) — поля нет; движок трактует это как `persist`: в сценариях S1–S7 такие `save` идут после `findById` той же сущности в том же методе или у сущности пустой конструктор, так что конструктор уже в ответе.
+- `collections` (правило R10): коллекции в отдельной таблице. `@ElementCollection` — таблица из `@CollectionTable(name)`, иначе по Hibernate «имя класса сущности_поле» (не `@Table`: `User` с `@Table(auth_user)` даёт `user_roles`). `@OneToMany`/`@ManyToMany` — только с явной `@JoinTable(name)`. `fetch` — `EAGER`, если указан, иначе `LAZY`. Все 6 таблиц коллекций совпадают с узлами скелета с `collection_of`.
+- `collections_loaded` (только `READ` сущности с ленивыми коллекциями): поля коллекций, которые метод загружает сам. Признак: геттер коллекции на переменной типа сущности (или `get()`/`orElse*()` у `Optional<сущность>`), и вызов не внутри `return`. Геттер в `return` коллекцию не грузит, её загрузит сериализация ответа. На один уровень смотрим в методы того же модуля, которым передана сущность (`getToken` -> `createToken(user)` -> `user.getRoles()`). Пустой список — метод коллекции не трогает; поля нет — ленивых коллекций нет.
+- `element_callbacks` (только `READ`): методы сущности, которые библиотека коллекций вызывает на элементах результата. Признак: результат сохранён в переменную, на ней `contains`/`indexOf`/`lastIndexOf`/`remove` с аргументом типа сущности, у сущности рукописный `equals(Object)`. Запись: `{"method": "method:ts-order-service:order.entity.Order#equals(java.lang.Object)", "via": "contains", "line": 90, "col": 27}`. В проекте 4 таких места: `create` и `addNewOrder` в обоих сервисах заказов.
 - `no_arg_ctor_statements`: число операторов в каждом явном конструкторе без аргументов (для встраиваемых типов без `@Embeddable`).
 - `constructors[]`: IR тел конструкторов без аргументов, в которых есть вызовы. Движок добавляет их в общий индекс IR, отсюда enum-вызовы `Order#<init>() -> OrderStatus#getCode()`.
 
 Проверка: все 273 вызова репозиториев находят `call_site` скелета, и все `call_site` с `data_access` покрыты (`tests/test_entities.py`, `EntityScannerTest`).
+
+### 3.6. IR тел всех методов (M2): `data/ir/<module>.json`
+
+Контракт M2 из ADR-005 для исполнителя M4. Режим `--mode bodies`, запуск: `& .\gradlew.bat run --args="--mode bodies"`. Покрывает все методы скелета с телом (1196 из 1538: остальные абстрактные), включая конструкторы (`#<init>`) и методы анонимных классов (`Foo$1#bar`). `pool_ir.json` и `entity_ir.json` не меняются, движок их читает как раньше.
+
+Файл на модуль:
+
+```json
+{
+  "schema": "method_ir/1",
+  "module": "ts-cancel-service",
+  "methods": {
+    "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)": {
+      "file": "ts-cancel-service/src/main/java/cancel/service/CancelServiceImpl.java",
+      "line": 45, "end": 141,
+      "params": [{"name": "orderId", "type": "String"}, {"name": "loginId", "type": "String"}, {"name": "headers", "type": "HttpHeaders"}],
+      "body": [
+        {"op": "assign", "line": 48, "target": {"name": "orderResult", "ref": "local"}, "decl": "Response<Order>", "operator": "=",
+         "expr": {"call": "call:method:ts-cancel-service:...#cancelOrder(...)@48:39", "callee": "getOrderByIdFromOrder",
+                  "recv": null, "args": [{"name": "orderId", "ref": "param"}, {"name": "headers", "ref": "param"}]}},
+        {"op": "if", "line": 49, "id": "b49",
+         "cond": {"bin": "==", "l": {"call": "call:...@49:25", "callee": "getStatus", "recv": {"name": "orderResult", "ref": "local"}, "args": []},
+                  "r": {"lit": 1, "type": "int"}},
+         "then": [{"op": "expr", "line": 50, "expr": {"call": "call:...@50:38", "callee": "info",
+                   "recv": {"field": "LOGGER", "of": {"name": "CancelServiceImpl", "ref": "type"}}, "args": ["..."]}}, "..."],
+         "else": ["..."]}
+      ]
+    }
+  }
+}
+```
+
+Ключ `methods` — ID узла скелета, дословно. Методы матчатся со скелетом по файлу, имени, числу параметров и строке объявления.
+
+Операторы (`op`, у каждого `line`):
+
+| `op` | Поля |
+|---|---|
+| `assign` | `target` (выражение), `expr` (нет у объявления без инициализатора), `decl` (тип, если это объявление), `operator` (`=`, `+=` и т. п.) |
+| `expr` | `expr` |
+| `if` | `id` (`b<строка>`, как в `pool_ir.json`), `cond`, `then`, `else` (`else if` — вложенный `if` в `else`) |
+| `switch` | `selector`, `cases`: `[{"labels": [выражения], "body": [...]}]`, пустой `labels` — `default` |
+| `while`, `do` | `cond`, `body` |
+| `for` | `init` (операторы), `cond`, `update` (выражения), `body` |
+| `foreach` | `id` (`f<строка>:<коллекция>`), `var`, `var_type`, `iter`, `body` |
+| `try` | `id` (`t<строка>`), `resources` (операторы), `body`, `catches`: `[{"types": [...], "var": "e", "body": [...]}]`, `finally` |
+| `return` | `expr` (может не быть) |
+| `throw` | `expr` |
+| `break`, `continue` | `label` (может не быть) |
+| `block` | `body`: блок `synchronized` (`lock`), метка (`label`) или вложенный `{}` |
+| `unsupported` | `text`: локальный класс, `assert` и прочее, чего нет в Train Ticket на путях сценариев |
+
+Выражения (объект, вид определяется ключом):
+
+| Ключ | Поля | Пример |
+|---|---|---|
+| `lit` | `type`: `int`, `long`, `double`, `char`, `string`, `boolean`, `null` | `{"lit": 1, "type": "int"}` |
+| `name` | `ref`: `local`, `param`, `field`, `type` (имя класса, `StringUtils`), `static` (статический импорт не из проекта, `ALL`), `unknown` (переменная внешнего метода в анонимном классе) | `{"name": "order", "ref": "local"}` |
+| `field` | `of` (выражение) | `order.status` |
+| `enum` | `constant`, `args` (литералы аргументов константы в объявлении enum) | `{"enum": "edu.fudan.common.entity.OrderStatus", "constant": "PAID", "args": [{"lit": 1, ...}, {"lit": "Paid & Not Collected", ...}]}` |
+| `const` | `value` (литерал): `static final` поле с литералом | `{"const": "edu.fudan.common.util.Constant.X", "value": {...}}` |
+| `call` | `callee`, `recv` (выражение или `null`), `args`, `target` (цель, если у вызова нет рёбер в скелете, а цель однозначна) | см. выше |
+| `new` | значение — тип как написан (`Order`, `ArrayList<>`); `fqn` — полное имя: тип проекта (вложенные через `$`, как в скелете), иначе явный импорт, иначе написанное полное имя, нет поля — не определить (`java.lang`, импорт со звёздочкой); `args`, `call` (call_site конструктора), `target` (как у `call`), `anon` (ID узла анонимного типа скелета; тело — отдельные методы `Foo$1#...`) | |
+| `new_array` | `type`, `dims`, `init` | |
+| `bin` | `l`, `r`: `+ - * / % == != < <= > >= && \|\| & \| ^ << >> >>>` | |
+| `un` | `e`: `! - + ~ ++pre --pre post++ post--` | |
+| `assign` | значение — оператор (`=`, `+=`), `target`, `expr`: присваивание внутри выражения | `x = y = 0` |
+| `tern` | `then`, `else` (значение `tern` — условие) | |
+| `cast`, `instanceof` | `e` (значение ключа — тип) | |
+| `index` | `of` | `arr[i]` |
+| `lambda` | `line`, `col` (в байтах UTF-8, как у call_site: на одной строке бывает несколько лямбд), `params`, `body` (операторы; тело-выражение — `[{"op": "return", ...}]`) | отложенный блок, R16 |
+| `method_ref` | `call` (call_site скелета с `method_ref: true`, если есть) | `Foo::bar` |
+| `this`, `super`, `class` | | `Foo.class` |
+| `text` | — | выражение, которое не разобрано (страховка) |
+
+Правила:
+
+- `call` — ID call_site скелета по `(file, line, col)` (колонка в байтах UTF-8, раздел 3.2; у ссылки на метод — имя после `::`, у `::new` — начало выражения). В скелете есть call_site почти у всех вызовов, включая геттеры Lombok и вызовы на enum-константах. Если call_site нет, ID свой: `ircall:<method_id>@<строка>:<колонка>`. Сейчас таких вызовов 4: `super(...)` в конструкторах исключений.
+- `target` — ID метода скелета, когда у вызова нет рёбер в скелете (своё `ircall` или call_site без `calls`/`runtime_dispatch`), а цель однозначна: метод enum-константы (`OrderStatus.PAID.getCode()` -> `OrderStatus#getCode()`, как в `pool_ir.json`), метод того же класса, статический метод или конструктор класса проекта.
+- Если рёбра у call_site есть, IR их не повторяет: цели, `runtime_dispatch`, `remote_call` и `data_access` берутся из скелета по ID call_site.
+- `enum` и `const` вычисляются по всем исходникам проекта: 12 enum-типов, `static final` поля с литералом. Тип enum ищется по импорту, затем в том же модуле, затем в `ts-common`.
+- `ref` у имени — по области видимости в методе: параметр, локальная переменная (включая переменные цикла, `catch` и параметры лямбды), поле класса, имя класса (с заглавной буквы и не переменная).
+- Внутрь тела анонимного класса не заходим: у его методов свои записи с ID скелета.
+
+Проверка: все 1196 методов скелета с телом найдены, все 8961 call_site скелета встречаются в IR ровно один раз и в своём методе, неразобранных выражений нет (`MethodIrWriterTest`). Объём: 42 файла, около 5.4 МБ.
 
 ## 4. Задачи на сегодня (по порядку)
 
@@ -181,4 +275,4 @@ if (orderResult.getStatus() == 1) {
 
 - Подключение `pool_ir.json` к `engine/graph/builder.py`/`rules.py` как источник условий вместо части `ScenarioProfile`-флагов — отдельная задача, зависит от того, появятся ли у M1 конкретные параметры шага (`assurance`, `foodType`, `tripId`...) — сейчас `engine/resolver.py` даёт только ID обработчика, не значения полей запроса. Без этого даже идеальный `pool_ir.json` не даст движку автоматически вычислить ветку — п. 7 выше (текстовая памятка) существует именно потому, что автоматическая интеграция не успеет сегодня.
 - Расширение пула на `TokenServiceImpl.getToken` (verifyCode-гейт), `UserServiceImpl.saveUser/createDefaultAuthUser` (S4), `AdminOrderServiceImpl.getAllOrders` (S6) — после того, как формат пройдёт обкатку на первой пятёрке.
-- Полный IR по ADR-005 (`ir/<module>.json`, все операторы, lambda-блоки, try/catch) — после хакатона или если Day 1 пул даст заметный прирост и останется время.
+- Полный IR по ADR-005 сделан 17.10: `data/ir/<module>.json`, раздел 3.6.

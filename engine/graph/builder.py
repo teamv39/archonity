@@ -15,7 +15,7 @@ from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex
 from engine.decisions import DecisionLedger, rules_return_line
-from engine.entities import hydration
+from engine.entities import RepositoryCall, hydration, rows_exist
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
 
@@ -155,10 +155,12 @@ class GraphBuilder:
                         ledger.include("calls", m, x, source_type, rule)
 
             # 2. Межсервисные вызовы (remote_call + message_delivery)
-            remote_targets = (
-                self.index.wiring["remote_call"].get(m, set())
-                | self.index.wiring["message_delivery"].get(m, set())
-            )
+            remote_targets = set(self.index.wiring["remote_call"].get(m, set()))
+            if getattr(self.rules, "rabbitmq_delivery", "on") != "off":
+                remote_targets |= self.index.wiring["message_delivery"].get(m, set())
+            elif ledger:
+                for tgt in self.index.wiring["message_delivery"].get(m, set()):
+                    ledger.prune("remote", m, tgt, "DEFAULT_RULE", "ablate_rabbitmq_delivery")
             for t in remote_targets:
                 if self.rules.is_dead_code_method(t, profile=profile, is_admin_scenario=is_admin_scenario):
                     self._prune_by_rule(self.rules.is_dead_code_method, "remote", m, t, profile, is_admin_scenario)
@@ -197,6 +199,27 @@ class GraphBuilder:
                     self._prune_by_rule(self.rules.is_dead_code_edge, "data", m, t, profile, is_admin_scenario)
                     continue
 
+                # Таблица коллекции блюд station_food_list: шаг 4 в S2/S3 (listFoodStoresByStationName) читает
+                # только информацию о магазинах без позиций блюд, в отличие от шагов с просмотром меню в S1/S4.
+                sf_mode = getattr(self.rules, "station_food_collection", "step4_store_only")
+                if "station_food_list" in t:
+                    if sf_mode == "off" or (sf_mode == "step4_store_only" and "listFoodStoresByStationName" in m):
+                        if ledger:
+                            ledger.prune("data", m, t, "FRAMEWORK_RULE", "station_store_browse_no_food_list")
+                        continue
+
+                # Зондирующий SELECT в S2 (шаги 9 и 10): в сценариях обычных поездов (regular_only)
+                # заказ находится в ts-order-other-service, запрос в ts-order-service возвращает 0 строк
+                if (
+                    getattr(self.rules, "probe_orders_data", "on") == "off"
+                    and getattr(profile, "train_mode", "") == "regular_only"
+                    and "OrderServiceImpl#getOrderById" in m
+                    and "ts-order-service.orders" in t
+                ):
+                    if ledger:
+                        ledger.prune("data", m, t, "STATE", "regular_train_probe_empty_orders")
+                    continue
+
                 # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                 source_type, rule = "SKELETON", "reachability"
                 if hasattr(self.index, "edge_guards"):
@@ -211,6 +234,15 @@ class GraphBuilder:
                         if trace:
                             source_type, rule = "IR_BRANCH", ";".join(trace)
 
+                # Таблица ленивой коллекции: только если метод загрузил коллекцию сам (R10, факты archparse)
+                loaded = self._collection_table_loaded(m, t)
+                if loaded is not None:
+                    if not loaded[0]:
+                        if ledger:
+                            ledger.prune("data", m, t, "STATE", loaded[1])
+                        continue
+                    source_type, rule = "STATE", loaded[1]
+
                 edges_data.add((m, t))
                 if ledger:
                     ledger.include("data", m, t, source_type, rule)
@@ -219,6 +251,12 @@ class GraphBuilder:
             for ctor, rule, via in self._hydrated_constructors(m, edges_data, profile, scenario_state):
                 reached_via.setdefault(ctor, ("STATE", rule, via))
                 stack.append((ctor, u))
+
+            # 5. Методы сущности, которые библиотека коллекций вызывает на загруженных строках
+            #    (list.contains(x) -> x.equals(элемент)); ребра calls нет: вызывает библиотека
+            for cb, rule, via in self._element_callbacks(m, edges_data, profile, scenario_state):
+                reached_via.setdefault(cb, ("STATE", rule, via))
+                stack.append((cb, u))
 
         active_methods = {m for m, _ in seen_methods}
         if ledger:
@@ -238,6 +276,13 @@ class GraphBuilder:
 
         return active_methods, edges_calls, edges_remote, edges_data
 
+    def _collection_table_loaded(self, m: str, t: str) -> tuple[bool, str] | None:
+        """Решение R10 по таблице коллекции; None — правило не применяется (режим all или не коллекция)."""
+        entities = getattr(self.index, "entities", None)
+        if entities is None or getattr(self.rules, "collection_tables_on_read", "loaded") == "all":
+            return None
+        return entities.collection_table_loaded(m, t)
+
     def _hydrated_constructors(
         self,
         m: str,
@@ -252,20 +297,12 @@ class GraphBuilder:
         Возвращает [(конструктор, правило, ребро data, через которое он исполнился)].
         """
         entities = getattr(self.index, "entities", None)
-        mode = getattr(self.rules, "entity_constructors_on_load", "body")
+        mode = getattr(self.rules, "entity_constructors_on_load", "project_calls")
         if entities is None or mode == "off":
             return []
         out: list[tuple[str, str, str]] = []
-        for call in entities.calls_by_method.get(m, ()):
-            table = next((t for t in sorted(call.tables) if (m, t) in edges_data), None)
-            if table is None:
-                continue
-            c_ir = self.index.pool_ir.calls_by_mid_line_col.get((m, call.line, call.col))
-            if c_ir is not None and c_ir.guard:
-                active, _ = self._eval_guards(m, [c_ir.guard], profile, scenario_state)
-                if not active:
-                    continue
-            is_new_user = bool(getattr(scenario_state, "is_new_user", False) or getattr(profile, "is_new_user", False))
+        is_new_user = self._is_new_user(profile, scenario_state)
+        for call, table in self._executed_repository_calls(m, edges_data, profile, scenario_state):
             decision = hydration(call, scenario_state, self.index.table_resource_to_db, is_new_user,
                                  allowed=entities.allowed_ctors(mode))
             via = f"data|{m}|{call.main_table or table}"
@@ -274,6 +311,63 @@ class GraphBuilder:
             elif self._ledger and call.entity and call.entity.no_arg_ctor and call.entity.ctor_statements > 0:
                 self._ledger.prune("executes", f"scenario:{self._ledger.scenario_id}", call.entity.no_arg_ctor,
                                    "STATE", decision.rule, via=via, line=call.line, col=call.col)
+        return out
+
+    def _executed_repository_calls(
+        self,
+        m: str,
+        edges_data: set[tuple[str, str]],
+        profile: ScenarioProfile | None,
+        scenario_state: ScenarioState | None,
+    ) -> list[tuple[RepositoryCall, str]]:
+        """Вызовы репозитория в методе m, которые исполнились: в ответ вошло ребро data к одной из таблиц
+        вызова, и guard вызова из IR (если метод в пуле) активен. Возвращает [(вызов, таблица)]."""
+        entities = getattr(self.index, "entities", None)
+        out: list[tuple[RepositoryCall, str]] = []
+        for call in entities.calls_by_method.get(m, ()) if entities is not None else ():
+            table = next((t for t in sorted(call.tables) if (m, t) in edges_data), None)
+            if table is None:
+                continue
+            c_ir = self.index.pool_ir.calls_by_mid_line_col.get((m, call.line, call.col))
+            if c_ir is not None and c_ir.guard:
+                active, _ = self._eval_guards(m, [c_ir.guard], profile, scenario_state)
+                if not active:
+                    continue
+            out.append((call, table))
+        return out
+
+    @staticmethod
+    def _is_new_user(profile: ScenarioProfile | None, scenario_state: ScenarioState | None) -> bool:
+        return bool(getattr(scenario_state, "is_new_user", False) or getattr(profile, "is_new_user", False))
+
+    def _element_callbacks(
+        self,
+        m: str,
+        edges_data: set[tuple[str, str]],
+        profile: ScenarioProfile | None,
+        scenario_state: ScenarioState | None,
+    ) -> list[tuple[str, str, str]]:
+        """equals сущности из list.contains(x) на результате чтения: исполняется, если чтение вернуло строки.
+
+        Библиотека коллекций вызывает x.equals(элемент) обычным виртуальным вызовом, не через отражение,
+        поэтому исключение REFERENCE («вызванные библиотекой лишь через отражение») сюда не относится.
+        Возвращает [(метод, правило, ребро data вызова)].
+        """
+        if getattr(self.rules, "element_callbacks", "on") == "off":
+            return []
+        out: list[tuple[str, str, str]] = []
+        is_new_user = self._is_new_user(profile, scenario_state)
+        for call, table in self._executed_repository_calls(m, edges_data, profile, scenario_state):
+            if not call.element_callbacks:
+                continue
+            via = f"data|{m}|{call.main_table or table}"
+            has_rows, why = rows_exist(call, scenario_state, self.index.table_resource_to_db, is_new_user)
+            for cb, lookup in call.element_callbacks:
+                if has_rows:
+                    out.append((cb, f"ELEMENT_CALLBACK:{lookup}({why})", via))
+                elif self._ledger:
+                    self._ledger.prune("executes", f"scenario:{self._ledger.scenario_id}", cb, "STATE",
+                                       f"ELEMENT_CALLBACK:no_rows({why})", via=via)
         return out
 
     def _eval_guards(

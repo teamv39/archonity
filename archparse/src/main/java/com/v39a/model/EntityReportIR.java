@@ -13,7 +13,7 @@ import java.util.List;
 public class EntityReportIR {
 
     @JsonProperty("schema")
-    public String schema = "entity_ir/1";
+    public String schema = "entity_ir/2";
 
     @JsonProperty("entities")
     public List<Entity> entities = new ArrayList<>();
@@ -69,6 +69,23 @@ public class EntityReportIR {
         /** Типы полей @Embedded и полей-встраиваемых классов (их конструкторы Hibernate вызывает вместе с сущностью). */
         @JsonProperty("embedded")
         public List<String> embedded = new ArrayList<>();
+
+        /** Коллекции, которые ORM хранит в отдельной таблице (@ElementCollection, @JoinTable). */
+        @JsonProperty("collections")
+        public List<CollectionField> collections = new ArrayList<>();
+    }
+
+    public static class CollectionField {
+        @JsonProperty("field")
+        public String field;
+
+        /** Имя таблицы коллекции: @CollectionTable / @JoinTable(name) или «таблица сущности_поле». */
+        @JsonProperty("table")
+        public String table;
+
+        /** LAZY (по умолчанию для коллекций) или EAGER. */
+        @JsonProperty("fetch")
+        public String fetch;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -109,5 +126,39 @@ public class EntityReportIR {
 
         @JsonProperty("id_assigned_reason")
         public String idAssignedReason;
+
+        /**
+         * Для READ сущности с ленивыми коллекциями: поля коллекций, которые метод загружает сам, пока он на стеке
+         * (результат геттера используется не только в return), в том числе в проектном методе, которому передана сущность.
+         * Пустой список — метод коллекции не трогает, их загрузит сериализация ответа после возврата.
+         */
+        @JsonProperty("collections_loaded")
+        public List<String> collectionsLoaded;
+
+        @JsonProperty("collections_loaded_reason")
+        public List<String> collectionsLoadedReason;
+
+        /**
+         * Для READ: методы сущности, которые библиотека коллекций вызывает обычным вызовом на элементах
+         * результата (`list.contains(x)` -> `x.equals(элемент)`), если у сущности рукописный equals.
+         */
+        @JsonProperty("element_callbacks")
+        public List<ElementCallback> elementCallbacks;
+    }
+
+    public static class ElementCallback {
+        /** ID метода скелета: method:<module>:<сущность>#equals(java.lang.Object). */
+        @JsonProperty("method")
+        public String method;
+
+        /** Вызов библиотеки: contains, indexOf, lastIndexOf, remove. */
+        @JsonProperty("via")
+        public String via;
+
+        @JsonProperty("line")
+        public int line;
+
+        @JsonProperty("col")
+        public int col;
     }
 }

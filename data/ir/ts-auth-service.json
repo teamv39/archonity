@@ -1,0 +1,2804 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-auth-service",
+  "methods" : {
+    "method:ts-auth-service:auth.AuthApplication#main(java.lang.String[])" : {
+      "file" : "ts-auth-service/src/main/java/auth/AuthApplication.java",
+      "line" : 17,
+      "end" : 19,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 18,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.AuthApplication#main(java.lang.String[])@18:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "AuthApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.AuthApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-auth-service/src/main/java/auth/AuthApplication.java",
+      "line" : 21,
+      "end" : 25,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 24,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.AuthApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@24:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.config.WebSecurityConfig#authenticationManager()" : {
+      "file" : "ts-auth-service/src/main/java/auth/config/WebSecurityConfig.java",
+      "line" : 40,
+      "end" : 44,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#authenticationManager()@43:22",
+          "callee" : "authenticationManager",
+          "recv" : {
+            "super" : true
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-auth-service/src/main/java/auth/config/WebSecurityConfig.java",
+      "line" : 78,
+      "end" : 99,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 80,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@96:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@95:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@94:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@94:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@93:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@92:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@91:42",
+                      "callee" : "permitAll",
+                      "recv" : {
+                        "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@91:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@89:68",
+                          "callee" : "hasRole",
+                          "recv" : {
+                            "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@89:18",
+                            "callee" : "antMatchers",
+                            "recv" : {
+                              "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@88:63",
+                              "callee" : "hasRole",
+                              "recv" : {
+                                "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@88:18",
+                                "callee" : "antMatchers",
+                                "recv" : {
+                                  "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@87:53",
+                                  "callee" : "permitAll",
+                                  "recv" : {
+                                    "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@87:18",
+                                    "callee" : "antMatchers",
+                                    "recv" : {
+                                      "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@86:90",
+                                      "callee" : "permitAll",
+                                      "recv" : {
+                                        "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@86:18",
+                                        "callee" : "antMatchers",
+                                        "recv" : {
+                                          "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@85:18",
+                                          "callee" : "authorizeRequests",
+                                          "recv" : {
+                                            "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@84:18",
+                                            "callee" : "and",
+                                            "recv" : {
+                                              "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@83:38",
+                                              "callee" : "sessionCreationPolicy",
+                                              "recv" : {
+                                                "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@83:18",
+                                                "callee" : "sessionManagement",
+                                                "recv" : {
+                                                  "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:25",
+                                                  "callee" : "disable",
+                                                  "recv" : {
+                                                    "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:18",
+                                                    "callee" : "csrf",
+                                                    "recv" : {
+                                                      "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@81:30",
+                                                      "callee" : "disable",
+                                                      "recv" : {
+                                                        "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@81:18",
+                                                        "callee" : "httpBasic",
+                                                        "recv" : {
+                                                          "name" : "httpSecurity",
+                                                          "ref" : "param"
+                                                        },
+                                                        "args" : [ ]
+                                                      },
+                                                      "args" : [ ]
+                                                    },
+                                                    "args" : [ ]
+                                                  },
+                                                  "args" : [ ]
+                                                },
+                                                "args" : [ ]
+                                              },
+                                              "args" : [ {
+                                                "field" : "STATELESS",
+                                                "of" : {
+                                                  "name" : "SessionCreationPolicy",
+                                                  "ref" : "type"
+                                                }
+                                              } ]
+                                            },
+                                            "args" : [ ]
+                                          },
+                                          "args" : [ ]
+                                        },
+                                        "args" : [ {
+                                          "lit" : "/api/v1/auth",
+                                          "type" : "string"
+                                        }, {
+                                          "lit" : "/api/v1/auth/hello",
+                                          "type" : "string"
+                                        }, {
+                                          "lit" : "/api/v1/user/hello",
+                                          "type" : "string"
+                                        } ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ {
+                                      "lit" : "/api/v1/users/login",
+                                      "type" : "string"
+                                    } ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ {
+                                  "field" : "GET",
+                                  "of" : {
+                                    "name" : "HttpMethod",
+                                    "ref" : "type"
+                                  }
+                                }, {
+                                  "lit" : "/api/v1/users",
+                                  "type" : "string"
+                                } ]
+                              },
+                              "args" : [ {
+                                "lit" : "ADMIN",
+                                "type" : "string"
+                              } ]
+                            },
+                            "args" : [ {
+                              "field" : "DELETE",
+                              "of" : {
+                                "name" : "HttpMethod",
+                                "ref" : "type"
+                              }
+                            }, {
+                              "lit" : "/api/v1/users/*",
+                              "type" : "string"
+                            } ]
+                          },
+                          "args" : [ {
+                            "lit" : "ADMIN",
+                            "type" : "string"
+                          } ]
+                        },
+                        "args" : [ {
+                          "lit" : "/user/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
+            "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@96:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 98,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@98:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@98:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.config.WebSecurityConfig#configureAuthentication(org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder)" : {
+      "file" : "ts-auth-service/src/main/java/auth/config/WebSecurityConfig.java",
+      "line" : 46,
+      "end" : 51,
+      "params" : [ {
+        "name" : "authenticationManagerBuilder",
+        "type" : "AuthenticationManagerBuilder"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 48,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configureAuthentication(org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder)@50:18",
+          "callee" : "passwordEncoder",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configureAuthentication(org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder)@49:18",
+            "callee" : "userDetailsService",
+            "recv" : {
+              "name" : "authenticationManagerBuilder",
+              "ref" : "param"
+            },
+            "args" : [ {
+              "field" : "userDetailsService",
+              "of" : {
+                "this" : true
+              }
+            } ]
+          },
+          "args" : [ {
+            "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#configureAuthentication(org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder)@50:34",
+            "callee" : "passwordEncoder",
+            "recv" : null,
+            "args" : [ ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.config.WebSecurityConfig#corsConfigurer()" : {
+      "file" : "ts-auth-service/src/main/java/auth/config/WebSecurityConfig.java",
+      "line" : 53,
+      "end" : 66,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 55,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#corsConfigurer()@55:16",
+          "args" : [ ],
+          "anon" : "type:ts-auth-service:auth.config.WebSecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.config.WebSecurityConfig#passwordEncoder()" : {
+      "file" : "ts-auth-service/src/main/java/auth/config/WebSecurityConfig.java",
+      "line" : 73,
+      "end" : 76,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 75,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
+          "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig#passwordEncoder()@75:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.config.WebSecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-auth-service/src/main/java/auth/config/WebSecurityConfig.java",
+      "line" : 56,
+      "end" : 64,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 58,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@63:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@62:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@61:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@60:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@59:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-auth-service:auth.config.WebSecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@58:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.constant.AuthConstant#<init>()" : {
+      "file" : "ts-auth-service/src/main/java/auth/constant/AuthConstant.java",
+      "line" : 8,
+      "end" : 10,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "throw",
+        "line" : 9,
+        "expr" : {
+          "new" : "IllegalStateException",
+          "call" : "call:method:ts-auth-service:auth.constant.AuthConstant#<init>()@9:15",
+          "args" : [ {
+            "lit" : "Utility class",
+            "type" : "string"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.constant.InfoConstant#<init>()" : {
+      "file" : "ts-auth-service/src/main/java/auth/constant/InfoConstant.java",
+      "line" : 8,
+      "end" : 10,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "throw",
+        "line" : 9,
+        "expr" : {
+          "new" : "IllegalStateException",
+          "call" : "call:method:ts-auth-service:auth.constant.InfoConstant#<init>()@9:15",
+          "args" : [ {
+            "lit" : "Utility class",
+            "type" : "string"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.controller.AuthController#createDefaultUser(auth.dto.AuthDto)" : {
+      "file" : "ts-auth-service/src/main/java/auth/controller/AuthController.java",
+      "line" : 36,
+      "end" : 42,
+      "params" : [ {
+        "name" : "authDto",
+        "type" : "AuthDto"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.controller.AuthController#createDefaultUser(auth.dto.AuthDto)@38:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[createDefaultUser][Create default auth user with authDto][AuthDto: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-auth-service:auth.controller.AuthController#createDefaultUser(auth.dto.AuthDto)@38:104",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "authDto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 39,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.controller.AuthController#createDefaultUser(auth.dto.AuthDto)@39:21",
+          "callee" : "createDefaultAuthUser",
+          "recv" : {
+            "name" : "userService",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "authDto",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 40,
+        "target" : {
+          "name" : "response",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Response",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-auth-service:auth.controller.AuthController#createDefaultUser(auth.dto.AuthDto)@40:29",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "SUCCESS",
+            "type" : "string"
+          }, {
+            "name" : "authDto",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 41,
+        "expr" : {
+          "new" : "ResponseEntity<>",
+          "fqn" : "org.springframework.http.ResponseEntity",
+          "call" : "call:method:ts-auth-service:auth.controller.AuthController#createDefaultUser(auth.dto.AuthDto)@41:16",
+          "args" : [ {
+            "name" : "response",
+            "ref" : "local"
+          }, {
+            "field" : "CREATED",
+            "of" : {
+              "name" : "HttpStatus",
+              "ref" : "type"
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.controller.AuthController#getHello()" : {
+      "file" : "ts-auth-service/src/main/java/auth/controller/AuthController.java",
+      "line" : 31,
+      "end" : 34,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "lit" : "hello",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.controller.UserController#deleteUserById(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-auth-service/src/main/java/auth/controller/UserController.java",
+      "line" : 59,
+      "end" : 63,
+      "params" : [ {
+        "name" : "userId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 61,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.controller.UserController#deleteUserById(java.lang.String,org.springframework.http.HttpHeaders)@61:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[deleteUserById][Delete user][userId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 62,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.controller.UserController#deleteUserById(java.lang.String,org.springframework.http.HttpHeaders)@62:31",
+          "callee" : "ok",
+          "recv" : {
+            "name" : "ResponseEntity",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-auth-service:auth.controller.UserController#deleteUserById(java.lang.String,org.springframework.http.HttpHeaders)@62:46",
+            "callee" : "deleteByUserId",
+            "recv" : {
+              "name" : "userService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "userId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-auth-service/src/main/java/auth/controller/UserController.java",
+      "line" : 53,
+      "end" : 57,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 55,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)@55:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[getAllUser][Get all users]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 56,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)@56:36",
+          "callee" : "body",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)@56:31",
+            "callee" : "ok",
+            "recv" : {
+              "name" : "ResponseEntity",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "call" : "call:method:ts-auth-service:auth.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)@56:53",
+            "callee" : "getAllUser",
+            "recv" : {
+              "name" : "userService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.controller.UserController#getHello()" : {
+      "file" : "ts-auth-service/src/main/java/auth/controller/UserController.java",
+      "line" : 36,
+      "end" : 39,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "lit" : "Hello",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-auth-service/src/main/java/auth/controller/UserController.java",
+      "line" : 41,
+      "end" : 51,
+      "params" : [ {
+        "name" : "dao",
+        "type" : "BasicAuthDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@43:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "logger",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "Login request of username: {}",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@43:58",
+            "callee" : "getUsername",
+            "recv" : {
+              "name" : "dao",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "try",
+        "line" : 44,
+        "id" : "t44",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "assign",
+          "line" : 45,
+          "target" : {
+            "name" : "res",
+            "ref" : "local"
+          },
+          "decl" : "Response<?>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@45:44",
+            "callee" : "getToken",
+            "recv" : {
+              "name" : "tokenService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "dao",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 46,
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@46:35",
+            "callee" : "ok",
+            "recv" : {
+              "name" : "ResponseEntity",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "name" : "res",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "UserOperationException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 48,
+            "expr" : {
+              "call" : "call:method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@48:20",
+              "callee" : "error",
+              "recv" : {
+                "name" : "logger",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[getToken][tokenService.getToken error][UserOperationException, message: {}]",
+                "type" : "string"
+              }, {
+                "call" : "call:method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@48:108",
+                "callee" : "getMessage",
+                "recv" : {
+                  "name" : "e",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "return",
+            "line" : 49,
+            "expr" : {
+              "call" : "call:method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@49:35",
+              "callee" : "ok",
+              "recv" : {
+                "name" : "ResponseEntity",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "new" : "Response<>",
+                "fqn" : "edu.fudan.common.util.Response",
+                "call" : "call:method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@49:38",
+                "args" : [ {
+                  "lit" : 0,
+                  "type" : "int"
+                }, {
+                  "lit" : "get token error",
+                  "type" : "string"
+                }, {
+                  "lit" : null,
+                  "type" : "null"
+                } ]
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      } ]
+    },
+    "method:ts-auth-service:auth.entity.User#getAuthorities()" : {
+      "file" : "ts-auth-service/src/main/java/auth/entity/User.java",
+      "line" : 41,
+      "end" : 44,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.entity.User#getAuthorities()@43:69",
+          "callee" : "collect",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.entity.User#getAuthorities()@43:36",
+            "callee" : "map",
+            "recv" : {
+              "call" : "call:method:ts-auth-service:auth.entity.User#getAuthorities()@43:27",
+              "callee" : "stream",
+              "recv" : {
+                "field" : "roles",
+                "of" : {
+                  "this" : true
+                }
+              },
+              "args" : [ ]
+            },
+            "args" : [ {
+              "method_ref" : "SimpleGrantedAuthority::new",
+              "call" : "call:method:ts-auth-service:auth.entity.User#getAuthorities()@43:40"
+            } ]
+          },
+          "args" : [ {
+            "call" : "call:method:ts-auth-service:auth.entity.User#getAuthorities()@43:88",
+            "callee" : "toList",
+            "recv" : {
+              "name" : "Collectors",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.entity.User#getPassword()" : {
+      "file" : "ts-auth-service/src/main/java/auth/entity/User.java",
+      "line" : 46,
+      "end" : 49,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "field" : "password",
+          "of" : {
+            "this" : true
+          }
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.entity.User#getUsername()" : {
+      "file" : "ts-auth-service/src/main/java/auth/entity/User.java",
+      "line" : 51,
+      "end" : 54,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 53,
+        "expr" : {
+          "field" : "username",
+          "of" : {
+            "this" : true
+          }
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.entity.User#isAccountNonExpired()" : {
+      "file" : "ts-auth-service/src/main/java/auth/entity/User.java",
+      "line" : 56,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 58,
+        "expr" : {
+          "lit" : true,
+          "type" : "boolean"
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.entity.User#isAccountNonLocked()" : {
+      "file" : "ts-auth-service/src/main/java/auth/entity/User.java",
+      "line" : 61,
+      "end" : 64,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 63,
+        "expr" : {
+          "lit" : true,
+          "type" : "boolean"
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.entity.User#isCredentialsNonExpired()" : {
+      "file" : "ts-auth-service/src/main/java/auth/entity/User.java",
+      "line" : 66,
+      "end" : 69,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 68,
+        "expr" : {
+          "lit" : true,
+          "type" : "boolean"
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.entity.User#isEnabled()" : {
+      "file" : "ts-auth-service/src/main/java/auth/entity/User.java",
+      "line" : 71,
+      "end" : 74,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 73,
+        "expr" : {
+          "lit" : true,
+          "type" : "boolean"
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.exception.UserOperationException#<init>(java.lang.String)" : {
+      "file" : "ts-auth-service/src/main/java/auth/exception/UserOperationException.java",
+      "line" : 9,
+      "end" : 11,
+      "params" : [ {
+        "name" : "msg",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 10,
+        "expr" : {
+          "call" : "ircall:method:ts-auth-service:auth.exception.UserOperationException#<init>(java.lang.String)@10:9",
+          "callee" : "super",
+          "recv" : null,
+          "args" : [ {
+            "name" : "msg",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.exception.handler.GlobalExceptionHandler#handleUserNotFoundException(auth.exception.UserOperationException)" : {
+      "file" : "ts-auth-service/src/main/java/auth/exception/handler/GlobalExceptionHandler.java",
+      "line" : 15,
+      "end" : 19,
+      "params" : [ {
+        "name" : "e",
+        "type" : "UserOperationException"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 18,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.exception.handler.GlobalExceptionHandler#handleUserNotFoundException(auth.exception.UserOperationException)@18:72",
+          "callee" : "body",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.exception.handler.GlobalExceptionHandler#handleUserNotFoundException(auth.exception.UserOperationException)@18:31",
+            "callee" : "status",
+            "recv" : {
+              "name" : "ResponseEntity",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "field" : "INTERNAL_SERVER_ERROR",
+              "of" : {
+                "name" : "HttpStatus",
+                "ref" : "type"
+              }
+            } ]
+          },
+          "args" : [ {
+            "call" : "call:method:ts-auth-service:auth.exception.handler.GlobalExceptionHandler#handleUserNotFoundException(auth.exception.UserOperationException)@18:79",
+            "callee" : "getMessage",
+            "recv" : {
+              "name" : "e",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])" : {
+      "file" : "ts-auth-service/src/main/java/auth/init/InitUser.java",
+      "line" : 27,
+      "end" : 50,
+      "params" : [ {
+        "name" : "strings",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 29,
+        "target" : {
+          "name" : "whetherExistUser",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@29:84",
+          "callee" : "orElse",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@29:48",
+            "callee" : "findByUsername",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "fdse_microservice",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ {
+            "new" : "User",
+            "fqn" : "auth.entity.User",
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@29:91",
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 30,
+        "id" : "b30",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@30:30",
+            "callee" : "getUsername",
+            "recv" : {
+              "name" : "whetherExistUser",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 31,
+          "target" : {
+            "name" : "user",
+            "ref" : "local"
+          },
+          "decl" : "User",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@36:22",
+            "callee" : "build",
+            "recv" : {
+              "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@35:22",
+              "callee" : "roles",
+              "recv" : {
+                "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@34:22",
+                "callee" : "password",
+                "recv" : {
+                  "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@33:22",
+                  "callee" : "username",
+                  "recv" : {
+                    "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@32:22",
+                    "callee" : "userId",
+                    "recv" : {
+                      "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@31:30",
+                      "callee" : "builder",
+                      "recv" : {
+                        "name" : "User",
+                        "ref" : "type"
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "lit" : "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "lit" : "fdse_microservice",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@34:47",
+                  "callee" : "encode",
+                  "recv" : {
+                    "name" : "passwordEncoder",
+                    "ref" : "field"
+                  },
+                  "args" : [ {
+                    "lit" : "111111",
+                    "type" : "string"
+                  } ]
+                } ]
+              },
+              "args" : [ {
+                "new" : "HashSet<>",
+                "fqn" : "java.util.HashSet",
+                "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@35:28",
+                "args" : [ {
+                  "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@35:49",
+                  "callee" : "asList",
+                  "recv" : {
+                    "name" : "Arrays",
+                    "ref" : "type"
+                  },
+                  "args" : [ {
+                    "lit" : "ROLE_USER",
+                    "type" : "string"
+                  } ]
+                } ]
+              } ]
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 37,
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@37:28",
+            "callee" : "save",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "user",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 40,
+        "target" : {
+          "name" : "whetherExistAdmin",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@40:73",
+          "callee" : "orElse",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@40:49",
+            "callee" : "findByUsername",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "lit" : "admin",
+              "type" : "string"
+            } ]
+          },
+          "args" : [ {
+            "new" : "User",
+            "fqn" : "auth.entity.User",
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@40:80",
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 41,
+        "id" : "b41",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@41:31",
+            "callee" : "getUsername",
+            "recv" : {
+              "name" : "whetherExistAdmin",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 42,
+          "target" : {
+            "name" : "admin",
+            "ref" : "local"
+          },
+          "decl" : "User",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@47:22",
+            "callee" : "build",
+            "recv" : {
+              "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@46:22",
+              "callee" : "roles",
+              "recv" : {
+                "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@45:22",
+                "callee" : "password",
+                "recv" : {
+                  "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@44:22",
+                  "callee" : "username",
+                  "recv" : {
+                    "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@43:22",
+                    "callee" : "userId",
+                    "recv" : {
+                      "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@42:31",
+                      "callee" : "builder",
+                      "recv" : {
+                        "name" : "User",
+                        "ref" : "type"
+                      },
+                      "args" : [ ]
+                    },
+                    "args" : [ {
+                      "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@43:47",
+                      "callee" : "toString",
+                      "recv" : {
+                        "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@43:34",
+                        "callee" : "randomUUID",
+                        "recv" : {
+                          "name" : "UUID",
+                          "ref" : "type"
+                        },
+                        "args" : [ ]
+                      },
+                      "args" : [ ]
+                    } ]
+                  },
+                  "args" : [ {
+                    "lit" : "admin",
+                    "type" : "string"
+                  } ]
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@45:47",
+                  "callee" : "encode",
+                  "recv" : {
+                    "name" : "passwordEncoder",
+                    "ref" : "field"
+                  },
+                  "args" : [ {
+                    "lit" : "222222",
+                    "type" : "string"
+                  } ]
+                } ]
+              },
+              "args" : [ {
+                "new" : "HashSet<>",
+                "fqn" : "java.util.HashSet",
+                "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@46:28",
+                "args" : [ {
+                  "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@46:49",
+                  "callee" : "asList",
+                  "recv" : {
+                    "name" : "Arrays",
+                    "ref" : "type"
+                  },
+                  "args" : [ {
+                    "lit" : "ROLE_ADMIN",
+                    "type" : "string"
+                  } ]
+                } ]
+              } ]
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 48,
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.init.InitUser#run(java.lang.String[])@48:28",
+            "callee" : "save",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "admin",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      } ]
+    },
+    "method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)" : {
+      "file" : "ts-auth-service/src/main/java/auth/security/UserDetailsServiceImpl.java",
+      "line" : 26,
+      "end" : 33,
+      "params" : [ {
+        "name" : "s",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 28,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)@28:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[loadUserByUsername][load UsernamePasswordAuthenticationToken][username: {}]",
+            "type" : "string"
+          }, {
+            "name" : "s",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 29,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)@30:18",
+          "callee" : "orElseThrow",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)@29:31",
+            "callee" : "findByUsername",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "s",
+              "ref" : "param"
+            } ]
+          },
+          "args" : [ {
+            "lambda" : {
+              "line" : 30,
+              "col" : 30,
+              "params" : [ ],
+              "body" : [ {
+                "op" : "return",
+                "line" : 30,
+                "expr" : {
+                  "new" : "UsernameNotFoundException",
+                  "fqn" : "org.springframework.security.core.userdetails.UsernameNotFoundException",
+                  "call" : "call:method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)@30:36",
+                  "args" : [ {
+                    "call" : "call:method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)@31:39",
+                    "callee" : "format",
+                    "recv" : {
+                      "name" : "MessageFormat",
+                      "ref" : "type"
+                    },
+                    "args" : [ {
+                      "const" : "auth.constant.InfoConstant.USER_NAME_NOT_FOUND_1",
+                      "value" : {
+                        "lit" : "Username not found: {0}.",
+                        "type" : "string"
+                      }
+                    }, {
+                      "name" : "s",
+                      "ref" : "param"
+                    } ]
+                  } ]
+                }
+              } ]
+            }
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)" : {
+      "file" : "ts-auth-service/src/main/java/auth/security/jwt/JWTProvider.java",
+      "line" : 29,
+      "end" : 44,
+      "params" : [ {
+        "name" : "user",
+        "type" : "User"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "name" : "claims",
+          "ref" : "local"
+        },
+        "decl" : "Claims",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@31:39",
+          "callee" : "setSubject",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@31:30",
+            "callee" : "claims",
+            "recv" : {
+              "name" : "Jwts",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@31:55",
+            "callee" : "getUsername",
+            "recv" : {
+              "name" : "user",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 32,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@32:16",
+          "callee" : "put",
+          "recv" : {
+            "name" : "claims",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "const" : "auth.constant.InfoConstant.ROLES",
+            "value" : {
+              "lit" : "roles",
+              "type" : "string"
+            }
+          }, {
+            "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@32:45",
+            "callee" : "getRoles",
+            "recv" : {
+              "name" : "user",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@33:16",
+          "callee" : "put",
+          "recv" : {
+            "name" : "claims",
+            "ref" : "local"
+          },
+          "args" : [ {
+            "const" : "auth.constant.InfoConstant.ID",
+            "value" : {
+              "lit" : "id",
+              "type" : "string"
+            }
+          }, {
+            "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@33:42",
+            "callee" : "getUserId",
+            "recv" : {
+              "name" : "user",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 35,
+        "target" : {
+          "name" : "now",
+          "ref" : "local"
+        },
+        "decl" : "Date",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Date",
+          "fqn" : "java.util.Date",
+          "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@35:20",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 36,
+        "target" : {
+          "name" : "validate",
+          "ref" : "local"
+        },
+        "decl" : "Date",
+        "operator" : "=",
+        "expr" : {
+          "new" : "Date",
+          "fqn" : "java.util.Date",
+          "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@36:25",
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@36:38",
+              "callee" : "getTime",
+              "recv" : {
+                "name" : "now",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "validityInMilliseconds",
+              "ref" : "field"
+            }
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@43:18",
+          "callee" : "compact",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@42:18",
+            "callee" : "signWith",
+            "recv" : {
+              "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@41:18",
+              "callee" : "setExpiration",
+              "recv" : {
+                "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@40:18",
+                "callee" : "setIssuedAt",
+                "recv" : {
+                  "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@39:18",
+                  "callee" : "setClaims",
+                  "recv" : {
+                    "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)@38:21",
+                    "callee" : "builder",
+                    "recv" : {
+                      "name" : "Jwts",
+                      "ref" : "type"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ {
+                    "name" : "claims",
+                    "ref" : "local"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "now",
+                  "ref" : "local"
+                } ]
+              },
+              "args" : [ {
+                "name" : "validate",
+                "ref" : "local"
+              } ]
+            },
+            "args" : [ {
+              "field" : "HS256",
+              "of" : {
+                "name" : "SignatureAlgorithm",
+                "ref" : "type"
+              }
+            }, {
+              "name" : "secretKey",
+              "ref" : "field"
+            } ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.security.jwt.JWTProvider#init()" : {
+      "file" : "ts-auth-service/src/main/java/auth/security/jwt/JWTProvider.java",
+      "line" : 24,
+      "end" : 27,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 26,
+        "target" : {
+          "name" : "secretKey",
+          "ref" : "field"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#init()@26:41",
+          "callee" : "encodeToString",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#init()@26:28",
+            "callee" : "getEncoder",
+            "recv" : {
+              "name" : "Base64",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "call" : "call:method:ts-auth-service:auth.security.jwt.JWTProvider#init()@26:66",
+            "callee" : "getBytes",
+            "recv" : {
+              "name" : "secretKey",
+              "ref" : "field"
+            },
+            "args" : [ ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getServiceUrl(java.lang.String)" : {
+      "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+      "line" : 54,
+      "end" : 56,
+      "params" : [ {
+        "name" : "serviceName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 55,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "lit" : "http://",
+            "type" : "string"
+          },
+          "r" : {
+            "name" : "serviceName",
+            "ref" : "param"
+          }
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
+      "line" : 58,
+      "end" : 97,
+      "params" : [ {
+        "name" : "dto",
+        "type" : "BasicAuthDto"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 60,
+        "target" : {
+          "name" : "username",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@60:31",
+          "callee" : "getUsername",
+          "recv" : {
+            "name" : "dto",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 61,
+        "target" : {
+          "name" : "password",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@61:31",
+          "callee" : "getPassword",
+          "recv" : {
+            "name" : "dto",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 62,
+        "target" : {
+          "name" : "verifyCode",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@62:33",
+          "callee" : "getVerificationCode",
+          "recv" : {
+            "name" : "dto",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 64,
+        "target" : {
+          "name" : "verification_code_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@64:48",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-verification-code-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 65,
+        "id" : "b65",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@65:26",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "StringUtils",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "name" : "verifyCode",
+              "ref" : "local"
+            } ]
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 66,
+          "target" : {
+            "name" : "requestEntity",
+            "ref" : "local"
+          },
+          "decl" : "HttpEntity",
+          "operator" : "=",
+          "expr" : {
+            "new" : "HttpEntity",
+            "fqn" : "org.springframework.http.HttpEntity",
+            "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@66:40",
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 67,
+          "target" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "decl" : "ResponseEntity<Boolean>",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@67:55",
+            "callee" : "exchange",
+            "recv" : {
+              "name" : "restTemplate",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "bin" : "+",
+              "l" : {
+                "bin" : "+",
+                "l" : {
+                  "name" : "verification_code_service_url",
+                  "ref" : "local"
+                },
+                "r" : {
+                  "lit" : "/api/v1/verifycode/verify/",
+                  "type" : "string"
+                }
+              },
+              "r" : {
+                "name" : "verifyCode",
+                "ref" : "local"
+              }
+            }, {
+              "field" : "GET",
+              "of" : {
+                "name" : "HttpMethod",
+                "ref" : "type"
+              }
+            }, {
+              "name" : "requestEntity",
+              "ref" : "local"
+            }, {
+              "class" : "Boolean"
+            } ]
+          }
+        }, {
+          "op" : "assign",
+          "line" : 72,
+          "target" : {
+            "name" : "id",
+            "ref" : "local"
+          },
+          "decl" : "boolean",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@72:29",
+            "callee" : "getBody",
+            "recv" : {
+              "name" : "re",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        }, {
+          "op" : "if",
+          "line" : 75,
+          "id" : "b75",
+          "cond" : {
+            "un" : "!",
+            "e" : {
+              "name" : "id",
+              "ref" : "local"
+            }
+          },
+          "then" : [ {
+            "op" : "expr",
+            "line" : 76,
+            "expr" : {
+              "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@76:24",
+              "callee" : "info",
+              "recv" : {
+                "name" : "LOGGER",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[getToken][Verification failed][userName: {}]",
+                "type" : "string"
+              }, {
+                "name" : "username",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "return",
+            "line" : 77,
+            "expr" : {
+              "new" : "Response<>",
+              "fqn" : "edu.fudan.common.util.Response",
+              "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@77:24",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "lit" : "Verification failed.",
+                "type" : "string"
+              }, {
+                "lit" : null,
+                "type" : "null"
+              } ]
+            }
+          } ],
+          "else" : [ ]
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 82,
+        "target" : {
+          "name" : "upat",
+          "ref" : "local"
+        },
+        "decl" : "UsernamePasswordAuthenticationToken",
+        "operator" : "=",
+        "expr" : {
+          "new" : "UsernamePasswordAuthenticationToken",
+          "fqn" : "org.springframework.security.authentication.UsernamePasswordAuthenticationToken",
+          "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@82:52",
+          "args" : [ {
+            "name" : "username",
+            "ref" : "local"
+          }, {
+            "name" : "password",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "try",
+        "line" : 83,
+        "id" : "t83",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "expr",
+          "line" : 84,
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@84:35",
+            "callee" : "authenticate",
+            "recv" : {
+              "name" : "authenticationManager",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "upat",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "AuthenticationException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 86,
+            "expr" : {
+              "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@86:20",
+              "callee" : "warn",
+              "recv" : {
+                "name" : "LOGGER",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[getToken][Incorrect username or password][username: {}, password: {}]",
+                "type" : "string"
+              }, {
+                "name" : "username",
+                "ref" : "local"
+              }, {
+                "name" : "password",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "return",
+            "line" : 87,
+            "expr" : {
+              "new" : "Response<>",
+              "fqn" : "edu.fudan.common.util.Response",
+              "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@87:20",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "lit" : "Incorrect username or password.",
+                "type" : "string"
+              }, {
+                "lit" : null,
+                "type" : "null"
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      }, {
+        "op" : "assign",
+        "line" : 90,
+        "target" : {
+          "name" : "user",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@91:18",
+          "callee" : "orElseThrow",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@90:36",
+            "callee" : "findByUsername",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "username",
+              "ref" : "local"
+            } ]
+          },
+          "args" : [ {
+            "lambda" : {
+              "line" : 91,
+              "col" : 30,
+              "params" : [ ],
+              "body" : [ {
+                "op" : "return",
+                "line" : 91,
+                "expr" : {
+                  "new" : "UserOperationException",
+                  "fqn" : "auth.exception.UserOperationException",
+                  "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@91:36",
+                  "args" : [ {
+                    "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@91:77",
+                    "callee" : "format",
+                    "recv" : {
+                      "name" : "MessageFormat",
+                      "ref" : "type"
+                    },
+                    "args" : [ {
+                      "const" : "auth.constant.InfoConstant.USER_NAME_NOT_FOUND_1",
+                      "value" : {
+                        "lit" : "Username not found: {0}.",
+                        "type" : "string"
+                      }
+                    }, {
+                      "name" : "username",
+                      "ref" : "local"
+                    } ]
+                  } ]
+                }
+              } ]
+            }
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 94,
+        "target" : {
+          "name" : "token",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@94:36",
+          "callee" : "createToken",
+          "recv" : {
+            "name" : "jwtProvider",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "user",
+            "ref" : "local"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 95,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@95:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[getToken][success][USER TOKEN: {} USER ID: {}]",
+            "type" : "string"
+          }, {
+            "name" : "token",
+            "ref" : "local"
+          }, {
+            "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@95:84",
+            "callee" : "getUserId",
+            "recv" : {
+              "name" : "user",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 96,
+        "expr" : {
+          "new" : "Response<>",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@96:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "login success",
+            "type" : "string"
+          }, {
+            "new" : "TokenDto",
+            "fqn" : "auth.dto.TokenDto",
+            "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@96:51",
+            "args" : [ {
+              "call" : "call:method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)@96:69",
+              "callee" : "getUserId",
+              "recv" : {
+                "name" : "user",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }, {
+              "name" : "username",
+              "ref" : "local"
+            }, {
+              "name" : "token",
+              "ref" : "local"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)" : {
+      "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
+      "line" : 81,
+      "end" : 104,
+      "params" : [ {
+        "name" : "user",
+        "type" : "User"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 82,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@82:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[checkUserCreateInfo][Check user create info][userId: {}, userName: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@82:101",
+            "callee" : "getUserId",
+            "recv" : {
+              "name" : "user",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }, {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@82:119",
+            "callee" : "getUsername",
+            "recv" : {
+              "name" : "user",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 83,
+        "target" : {
+          "name" : "infos",
+          "ref" : "local"
+        },
+        "decl" : "List<String>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@83:30",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 85,
+        "id" : "b85",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "lit" : null,
+              "type" : "null"
+            },
+            "r" : {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@85:26",
+              "callee" : "getUsername",
+              "recv" : {
+                "name" : "user",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }
+          },
+          "r" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@85:46",
+            "callee" : "equals",
+            "recv" : {
+              "lit" : "",
+              "type" : "string"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@85:58",
+              "callee" : "getUsername",
+              "recv" : {
+                "name" : "user",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            } ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 86,
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@86:19",
+            "callee" : "add",
+            "recv" : {
+              "name" : "infos",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@86:37",
+              "callee" : "format",
+              "recv" : {
+                "name" : "MessageFormat",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "const" : "auth.constant.InfoConstant.PROPERTIES_CANNOT_BE_EMPTY_1",
+                "value" : {
+                  "lit" : "{0} cannot be empty.",
+                  "type" : "string"
+                }
+              }, {
+                "const" : "auth.constant.InfoConstant.USERNAME",
+                "value" : {
+                  "lit" : "username",
+                  "type" : "string"
+                }
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "assign",
+        "line" : 89,
+        "target" : {
+          "name" : "passwordMaxLength",
+          "ref" : "local"
+        },
+        "decl" : "int",
+        "operator" : "=",
+        "expr" : {
+          "lit" : 6,
+          "type" : "int"
+        }
+      }, {
+        "op" : "if",
+        "line" : 90,
+        "id" : "b90",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "lit" : null,
+            "type" : "null"
+          },
+          "r" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@90:26",
+            "callee" : "getPassword",
+            "recv" : {
+              "name" : "user",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 91,
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@91:19",
+            "callee" : "add",
+            "recv" : {
+              "name" : "infos",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@91:37",
+              "callee" : "format",
+              "recv" : {
+                "name" : "MessageFormat",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "const" : "auth.constant.InfoConstant.PROPERTIES_CANNOT_BE_EMPTY_1",
+                "value" : {
+                  "lit" : "{0} cannot be empty.",
+                  "type" : "string"
+                }
+              }, {
+                "const" : "auth.constant.InfoConstant.PASSWORD",
+                "value" : {
+                  "lit" : "password",
+                  "type" : "string"
+                }
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "if",
+          "line" : 92,
+          "id" : "b92",
+          "cond" : {
+            "bin" : "<",
+            "l" : {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@92:39",
+              "callee" : "length",
+              "recv" : {
+                "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@92:25",
+                "callee" : "getPassword",
+                "recv" : {
+                  "name" : "user",
+                  "ref" : "param"
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "passwordMaxLength",
+              "ref" : "local"
+            }
+          },
+          "then" : [ {
+            "op" : "expr",
+            "line" : 93,
+            "expr" : {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@93:19",
+              "callee" : "add",
+              "recv" : {
+                "name" : "infos",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@93:37",
+                "callee" : "format",
+                "recv" : {
+                  "name" : "MessageFormat",
+                  "ref" : "type"
+                },
+                "args" : [ {
+                  "const" : "auth.constant.InfoConstant.PASSWORD_LEAST_CHAR_1",
+                  "value" : {
+                    "lit" : "Passwords must contain at least {0} characters.",
+                    "type" : "string"
+                  }
+                }, {
+                  "lit" : 6,
+                  "type" : "int"
+                } ]
+              } ]
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "if",
+        "line" : 96,
+        "id" : "b96",
+        "cond" : {
+          "bin" : "||",
+          "l" : {
+            "bin" : "==",
+            "l" : {
+              "lit" : null,
+              "type" : "null"
+            },
+            "r" : {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@96:26",
+              "callee" : "getRoles",
+              "recv" : {
+                "name" : "user",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            }
+          },
+          "r" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@96:56",
+            "callee" : "isEmpty",
+            "recv" : {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@96:45",
+              "callee" : "getRoles",
+              "recv" : {
+                "name" : "user",
+                "ref" : "param"
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 97,
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@97:19",
+            "callee" : "add",
+            "recv" : {
+              "name" : "infos",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@97:37",
+              "callee" : "format",
+              "recv" : {
+                "name" : "MessageFormat",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "const" : "auth.constant.InfoConstant.PROPERTIES_CANNOT_BE_EMPTY_1",
+                "value" : {
+                  "lit" : "{0} cannot be empty.",
+                  "type" : "string"
+                }
+              }, {
+                "const" : "auth.constant.InfoConstant.ROLES",
+                "value" : {
+                  "lit" : "roles",
+                  "type" : "string"
+                }
+              } ]
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      }, {
+        "op" : "if",
+        "line" : 100,
+        "id" : "b100",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@100:20",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "infos",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 101,
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@101:20",
+            "callee" : "warn",
+            "recv" : {
+              "name" : "LOGGER",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@101:31",
+              "callee" : "toString",
+              "recv" : {
+                "name" : "infos",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "throw",
+          "line" : 102,
+          "expr" : {
+            "new" : "UserOperationException",
+            "fqn" : "auth.exception.UserOperationException",
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@102:19",
+            "args" : [ {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#checkUserCreateInfo(auth.entity.User)@102:52",
+              "callee" : "toString",
+              "recv" : {
+                "name" : "infos",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        } ],
+        "else" : [ ]
+      } ]
+    },
+    "method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)" : {
+      "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
+      "line" : 51,
+      "end" : 66,
+      "params" : [ {
+        "name" : "dto",
+        "type" : "AuthDto"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 53,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@53:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[createDefaultAuthUser][Register User Info][AuthDto name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@53:90",
+            "callee" : "getUserName",
+            "recv" : {
+              "name" : "dto",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 54,
+        "target" : {
+          "name" : "user",
+          "ref" : "local"
+        },
+        "decl" : "User",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@59:18",
+          "callee" : "build",
+          "recv" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@58:18",
+            "callee" : "roles",
+            "recv" : {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@57:18",
+              "callee" : "password",
+              "recv" : {
+                "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@56:18",
+                "callee" : "username",
+                "recv" : {
+                  "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@55:18",
+                  "callee" : "userId",
+                  "recv" : {
+                    "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@54:26",
+                    "callee" : "builder",
+                    "recv" : {
+                      "name" : "User",
+                      "ref" : "type"
+                    },
+                    "args" : [ ]
+                  },
+                  "args" : [ {
+                    "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@55:29",
+                    "callee" : "getUserId",
+                    "recv" : {
+                      "name" : "dto",
+                      "ref" : "param"
+                    },
+                    "args" : [ ]
+                  } ]
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@56:31",
+                  "callee" : "getUserName",
+                  "recv" : {
+                    "name" : "dto",
+                    "ref" : "param"
+                  },
+                  "args" : [ ]
+                } ]
+              },
+              "args" : [ {
+                "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@57:43",
+                "callee" : "encode",
+                "recv" : {
+                  "name" : "passwordEncoder",
+                  "ref" : "field"
+                },
+                "args" : [ {
+                  "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@57:54",
+                  "callee" : "getPassword",
+                  "recv" : {
+                    "name" : "dto",
+                    "ref" : "param"
+                  },
+                  "args" : [ ]
+                } ]
+              } ]
+            },
+            "args" : [ {
+              "new" : "HashSet<>",
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@58:24",
+              "args" : [ {
+                "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@58:45",
+                "callee" : "asList",
+                "recv" : {
+                  "name" : "Arrays",
+                  "ref" : "type"
+                },
+                "args" : [ {
+                  "const" : "auth.constant.AuthConstant.ROLE_USER",
+                  "value" : {
+                    "lit" : "ROLE_USER",
+                    "type" : "string"
+                  }
+                } ]
+              } ]
+            } ]
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "try",
+        "line" : 60,
+        "id" : "t60",
+        "resources" : [ ],
+        "body" : [ {
+          "op" : "expr",
+          "line" : 61,
+          "expr" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@61:13",
+            "callee" : "checkUserCreateInfo",
+            "recv" : null,
+            "args" : [ {
+              "name" : "user",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "catches" : [ {
+          "types" : [ "UserOperationException" ],
+          "var" : "e",
+          "body" : [ {
+            "op" : "expr",
+            "line" : 63,
+            "expr" : {
+              "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@63:20",
+              "callee" : "error",
+              "recv" : {
+                "name" : "LOGGER",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "lit" : "[createDefaultAuthUser][Create default auth user][UserOperationException][message: {}]",
+                "type" : "string"
+              }, {
+                "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@63:118",
+                "callee" : "getMessage",
+                "recv" : {
+                  "name" : "e",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          } ]
+        } ],
+        "finally" : null
+      }, {
+        "op" : "return",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#createDefaultAuthUser(auth.dto.AuthDto)@65:31",
+          "callee" : "save",
+          "recv" : {
+            "name" : "userRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "user",
+            "ref" : "local"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.service.impl.UserServiceImpl#deleteByUserId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
+      "line" : 68,
+      "end" : 74,
+      "params" : [ {
+        "name" : "userId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 71,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#deleteByUserId(java.lang.String,org.springframework.http.HttpHeaders)@71:16",
+          "callee" : "info",
+          "recv" : {
+            "name" : "LOGGER",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "lit" : "[deleteByUserId][DELETE USER][user id: {}]",
+            "type" : "string"
+          }, {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#deleteByUserId(java.lang.String,org.springframework.http.HttpHeaders)@72:24",
+          "callee" : "deleteByUserId",
+          "recv" : {
+            "name" : "userRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "userId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 73,
+        "expr" : {
+          "new" : "Response",
+          "fqn" : "edu.fudan.common.util.Response",
+          "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#deleteByUserId(java.lang.String,org.springframework.http.HttpHeaders)@73:16",
+          "args" : [ {
+            "lit" : 1,
+            "type" : "int"
+          }, {
+            "lit" : "DELETE USER SUCCESS",
+            "type" : "string"
+          }, {
+            "lit" : null,
+            "type" : "null"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.service.impl.UserServiceImpl#getAllUser(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
+      "line" : 40,
+      "end" : 43,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 42,
+        "expr" : {
+          "cast" : "List<User>",
+          "e" : {
+            "call" : "call:method:ts-auth-service:auth.service.impl.UserServiceImpl#getAllUser(org.springframework.http.HttpHeaders)@42:44",
+            "callee" : "findAll",
+            "recv" : {
+              "name" : "userRepository",
+              "ref" : "field"
+            },
+            "args" : [ ]
+          }
+        }
+      } ]
+    },
+    "method:ts-auth-service:auth.service.impl.UserServiceImpl#saveUser(auth.entity.User)" : {
+      "file" : "ts-auth-service/src/main/java/auth/service/impl/UserServiceImpl.java",
+      "line" : 35,
+      "end" : 38,
+      "params" : [ {
+        "name" : "user",
+        "type" : "User"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 37,
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      } ]
+    }
+  }
+}

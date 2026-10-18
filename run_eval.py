@@ -66,9 +66,41 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--entity-ctors",
         choices=("body", "project_calls", "off"),
-        default="body",
-        help="Режим правила R7 (конструкторы сущностей при загрузке из БД): body — непустое тело, "
-             "project_calls — только конструкторы с вызовом проектного метода (выдача до обобщения R7), off — выключено",
+        default="project_calls",
+        help="Режим правила R7 (конструкторы сущностей при загрузке из БД): project_calls — только конструкторы "
+             "с вызовом проектного метода (по умолчанию), body — любое непустое тело (опровергнуто платформой), off — выключено",
+    )
+    parser.add_argument(
+        "--collection-tables",
+        choices=("loaded", "all"),
+        default="loaded",
+        help="Таблицы ленивых коллекций при чтении (R10): loaded — только коллекции, которые метод загрузил сам "
+             "(по умолчанию), all — все таблицы data_access исполненного вызова (поведение до 17.10)",
+    )
+    parser.add_argument(
+        "--element-callbacks",
+        choices=("on", "off"),
+        default="on",
+        help="equals сущности из list.contains(x) на результате чтения (блок 8): on — исполняется, если чтение "
+             "вернуло строки (по умолчанию), off — не учитывать (поведение до 17.10)",
+    )
+    parser.add_argument(
+        "--rabbitmq-delivery",
+        choices=("on", "off"),
+        default="on",
+        help="Асинхронная доставка RabbitMQ (правило R13): on — учитывать межсервисное ребро к потребителю (по умолчанию), off — абляция (исключить потребителя)",
+    )
+    parser.add_argument(
+        "--station-food-collection",
+        choices=("step4_store_only", "all", "off"),
+        default="step4_store_only",
+        help="Таблица коллекции блюд station_food_list: step4_store_only — на шаге 4 в S2/S3 только магазины (по умолчанию), all — учитывать везде, off — исключить везде",
+    )
+    parser.add_argument(
+        "--probe-orders-data",
+        choices=("on", "off"),
+        default="on",
+        help="Зондирующий SELECT в S2 (шаги 9 и 10 к ts-order-service.orders): on — учитывать (по умолчанию), off — абляция (исключить)",
     )
     parser.add_argument(
         "--reparse",
@@ -80,6 +112,17 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Пропустить автоматический вызов evaluate_golden.py",
     )
+    parser.add_argument(
+        "--grounder",
+        choices=("legacy", "m1"),
+        default="m1",
+        help="Заземление шагов: m1 (engine/grounding, ADR-005; ответы LLM из cache/, без сервера — только кеш) "
+             "или legacy (engine/resolver.py)",
+    )
+    parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
+    parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
+    parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
+    parser.add_argument("--no-embed", action="store_true", help="M1 без dense-ретривера (только BM25)")
     return parser.parse_args()
 
 
@@ -163,12 +206,28 @@ def main() -> None:
     print(f"AST IR:     {pool_ir_path}")
 
     # Запуск пайплайна
+    m1_options = None
+    if args.grounder == "m1":
+        from engine.grounding.llm import LLMClient
+
+        m1_options = {
+            "embedder": None if args.no_embed else "qwen3-4b",
+            "llm": None if args.no_llm else LLMClient(use_server=not args.no_server, refresh=args.no_cache),
+        }
+    print(f"Grounder:   {args.grounder}")
     pipeline = ArchonityPipeline(
         skeleton_path=args.skeleton,
         targets_root=args.targets,
         rules_path=args.rules,
         ir_path=pool_ir_path,
         entity_constructors_on_load=args.entity_ctors,
+        collection_tables_on_read=args.collection_tables,
+        element_callbacks=args.element_callbacks,
+        rabbitmq_delivery=args.rabbitmq_delivery,
+        station_food_collection=args.station_food_collection,
+        probe_orders_data=args.probe_orders_data,
+        grounder=args.grounder,
+        m1_options=m1_options,
     )
 
     print("Генерация графов для сценариев...")
@@ -182,6 +241,12 @@ def main() -> None:
     evidence_out = args.out.parent / "evidence.json"
     adapter.save_evidence_log(evidence_out)
     print(f"Evidence Log сохранен в: {evidence_out}")
+
+    if args.grounder == "m1":
+        steps_out = args.out.parent / "step_requests.json"
+        with open(steps_out, "w", encoding="utf-8") as f:
+            json.dump(pipeline.step_requests, f, ensure_ascii=False, indent=1)
+        print(f"StepRequest (M1) сохранены в: {steps_out}")
 
     decisions_out = args.out.parent / "decisions.json"
     with open(decisions_out, "w", encoding="utf-8") as f:

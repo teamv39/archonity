@@ -83,6 +83,7 @@ models/
 !/data/branch_rules.json
 !/data/pool_ir.json
 !/data/entity_ir.json
+!/data/ir/
 datasets/
 raw_data/
 processed_data/

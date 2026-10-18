@@ -1,0 +1,2855 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-assurance-service",
+  "methods" : {
+    "method:ts-assurance-service:assurance.AssuranceApplication#main(java.lang.String[])" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/AssuranceApplication.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.AssuranceApplication#main(java.lang.String[])@27:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "AssuranceApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.AssuranceApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/AssuranceApplication.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.AssuranceApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@33:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/config/SecurityConfig.java",
+      "line" : 62,
+      "end" : 80,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 64,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:61",
+                      "callee" : "hasRole",
+                      "recv" : {
+                        "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                          "callee" : "authorizeRequests",
+                          "recv" : {
+                            "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                            "callee" : "and",
+                            "recv" : {
+                              "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:38",
+                              "callee" : "sessionCreationPolicy",
+                              "recv" : {
+                                "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@68:18",
+                                "callee" : "sessionManagement",
+                                "recv" : {
+                                  "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:25",
+                                  "callee" : "disable",
+                                  "recv" : {
+                                    "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@66:18",
+                                    "callee" : "csrf",
+                                    "recv" : {
+                                      "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:34",
+                                      "callee" : "disable",
+                                      "recv" : {
+                                        "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@64:22",
+                                        "callee" : "httpBasic",
+                                        "recv" : {
+                                          "name" : "httpSecurity",
+                                          "ref" : "param"
+                                        },
+                                        "args" : [ ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ ]
+                              },
+                              "args" : [ {
+                                "field" : "STATELESS",
+                                "of" : {
+                                  "name" : "SessionCreationPolicy",
+                                  "ref" : "type"
+                                }
+                              } ]
+                            },
+                            "args" : [ ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/assuranceservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "USER",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
+            "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/config/SecurityConfig.java",
+      "line" : 46,
+      "end" : 59,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 48,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#corsConfigurer()@48:16",
+          "args" : [ ],
+          "anon" : "type:ts-assurance-service:assurance.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/config/SecurityConfig.java",
+      "line" : 33,
+      "end" : 36,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 35,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
+          "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig#passwordEncoder()@35:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/config/SecurityConfig.java",
+      "line" : 49,
+      "end" : 57,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-assurance-service:assurance.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@51:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.controller.AssuranceController#createNewAssurance(int,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/controller/AssuranceController.java",
+      "line" : 71,
+      "end" : 77,
+      "params" : [ {
+        "name" : "typeIndex",
+        "type" : "int"
+      }, {
+        "name" : "orderId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 75,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#createNewAssurance(int,java.lang.String,org.springframework.http.HttpHeaders)@75:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AssuranceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[createNewAssurance][Create new assurance][typeIndex: {}, orderId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "typeIndex",
+            "ref" : "param"
+          }, {
+            "name" : "orderId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 76,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#createNewAssurance(int,java.lang.String,org.springframework.http.HttpHeaders)@76:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#createNewAssurance(int,java.lang.String,org.springframework.http.HttpHeaders)@76:36",
+            "callee" : "create",
+            "recv" : {
+              "name" : "assuranceService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "typeIndex",
+              "ref" : "param"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssurance(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/controller/AssuranceController.java",
+      "line" : 46,
+      "end" : 51,
+      "params" : [ {
+        "name" : "assuranceId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 49,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssurance(java.lang.String,org.springframework.http.HttpHeaders)@49:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AssuranceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deleteAssurance][Delete Assurance][assuranceId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "assuranceId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 50,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssurance(java.lang.String,org.springframework.http.HttpHeaders)@50:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssurance(java.lang.String,org.springframework.http.HttpHeaders)@50:36",
+            "callee" : "deleteById",
+            "recv" : {
+              "name" : "assuranceService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssurance(java.lang.String,org.springframework.http.HttpHeaders)@50:52",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "name" : "assuranceId",
+                "ref" : "param"
+              } ]
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/controller/AssuranceController.java",
+      "line" : 53,
+      "end" : 58,
+      "params" : [ {
+        "name" : "orderId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 56,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@56:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AssuranceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deleteAssuranceByOrderId][Delete Assurance by orderId][orderId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "orderId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 57,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@57:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@57:36",
+            "callee" : "deleteByOrderId",
+            "recv" : {
+              "name" : "assuranceService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#deleteAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@57:57",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "name" : "orderId",
+                "ref" : "param"
+              } ]
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/controller/AssuranceController.java",
+      "line" : 86,
+      "end" : 91,
+      "params" : [ {
+        "name" : "orderId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 89,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@89:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AssuranceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[findAssuranceByOrderId][Find assurance by orderId][orderId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "orderId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 90,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@90:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@90:36",
+            "callee" : "findAssuranceByOrderId",
+            "recv" : {
+              "name" : "assuranceService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)@90:64",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "name" : "orderId",
+                "ref" : "param"
+              } ]
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssuranceType(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/controller/AssuranceController.java",
+      "line" : 39,
+      "end" : 44,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 42,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssuranceType(org.springframework.http.HttpHeaders)@42:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AssuranceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllAssuranceType][Get Assurance Type]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 43,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssuranceType(org.springframework.http.HttpHeaders)@43:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssuranceType(org.springframework.http.HttpHeaders)@43:36",
+            "callee" : "getAllAssuranceTypes",
+            "recv" : {
+              "name" : "assuranceService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssurances(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/controller/AssuranceController.java",
+      "line" : 32,
+      "end" : 37,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 35,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssurances(org.springframework.http.HttpHeaders)@35:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AssuranceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllAssurances][Get All Assurances]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 36,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssurances(org.springframework.http.HttpHeaders)@36:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssurances(org.springframework.http.HttpHeaders)@36:36",
+            "callee" : "getAllAssurances",
+            "recv" : {
+              "name" : "assuranceService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.controller.AssuranceController#getAssuranceById(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/controller/AssuranceController.java",
+      "line" : 79,
+      "end" : 84,
+      "params" : [ {
+        "name" : "assuranceId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 82,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAssuranceById(java.lang.String,org.springframework.http.HttpHeaders)@82:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AssuranceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAssuranceById][Find assurance by assuranceId][assureId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "assuranceId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 83,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAssuranceById(java.lang.String,org.springframework.http.HttpHeaders)@83:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAssuranceById(java.lang.String,org.springframework.http.HttpHeaders)@83:36",
+            "callee" : "findAssuranceById",
+            "recv" : {
+              "name" : "assuranceService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#getAssuranceById(java.lang.String,org.springframework.http.HttpHeaders)@83:59",
+              "callee" : "fromString",
+              "recv" : {
+                "name" : "UUID",
+                "ref" : "type"
+              },
+              "args" : [ {
+                "name" : "assuranceId",
+                "ref" : "param"
+              } ]
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.controller.AssuranceController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/controller/AssuranceController.java",
+      "line" : 27,
+      "end" : 30,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 29,
+        "expr" : {
+          "lit" : "Welcome to [ Assurance Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.controller.AssuranceController#modifyAssurance(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/controller/AssuranceController.java",
+      "line" : 60,
+      "end" : 68,
+      "params" : [ {
+        "name" : "assuranceId",
+        "type" : "String"
+      }, {
+        "name" : "orderId",
+        "type" : "String"
+      }, {
+        "name" : "typeIndex",
+        "type" : "int"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#modifyAssurance(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@65:36",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AssuranceController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[modifyAssurance][Modify Assurance][assuranceId: {}, orderId: {}, typeIndex: {}]",
+            "type" : "string"
+          }, {
+            "name" : "assuranceId",
+            "ref" : "param"
+          }, {
+            "name" : "orderId",
+            "ref" : "param"
+          }, {
+            "name" : "typeIndex",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 67,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#modifyAssurance(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@67:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.controller.AssuranceController#modifyAssurance(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@67:36",
+            "callee" : "modify",
+            "recv" : {
+              "name" : "assuranceService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "assuranceId",
+              "ref" : "param"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            }, {
+              "name" : "typeIndex",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.Assurance#<init>()" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/Assurance.java",
+      "line" : 36,
+      "end" : 38,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 37,
+        "target" : {
+          "field" : "orderId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.entity.Assurance#<init>()@37:42",
+          "callee" : "toString",
+          "recv" : {
+            "call" : "call:method:ts-assurance-service:assurance.entity.Assurance#<init>()@37:29",
+            "callee" : "randomUUID",
+            "recv" : {
+              "name" : "UUID",
+              "ref" : "type"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.Assurance#<init>(java.lang.String,java.lang.String,assurance.entity.AssuranceType)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/Assurance.java",
+      "line" : 40,
+      "end" : 44,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "orderId",
+        "type" : "String"
+      }, {
+        "name" : "type",
+        "type" : "AssuranceType"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 41,
+        "target" : {
+          "field" : "id",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "id",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "field" : "orderId",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "orderId",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "field" : "type",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "type",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.AssuranceType#<init>(int,java.lang.String,double)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/AssuranceType.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "index",
+        "type" : "int"
+      }, {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "price",
+        "type" : "double"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 31,
+        "target" : {
+          "field" : "index",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "index",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 32,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      }, {
+        "op" : "assign",
+        "line" : 33,
+        "target" : {
+          "field" : "price",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "price",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.AssuranceType#getIndex()" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/AssuranceType.java",
+      "line" : 36,
+      "end" : 38,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 37,
+        "expr" : {
+          "name" : "index",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.AssuranceType#getName()" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/AssuranceType.java",
+      "line" : 44,
+      "end" : 46,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 45,
+        "expr" : {
+          "name" : "name",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.AssuranceType#getPrice()" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/AssuranceType.java",
+      "line" : 52,
+      "end" : 54,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 53,
+        "expr" : {
+          "name" : "price",
+          "ref" : "field"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.AssuranceType#getTypeByIndex(int)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/AssuranceType.java",
+      "line" : 60,
+      "end" : 68,
+      "params" : [ {
+        "name" : "index",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 61,
+        "target" : {
+          "name" : "ats",
+          "ref" : "local"
+        },
+        "decl" : "AssuranceType[]",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.entity.AssuranceType#getTypeByIndex(int)@61:45",
+          "callee" : "values",
+          "recv" : {
+            "name" : "AssuranceType",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 62,
+        "id" : "f62:ats",
+        "var" : "at",
+        "var_type" : "AssuranceType",
+        "iter" : {
+          "name" : "ats",
+          "ref" : "local"
+        },
+        "body" : [ {
+          "op" : "if",
+          "line" : 63,
+          "id" : "b63",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "call" : "call:method:ts-assurance-service:assurance.entity.AssuranceType#getTypeByIndex(int)@63:20",
+              "callee" : "getIndex",
+              "recv" : {
+                "name" : "at",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            },
+            "r" : {
+              "name" : "index",
+              "ref" : "param"
+            }
+          },
+          "then" : [ {
+            "op" : "return",
+            "line" : 64,
+            "expr" : {
+              "name" : "at",
+              "ref" : "local"
+            }
+          } ],
+          "else" : [ ]
+        } ]
+      }, {
+        "op" : "return",
+        "line" : 67,
+        "expr" : {
+          "lit" : null,
+          "type" : "null"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.AssuranceType#setIndex(int)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/AssuranceType.java",
+      "line" : 40,
+      "end" : 42,
+      "params" : [ {
+        "name" : "index",
+        "type" : "int"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 41,
+        "target" : {
+          "field" : "index",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "index",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.AssuranceType#setName(java.lang.String)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/AssuranceType.java",
+      "line" : 48,
+      "end" : 50,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 49,
+        "target" : {
+          "field" : "name",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "name",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.AssuranceType#setPrice(double)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/AssuranceType.java",
+      "line" : 56,
+      "end" : 58,
+      "params" : [ {
+        "name" : "price",
+        "type" : "double"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 57,
+        "target" : {
+          "field" : "price",
+          "of" : {
+            "this" : true
+          }
+        },
+        "operator" : "=",
+        "expr" : {
+          "name" : "price",
+          "ref" : "param"
+        }
+      } ]
+    },
+    "method:ts-assurance-service:assurance.entity.PlainAssurance#<init>()" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/entity/PlainAssurance.java",
+      "line" : 27,
+      "end" : 29,
+      "params" : [ ],
+      "body" : [ ]
+    },
+    "method:ts-assurance-service:assurance.init.InitData#run(java.lang.String[])" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/init/InitData.java",
+      "line" : 28,
+      "end" : 79,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String"
+      } ],
+      "body" : [ ]
+    },
+    "method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+      "line" : 52,
+      "end" : 68,
+      "params" : [ {
+        "name" : "typeIndex",
+        "type" : "int"
+      }, {
+        "name" : "orderId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 54,
+        "target" : {
+          "name" : "a",
+          "ref" : "local"
+        },
+        "decl" : "Assurance",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@54:43",
+          "callee" : "findByOrderId",
+          "recv" : {
+            "name" : "assuranceRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "orderId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 55,
+        "target" : {
+          "name" : "at",
+          "ref" : "local"
+        },
+        "decl" : "AssuranceType",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@55:42",
+          "callee" : "getTypeByIndex",
+          "recv" : {
+            "name" : "AssuranceType",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "name" : "typeIndex",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 56,
+        "id" : "b56",
+        "cond" : {
+          "bin" : "!=",
+          "l" : {
+            "name" : "a",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 57,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@57:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[create][AddAssurance Fail][Assurance already exists][typeIndex: {}, orderId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "typeIndex",
+              "ref" : "param"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 58,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@58:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Fail.Assurance already exists",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "if",
+          "line" : 59,
+          "id" : "b59",
+          "cond" : {
+            "bin" : "==",
+            "l" : {
+              "name" : "at",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "then" : [ {
+            "op" : "expr",
+            "line" : 60,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@60:41",
+              "callee" : "warn",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "AssuranceServiceImpl",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "[create][AddAssurance Fail][Assurance type doesn't exist][typeIndex: {}, orderId: {}]",
+                "type" : "string"
+              }, {
+                "name" : "typeIndex",
+                "ref" : "param"
+              }, {
+                "name" : "orderId",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "return",
+            "line" : 61,
+            "expr" : {
+              "new" : "Response<>",
+              "fqn" : "edu.fudan.common.util.Response",
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@61:20",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "lit" : "Fail.Assurance type doesn't exist",
+                "type" : "string"
+              }, {
+                "lit" : null,
+                "type" : "null"
+              } ]
+            }
+          } ],
+          "else" : [ {
+            "op" : "assign",
+            "line" : 63,
+            "target" : {
+              "name" : "assurance",
+              "ref" : "local"
+            },
+            "decl" : "Assurance",
+            "operator" : "=",
+            "expr" : {
+              "new" : "Assurance",
+              "fqn" : "assurance.entity.Assurance",
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@63:35",
+              "args" : [ {
+                "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@63:67",
+                "callee" : "toString",
+                "recv" : {
+                  "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@63:54",
+                  "callee" : "randomUUID",
+                  "recv" : {
+                    "name" : "UUID",
+                    "ref" : "type"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              }, {
+                "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@63:104",
+                "callee" : "toString",
+                "recv" : {
+                  "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@63:84",
+                  "callee" : "fromString",
+                  "recv" : {
+                    "name" : "UUID",
+                    "ref" : "type"
+                  },
+                  "args" : [ {
+                    "name" : "orderId",
+                    "ref" : "param"
+                  } ]
+                },
+                "args" : [ ]
+              }, {
+                "name" : "at",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 64,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@64:33",
+              "callee" : "save",
+              "recv" : {
+                "name" : "assuranceRepository",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "name" : "assurance",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 65,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@65:41",
+              "callee" : "info",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "AssuranceServiceImpl",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "[create][AddAssurance][Success]",
+                "type" : "string"
+              } ]
+            }
+          }, {
+            "op" : "return",
+            "line" : 66,
+            "expr" : {
+              "new" : "Response<>",
+              "fqn" : "edu.fudan.common.util.Response",
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#create(int,java.lang.String,org.springframework.http.HttpHeaders)@66:20",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "Success",
+                "type" : "string"
+              }, {
+                "name" : "assurance",
+                "ref" : "local"
+              } ]
+            }
+          } ]
+        } ]
+      } ]
+    },
+    "method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteById(java.util.UUID,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+      "line" : 70,
+      "end" : 81,
+      "params" : [ {
+        "name" : "assuranceId",
+        "type" : "UUID"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteById(java.util.UUID,org.springframework.http.HttpHeaders)@72:29",
+          "callee" : "deleteById",
+          "recv" : {
+            "name" : "assuranceRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteById(java.util.UUID,org.springframework.http.HttpHeaders)@72:52",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "assuranceId",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 73,
+        "target" : {
+          "name" : "a",
+          "ref" : "local"
+        },
+        "decl" : "Optional<Assurance>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteById(java.util.UUID,org.springframework.http.HttpHeaders)@73:53",
+          "callee" : "findById",
+          "recv" : {
+            "name" : "assuranceRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteById(java.util.UUID,org.springframework.http.HttpHeaders)@73:74",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "assuranceId",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 74,
+        "id" : "b74",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "a",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 75,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteById(java.util.UUID,org.springframework.http.HttpHeaders)@75:41",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deleteById][DeleteAssurance success][assuranceId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "assuranceId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 76,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteById(java.util.UUID,org.springframework.http.HttpHeaders)@76:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Delete Success with Assurance id",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 78,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteById(java.util.UUID,org.springframework.http.HttpHeaders)@78:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deleteById][DeleteAssurance Fail][Assurance not clear][assuranceId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "assuranceId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 79,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteById(java.util.UUID,org.springframework.http.HttpHeaders)@79:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Fail.Assurance not clear",
+              "type" : "string"
+            }, {
+              "name" : "assuranceId",
+              "ref" : "param"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+      "line" : 83,
+      "end" : 94,
+      "params" : [ {
+        "name" : "orderId",
+        "type" : "UUID"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 85,
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@85:29",
+          "callee" : "removeAssuranceByOrderId",
+          "recv" : {
+            "name" : "assuranceRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@85:62",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "orderId",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 86,
+        "target" : {
+          "name" : "isExistAssurace",
+          "ref" : "local"
+        },
+        "decl" : "Assurance",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@86:57",
+          "callee" : "findByOrderId",
+          "recv" : {
+            "name" : "assuranceRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@86:79",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "orderId",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 87,
+        "id" : "b87",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "isExistAssurace",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 88,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@88:41",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deleteByOrderId][DeleteAssurance Success][orderId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 89,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@89:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Delete Success with Order Id",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 91,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@91:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[deleteByOrderId][DeleteAssurance Fail][Assurance not clear][orderId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 92,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#deleteByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@92:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Fail.Assurance not clear",
+              "type" : "string"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceById(java.util.UUID,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+      "line" : 28,
+      "end" : 38,
+      "params" : [ {
+        "name" : "id",
+        "type" : "UUID"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 30,
+        "target" : {
+          "name" : "assurance",
+          "ref" : "local"
+        },
+        "decl" : "Optional<Assurance>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceById(java.util.UUID,org.springframework.http.HttpHeaders)@30:61",
+          "callee" : "findById",
+          "recv" : {
+            "name" : "assuranceRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceById(java.util.UUID,org.springframework.http.HttpHeaders)@30:73",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "id",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 31,
+        "id" : "b31",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "assurance",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 32,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceById(java.util.UUID,org.springframework.http.HttpHeaders)@32:41",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[findAssuranceById][find assurance][No content][assurance id: {}]",
+              "type" : "string"
+            }, {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 33,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceById(java.util.UUID,org.springframework.http.HttpHeaders)@33:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No Content by this id",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 35,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceById(java.util.UUID,org.springframework.http.HttpHeaders)@35:41",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[findAssuranceById][Find Assurance][assurance id: {}]",
+              "type" : "string"
+            }, {
+              "name" : "id",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 36,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceById(java.util.UUID,org.springframework.http.HttpHeaders)@36:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Find Assurance Success",
+              "type" : "string"
+            }, {
+              "name" : "assurance",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+      "line" : 40,
+      "end" : 50,
+      "params" : [ {
+        "name" : "orderId",
+        "type" : "UUID"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "assurance",
+          "ref" : "local"
+        },
+        "decl" : "Assurance",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@42:51",
+          "callee" : "findByOrderId",
+          "recv" : {
+            "name" : "assuranceRepository",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@42:73",
+            "callee" : "toString",
+            "recv" : {
+              "name" : "orderId",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 43,
+        "id" : "b43",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "assurance",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 44,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@44:41",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[findAssuranceByOrderId][find assurance][No content][orderId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 45,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@45:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No Content by this orderId",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 47,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@47:41",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[findAssuranceByOrderId][find assurance success][orderId: {}]",
+              "type" : "string"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 48,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#findAssuranceByOrderId(java.util.UUID,org.springframework.http.HttpHeaders)@48:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Find Assurance Success",
+              "type" : "string"
+            }, {
+              "name" : "assurance",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+      "line" : 139,
+      "end" : 157,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 142,
+        "target" : {
+          "name" : "atlist",
+          "ref" : "local"
+        },
+        "decl" : "List<AssuranceTypeBean>",
+        "operator" : "=",
+        "expr" : {
+          "new" : "ArrayList<>",
+          "fqn" : "java.util.ArrayList",
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@142:42",
+          "args" : [ ]
+        }
+      }, {
+        "op" : "foreach",
+        "line" : 143,
+        "id" : "f143:AssuranceType.values()",
+        "var" : "at",
+        "var_type" : "AssuranceType",
+        "iter" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@143:47",
+          "callee" : "values",
+          "recv" : {
+            "name" : "AssuranceType",
+            "ref" : "type"
+          },
+          "args" : [ ]
+        },
+        "body" : [ {
+          "op" : "assign",
+          "line" : 144,
+          "target" : {
+            "name" : "atb",
+            "ref" : "local"
+          },
+          "decl" : "AssuranceTypeBean",
+          "operator" : "=",
+          "expr" : {
+            "new" : "AssuranceTypeBean",
+            "fqn" : "assurance.entity.AssuranceTypeBean",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@144:37",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 145,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@145:17",
+            "callee" : "setIndex",
+            "recv" : {
+              "name" : "atb",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@145:29",
+              "callee" : "getIndex",
+              "recv" : {
+                "name" : "at",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 146,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@146:17",
+            "callee" : "setName",
+            "recv" : {
+              "name" : "atb",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@146:28",
+              "callee" : "getName",
+              "recv" : {
+                "name" : "at",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 147,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@147:17",
+            "callee" : "setPrice",
+            "recv" : {
+              "name" : "atb",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@147:29",
+              "callee" : "getPrice",
+              "recv" : {
+                "name" : "at",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "expr",
+          "line" : 148,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@148:20",
+            "callee" : "add",
+            "recv" : {
+              "name" : "atlist",
+              "ref" : "local"
+            },
+            "args" : [ {
+              "name" : "atb",
+              "ref" : "local"
+            } ]
+          }
+        } ]
+      }, {
+        "op" : "if",
+        "line" : 150,
+        "id" : "b150",
+        "cond" : {
+          "un" : "!",
+          "e" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@150:21",
+            "callee" : "isEmpty",
+            "recv" : {
+              "name" : "atlist",
+              "ref" : "local"
+            },
+            "args" : [ ]
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 151,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@151:41",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getAllAssuranceTypes][find all assurance type success][list size: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@151:127",
+              "callee" : "size",
+              "recv" : {
+                "name" : "atlist",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 152,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@152:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Find All Assurance",
+              "type" : "string"
+            }, {
+              "name" : "atlist",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 154,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@154:41",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getAllAssuranceTypes][find all assurance type][No content]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 155,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssuranceTypes(org.springframework.http.HttpHeaders)@155:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Assurance is Empty",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+      "line" : 117,
+      "end" : 137,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 119,
+        "target" : {
+          "name" : "as",
+          "ref" : "local"
+        },
+        "decl" : "List<Assurance>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@119:50",
+          "callee" : "findAll",
+          "recv" : {
+            "name" : "assuranceRepository",
+            "ref" : "field"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 120,
+        "id" : "b120",
+        "cond" : {
+          "bin" : "&&",
+          "l" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "as",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "r" : {
+            "un" : "!",
+            "e" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@120:31",
+              "callee" : "isEmpty",
+              "recv" : {
+                "name" : "as",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          }
+        },
+        "then" : [ {
+          "op" : "assign",
+          "line" : 121,
+          "target" : {
+            "name" : "result",
+            "ref" : "local"
+          },
+          "decl" : "ArrayList<PlainAssurance>",
+          "operator" : "=",
+          "expr" : {
+            "new" : "ArrayList<>",
+            "fqn" : "java.util.ArrayList",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@121:48",
+            "args" : [ ]
+          }
+        }, {
+          "op" : "foreach",
+          "line" : 122,
+          "id" : "f122:as",
+          "var" : "a",
+          "var_type" : "Assurance",
+          "iter" : {
+            "name" : "as",
+            "ref" : "local"
+          },
+          "body" : [ {
+            "op" : "assign",
+            "line" : 123,
+            "target" : {
+              "name" : "pa",
+              "ref" : "local"
+            },
+            "decl" : "PlainAssurance",
+            "operator" : "=",
+            "expr" : {
+              "new" : "PlainAssurance",
+              "fqn" : "assurance.entity.PlainAssurance",
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@123:37",
+              "args" : [ ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 124,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@124:20",
+              "callee" : "setId",
+              "recv" : {
+                "name" : "pa",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@124:28",
+                "callee" : "getId",
+                "recv" : {
+                  "name" : "a",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 125,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@125:20",
+              "callee" : "setOrderId",
+              "recv" : {
+                "name" : "pa",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@125:33",
+                "callee" : "getOrderId",
+                "recv" : {
+                  "name" : "a",
+                  "ref" : "local"
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 126,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@126:20",
+              "callee" : "setTypeIndex",
+              "recv" : {
+                "name" : "pa",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@126:45",
+                "callee" : "getIndex",
+                "recv" : {
+                  "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@126:35",
+                  "callee" : "getType",
+                  "recv" : {
+                    "name" : "a",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 127,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@127:20",
+              "callee" : "setTypeName",
+              "recv" : {
+                "name" : "pa",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@127:44",
+                "callee" : "getName",
+                "recv" : {
+                  "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@127:34",
+                  "callee" : "getType",
+                  "recv" : {
+                    "name" : "a",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 128,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@128:20",
+              "callee" : "setTypePrice",
+              "recv" : {
+                "name" : "pa",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@128:45",
+                "callee" : "getPrice",
+                "recv" : {
+                  "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@128:35",
+                  "callee" : "getType",
+                  "recv" : {
+                    "name" : "a",
+                    "ref" : "local"
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 129,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@129:24",
+              "callee" : "add",
+              "recv" : {
+                "name" : "result",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "pa",
+                "ref" : "local"
+              } ]
+            }
+          } ]
+        }, {
+          "op" : "expr",
+          "line" : 131,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@131:41",
+            "callee" : "info",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getAllAssurances][find all assurance success][list size: {}]",
+              "type" : "string"
+            }, {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@131:114",
+              "callee" : "size",
+              "recv" : {
+                "name" : "as",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 132,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@132:20",
+            "args" : [ {
+              "lit" : 1,
+              "type" : "int"
+            }, {
+              "lit" : "Success",
+              "type" : "string"
+            }, {
+              "name" : "result",
+              "ref" : "local"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "expr",
+          "line" : 134,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@134:41",
+            "callee" : "warn",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[getAllAssurances][find all assurance][No content]",
+              "type" : "string"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 135,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#getAllAssurances(org.springframework.http.HttpHeaders)@135:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "No Content, Assurance is empty",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ]
+      } ]
+    },
+    "method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-assurance-service/src/main/java/assurance/service/AssuranceServiceImpl.java",
+      "line" : 96,
+      "end" : 115,
+      "params" : [ {
+        "name" : "assuranceId",
+        "type" : "String"
+      }, {
+        "name" : "orderId",
+        "type" : "String"
+      }, {
+        "name" : "typeIndex",
+        "type" : "int"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 98,
+        "target" : {
+          "name" : "oldAssuranceResponse",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@98:41",
+          "callee" : "findAssuranceById",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@98:64",
+            "callee" : "fromString",
+            "recv" : {
+              "name" : "UUID",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "name" : "assuranceId",
+              "ref" : "param"
+            } ]
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 99,
+        "target" : {
+          "name" : "oldAssurance",
+          "ref" : "local"
+        },
+        "decl" : "Assurance",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@99:89",
+          "callee" : "get",
+          "recv" : {
+            "cast" : "Optional<Assurance>",
+            "e" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@99:78",
+              "callee" : "getData",
+              "recv" : {
+                "name" : "oldAssuranceResponse",
+                "ref" : "local"
+              },
+              "args" : [ ]
+            }
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "if",
+        "line" : 100,
+        "id" : "b100",
+        "cond" : {
+          "bin" : "==",
+          "l" : {
+            "name" : "oldAssurance",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : null,
+            "type" : "null"
+          }
+        },
+        "then" : [ {
+          "op" : "expr",
+          "line" : 101,
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@101:41",
+            "callee" : "error",
+            "recv" : {
+              "field" : "LOGGER",
+              "of" : {
+                "name" : "AssuranceServiceImpl",
+                "ref" : "type"
+              }
+            },
+            "args" : [ {
+              "lit" : "[modify][ModifyAssurance Fail][Assurance not found][assuranceId: {}, orderId: {}, typeIndex: {}]",
+              "type" : "string"
+            }, {
+              "name" : "assuranceId",
+              "ref" : "param"
+            }, {
+              "name" : "orderId",
+              "ref" : "param"
+            }, {
+              "name" : "typeIndex",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "return",
+          "line" : 102,
+          "expr" : {
+            "new" : "Response<>",
+            "fqn" : "edu.fudan.common.util.Response",
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@102:20",
+            "args" : [ {
+              "lit" : 0,
+              "type" : "int"
+            }, {
+              "lit" : "Fail.Assurance not found.",
+              "type" : "string"
+            }, {
+              "lit" : null,
+              "type" : "null"
+            } ]
+          }
+        } ],
+        "else" : [ {
+          "op" : "assign",
+          "line" : 104,
+          "target" : {
+            "name" : "at",
+            "ref" : "local"
+          },
+          "decl" : "AssuranceType",
+          "operator" : "=",
+          "expr" : {
+            "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@104:46",
+            "callee" : "getTypeByIndex",
+            "recv" : {
+              "name" : "AssuranceType",
+              "ref" : "type"
+            },
+            "args" : [ {
+              "name" : "typeIndex",
+              "ref" : "param"
+            } ]
+          }
+        }, {
+          "op" : "if",
+          "line" : 105,
+          "id" : "b105",
+          "cond" : {
+            "bin" : "!=",
+            "l" : {
+              "name" : "at",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : null,
+              "type" : "null"
+            }
+          },
+          "then" : [ {
+            "op" : "expr",
+            "line" : 106,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@106:30",
+              "callee" : "setType",
+              "recv" : {
+                "name" : "oldAssurance",
+                "ref" : "local"
+              },
+              "args" : [ {
+                "name" : "at",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 107,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@107:37",
+              "callee" : "save",
+              "recv" : {
+                "name" : "assuranceRepository",
+                "ref" : "field"
+              },
+              "args" : [ {
+                "name" : "oldAssurance",
+                "ref" : "local"
+              } ]
+            }
+          }, {
+            "op" : "expr",
+            "line" : 108,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@108:45",
+              "callee" : "info",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "AssuranceServiceImpl",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "[modify][ModifyAssurance Success][assuranceId: {}, orderId: {}, typeIndex: {}]",
+                "type" : "string"
+              }, {
+                "name" : "assuranceId",
+                "ref" : "param"
+              }, {
+                "name" : "orderId",
+                "ref" : "param"
+              }, {
+                "name" : "typeIndex",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "return",
+            "line" : 109,
+            "expr" : {
+              "new" : "Response<>",
+              "fqn" : "edu.fudan.common.util.Response",
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@109:24",
+              "args" : [ {
+                "lit" : 1,
+                "type" : "int"
+              }, {
+                "lit" : "Modify Success",
+                "type" : "string"
+              }, {
+                "name" : "oldAssurance",
+                "ref" : "local"
+              } ]
+            }
+          } ],
+          "else" : [ {
+            "op" : "expr",
+            "line" : 111,
+            "expr" : {
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@111:45",
+              "callee" : "error",
+              "recv" : {
+                "field" : "LOGGER",
+                "of" : {
+                  "name" : "AssuranceServiceImpl",
+                  "ref" : "type"
+                }
+              },
+              "args" : [ {
+                "lit" : "[modify][ModifyAssurance Fail][Assurance Type not exist][assuranceId: {}, orderId: {}, typeIndex: {}]",
+                "type" : "string"
+              }, {
+                "name" : "assuranceId",
+                "ref" : "param"
+              }, {
+                "name" : "orderId",
+                "ref" : "param"
+              }, {
+                "name" : "typeIndex",
+                "ref" : "param"
+              } ]
+            }
+          }, {
+            "op" : "return",
+            "line" : 112,
+            "expr" : {
+              "new" : "Response<>",
+              "fqn" : "edu.fudan.common.util.Response",
+              "call" : "call:method:ts-assurance-service:assurance.service.AssuranceServiceImpl#modify(java.lang.String,java.lang.String,int,org.springframework.http.HttpHeaders)@112:24",
+              "args" : [ {
+                "lit" : 0,
+                "type" : "int"
+              }, {
+                "lit" : "Assurance Type not exist",
+                "type" : "string"
+              }, {
+                "lit" : null,
+                "type" : "null"
+              } ]
+            }
+          } ]
+        } ]
+      } ]
+    }
+  }
+}

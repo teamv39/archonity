@@ -1,0 +1,4027 @@
+{
+  "schema" : "method_ir/1",
+  "module" : "ts-admin-basic-info-service",
+  "methods" : {
+    "method:ts-admin-basic-info-service:adminbasic.AdminBasicInfoApplication#main(java.lang.String[])" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/AdminBasicInfoApplication.java",
+      "line" : 26,
+      "end" : 28,
+      "params" : [ {
+        "name" : "args",
+        "type" : "String[]"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 27,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.AdminBasicInfoApplication#main(java.lang.String[])@27:27",
+          "callee" : "run",
+          "recv" : {
+            "name" : "SpringApplication",
+            "ref" : "type"
+          },
+          "args" : [ {
+            "class" : "AdminBasicInfoApplication"
+          }, {
+            "name" : "args",
+            "ref" : "param"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.AdminBasicInfoApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/AdminBasicInfoApplication.java",
+      "line" : 30,
+      "end" : 34,
+      "params" : [ {
+        "name" : "builder",
+        "type" : "RestTemplateBuilder"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 33,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.AdminBasicInfoApplication#restTemplate(org.springframework.boot.web.client.RestTemplateBuilder)@33:24",
+          "callee" : "build",
+          "recv" : {
+            "name" : "builder",
+            "ref" : "param"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/config/SecurityConfig.java",
+      "line" : 63,
+      "end" : 87,
+      "params" : [ {
+        "name" : "httpSecurity",
+        "type" : "HttpSecurity"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:18",
+          "callee" : "addFilterBefore",
+          "recv" : {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@81:18",
+            "callee" : "and",
+            "recv" : {
+              "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@80:31",
+              "callee" : "authenticated",
+              "recv" : {
+                "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@80:18",
+                "callee" : "anyRequest",
+                "recv" : {
+                  "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@79:81",
+                  "callee" : "permitAll",
+                  "recv" : {
+                    "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@78:18",
+                    "callee" : "antMatchers",
+                    "recv" : {
+                      "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:62",
+                      "callee" : "hasRole",
+                      "recv" : {
+                        "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@77:18",
+                        "callee" : "antMatchers",
+                        "recv" : {
+                          "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:95",
+                          "callee" : "permitAll",
+                          "recv" : {
+                            "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@76:18",
+                            "callee" : "antMatchers",
+                            "recv" : {
+                              "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:94",
+                              "callee" : "permitAll",
+                              "recv" : {
+                                "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@75:18",
+                                "callee" : "antMatchers",
+                                "recv" : {
+                                  "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:93",
+                                  "callee" : "permitAll",
+                                  "recv" : {
+                                    "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@74:18",
+                                    "callee" : "antMatchers",
+                                    "recv" : {
+                                      "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:93",
+                                      "callee" : "permitAll",
+                                      "recv" : {
+                                        "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@73:18",
+                                        "callee" : "antMatchers",
+                                        "recv" : {
+                                          "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:95",
+                                          "callee" : "permitAll",
+                                          "recv" : {
+                                            "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@72:18",
+                                            "callee" : "antMatchers",
+                                            "recv" : {
+                                              "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@71:18",
+                                              "callee" : "authorizeRequests",
+                                              "recv" : {
+                                                "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@70:18",
+                                                "callee" : "and",
+                                                "recv" : {
+                                                  "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:38",
+                                                  "callee" : "sessionCreationPolicy",
+                                                  "recv" : {
+                                                    "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@69:18",
+                                                    "callee" : "sessionManagement",
+                                                    "recv" : {
+                                                      "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:25",
+                                                      "callee" : "disable",
+                                                      "recv" : {
+                                                        "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@67:18",
+                                                        "callee" : "csrf",
+                                                        "recv" : {
+                                                          "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@65:34",
+                                                          "callee" : "disable",
+                                                          "recv" : {
+                                                            "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@65:22",
+                                                            "callee" : "httpBasic",
+                                                            "recv" : {
+                                                              "name" : "httpSecurity",
+                                                              "ref" : "param"
+                                                            },
+                                                            "args" : [ ]
+                                                          },
+                                                          "args" : [ ]
+                                                        },
+                                                        "args" : [ ]
+                                                      },
+                                                      "args" : [ ]
+                                                    },
+                                                    "args" : [ ]
+                                                  },
+                                                  "args" : [ {
+                                                    "field" : "STATELESS",
+                                                    "of" : {
+                                                      "name" : "SessionCreationPolicy",
+                                                      "ref" : "type"
+                                                    }
+                                                  } ]
+                                                },
+                                                "args" : [ ]
+                                              },
+                                              "args" : [ ]
+                                            },
+                                            "args" : [ {
+                                              "field" : "GET",
+                                              "of" : {
+                                                "name" : "HttpMethod",
+                                                "ref" : "type"
+                                              }
+                                            }, {
+                                              "lit" : "/api/v1/adminbasicservice/adminbasic/stations",
+                                              "type" : "string"
+                                            } ]
+                                          },
+                                          "args" : [ ]
+                                        },
+                                        "args" : [ {
+                                          "field" : "GET",
+                                          "of" : {
+                                            "name" : "HttpMethod",
+                                            "ref" : "type"
+                                          }
+                                        }, {
+                                          "lit" : "/api/v1/adminbasicservice/adminbasic/trains",
+                                          "type" : "string"
+                                        } ]
+                                      },
+                                      "args" : [ ]
+                                    },
+                                    "args" : [ {
+                                      "field" : "GET",
+                                      "of" : {
+                                        "name" : "HttpMethod",
+                                        "ref" : "type"
+                                      }
+                                    }, {
+                                      "lit" : "/api/v1/adminbasicservice/adminbasic/prices",
+                                      "type" : "string"
+                                    } ]
+                                  },
+                                  "args" : [ ]
+                                },
+                                "args" : [ {
+                                  "field" : "GET",
+                                  "of" : {
+                                    "name" : "HttpMethod",
+                                    "ref" : "type"
+                                  }
+                                }, {
+                                  "lit" : "/api/v1/adminbasicservice/adminbasic/configs",
+                                  "type" : "string"
+                                } ]
+                              },
+                              "args" : [ ]
+                            },
+                            "args" : [ {
+                              "field" : "GET",
+                              "of" : {
+                                "name" : "HttpMethod",
+                                "ref" : "type"
+                              }
+                            }, {
+                              "lit" : "/api/v1/adminbasicservice/adminbasic/contacts",
+                              "type" : "string"
+                            } ]
+                          },
+                          "args" : [ ]
+                        },
+                        "args" : [ {
+                          "lit" : "/api/v1/adminbasicservice/**",
+                          "type" : "string"
+                        } ]
+                      },
+                      "args" : [ {
+                        "lit" : "ADMIN",
+                        "type" : "string"
+                      } ]
+                    },
+                    "args" : [ {
+                      "lit" : "/swagger-ui.html",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/webjars/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/images/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/configuration/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/swagger-resources/**",
+                      "type" : "string"
+                    }, {
+                      "lit" : "/v2/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ ]
+                },
+                "args" : [ ]
+              },
+              "args" : [ ]
+            },
+            "args" : [ ]
+          },
+          "args" : [ {
+            "new" : "JWTFilter",
+            "fqn" : "edu.fudan.common.security.jwt.JWTFilter",
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@82:34",
+            "args" : [ ]
+          }, {
+            "class" : "UsernamePasswordAuthenticationFilter"
+          } ]
+        }
+      }, {
+        "op" : "expr",
+        "line" : 86,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@86:32",
+          "callee" : "cacheControl",
+          "recv" : {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#configure(org.springframework.security.config.annotation.web.builders.HttpSecurity)@86:22",
+            "callee" : "headers",
+            "recv" : {
+              "name" : "httpSecurity",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#corsConfigurer()" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/config/SecurityConfig.java",
+      "line" : 47,
+      "end" : 60,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 49,
+        "expr" : {
+          "new" : "WebMvcConfigurerAdapter",
+          "fqn" : "org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#corsConfigurer()@49:16",
+          "args" : [ ],
+          "anon" : "type:ts-admin-basic-info-service:adminbasic.config.SecurityConfig$1"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#passwordEncoder()" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/config/SecurityConfig.java",
+      "line" : 34,
+      "end" : 37,
+      "params" : [ ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 36,
+        "expr" : {
+          "new" : "BCryptPasswordEncoder",
+          "fqn" : "org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig#passwordEncoder()@36:16",
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/config/SecurityConfig.java",
+      "line" : 50,
+      "end" : 58,
+      "params" : [ {
+        "name" : "registry",
+        "type" : "CorsRegistry"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@57:26",
+          "callee" : "maxAge",
+          "recv" : {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@56:26",
+            "callee" : "allowCredentials",
+            "recv" : {
+              "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@55:26",
+              "callee" : "allowedHeaders",
+              "recv" : {
+                "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@54:26",
+                "callee" : "allowedMethods",
+                "recv" : {
+                  "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@53:26",
+                  "callee" : "allowedOrigins",
+                  "recv" : {
+                    "call" : "call:method:ts-admin-basic-info-service:adminbasic.config.SecurityConfig$1#addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry)@52:26",
+                    "callee" : "addMapping",
+                    "recv" : {
+                      "name" : "registry",
+                      "ref" : "param"
+                    },
+                    "args" : [ {
+                      "lit" : "/**",
+                      "type" : "string"
+                    } ]
+                  },
+                  "args" : [ {
+                    "name" : "ALL",
+                    "ref" : "static"
+                  } ]
+                },
+                "args" : [ {
+                  "name" : "ALL",
+                  "ref" : "static"
+                } ]
+              },
+              "args" : [ {
+                "name" : "ALL",
+                "ref" : "static"
+              } ]
+            },
+            "args" : [ {
+              "lit" : false,
+              "type" : "boolean"
+            } ]
+          },
+          "args" : [ {
+            "lit" : 3600,
+            "type" : "int"
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 139,
+      "end" : 144,
+      "params" : [ {
+        "name" : "c",
+        "type" : "Config"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 142,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@142:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[addConfig][Add Config by admin][Config name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@142:101",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "c",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 143,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@143:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@143:41",
+            "callee" : "addConfig",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "c",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 55,
+      "end" : 60,
+      "params" : [ {
+        "name" : "c",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 58,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@58:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[addContacts][Modify Contacts by admin][Contacts name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@58:110",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "c",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 59,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@59:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@59:41",
+            "callee" : "addContact",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "c",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 167,
+      "end" : 172,
+      "params" : [ {
+        "name" : "pi",
+        "type" : "PriceInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 170,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@170:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[addPrice][Add Price by admin[PriceInfo id: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@170:100",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "pi",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 171,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@171:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@171:41",
+            "callee" : "addPrice",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "pi",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 83,
+      "end" : 88,
+      "params" : [ {
+        "name" : "s",
+        "type" : "Station"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 86,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@86:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[addStation][Add Station by admin][Station id: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@86:102",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "s",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 87,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@87:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@87:41",
+            "callee" : "addStation",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "s",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 111,
+      "end" : 116,
+      "params" : [ {
+        "name" : "t",
+        "type" : "TrainType"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 114,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@114:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[addTrain][Add Train by admin][TrainType id: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@114:100",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "t",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 115,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@115:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@115:41",
+            "callee" : "addTrain",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "t",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 125,
+      "end" : 130,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 128,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@128:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deleteConfig][Delete Config by admin][Config name: {}]",
+            "type" : "string"
+          }, {
+            "name" : "name",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 129,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@129:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@129:41",
+            "callee" : "deleteConfig",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "name",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteContacts(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 41,
+      "end" : 46,
+      "params" : [ {
+        "name" : "contactsId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 44,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteContacts(java.lang.String,org.springframework.http.HttpHeaders)@44:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deleteContacts][Delete Contacts by admin][contactsId: {}]",
+            "type" : "string"
+          }, {
+            "name" : "contactsId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 45,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteContacts(java.lang.String,org.springframework.http.HttpHeaders)@45:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteContacts(java.lang.String,org.springframework.http.HttpHeaders)@45:41",
+            "callee" : "deleteContact",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "contactsId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 153,
+      "end" : 158,
+      "params" : [ {
+        "name" : "pricesId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 156,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)@156:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deletePrice][Delete Price by admin][PriceInfo id: {}]",
+            "type" : "string"
+          }, {
+            "name" : "pricesId",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 157,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)@157:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)@157:41",
+            "callee" : "deletePrice",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "pricesId",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 69,
+      "end" : 74,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 72,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)@72:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deleteStation][Delete Station by admin][Station id: {}]",
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 73,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)@73:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)@73:41",
+            "callee" : "deleteStation",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "id",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 97,
+      "end" : 102,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 100,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)@100:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[deleteTrain][Delete Train by admin][train id: {}]",
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 101,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)@101:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)@101:41",
+            "callee" : "deleteTrain",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "id",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllConfigs(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 118,
+      "end" : 123,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 121,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllConfigs(org.springframework.http.HttpHeaders)@121:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllConfigs][Find All Config by admin][getAllConfigs]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 122,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllConfigs(org.springframework.http.HttpHeaders)@122:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllConfigs(org.springframework.http.HttpHeaders)@122:41",
+            "callee" : "getAllConfigs",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllContacts(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 34,
+      "end" : 39,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 37,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllContacts(org.springframework.http.HttpHeaders)@37:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllContacts][Find All Contacts by admin][getAllContacts] ",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 38,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllContacts(org.springframework.http.HttpHeaders)@38:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllContacts(org.springframework.http.HttpHeaders)@38:41",
+            "callee" : "getAllContacts",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllPrices(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 146,
+      "end" : 151,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 149,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllPrices(org.springframework.http.HttpHeaders)@149:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllPrices][Find All Price by admin][getAllPrices]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 150,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllPrices(org.springframework.http.HttpHeaders)@150:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllPrices(org.springframework.http.HttpHeaders)@150:41",
+            "callee" : "getAllPrices",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllStations(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 62,
+      "end" : 67,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 65,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllStations(org.springframework.http.HttpHeaders)@65:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllStations][Find All Station by admin][getAllStations]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 66,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllStations(org.springframework.http.HttpHeaders)@66:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllStations(org.springframework.http.HttpHeaders)@66:41",
+            "callee" : "getAllStations",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllTrains(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 90,
+      "end" : 95,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 93,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllTrains(org.springframework.http.HttpHeaders)@93:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[getAllTrains][Find All Train by admin][getAllStations]",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 94,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllTrains(org.springframework.http.HttpHeaders)@94:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllTrains(org.springframework.http.HttpHeaders)@94:41",
+            "callee" : "getAllTrains",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#home(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 29,
+      "end" : 32,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 31,
+        "expr" : {
+          "lit" : "Welcome to [ AdminBasicInfo Service ] !",
+          "type" : "string"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 132,
+      "end" : 137,
+      "params" : [ {
+        "name" : "c",
+        "type" : "Config"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 135,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@135:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[modifyConfig][Modify Config by admin][Config name: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@135:107",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "c",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 136,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@136:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@136:41",
+            "callee" : "modifyConfig",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "c",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 48,
+      "end" : 53,
+      "params" : [ {
+        "name" : "mci",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 51,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@51:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[modifyContacts][Modify Contacts by admin][Contacts name:{}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@51:114",
+            "callee" : "getName",
+            "recv" : {
+              "name" : "mci",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 52,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@52:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@52:41",
+            "callee" : "modifyContact",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "mci",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 160,
+      "end" : 165,
+      "params" : [ {
+        "name" : "pi",
+        "type" : "PriceInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 163,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@163:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[modifyPrice][Modify Price by admin][PriceInfo id: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@163:107",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "pi",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 164,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@164:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@164:41",
+            "callee" : "modifyPrice",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "pi",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 76,
+      "end" : 81,
+      "params" : [ {
+        "name" : "s",
+        "type" : "Station"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 79,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@79:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[modifyStation][Modify Station by admin][Station id: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@79:108",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "s",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 80,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@80:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@80:41",
+            "callee" : "modifyStation",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "s",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/controller/AdminBasicInfoController.java",
+      "line" : 104,
+      "end" : 109,
+      "params" : [ {
+        "name" : "t",
+        "type" : "TrainType"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "expr",
+        "line" : 107,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@107:41",
+          "callee" : "info",
+          "recv" : {
+            "field" : "LOGGER",
+            "of" : {
+              "name" : "AdminBasicInfoController",
+              "ref" : "type"
+            }
+          },
+          "args" : [ {
+            "lit" : "[modifyTrain][Modify Train by admin][TrainType id: {}]",
+            "type" : "string"
+          }, {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@107:106",
+            "callee" : "getId",
+            "recv" : {
+              "name" : "t",
+              "ref" : "param"
+            },
+            "args" : [ ]
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 108,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@108:16",
+          "callee" : "ok",
+          "recv" : null,
+          "args" : [ {
+            "call" : "call:method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@108:41",
+            "callee" : "modifyTrain",
+            "recv" : {
+              "name" : "adminBasicInfoService",
+              "ref" : "field"
+            },
+            "args" : [ {
+              "name" : "t",
+              "ref" : "param"
+            }, {
+              "name" : "headers",
+              "ref" : "param"
+            } ]
+          } ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 237,
+      "end" : 248,
+      "params" : [ {
+        "name" : "c",
+        "type" : "Config"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 239,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@239:36",
+          "args" : [ {
+            "name" : "c",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 240,
+        "target" : {
+          "name" : "config_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@240:37",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-config-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 241,
+        "target" : {
+          "name" : "configs",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "config_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/configservice/configs",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 242,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@242:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "configs",
+            "ref" : "local"
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 247,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@247:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 85,
+      "end" : 98,
+      "params" : [ {
+        "name" : "c",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 87,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 88,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@88:36",
+          "args" : [ {
+            "name" : "c",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 89,
+        "target" : {
+          "name" : "contacts_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@89:39",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-contacts-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 90,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@90:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "contacts_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/contactservice/contacts/admin",
+              "type" : "string"
+            }
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 95,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@95:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 97,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 288,
+      "end" : 300,
+      "params" : [ {
+        "name" : "pi",
+        "type" : "PriceInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 290,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@290:36",
+          "args" : [ {
+            "name" : "pi",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 291,
+        "target" : {
+          "name" : "price_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@291:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-price-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 292,
+        "target" : {
+          "name" : "prices",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "price_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/priceservice/prices",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 293,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@293:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "prices",
+            "ref" : "local"
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 298,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@298:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 116,
+      "end" : 129,
+      "params" : [ {
+        "name" : "s",
+        "type" : "Station"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 118,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 119,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@119:36",
+          "args" : [ {
+            "name" : "s",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 120,
+        "target" : {
+          "name" : "station_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@120:38",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-station-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 121,
+        "target" : {
+          "name" : "stations",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "station_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/stationservice/stations",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 122,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@122:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "stations",
+            "ref" : "local"
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 127,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@127:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 128,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 178,
+      "end" : 192,
+      "params" : [ {
+        "name" : "t",
+        "type" : "TrainType"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 180,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 181,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@181:36",
+          "args" : [ {
+            "name" : "t",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 182,
+        "target" : {
+          "name" : "train_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@182:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-train-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 183,
+        "target" : {
+          "name" : "trains",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "train_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/trainservice/trains",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 184,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@184:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "trains",
+            "ref" : "local"
+          }, {
+            "field" : "POST",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 189,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@189:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 190,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 250,
+      "end" : 260,
+      "params" : [ {
+        "name" : "name",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 252,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@252:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 253,
+        "target" : {
+          "name" : "config_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@253:37",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-config-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 254,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@254:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "config_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/configservice/configs/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "name",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "DELETE",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 259,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)@259:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteContact(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 54,
+      "end" : 67,
+      "params" : [ {
+        "name" : "contactsId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 56,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 57,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteContact(java.lang.String,org.springframework.http.HttpHeaders)@57:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 58,
+        "target" : {
+          "name" : "contacts_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteContact(java.lang.String,org.springframework.http.HttpHeaders)@58:39",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-contacts-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 59,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteContact(java.lang.String,org.springframework.http.HttpHeaders)@59:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "contacts_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/contactservice/contacts/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "contactsId",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "DELETE",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 64,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteContact(java.lang.String,org.springframework.http.HttpHeaders)@64:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 66,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 302,
+      "end" : 314,
+      "params" : [ {
+        "name" : "pricesId",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 304,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)@304:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 305,
+        "target" : {
+          "name" : "price_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)@305:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-price-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 306,
+        "target" : {
+          "name" : "path",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "bin" : "+",
+            "l" : {
+              "name" : "price_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/priceservice/prices/",
+              "type" : "string"
+            }
+          },
+          "r" : {
+            "name" : "pricesId",
+            "ref" : "param"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 307,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)@307:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "path",
+            "ref" : "local"
+          }, {
+            "field" : "DELETE",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 313,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)@313:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 131,
+      "end" : 144,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 133,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 134,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)@134:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 135,
+        "target" : {
+          "name" : "station_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)@135:38",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-station-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 136,
+        "target" : {
+          "name" : "path",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "bin" : "+",
+            "l" : {
+              "name" : "station_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/stationservice/stations/",
+              "type" : "string"
+            }
+          },
+          "r" : {
+            "name" : "id",
+            "ref" : "param"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 137,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)@137:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "path",
+            "ref" : "local"
+          }, {
+            "field" : "DELETE",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 142,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)@142:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 143,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 194,
+      "end" : 206,
+      "params" : [ {
+        "name" : "id",
+        "type" : "String"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 196,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 197,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)@197:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 198,
+        "target" : {
+          "name" : "train_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)@198:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-train-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 199,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)@199:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "bin" : "+",
+              "l" : {
+                "name" : "train_service_url",
+                "ref" : "local"
+              },
+              "r" : {
+                "lit" : "/api/v1/trainservice/trains/",
+                "type" : "string"
+              }
+            },
+            "r" : {
+              "name" : "id",
+              "ref" : "param"
+            }
+          }, {
+            "field" : "DELETE",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 204,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)@204:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 205,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllConfigs(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 223,
+      "end" : 235,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 225,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllConfigs(org.springframework.http.HttpHeaders)@225:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 226,
+        "target" : {
+          "name" : "config_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllConfigs(org.springframework.http.HttpHeaders)@226:37",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-config-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 227,
+        "target" : {
+          "name" : "configs",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "config_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/configservice/configs",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 228,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllConfigs(org.springframework.http.HttpHeaders)@228:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "configs",
+            "ref" : "local"
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 234,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllConfigs(org.springframework.http.HttpHeaders)@234:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 39,
+      "end" : 52,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 41,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 42,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@42:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 43,
+        "target" : {
+          "name" : "contacts_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@43:39",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-contacts-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 44,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@44:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "contacts_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/contactservice/contacts",
+              "type" : "string"
+            }
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 49,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllContacts(org.springframework.http.HttpHeaders)@49:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 51,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllPrices(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 275,
+      "end" : 286,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 277,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllPrices(org.springframework.http.HttpHeaders)@277:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 278,
+        "target" : {
+          "name" : "price_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllPrices(org.springframework.http.HttpHeaders)@278:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-price-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 279,
+        "target" : {
+          "name" : "prices",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "price_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/priceservice/prices",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 280,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllPrices(org.springframework.http.HttpHeaders)@280:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "prices",
+            "ref" : "local"
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 285,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllPrices(org.springframework.http.HttpHeaders)@285:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllStations(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 100,
+      "end" : 114,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 102,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllStations(org.springframework.http.HttpHeaders)@102:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 103,
+        "target" : {
+          "name" : "station_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllStations(org.springframework.http.HttpHeaders)@103:38",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-station-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 104,
+        "target" : {
+          "name" : "stations",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "station_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/stationservice/stations",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 105,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllStations(org.springframework.http.HttpHeaders)@105:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "stations",
+            "ref" : "local"
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 111,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllStations(org.springframework.http.HttpHeaders)@111:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllTrains(org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 163,
+      "end" : 176,
+      "params" : [ {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 165,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllTrains(org.springframework.http.HttpHeaders)@165:36",
+          "args" : [ {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 166,
+        "target" : {
+          "name" : "train_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllTrains(org.springframework.http.HttpHeaders)@166:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-train-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 167,
+        "target" : {
+          "name" : "trains",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "train_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/trainservice/trains",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 168,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllTrains(org.springframework.http.HttpHeaders)@168:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "trains",
+            "ref" : "local"
+          }, {
+            "field" : "GET",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 174,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getAllTrains(org.springframework.http.HttpHeaders)@174:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#getServiceUrl(java.lang.String)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 35,
+      "end" : 37,
+      "params" : [ {
+        "name" : "serviceName",
+        "type" : "String"
+      } ],
+      "body" : [ {
+        "op" : "return",
+        "line" : 36,
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "lit" : "http://",
+            "type" : "string"
+          },
+          "r" : {
+            "name" : "serviceName",
+            "ref" : "param"
+          }
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 262,
+      "end" : 273,
+      "params" : [ {
+        "name" : "c",
+        "type" : "Config"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 264,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@264:36",
+          "args" : [ {
+            "name" : "c",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 265,
+        "target" : {
+          "name" : "config_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@265:37",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-config-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 266,
+        "target" : {
+          "name" : "configs",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "config_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/configservice/configs",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 267,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@267:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "configs",
+            "ref" : "local"
+          }, {
+            "field" : "PUT",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 272,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)@272:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 69,
+      "end" : 82,
+      "params" : [ {
+        "name" : "mci",
+        "type" : "Contacts"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 71,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 72,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@72:36",
+          "args" : [ {
+            "name" : "mci",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 73,
+        "target" : {
+          "name" : "contacts_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@73:39",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-contacts-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 74,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@74:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "bin" : "+",
+            "l" : {
+              "name" : "contacts_service_url",
+              "ref" : "local"
+            },
+            "r" : {
+              "lit" : "/api/v1/contactservice/contacts",
+              "type" : "string"
+            }
+          }, {
+            "field" : "PUT",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 79,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyContact(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)@79:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 81,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 316,
+      "end" : 327,
+      "params" : [ {
+        "name" : "pi",
+        "type" : "PriceInfo"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 318,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@318:36",
+          "args" : [ {
+            "name" : "pi",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 319,
+        "target" : {
+          "name" : "price_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@319:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-price-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 320,
+        "target" : {
+          "name" : "prices",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "price_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/priceservice/prices",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 321,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@321:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "prices",
+            "ref" : "local"
+          }, {
+            "field" : "PUT",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 326,
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)@326:19",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 146,
+      "end" : 161,
+      "params" : [ {
+        "name" : "s",
+        "type" : "Station"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 148,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 149,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@149:36",
+          "args" : [ {
+            "name" : "s",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 150,
+        "target" : {
+          "name" : "station_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@150:38",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-station-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 151,
+        "target" : {
+          "name" : "stations",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "station_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/stationservice/stations",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 152,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@152:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "stations",
+            "ref" : "local"
+          }, {
+            "field" : "PUT",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 157,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)@157:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 159,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    },
+    "method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)" : {
+      "file" : "ts-admin-basic-info-service/src/main/java/adminbasic/service/AdminBasicInfoServiceImpl.java",
+      "line" : 208,
+      "end" : 221,
+      "params" : [ {
+        "name" : "t",
+        "type" : "TrainType"
+      }, {
+        "name" : "headers",
+        "type" : "HttpHeaders"
+      } ],
+      "body" : [ {
+        "op" : "assign",
+        "line" : 210,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "decl" : "Response",
+        "operator" : "="
+      }, {
+        "op" : "assign",
+        "line" : 211,
+        "target" : {
+          "name" : "requestEntity",
+          "ref" : "local"
+        },
+        "decl" : "HttpEntity",
+        "operator" : "=",
+        "expr" : {
+          "new" : "HttpEntity",
+          "fqn" : "org.springframework.http.HttpEntity",
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@211:36",
+          "args" : [ {
+            "name" : "t",
+            "ref" : "param"
+          }, {
+            "name" : "headers",
+            "ref" : "param"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 212,
+        "target" : {
+          "name" : "train_service_url",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@212:36",
+          "callee" : "getServiceUrl",
+          "recv" : null,
+          "args" : [ {
+            "lit" : "ts-train-service",
+            "type" : "string"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 213,
+        "target" : {
+          "name" : "trains",
+          "ref" : "local"
+        },
+        "decl" : "String",
+        "operator" : "=",
+        "expr" : {
+          "bin" : "+",
+          "l" : {
+            "name" : "train_service_url",
+            "ref" : "local"
+          },
+          "r" : {
+            "lit" : "/api/v1/trainservice/trains",
+            "type" : "string"
+          }
+        }
+      }, {
+        "op" : "assign",
+        "line" : 214,
+        "target" : {
+          "name" : "re",
+          "ref" : "local"
+        },
+        "decl" : "ResponseEntity<Response>",
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@214:52",
+          "callee" : "exchange",
+          "recv" : {
+            "name" : "restTemplate",
+            "ref" : "field"
+          },
+          "args" : [ {
+            "name" : "trains",
+            "ref" : "local"
+          }, {
+            "field" : "PUT",
+            "of" : {
+              "name" : "HttpMethod",
+              "ref" : "type"
+            }
+          }, {
+            "name" : "requestEntity",
+            "ref" : "local"
+          }, {
+            "class" : "Response"
+          } ]
+        }
+      }, {
+        "op" : "assign",
+        "line" : 219,
+        "target" : {
+          "name" : "result",
+          "ref" : "local"
+        },
+        "operator" : "=",
+        "expr" : {
+          "call" : "call:method:ts-admin-basic-info-service:adminbasic.service.AdminBasicInfoServiceImpl#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)@219:21",
+          "callee" : "getBody",
+          "recv" : {
+            "name" : "re",
+            "ref" : "local"
+          },
+          "args" : [ ]
+        }
+      }, {
+        "op" : "return",
+        "line" : 220,
+        "expr" : {
+          "name" : "result",
+          "ref" : "local"
+        }
+      } ]
+    }
+  }
+}
