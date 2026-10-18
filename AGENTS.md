@@ -26,6 +26,7 @@
 - [open-questions.md](./docs/open-questions.md) — открытые вопросы
 - [team_roles.md](./docs/team_roles.md) — роли в команде
 - [environment_guide.md](./docs/environment_guide.md) — окружение (Windows/Python UTF-8/Gradle), частые ошибки и запуск
+- [agent_lessons.md](./docs/agent_lessons.md) — что уже известно о балле, что подтверждено, методика проверки гипотез; читать перед новой гипотезой
 - `hackaton/tt-challenge/` — пакет организаторов (README, REFERENCE, скелет, сценарии, эталон S0, бейзлайны)
 
 /docs/rfc рассматривай НЕ КАК ПРИНЯТЫЕ РЕШЕНИЯ, а как **ПОТЕНЦИАЛЬНЫЕ РЕШЕНИЯ**. Ты не в праве разрабатывать опираясь на RFC, если на то нет явно прописанного пользовательского требования.
