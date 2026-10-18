@@ -334,6 +334,12 @@ class RuntimeRules:
     # included — абляция (включать route_distances при поиске маршрута).
     ROUTE_DISTANCES_COLLECTION_MODES = ("pruned", "included")
 
+    # Мертвый код формирования уведомлений в Preserve (Гипотеза 2.5):
+    # on (по умолчанию) — вызывать getAccount и SeatClass#getNameByCode перед закомментированным sendEmail;
+    # other_only — абляция только для PreserveOtherServiceImpl (S2);
+    # off — абляция для всех Preserve-сервисов (PreserveServiceImpl и PreserveOtherServiceImpl).
+    PRESERVE_NOTIFICATION_LOOKUP_MODES = ("on", "off", "other_only")
+
     # Исполнитель M4 (engine/executor), гипотезы под флагами:
     # unresolved_receiver_calls: метод проекта на получателе известного типа, у вызова которого в скелете нет
     #   ребра (TripId#toString в BasicServiceImpl): mute (по умолчанию) — только значение, без рёбер; emit — рёбра.
@@ -354,6 +360,7 @@ class RuntimeRules:
         enum_member_calls: str = "on",
         trip_food_query: str = "cascade",
         route_distances_collection: str = "pruned",
+        preserve_notification_lookup: str = "on",
         unresolved_receiver_calls: str = "mute",
         m4_success_retry: str = "on",
     ) -> None:
@@ -384,6 +391,10 @@ class RuntimeRules:
             raise ValueError(
                 f"route_distances_collection: {route_distances_collection!r}, ожидается одно из {self.ROUTE_DISTANCES_COLLECTION_MODES}"
             )
+        if preserve_notification_lookup not in self.PRESERVE_NOTIFICATION_LOOKUP_MODES:
+            raise ValueError(
+                f"preserve_notification_lookup: {preserve_notification_lookup!r}, ожидается одно из {self.PRESERVE_NOTIFICATION_LOOKUP_MODES}"
+            )
         self.collection_tables_on_read = collection_tables_on_read
         self.element_callbacks = element_callbacks
         self.rabbitmq_delivery = rabbitmq_delivery
@@ -392,6 +403,7 @@ class RuntimeRules:
         self.enum_member_calls = enum_member_calls
         self.trip_food_query = trip_food_query
         self.route_distances_collection = route_distances_collection
+        self.preserve_notification_lookup = preserve_notification_lookup
         if unresolved_receiver_calls not in self.UNRESOLVED_RECEIVER_MODES:
             raise ValueError(f"unresolved_receiver_calls: {unresolved_receiver_calls!r}, "
                              f"ожидается одно из {self.UNRESOLVED_RECEIVER_MODES}")
@@ -493,6 +505,14 @@ class RuntimeRules:
             # 4. Сервисы питания и вызовы в preserve
             if not profile.has_food:
                 if "food" in svc or "createFoodOrder" in method_id or "FoodOrder#<init>" in method_id:
+                    return True
+
+            # 4.1. Уведомления при покупке билета (Гипотеза 2.5)
+            pnl = getattr(self, "preserve_notification_lookup", "on")
+            if pnl != "on":
+                if pnl in ("other_only", "off") and "PreserveOtherServiceImpl#getAccount" in method_id:
+                    return True
+                if pnl == "off" and "PreserveServiceImpl#getAccount" in method_id:
                     return True
 
             # 5. Скоростные против медленных поездов
@@ -617,6 +637,16 @@ class RuntimeRules:
             if profile.train_mode == "regular_only":
                 if "CancelServiceImpl" in source and any(b in target for b in ("NotifyInfo#<init>", "SeatClass#getNameByCode")):
                     return True
+
+            # Уведомления при покупке билета (Гипотеза 2.5):
+            # getAccount и SeatClass#getNameByCode перед закомментированным sendEmail
+            pnl = getattr(self, "preserve_notification_lookup", "on")
+            if pnl != "on":
+                is_other = "PreserveOtherServiceImpl" in source
+                is_main = "PreserveServiceImpl" in source
+                if (pnl == "other_only" and is_other) or (pnl == "off" and (is_other or is_main)):
+                    if any(b in target for b in ("getAccount", "SeatClass#getNameByCode")):
+                        return True
 
             # R17: Если у пользователя нет существующих заказов (новый пользователь / пустая БД),
             # цикл по коллекции заказов в проверках безопасности содержит 0 итераций
