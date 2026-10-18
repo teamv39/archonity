@@ -275,6 +275,16 @@ class StepExecutor:
             user = None
             if params.get("userName") is None and "userName" in names:
                 defaults["userName"] = self.registered_username = "m4-new-user"
+        is_contact_dto = _kind_rank(ftype, "contact") >= 2 and "documentNumber" in names
+        if is_contact_dto and getattr(self, "_verb", None) == "POST":
+            # Добавление контакта: синтетический номер документа исключает коллизию с существующими контактами
+            # аккаунта при проверке дубликатов в ContactsServiceImpl#create.
+            if "documentNumber" not in params:
+                defaults["documentNumber"] = "m4-new-contact-doc"
+            if "name" not in params:
+                defaults["name"] = "m4-new-companion"
+            if "phoneNumber" not in params:
+                defaults["phoneNumber"] = "13800000000"
         if {"password", "verificationCode"} <= names:
             # Логин: контекст скелета (context.account) — пассажир сценария (или зарегистрированный в сценарии),
             # кода подтверждения нет
