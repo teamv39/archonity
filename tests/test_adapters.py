@@ -150,3 +150,42 @@ class TestSubmissionAdapter:
         ev_path = tmp_path / "evidence.json"
         adapter.save_evidence_log(ev_path)
         assert ev_path.is_file()
+
+
+class TestContextAndDbState:
+    """Тестирование динамической загрузки контекста и состояния БД."""
+
+    def test_parse_context_readme(self) -> None:
+        from engine.adapters.db import parse_context_readme
+
+        context_readme = ROOT / "hackaton" / "tt-challenge" / "context" / "README.md"
+        assert context_readme.is_file()
+
+        info = parse_context_readme(context_readme)
+        assert info.get("travel_date") == "2026-10-01"
+        assert info.get("system_date") == "2026-09-15"
+        assert info.get("user_name") == "fdse_microservice"
+        assert info.get("balance") == 10000.0
+
+    def test_database_state_user_and_balance(self) -> None:
+        from engine.adapters.db import load_db_dump
+
+        dump_path = ROOT / "hackaton" / "tt-challenge" / "context" / "db-after-warmup.sql.gz"
+        assert dump_path.is_file()
+
+        db = load_db_dump(dump_path)
+        user = db.get_user_by_name("fdse_microservice")
+        assert user is not None
+        assert user["user_id"] == "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f"
+
+        # Проверка динамического расчета баланса
+        balance = db.get_user_balance(user["user_id"])
+        assert balance is not None
+        assert balance > 8000.0  # 10361.0 - 1670.0 = 8691.0
+
+    def test_skeleton_index_context(self, skeleton_index: SkeletonIndex) -> None:
+        assert hasattr(skeleton_index, "context")
+        assert skeleton_index.context.get("travel_date") == "2026-10-01"
+        assert skeleton_index.context.get("system_date") == "2026-09-15"
+        assert skeleton_index.context.get("user_name") == "fdse_microservice"
+

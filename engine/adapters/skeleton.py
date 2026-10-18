@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from engine.adapters.db import DatabaseState, TableNodeResolution, load_db_dump
+from engine.adapters.db import DatabaseState, TableNodeResolution, load_db_dump, parse_context_readme
 from engine.entities import EntityFacts
 from engine.ir import MethodPoolIR
 
@@ -107,6 +107,14 @@ class SkeletonIndex:
                     self.db_state = DatabaseState()
             else:
                 self.db_state = DatabaseState()
+
+        # Контекст сценариев бенчмарка (context/README.md)
+        actual_dump_file = resolved_db_path if (resolved_db_path and Path(resolved_db_path).is_file()) else self._find_default_db_dump()
+        self.context: dict[str, Any] = {}
+        if actual_dump_file is not None:
+            readme_candidate = Path(actual_dump_file).parent / "README.md"
+            if readme_candidate.is_file():
+                self.context = parse_context_readme(readme_candidate)
 
         self.handlers: list[tuple[str, str | None, list[str]]] = []
         for nid, n in self.N.items():
