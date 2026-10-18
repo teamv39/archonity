@@ -221,6 +221,8 @@
 
 #### Гипотеза 4.1 (P0): Ложные вызовы к `ts-order-other-service` при проверке безопасности в S4
 
+**Статус: Категорически опровергнута платформой.** Отсечение `ts-order-other-service` при `checkSecurity` (посылка Зонд 1, флаг `--security-check-scope target_train_only`) обрушило скор с 0.936250 до **0.910000** (падение на **-0.026**). Все 73 отсечённых ребра являются 100% True Positives. Организаторы ожидают реальные вызовы Spring Boot RestTemplate в рантайме. Дефолт строго `--security-check-scope all`. [Аудит зонда](security_check_scope_probe_audit.md).
+
 * **Построчный анализ Train Ticket:**
   * На шаге 7 `PreserveServiceImpl#preserve` вызывает `checkSecurity(accountId)`.
   * `SecurityServiceImpl#check` выполняет два безусловных удаленных вызова:
