@@ -231,8 +231,8 @@ class GraphBuilder:
                     self._prune_by_rule(self.rules.is_dead_code_edge, "remote", m, t, profile, is_admin_scenario)
                     continue
 
-                # Каскадный запрос станционной еды из getAllFood (Гипотеза 1.1 / 4.1):
-                # direct_train_food — пассажир запрашивает только поездное меню в S1/S4
+                # Каскадный запрос станционной еды из getAllFood:
+                # direct_train_food — запрос только поездного меню без станционных магазинов
                 if (
                     getattr(self.rules, "trip_food_query", "cascade") == "direct_train_food"
                     and "FoodServiceImpl#getAllFood" in m
