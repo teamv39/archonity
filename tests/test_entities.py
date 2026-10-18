@@ -240,3 +240,16 @@ class TestElementCallbacks:
     def test_unknown_mode_rejected(self) -> None:
         with pytest.raises(ValueError):
             RuntimeRules(element_callbacks="maybe")
+
+    def test_owner_columns_and_state_rows_generality(self) -> None:
+        from engine.entities import OWNER_COLUMNS, _state_rows
+        assert "account_id" in OWNER_COLUMNS
+        assert "user_id" in OWNER_COLUMNS
+        assert "owner_id" in OWNER_COLUMNS
+        assert "customer_id" in OWNER_COLUMNS
+
+        class DummyState:
+            pass
+
+        assert _state_rows("orders", DummyState(), account=None) == []
+        assert _state_rows("other_table", DummyState(), account=None) == []

@@ -731,7 +731,17 @@ class ScenarioState:
             trip_id = p.get("tripId") or p.get("trip_id") or (m_trip.group(1) if m_trip else None)
             if not trip_id:
                 is_regular = ("regular" in t or "other" in t) and "high-speed" not in t
-                trip_id = "K1235" if is_regular else "G1234"
+                if self.db_state is not None and hasattr(self.db_state, "get_table"):
+                    tbl = "trip2" if is_regular else "trip"
+                    rows = self.db_state.get_table(tbl)
+                    if rows:
+                        num = rows[0].get("number")
+                        if num:
+                            trip_id = f"K{num}" if is_regular else f"G{num}"
+                        else:
+                            trip_id = str(rows[0].get("id", ""))
+                if not trip_id:
+                    trip_id = "K1235" if is_regular else "G1234"
             trip_data = {
                 "id": trip_id,
                 "trip_id": trip_id,
@@ -745,7 +755,13 @@ class ScenarioState:
         # 15. Store / Food Query
         if re.search(r"\b(?:food\s+store|store\s+in|food\s+menu)\b", t):
             m_station = re.search(r"\b(?:in|at)\s+([A-Za-z\s]+)", action_name)
-            st_name = m_station.group(1).strip() if m_station else "Shanghai"
+            st_name = m_station.group(1).strip() if m_station else None
+            if not st_name and self.db_state is not None and hasattr(self.db_state, "get_table"):
+                st_rows = self.db_state.get_table("station")
+                if st_rows:
+                    st_name = st_rows[0].get("name")
+            if not st_name:
+                st_name = "Shanghai"
             store_data = {"id": f"store-{st_name.lower().replace(' ', '')}", "station_name": st_name, "created_at_step": step_index}
             self.record_step_entity(step_index, "store", store_data)
             self.record_step_entity(step_index, "food", {"id": f"food-{st_name.lower().replace(' ', '')}", "created_at_step": step_index})
