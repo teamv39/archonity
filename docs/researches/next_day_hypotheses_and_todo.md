@@ -95,6 +95,7 @@
 #### Гипотеза 2.1 (P0): Ошибка заземления M1 на шаге 14 (`payDifference` $\rightarrow$ `rebook`)
 
 **Статус: Подтверждена платформой.** Заземление шага 14 исправлено на `RebookController#rebook` (PR #50): 0.920060 → 0.924310. Обобщения PR #53–57 выдачу не меняют (сверено ребро в ребро), прирост 0.924310 даёт именно эта правка. [Отчёт](m1_s2_step14_rebook_and_hypotheses_audit.md).
+
 * **Построчный анализ Train Ticket:**
   * Шаг 14: *«Rebook the paid ticket to a second-class seat on the same regular train (the cheaper ticket: the difference is refunded to the internal balance)»*.
   * В текущем прогоне M1 связывает шаг с `RebookController#payDifference`, ориентируясь на слово «difference».
@@ -116,6 +117,7 @@
 #### Гипотеза 2.2 (P1): Селекция сервиса распределения мест при перебронировании
 
 **Статус: Проверена по коду и выдаче.** `distributeSeat` для Z1234 идёт только в `ts-order-other-service`; legacy и M4 дают одно и то же. Отдельной посылки не было. [Отчёт](m1_s2_step14_rebook_and_hypotheses_audit.md), раздел 3.1.
+
 * **Построчный анализ Train Ticket:**
   * Внутри `RebookServiceImpl#updateOrder` (строка 251) вызывается `ts-seat-service:SeatController#create`.
   * В `SeatServiceImpl#distributeSeat`:
@@ -127,6 +129,7 @@
 #### Гипотеза 2.3 (P1): Таблица коллекции блюд `station_food_list` на шагах 6 и 11
 
 **Статус: Проверена по коду и выдаче.** `createFoodOrder` пишет только `food_order`, обращений к `station_food_list` на шагах 6 и 11 нет. Сам отсев `station_food_list` на шаге 4 подтверждён платформой отдельно (0.918270 → 0.920060, [аудит](station_food_list_step4_audit.md)).
+
 * **Построчный анализ Train Ticket:**
   * На шаге 4 мы исключили `station_food_list` для `listFoodStoresByStationName` и получили +0.006349.
   * На шагах 6 и 11 оформляется заказ: вызывается `FoodServiceImpl#createFoodOrder`. Метод сохраняет `FoodOrder` в таблицу `ts-food-service.food_order` и отправляет сообщение в очередь RabbitMQ.
@@ -137,6 +140,7 @@
 #### Гипотеза 2.4 (P2): Изоляция зондирующего расчета на шаге 9 (`calculateRefund`)
 
 **Статус: Проверена по коду и выдаче.** Шаг 9 не трогает `ts-inside-payment-service`; M4 считает тот же путь по значениям. [Отчёт](m1_s2_step14_rebook_and_hypotheses_audit.md), раздел 3.5.
+
 * **Построчный анализ Train Ticket:**
   * Шаг 9: *«Ask how much would be refunded if the order were cancelled»*.
   * Метод `CancelController#calculate` делает чтение заказа и вычисляет `0.8 * price`. Метод `drawBackMoney` и обращение к платежному сервису не вызываются.
@@ -152,6 +156,7 @@
 #### Гипотеза 3.1 (P0): Вызовы методов перечисления на шаге 15 (`AssuranceType`)
 
 **Статус: Опровергнута платформой.** Отсечение геттеров `AssuranceType` (посылка 1664973) снизило S3 0.905 → 0.898, итог 0.920060 → 0.919090. Вызовы enum в эталоне есть, дефолт `--enum-member-calls on`. [Аудит](assurance_enum_calls_audit.md).
+
 * **Построчный анализ Train Ticket:**
   * Шаг 15: *«Look at the list of assurance types»* $\rightarrow$ `AssuranceController#getAllAssuranceType`.
   * `AssuranceServiceImpl#getAllAssuranceTypes` итерируется по значениям enum:
@@ -164,6 +169,7 @@
 #### Гипотеза 3.2 (P1): Запрос багажного тарифа на шаге 14 (`ts-consign-price-service`)
 
 **Статус: Проверена по коду и выдаче.** Шаг 14 читает только `consign_price`, обращений к `ts-price-service` нет. [Отчёт](m1_s2_step14_rebook_and_hypotheses_audit.md), раздел 3.7.
+
 * **Построчный анализ Train Ticket:**
   * Шаг 14: *«Check what a 0.5 kg consignment within the region costs»* $\rightarrow$ `ConsignPriceController#getPriceByWeightAndRegion`.
   * Метод обращается к `ts-consign-price-service.consign_price`. Проверить, не порождает ли вызов лишних обращений к справочникам цен поездов (`ts-price-service`).
@@ -172,6 +178,7 @@
 #### Гипотеза 3.3 (P2): Добавление нового контакта на шаге 6 (`createNewContacts`)
 
 **Статус: Проверена по коду и выдаче, опровергнута.** `Contacts` приходит через `@RequestBody` (Jackson), `new Contacts()` в `ContactsServiceImpl` нет; конструкторы без проектного `new` платформа уже опровергла (0.8927 → 0.8842, [r7_score_drop.md](r7_score_drop.md)).
+
 * **Построчный анализ Train Ticket:**
   * Шаг 6 добавляет нового пассажира: `ContactsController#createNewContacts`.
   * Проверить выполнение конструктора `Contacts#<init>()` при создании сущности через `new` (не Hibernate). Согласно правилу R7 такие конструкторы должны учитываться.
@@ -186,6 +193,7 @@
 #### Гипотеза 1.1 (P1): Отсечение станционной еды из каскада `getAllFood` на шаге 4
 
 **Статус: Опровергнута платформой.** Отсечение каскада `ts-station-food-service` из `getAllFood` (посылка 1664975, вместе с 4.1): 0.920060 → 0.913470. Каскад в эталоне есть, дефолт `--trip-food-query cascade`. [Аудит](trip_food_query_audit.md).
+
 * **Построчный анализ Train Ticket:**
   * Шаг 4: *«View the food menu offered on this trip»*. Пассажир интересуется только питанием на борту поезда.
   * Фронтенд шлет `/api/v1/foodservice/foods/...` в `FoodController#getAllFood`.
@@ -197,6 +205,7 @@
 #### Гипотеза 1.2 (P2): Точечные чтения багажа и страховки (шаги 13 и 14)
 
 **Статус: Проверена по коду и выдаче.** Шаги 13 и 14 — по 4 ребра, каскада к заказам нет. [Отчёт](m1_s2_step14_rebook_and_hypotheses_audit.md), раздел 3.8.
+
 * **Построчный анализ Train Ticket:**
   * Шаг 13: `ConsignController#findByOrderId` $\rightarrow$ `consign_record`.
   * Шаг 14: `AssuranceController#findAssuranceByOrderId` $\rightarrow$ `assurance`.
@@ -212,6 +221,7 @@
 #### Гипотеза 4.1 (P1): Отсечение станционной еды на шаге 6 (аналогично $S_1$)
 
 **Статус: Опровергнута платформой** вместе с 1.1 (та же посылка 1664975). [Аудит](trip_food_query_audit.md).
+
 * **Построчный анализ Train Ticket:**
   * На шаге 6 пассажир запрашивает меню поезда, на шаге 7 заказывает питание в поезде (`foodType = 1`).
   * Каскадный вызов `ts-station-food-service` аналогично формирует потенциальные FP.
@@ -220,6 +230,7 @@
 #### Гипотеза 4.2 (P1): Внешняя оплата на шаге 11 (`ts-payment-service`)
 
 **Статус: Проверена по коду и выдаче.** Нулевой баланс: внешний `PaymentController#pay`, запись в `payment`, чтение `inside_money`. M4 приходит к той же ветке по суммам из БД. [Отчёт](m1_s2_step14_rebook_and_hypotheses_audit.md), раздел 3.3.
+
 * **Построчный анализ Train Ticket:**
   * Баланс нового пользователя равен 0 RMB. Метод `InsidePaymentServiceImpl#pay` переходит в ветку `totalExpand.compareTo(money) > 0` и вызывает `ts-payment-service:PaymentController#pay`.
   * В `PaymentServiceImpl#pay`: создается запись в таблице `ts-payment-service.payment`.
@@ -230,6 +241,7 @@
 #### Гипотеза 4.3 (P2): Пустые коллекции нового пользователя (Правило R17)
 
 **Статус: Проверена по коду и выдаче, на балл не влияет.** Множество `executes` S4 у M4 и legacy одинаково: `Order#<init>` входит в ответ по поздним шагам, ребро считается на сценарий, а не на шаг. [m4_executor.md](m4_executor.md), раздел 5.
+
 * **Построчный анализ Train Ticket:**
   * У нового пользователя на шаге 3 список контактов пуст, до шага 7 список заказов пуст.
   * Проверить, что циклы по выборкам заказов не порождают фантомных вызовов гидрации `Order#<init>()` на шагах 1–6.
@@ -244,6 +256,7 @@
 #### Гипотеза 5.1 (P1): Таблицы ленивых коллекций `Route` при расширенном поиске
 
 **Статус: Подтверждена платформой.** Возврат `route_distances` при поиске (абляция `included`, посылка 1664977) снизил балл 0.920060 → 0.919120; исключение по R10 остаётся (`--route-distances-collection pruned`). [Аудит](route_distances_s5_audit.md): там «опровергнута» относится к абляции.
+
 * **Построчный анализ Train Ticket:**
   * Шаги 2–5 генерируют рекордные 593 ребра за счет многократного опроса `ts-travel-plan-service`, который вызывает `travel-service` и `travel2-service`.
   * В `ts-route-service` сущность `Route` содержит `@ElementCollection` `route_stations` и `route_distances`.
@@ -253,6 +266,7 @@
 #### Гипотеза 5.2 (P2): Исключение недостижимых вспомогательных сервисов в `travelplan`
 
 **Статус: Проверена по коду и выдаче, опровергнута.** `getCheapest`/`getQuickest`/`getMinStation` для каждого варианта зовут `ts-seat-service` (`getRestTicketNumber`); M4 исполняет эти вызовы по значениям. [Отчёт](m1_s2_step14_rebook_and_hypotheses_audit.md), раздел 4.1.
+
 * **Построчный анализ Train Ticket:**
   * `TravelPlanServiceImpl` собирает варианты поездов. Проверить, не уходят ли лишние вызовы к `ts-seat-service` на этапе предварительного поиска маршрутов.
 * **Потенциальный прирост:** **+0.005 ... +0.008 к $S_5$**.
@@ -266,6 +280,7 @@
 #### Гипотеза 6.1 (P1): Точная запись коллекций маршрута в `AdminRouteController#addRoute`
 
 **Статус: Проверена по коду и выдаче, подтверждена.** `RouteServiceImpl#createAndModify` → `route`, `route_stations`, `route_distances`: legacy и M4 независимо. [m4_executor.md](m4_executor.md), раздел 5.
+
 * **Построчный анализ Train Ticket:**
   * Шаг 4: администратор создает маршрут с дистанциями `0, 100, 250`.
   * При создании новой записи `Route` сохраняются обе таблицы коллекций: `route_stations` и `route_distances`.
@@ -275,6 +290,7 @@
 #### Гипотеза 6.2 (P2): Административный запрос всех заказов на шаге 14
 
 **Статус: Проверена по коду и выдаче, подтверждена.** `getAllOrders` опрашивает оба сервиса заказов, гидрация `Order#<init>` обоих типов: legacy и M4 независимо. [m4_executor.md](m4_executor.md), раздел 5.
+
 * **Построчный анализ Train Ticket:**
   * Шаг 14: `AdminOrderController#getAllOrders` опрашивает оба сервиса (`order` и `orderOther`).
   * Проверить корректность вызовов конструкторов `Order#<init>()` при чтении полных списков.
@@ -289,6 +305,7 @@
 #### Гипотеза 7.1 (P0): Построчная логика отказа в `calculateRefund` на шаге 8
 
 **Статус: Проверена по коду и выдаче.** При `COLLECTED` `calculateRefund(Order)` и `drawBackMoney` не вызываются ни в legacy, ни в M4. [Отчёт](m1_s2_step14_rebook_and_hypotheses_audit.md), раздел 3.2.
+
 * **Построчный анализ Train Ticket:**
   * Шаг 7 переводит билет в статус `COLLECTED` (код 2).
   * Шаг 8: *«Ask how much would be refunded for the collected order»* $\rightarrow$ `CancelController#calculate`.
@@ -309,6 +326,7 @@
 #### Гипотеза 7.2 (P1): Полный обрыв перебронирования на шаге 10 (`rebook` при `COLLECTED`)
 
 **Статус: Подтверждена платформой в составе посылки M4 `01-m4-executor`** (0.924310 → 0.92894). M4 нашёл, что `rebook` отказывает ещё раньше — на `getData().getStatus() != 1`, до `OrderStatus.*.getCode()` (−1 ребро в S7), а legacy по флагу отказа гасил `SeatController#create` во всём S7, включая успешную покупку (+10 рёбер). Посылка меняла и S6 (−8), поэтому вклад S7 отдельно не измерен. [m4_executor.md](m4_executor.md), раздел 3.
+
 * **Построчный анализ Train Ticket:**
   * Шаг 10: *«Try to rebook the collected order onto the second high-speed trip found (the system refuses)»*.
   * В `RebookServiceImpl.java` (строки 72–74):
@@ -323,6 +341,7 @@
 #### Гипотеза 7.3 (P2): Фильтры дат на шагах 13 и 14 (`travelDate` и `boughtDate`)
 
 **Статус: Проверена по коду и выдаче.** Флаги фильтра дат от M1 дают `String2Date` в `queryOrders` на шагах 13 и 14; M4 решает ту же ветку по значениям флагов. [Отчёт](m1_s2_step14_rebook_and_hypotheses_audit.md), раздел 3.6.
+
 * **Построчный анализ Train Ticket:**
   * Шаг 13 активирует `enableTravelDateQuery`, шаг 14 — `enableBoughtDateQuery`.
   * Проверить соответствие параметров и точных вызовов парсинга дат `StringUtils.String2Date` в `OrderServiceImpl#queryOrders`.
