@@ -312,6 +312,9 @@ class StepExecutor:
         self._scenario = scenario or {}
         self._step_req = step_req
         handler = step_req.handler
+        from engine.rules import ScenarioProfile
+        prof = ScenarioProfile.from_scenario(self._scenario) if self._scenario else None
+        self.it.train_mode = prof.train_mode if prof else "both"
         params = {k: v for k, v in (getattr(step_req, "params", None) or {}).items() if v is not None}
         self._user_name = getattr(state, "user_name", None)
         self._verb = (getattr(step_req, "http", None) or {}).get("method")

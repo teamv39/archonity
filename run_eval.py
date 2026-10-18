@@ -127,6 +127,20 @@ def parse_args() -> argparse.Namespace:
         help="Мертвый код формирования уведомлений в Preserve (Гипотеза 2.5): on — вызывать getAccount и SeatClass#getNameByCode перед закомментированным sendEmail (по умолчанию), other_only — отсекать в PreserveOtherServiceImpl (S2), off — отсекать во всех Preserve",
     )
     parser.add_argument(
+        "--security-check-scope",
+        choices=("all", "target_train_only"),
+        default="all",
+        help="Изоляция проверки безопасности (Гипотеза 3.4): all — опрашивать оба сервиса заказов (по умолчанию), "
+             "target_train_only — опрашивать только сервис заказов целевого типа поезда (абляция)",
+    )
+    parser.add_argument(
+        "--route-stations-usage",
+        choices=("pruned", "preserve", "all"),
+        default="pruned",
+        help="Использование таблицы коллекции route_stations (Гипотеза 3.13): pruned — отсекать в getRouteById (по умолчанию), "
+             "preserve — включать при бронировании билетов (явный вызов route.getStations()), all — включать везде",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -302,7 +316,9 @@ def main() -> None:
         enum_member_calls=args.enum_member_calls,
         trip_food_query=args.trip_food_query,
         route_distances_collection=args.route_distances_collection,
+        route_stations_usage=args.route_stations_usage,
         preserve_notification_lookup=args.preserve_notification_lookup,
+        security_check_scope=args.security_check_scope,
         grounder=args.grounder,
         m1_options=m1_options,
         executor=args.executor,

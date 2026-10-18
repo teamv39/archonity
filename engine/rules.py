@@ -334,6 +334,12 @@ class RuntimeRules:
     # included — абляция (включать route_distances при поиске маршрута).
     ROUTE_DISTANCES_COLLECTION_MODES = ("pruned", "included")
 
+    # Использование таблицы коллекции route_stations (Гипотеза 3.13):
+    # pruned (по умолчанию) — только методы, явно обходящие станции в сервисе маршрутов (R10);
+    # preserve — включать также при бронировании (preserve), где stationList извлекается через route.getStations();
+    # all — включать при любом вызове getRouteById.
+    ROUTE_STATIONS_USAGE_MODES = ("pruned", "preserve", "all")
+
     # Мертвый код формирования уведомлений в Preserve (Гипотеза 2.5):
     # on (по умолчанию) — вызывать getAccount и SeatClass#getNameByCode перед закомментированным sendEmail;
     # other_only — абляция только для PreserveOtherServiceImpl (S2);
@@ -348,6 +354,11 @@ class RuntimeRules:
     UNRESOLVED_RECEIVER_MODES = ("mute", "emit")
     M4_SUCCESS_RETRY_MODES = ("on", "off")
 
+    # Изоляция проверки безопасности (Гипотеза 3.4): all (по умолчанию) — опрашивать оба сервиса заказов,
+    # target_train_only — опрашивать только сервис заказов целевого типа поезда (ts-order-service для скоростных,
+    # ts-order-other-service для обычных)
+    SECURITY_CHECK_SCOPE_MODES = ("all", "target_train_only")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -360,9 +371,11 @@ class RuntimeRules:
         enum_member_calls: str = "on",
         trip_food_query: str = "cascade",
         route_distances_collection: str = "pruned",
+        route_stations_usage: str = "pruned",
         preserve_notification_lookup: str = "on",
         unresolved_receiver_calls: str = "mute",
         m4_success_retry: str = "on",
+        security_check_scope: str = "all",
     ) -> None:
         if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
             raise ValueError(
@@ -395,6 +408,10 @@ class RuntimeRules:
             raise ValueError(
                 f"preserve_notification_lookup: {preserve_notification_lookup!r}, ожидается одно из {self.PRESERVE_NOTIFICATION_LOOKUP_MODES}"
             )
+        if route_stations_usage not in self.ROUTE_STATIONS_USAGE_MODES:
+            raise ValueError(
+                f"route_stations_usage: {route_stations_usage!r}, ожидается одно из {self.ROUTE_STATIONS_USAGE_MODES}"
+            )
         self.collection_tables_on_read = collection_tables_on_read
         self.element_callbacks = element_callbacks
         self.rabbitmq_delivery = rabbitmq_delivery
@@ -403,14 +420,18 @@ class RuntimeRules:
         self.enum_member_calls = enum_member_calls
         self.trip_food_query = trip_food_query
         self.route_distances_collection = route_distances_collection
+        self.route_stations_usage = route_stations_usage
         self.preserve_notification_lookup = preserve_notification_lookup
         if unresolved_receiver_calls not in self.UNRESOLVED_RECEIVER_MODES:
             raise ValueError(f"unresolved_receiver_calls: {unresolved_receiver_calls!r}, "
                              f"ожидается одно из {self.UNRESOLVED_RECEIVER_MODES}")
         if m4_success_retry not in self.M4_SUCCESS_RETRY_MODES:
             raise ValueError(f"m4_success_retry: {m4_success_retry!r}, ожидается одно из {self.M4_SUCCESS_RETRY_MODES}")
+        if security_check_scope not in self.SECURITY_CHECK_SCOPE_MODES:
+            raise ValueError(f"security_check_scope: {security_check_scope!r}, ожидается одно из {self.SECURITY_CHECK_SCOPE_MODES}")
         self.unresolved_receiver_calls = unresolved_receiver_calls
         self.m4_success_retry = m4_success_retry
+        self.security_check_scope = security_check_scope
         self.rules_path = Path(rules_path) if rules_path else self.DEFAULT_RULES_PATH
         self.data: dict[str, Any] = {}
         self.admin_services: set[str] = set()
@@ -528,7 +549,13 @@ class RuntimeRules:
                     "executeOrderOther" in method_id or "getOrderByIdFromOrderOther" in method_id
                 ):
                     return True
+                if getattr(self, "security_check_scope", "all") == "target_train_only":
+                    if "getSecurityOrderOtherInfoFromOrder" in method_id:
+                        return True
             elif profile.train_mode == "regular_only":
+                if getattr(self, "security_check_scope", "all") == "target_train_only":
+                    if "getSecurityOrderInfoFromOrder" in method_id:
+                        return True
                 if svc == "ts-preserve-service":
                     return True
                 if svc == "ts-travel-service" and not getattr(profile, "has_advanced_search", False):
@@ -745,6 +772,8 @@ class RuntimeRules:
                     if target_svc in ("ts-preserve-other-service", "ts-travel2-service"):
                         return True
                     if target_svc == "ts-order-other-service":
+                        if getattr(self, "security_check_scope", "all") == "target_train_only" and ("security" in source or "Security" in source):
+                            return True
                         if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source or "getAllOrders" in source):
                             return True
                 elif profile.train_mode == "regular_only":
@@ -753,6 +782,8 @@ class RuntimeRules:
                     if target_svc == "ts-travel-service" and not getattr(profile, "has_advanced_search", False):
                         return True
                     if target_svc == "ts-order-service":
+                        if getattr(self, "security_check_scope", "all") == "target_train_only" and ("security" in source or "Security" in source):
+                            return True
                         if not ("queryOrders" in source or "securityInfoCheck" in source or "checkSecurity" in source or "getOrderById" in source):
                             return True
 

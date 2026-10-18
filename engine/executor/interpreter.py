@@ -821,6 +821,19 @@ class Interpreter:
                         for t in sorted(self.cs_calls.get(cs, ())):
                             self.sink.prune("calls", fr.method, t, "FRAMEWORK_RULE", "dead_code_notification_dto")
                     return UNKNOWN
+        scope = getattr(self.rules, "security_check_scope", "all")
+        if scope == "target_train_only":
+            train_mode = getattr(self, "train_mode", "both")
+            if callee == "getSecurityOrderOtherInfoFromOrder" and train_mode == "high_speed_only":
+                if cs:
+                    for t in sorted(self.cs_calls.get(cs, ())):
+                        self.sink.prune("calls", fr.method, t, "DEFAULT_RULE", "H3.4:security_check_target_train_only")
+                return Obj("edu.fudan.common.entity.OrderSecurity", {"orderNumInLastOneHour": 0, "orderNumOfValidOrder": 0}, open=False)
+            elif callee == "getSecurityOrderInfoFromOrder" and train_mode == "regular_only":
+                if cs:
+                    for t in sorted(self.cs_calls.get(cs, ())):
+                        self.sink.prune("calls", fr.method, t, "DEFAULT_RULE", "H3.4:security_check_target_train_only")
+                return Obj("edu.fudan.common.entity.OrderSecurity", {"orderNumInLastOneHour": 0, "orderNumOfValidOrder": 0}, open=False)
         if cs in self.cs_remote:
             return self.remote_call(fr, cs, callee, args)
         if cs in self.cs_data:
@@ -1042,6 +1055,13 @@ class Interpreter:
         if (getattr(self.rules, "route_distances_collection", "pruned") == "included"
                 and "getRouteByStartAndEnd" in fr.method and "route_distances" in t):
             return True, ("STATE", "ablation:route_distances_included")
+        rsu = getattr(self.rules, "route_stations_usage", "pruned")
+        if "route_stations" in t and "getRouteById" in fr.method:
+            if rsu == "all":
+                return True, ("STATE", "H3.13:route_stations_usage_all")
+            elif rsu == "preserve":
+                if any("preserve" in m.lower() for m in self.stack):
+                    return True, ("STATE", "H3.13:route_stations_preserve")
         if getattr(self.rules, "collection_tables_on_read", "loaded") != "all":
             dec = self.index.entities.collection_table_loaded(fr.method, t)
             if dec is not None:
