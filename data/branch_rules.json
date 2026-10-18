@@ -34,7 +34,7 @@
     {
       "id": "BR_EMPTY_COLLECTION_NEW_USER",
       "code": "R17",
-      "description": "Цикл foreach исполняется, только если коллекция непуста. Коллекция orders пуста для вновь зарегистрированного пользователя (S4)",
+      "description": "Цикл foreach исполняется, только если коллекция непуста. Коллекция orders пуста для пользователя без существующих заказов",
       "enabled": true,
       "matcher": {
         "branch_type": "foreach",

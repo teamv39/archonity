@@ -238,13 +238,15 @@ class ScenarioState:
         cls,
         db_state: Any = None,
         scenario_profile: Any = None,
+        context: dict[str, Any] | None = None,
     ) -> ScenarioState:
-        """Constructs canonical initial state from DatabaseState loaded via M0."""
-        user_name = cls.DEFAULT_USERNAME
+        """Constructs canonical initial state from DatabaseState loaded via M0 and execution context."""
+        context = context or {}
+        user_name = context.get("user_name", cls.DEFAULT_USERNAME)
         account_id = cls.DEFAULT_ACCOUNT_ID
-        balance = cls.DEFAULT_BALANCE
-        travel_date = cls.DEFAULT_TRAVEL_DATE
-        system_date = cls.DEFAULT_SYSTEM_DATE
+        balance = float(context.get("balance", cls.DEFAULT_BALANCE))
+        travel_date = context.get("travel_date", cls.DEFAULT_TRAVEL_DATE)
+        system_date = context.get("system_date", cls.DEFAULT_SYSTEM_DATE)
 
         scenario_id = getattr(scenario_profile, "id", "S?") if scenario_profile else "S?"
         is_admin = getattr(scenario_profile, "is_admin", False) if scenario_profile else False
@@ -259,8 +261,13 @@ class ScenarioState:
             user_rows = db_state.get_table("user") if hasattr(db_state, "get_table") else []
             for u in user_rows:
                 users.append(dict(u))
-                if u.get("user_name") == cls.DEFAULT_USERNAME:
-                    account_id = u.get("user_id", cls.DEFAULT_ACCOUNT_ID)
+                if u.get("user_name") == user_name:
+                    account_id = u.get("user_id", account_id)
+
+            # If user_name not found by exact match, but users exist and account_id is still default
+            if user_rows and account_id == cls.DEFAULT_ACCOUNT_ID and not any(u.get("user_id") == account_id for u in user_rows):
+                account_id = user_rows[0].get("user_id", account_id)
+                user_name = user_rows[0].get("user_name", user_name)
 
             # Contacts table
             for c in (db_state.get_table("contacts") if hasattr(db_state, "get_table") else []):

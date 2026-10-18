@@ -121,9 +121,11 @@ class ArchonityPipeline:
         # Шаг 1: Инициализация изолированного состояния сценария (M3)
         if scenario_state is None:
             db_state = getattr(self.index, "db_state", None)
+            context = getattr(self.index, "context", None)
             scenario_state = ScenarioState.create_initial(
                 db_state=db_state.fork() if db_state else None,
                 scenario_profile=profile,
+                context=context,
             )
 
         step_texts = [st.get("action", "") for st in scenario_dict.get("steps") or []]
