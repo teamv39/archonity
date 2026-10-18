@@ -137,6 +137,34 @@ def parse_args() -> argparse.Namespace:
         help="Заземление шагов: m1 (engine/grounding, ADR-005; ответы LLM из cache/, без сервера — только кеш) "
              "или legacy (engine/resolver.py)",
     )
+    parser.add_argument(
+        "--executor",
+        choices=("legacy", "ir"),
+        default="legacy",
+        help="Исполнитель шага: legacy — обход скелета с правилами (по умолчанию), ir — M4 по IR тел методов "
+             "data/ir (ADR-005, трёхзначная логика, мир БД сценария); требует --grounder m1",
+    )
+    parser.add_argument(
+        "--m4-unresolved-calls",
+        choices=("mute", "emit"),
+        default="mute",
+        help="M4: метод проекта на получателе известного типа без ребра в скелете (TripId#toString): mute — только "
+             "значение (по умолчанию), emit — писать рёбра calls/executes (гипотеза)",
+    )
+    parser.add_argument(
+        "--m4-success-retry",
+        choices=("on", "off"),
+        default="on",
+        help="M4: шаг ожидает успех, а по значениям M1 отказал — повтор с нормализованными, затем неизвестными "
+             "строковыми параметрами (on по умолчанию)",
+    )
+    parser.add_argument(
+        "--m4-judge",
+        choices=("off", "on"),
+        default="off",
+        help="M4: судья LLM для условий UNKNOWN, где иначе исполнились бы оба плеча (кеш cache/llm, сервер по "
+             "--no-server); off по умолчанию",
+    )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
@@ -224,6 +252,8 @@ def main() -> None:
     print(f"AST IR:     {pool_ir_path}")
 
     # Запуск пайплайна
+    from engine.grounding.llm import LLMClient
+
     m1_options = None
     if args.grounder == "m1":
         from engine.grounding.llm import LLMClient
@@ -249,6 +279,11 @@ def main() -> None:
         route_distances_collection=args.route_distances_collection,
         grounder=args.grounder,
         m1_options=m1_options,
+        executor=args.executor,
+        unresolved_receiver_calls=args.m4_unresolved_calls,
+        m4_success_retry=args.m4_success_retry,
+        m4_judge=(LLMClient(use_server=not args.no_server, refresh=args.no_cache)
+                  if args.executor == "ir" and args.m4_judge == "on" else None),
     )
 
     print("Генерация графов для сценариев...")
@@ -268,6 +303,12 @@ def main() -> None:
         with open(steps_out, "w", encoding="utf-8") as f:
             json.dump(pipeline.step_requests, f, ensure_ascii=False, indent=1)
         print(f"StepRequest (M1) сохранены в: {steps_out}")
+
+    if pipeline.m4 is not None:
+        unknowns_out = args.out.parent / "m4_unknowns.json"
+        with open(unknowns_out, "w", encoding="utf-8") as f:
+            json.dump(pipeline.m4.unknowns, f, ensure_ascii=False, indent=1)
+        print(f"Условия UNKNOWN исполнителя M4 сохранены в: {unknowns_out}")
 
     decisions_out = args.out.parent / "decisions.json"
     with open(decisions_out, "w", encoding="utf-8") as f:

@@ -39,6 +39,11 @@ class ArchonityPipeline:
         route_distances_collection: str = "pruned",
         grounder: str = "legacy",
         m1_options: dict[str, Any] | None = None,
+        executor: str = "legacy",
+        method_ir_dir: str | Path | None = None,
+        unresolved_receiver_calls: str = "mute",
+        m4_success_retry: str = "on",
+        m4_judge: Any = None,
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -68,6 +73,8 @@ class ArchonityPipeline:
             enum_member_calls=enum_member_calls,
             trip_food_query=trip_food_query,
             route_distances_collection=route_distances_collection,
+            unresolved_receiver_calls=unresolved_receiver_calls,
+            m4_success_retry=m4_success_retry,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
@@ -87,6 +94,24 @@ class ArchonityPipeline:
 
         # 6. Журнал решений по рёбрам (evidence.json v2): пишет сам builder
         self.ledger = DecisionLedger()
+
+        # 7. Исполнитель шага: legacy (обход скелета, builder) или ir (M4 по data/ir, ADR-005; нужен M1)
+        self.executor_mode = executor
+        self.m4 = None
+        if executor == "ir":
+            if grounder != "m1":
+                raise ValueError("executor=ir работает от StepRequest M1: нужен grounder=m1")
+            from engine.executor.step import StepExecutor
+
+            ir_dir = Path(method_ir_dir) if method_ir_dir else Path(__file__).resolve().parent.parent / "data" / "ir"
+            judge = None
+            if m4_judge is not None:
+                from engine.executor.judge import Judge
+
+                judge = Judge(m4_judge, self.index.N, self.targets_root)
+            self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root, judge=judge)
+        elif executor != "legacy":
+            raise ValueError(f"неизвестный executor: {executor}")
 
     def run_scenario(
         self,
@@ -122,6 +147,8 @@ class ArchonityPipeline:
         prev_files: set[str] = set()
         session = self.m1.begin(scenario_dict) if self.m1 is not None else None
         self.step_requests[sid] = []
+        if self.m4 is not None:
+            self.m4.begin_scenario(sid)
 
         # Шаг 2: Пошаговый обход графа (Step-by-step Execution)
         for st in scenario_dict.get("steps") or []:
@@ -143,14 +170,21 @@ class ArchonityPipeline:
                 scenario_state.apply_step(st, scenario_dict=scenario_dict)
                 continue
 
-            m, c, r, d = self.builder.traverse(
-                step_entries,
-                is_admin_scenario=step_profile.is_admin,
-                scenario_meta=scenario_meta,
-                profile=step_profile,
-                scenario_state=scenario_state,
-                ledger=self.ledger,
-            )
+            if self.m4 is not None and step_req is not None:
+                if self.m4.it.judge is not None:
+                    self.m4.it.judge.step_text = st.get("action", "")
+                m, c, r, d = self.m4.run_step(step_req, scenario_state, ledger=self.ledger)
+                self.builder._ledger = self.ledger
+                self.builder.apply_spring_security(m, c, d)
+            else:
+                m, c, r, d = self.builder.traverse(
+                    step_entries,
+                    is_admin_scenario=step_profile.is_admin,
+                    scenario_meta=scenario_meta,
+                    profile=step_profile,
+                    scenario_state=scenario_state,
+                    ledger=self.ledger,
+                )
             all_methods |= m
             all_calls |= c
             all_remote |= r
