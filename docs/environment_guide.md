@@ -135,3 +135,27 @@ data/pool_ir.json linguist-generated=true -diff
 - В скелете параметры некоторых методов имеют признак `unresolved: True` и префикс `?` в дескрипторе (например, `?HttpHeaders` в ID `method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)`).
 - Если попытаться восстановить ID метода автоматически из AST JavaParser, получится `HttpHeaders` (без знака вопроса), и ID не совпадет со скелетом (что нарушает строгое правило «концы рёбер — ID методов из скелета дословно»).
 - **Правило:** `TargetMethod` всегда принимает и сохраняет строковый `methodId` из скелета строго дословно, а типы аргументов для поиска метода в AST задаются отдельно простыми именами.
+
+## 9. Исполнитель M4 и судья
+
+M4 (`engine/executor/`, ADR-005) включается флагом и требует M1:
+```powershell
+$env:PYTHONUTF8=1; python run_eval.py --grounder m1 --executor m4
+```
+
+| Флаг | Что делает |
+|---|---|
+| `--judge on` (по умолчанию) | ответы судьи из кеша `cache/llm/`, на промахе — сервер |
+| `--judge cache` | только кеш; промах — плечо по исходу шага |
+| `--judge off` | без судьи |
+| `--judge-budget N` | не больше N вызовов сервера за прогон (по умолчанию 400) |
+| `--m4-only SUBSTR` | M4 исполняет только методы с подстрокой в ID, остальные — legacy (поиск регрессий) |
+| `--m4-legacy-rules` | абляция: эвристики `rules.py` поверх решений IR |
+| `--m4-no-runtime-type-edges` | абляция R2: вызов по фактическому типу без рёбер |
+| `--no-signal-arm continue\|then` | плечо, если у неизвестного условия нет сигнала исхода |
+
+Сервер для судьи и M1: `powershell -File scripts/start_llm.ps1` (модель на `D:\models`). Сервер поднимается примерно за 10 с, одно условие занимает около 3 с; весь прогон S0–S7 без кеша — около 3 минут. После прогона сервер остановить: он занимает GPU, а эмбеддер с ним в 16 ГБ не помещается.
+
+Без GPU прогон воспроизводится из кеша: `--judge cache --no-server` даёт тот же `submission.json` байт в байт. Новые ответы судьи (`cache/llm/*.json`) коммитятся вместе с кодом.
+
+Тесты M4: `tests/test_m4_executor.py` (модели и решения на S0–S7), `tests/test_judge.py`, `tests/test_m4_parity.py`, `tests/test_builder_interceptor.py`.
