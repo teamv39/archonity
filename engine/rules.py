@@ -261,6 +261,21 @@ class RuntimeRules:
     # off — абляция (исключить ребро data к orders при probe в regular_only).
     PROBE_ORDERS_DATA_MODES = ("on", "off")
 
+    # Вызовы методов перечисления AssuranceType (Гипотеза 3.1):
+    # on (по умолчанию) — учитывать вызовы геттеров AssuranceType в getAllAssuranceTypes;
+    # off — абляция (исключить вызовы геттеров перечисления на шаге 15 в S3).
+    ENUM_MEMBER_CALLS_MODES = ("on", "off")
+
+    # Режим запроса еды поездки в getAllFood (Гипотеза 1.1 / 4.1):
+    # cascade (по умолчанию) — опрашивать станционную еду по маршруту следования поезда;
+    # direct_train_food — абляция (пассажир запрашивает только поездное меню в S1/S4).
+    TRIP_FOOD_QUERY_MODES = ("cascade", "direct_train_food")
+
+    # Таблица коллекции route_distances в ts-route-service (Гипотеза 5.1):
+    # pruned (по умолчанию) — отсекать route_distances при getRouteByStartAndEnd (дистанции не читаются, R10);
+    # included — абляция (включать route_distances на поиске маршрута в S5).
+    ROUTE_DISTANCES_COLLECTION_MODES = ("pruned", "included")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -270,6 +285,9 @@ class RuntimeRules:
         rabbitmq_delivery: str = "on",
         station_food_collection: str = "step4_store_only",
         probe_orders_data: str = "on",
+        enum_member_calls: str = "on",
+        trip_food_query: str = "cascade",
+        route_distances_collection: str = "pruned",
     ) -> None:
         if entity_constructors_on_load not in self.ENTITY_CTOR_MODES:
             raise ValueError(
@@ -290,11 +308,22 @@ class RuntimeRules:
             )
         if probe_orders_data not in self.PROBE_ORDERS_DATA_MODES:
             raise ValueError(f"probe_orders_data: {probe_orders_data!r}, ожидается одно из {self.PROBE_ORDERS_DATA_MODES}")
+        if enum_member_calls not in self.ENUM_MEMBER_CALLS_MODES:
+            raise ValueError(f"enum_member_calls: {enum_member_calls!r}, ожидается одно из {self.ENUM_MEMBER_CALLS_MODES}")
+        if trip_food_query not in self.TRIP_FOOD_QUERY_MODES:
+            raise ValueError(f"trip_food_query: {trip_food_query!r}, ожидается одно из {self.TRIP_FOOD_QUERY_MODES}")
+        if route_distances_collection not in self.ROUTE_DISTANCES_COLLECTION_MODES:
+            raise ValueError(
+                f"route_distances_collection: {route_distances_collection!r}, ожидается одно из {self.ROUTE_DISTANCES_COLLECTION_MODES}"
+            )
         self.collection_tables_on_read = collection_tables_on_read
         self.element_callbacks = element_callbacks
         self.rabbitmq_delivery = rabbitmq_delivery
         self.station_food_collection = station_food_collection
         self.probe_orders_data = probe_orders_data
+        self.enum_member_calls = enum_member_calls
+        self.trip_food_query = trip_food_query
+        self.route_distances_collection = route_distances_collection
         self.rules_path = Path(rules_path) if rules_path else self.DEFAULT_RULES_PATH
         self.data: dict[str, Any] = {}
         self.admin_services: set[str] = set()

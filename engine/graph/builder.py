@@ -128,6 +128,17 @@ class GraphBuilder:
                         self._prune_by_rule(self.rules.is_dead_code_edge, "calls", m, x, profile, is_admin_scenario)
                         continue
 
+                    # Вызовы методов перечисления AssuranceType (Гипотеза 3.1):
+                    # off — исключить вызовы геттеров AssuranceType из getAllAssuranceTypes на шаге 15 в S3
+                    if (
+                        getattr(self.rules, "enum_member_calls", "on") == "off"
+                        and "getAllAssuranceTypes" in m
+                        and "AssuranceType#" in x
+                    ):
+                        if ledger:
+                            ledger.prune("calls", m, x, "DEFAULT_RULE", "enum_member_getter_ablation")
+                        continue
+
                     # Проверка активности вызова по AST Guard из IR (M2 -> M4)
                     source_type, rule = "SKELETON", "reachability"
                     if hasattr(self.index, "edge_guards"):
@@ -167,6 +178,17 @@ class GraphBuilder:
                     continue
                 if self.rules.is_dead_code_edge(m, "remote", t, profile=profile, is_admin_scenario=is_admin_scenario):
                     self._prune_by_rule(self.rules.is_dead_code_edge, "remote", m, t, profile, is_admin_scenario)
+                    continue
+
+                # Каскадный запрос станционной еды из getAllFood (Гипотеза 1.1 / 4.1):
+                # direct_train_food — пассажир запрашивает только поездное меню в S1/S4
+                if (
+                    getattr(self.rules, "trip_food_query", "cascade") == "direct_train_food"
+                    and "FoodServiceImpl#getAllFood" in m
+                    and "StationFoodController#getFoodStoresByStationNames" in t
+                ):
+                    if ledger:
+                        ledger.prune("remote", m, t, "DEFAULT_RULE", "trip_food_no_station_cascade")
                     continue
 
                 # Проверка активности вызова по AST Guard из IR (M2 -> M4)
@@ -235,7 +257,14 @@ class GraphBuilder:
                             source_type, rule = "IR_BRANCH", ";".join(trace)
 
                 # Таблица ленивой коллекции: только если метод загрузил коллекцию сам (R10, факты archparse)
-                loaded = self._collection_table_loaded(m, t)
+                if (
+                    getattr(self.rules, "route_distances_collection", "pruned") == "included"
+                    and "getRouteByStartAndEnd" in m
+                    and "route_distances" in t
+                ):
+                    loaded = (True, "ablation:route_distances_included")
+                else:
+                    loaded = self._collection_table_loaded(m, t)
                 if loaded is not None:
                     if not loaded[0]:
                         if ledger:
