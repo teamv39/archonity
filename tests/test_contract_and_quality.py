@@ -62,7 +62,7 @@ class TestQualityAndConstraints:
         # Вывод во временную папку: иначе тест перезаписывает output/submission.json, собранный для сдачи
         cmd = [sys.executable, str(ROOT / "run_eval.py"), "-o", str(tmp_path / "submission.json"), "--no-eval"]
         t0 = time.perf_counter()
-        res = subprocess.run(cmd, capture_output=True, text=True)
+        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
         duration = time.perf_counter() - t0
 
         assert res.returncode == 0, f"run_eval failed: {res.stderr}"
@@ -71,7 +71,7 @@ class TestQualityAndConstraints:
     def test_cli_help(self) -> None:
         """Тестирование CLI: проверка флага --help."""
         cmd = [sys.executable, str(ROOT / "run_eval.py"), "--help"]
-        res = subprocess.run(cmd, capture_output=True, text=True)
+        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
         assert res.returncode == 0
         assert "Archonity: генерация submission.json" in res.stdout
         assert "--skeleton" in res.stdout
@@ -88,7 +88,7 @@ class TestQualityAndConstraints:
             "-o", str(custom_out),
             "--no-eval",
         ]
-        res = subprocess.run(cmd, capture_output=True, text=True)
+        res = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", errors="replace")
         assert res.returncode == 0
         assert custom_out.is_file()
         assert (custom_out.parent / "canonical_graph.json").is_file()

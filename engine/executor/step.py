@@ -275,6 +275,16 @@ class StepExecutor:
             user = None
             if params.get("userName") is None and "userName" in names:
                 defaults["userName"] = self.registered_username = "m4-new-user"
+        is_contact_dto = _kind_rank(ftype, "contact") >= 2 and "documentNumber" in names
+        if is_contact_dto and getattr(self, "_verb", None) == "POST":
+            # Добавление контакта: синтетический номер документа исключает коллизию с существующими контактами
+            # аккаунта при проверке дубликатов в ContactsServiceImpl#create.
+            if "documentNumber" not in params:
+                defaults["documentNumber"] = "m4-new-contact-doc"
+            if "name" not in params:
+                defaults["name"] = "m4-new-companion"
+            if "phoneNumber" not in params:
+                defaults["phoneNumber"] = "13800000000"
         if {"password", "verificationCode"} <= names:
             # Логин: контекст скелета (context.account) — пассажир сценария (или зарегистрированный в сценарии),
             # кода подтверждения нет
@@ -312,6 +322,9 @@ class StepExecutor:
         self._scenario = scenario or {}
         self._step_req = step_req
         handler = step_req.handler
+        from engine.rules import ScenarioProfile
+        prof = ScenarioProfile.from_scenario(self._scenario) if self._scenario else None
+        self.it.train_mode = prof.train_mode if prof else "both"
         params = {k: v for k, v in (getattr(step_req, "params", None) or {}).items() if v is not None}
         self._user_name = getattr(state, "user_name", None)
         self._verb = (getattr(step_req, "http", None) or {}).get("method")

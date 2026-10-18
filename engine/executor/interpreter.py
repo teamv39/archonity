@@ -765,6 +765,16 @@ class Interpreter:
         for f in self.types.all_fields(tid):
             obj.fields[f["name"]] = default_value(f)
         cs = e.get("call")
+        pnl = getattr(self.rules, "preserve_notification_lookup", "on")
+        if pnl != "on":
+            is_other = "PreserveOtherServiceImpl" in fr.method
+            is_main = "PreserveServiceImpl" in fr.method
+            if (pnl == "other_only" and is_other) or (pnl == "off" and (is_other or is_main)):
+                if written == "NotifyInfo":
+                    if cs:
+                        for t in sorted(self.cs_calls.get(cs, ())):
+                            self.sink.prune("calls", fr.method, t, "FRAMEWORK_RULE", "dead_code_notification_dto")
+                    return obj
         ctors = [t for t in self.cs_calls.get(cs, ())] if cs else []
         if not ctors and e.get("target"):
             ctors = [e["target"]]
@@ -801,6 +811,29 @@ class Interpreter:
         recv = self.eval(recv_e, fr) if recv_e is not None else None
         raw_args = e.get("args") or []
         args = [self.eval(a, fr) for a in raw_args]
+        pnl = getattr(self.rules, "preserve_notification_lookup", "on")
+        if pnl != "on":
+            is_other = "PreserveOtherServiceImpl" in fr.method
+            is_main = "PreserveServiceImpl" in fr.method
+            if (pnl == "other_only" and is_other) or (pnl == "off" and (is_other or is_main)):
+                if callee in ("getAccount", "getNameByCode"):
+                    if cs:
+                        for t in sorted(self.cs_calls.get(cs, ())):
+                            self.sink.prune("calls", fr.method, t, "FRAMEWORK_RULE", "dead_code_notification_dto")
+                    return UNKNOWN
+        scope = getattr(self.rules, "security_check_scope", "all")
+        if scope == "target_train_only":
+            train_mode = getattr(self, "train_mode", "both")
+            if callee == "getSecurityOrderOtherInfoFromOrder" and train_mode == "high_speed_only":
+                if cs:
+                    for t in sorted(self.cs_calls.get(cs, ())):
+                        self.sink.prune("calls", fr.method, t, "DEFAULT_RULE", "H3.4:security_check_target_train_only")
+                return Obj("edu.fudan.common.entity.OrderSecurity", {"orderNumInLastOneHour": 0, "orderNumOfValidOrder": 0}, open=False)
+            elif callee == "getSecurityOrderInfoFromOrder" and train_mode == "regular_only":
+                if cs:
+                    for t in sorted(self.cs_calls.get(cs, ())):
+                        self.sink.prune("calls", fr.method, t, "DEFAULT_RULE", "H3.4:security_check_target_train_only")
+                return Obj("edu.fudan.common.entity.OrderSecurity", {"orderNumInLastOneHour": 0, "orderNumOfValidOrder": 0}, open=False)
         if cs in self.cs_remote:
             return self.remote_call(fr, cs, callee, args)
         if cs in self.cs_data:
@@ -1029,6 +1062,13 @@ class Interpreter:
         if (getattr(self.rules, "route_distances_collection", "pruned") == "included"
                 and "getRouteByStartAndEnd" in fr.method and "route_distances" in t):
             return True, ("STATE", "ablation:route_distances_included")
+        rsu = getattr(self.rules, "route_stations_usage", "pruned")
+        if "route_stations" in t and "getRouteById" in fr.method:
+            if rsu == "all":
+                return True, ("STATE", "H3.13:route_stations_usage_all")
+            elif rsu == "preserve":
+                if any("preserve" in m.lower() for m in self.stack):
+                    return True, ("STATE", "H3.13:route_stations_preserve")
         if getattr(self.rules, "collection_tables_on_read", "loaded") != "all":
             dec = self.index.entities.collection_table_loaded(fr.method, t)
             if dec is not None:
@@ -1112,9 +1152,11 @@ class Interpreter:
         if exact:
             return (objs[0] if objs else None), rows
         # неточное условие: строка может быть любой из подходящих (или ни одной) — значения полей неизвестны
-        if len(objs) == 1:
-            return objs[0], rows
-        return (Obj(entity, {}, open=True) if objs else None), rows
+        if not objs:
+            return None, rows
+        obj = objs[0] if len(objs) == 1 else Obj(entity, {}, open=True)
+        obj.maybe_null = True
+        return obj, rows
 
     def _hydrate(self, fr: Frame, rc: Any, rows: Any) -> None:
         """Конструкторы сущности при загрузке строк Hibernate (R7) и equals из list.contains."""

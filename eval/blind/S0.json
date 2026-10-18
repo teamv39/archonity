@@ -1,0 +1,334 @@
+{
+ "project": "trainticket",
+ "scenarios": {
+  "S0": {
+   "edges": [
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.entity.User#getAuthorities()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.entity.User#getPassword()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.entity.User#getUsername()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.entity.User#isAccountNonExpired()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.entity.User#isAccountNonLocked()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.entity.User#isCredentialsNonExpired()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.entity.User#isEnabled()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getServiceUrl(java.lang.String)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-common:edu.fudan.common.security.jwt.JWTFilter#doFilterInternal(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse,javax.servlet.FilterChain)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-common:edu.fudan.common.util.StringUtils#Date2String(java.util.Date)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-consign-service:consign.controller.ConsignController#findByAccountId(java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-consign-service:consign.service.ConsignServiceImpl#queryByAccountId(java.util.UUID,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsByAccountId(java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-other-service:other.entity.Order#<init>()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrdersForRefresh(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-service:order.entity.Order#<init>()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-service:order.entity.OrderInfo#getLoginId()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-service:order.entity.OrderInfo#getState()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-service:order.entity.OrderInfo#isEnableBoughtDateQuery()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-service:order.entity.OrderInfo#isEnableStateQuery()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-service:order.entity.OrderInfo#isEnableTravelDateQuery()"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "scenario:S0",
+     "relation": "executes",
+     "target": "method:ts-order-service:order.service.OrderServiceImpl#queryOrdersForRefresh(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)",
+     "relation": "calls",
+     "target": "method:ts-auth-service:auth.entity.User#getUsername()"
+    },
+    {
+     "source": "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-auth-service:auth.entity.User#getPassword()"
+    },
+    {
+     "source": "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-auth-service:auth.security.jwt.JWTProvider#createToken(auth.entity.User)"
+    },
+    {
+     "source": "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getServiceUrl(java.lang.String)"
+    },
+    {
+     "source": "method:ts-consign-service:consign.controller.ConsignController#findByAccountId(java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-consign-service:consign.service.ConsignServiceImpl#queryByAccountId(java.util.UUID,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsByAccountId(java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrdersForRefresh(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "method:ts-order-other-service:other.entity.Order#<init>()",
+     "relation": "calls",
+     "target": "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
+    },
+    {
+     "source": "method:ts-order-other-service:other.entity.Order#<init>()",
+     "relation": "calls",
+     "target": "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()"
+    },
+    {
+     "source": "method:ts-order-other-service:other.entity.Order#<init>()",
+     "relation": "calls",
+     "target": "method:ts-common:edu.fudan.common.util.StringUtils#Date2String(java.util.Date)"
+    },
+    {
+     "source": "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrdersForRefresh(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-service:order.entity.OrderInfo#getLoginId()"
+    },
+    {
+     "source": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-service:order.service.OrderServiceImpl#queryOrdersForRefresh(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "method:ts-order-service:order.entity.Order#<init>()",
+     "relation": "calls",
+     "target": "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
+    },
+    {
+     "source": "method:ts-order-service:order.entity.Order#<init>()",
+     "relation": "calls",
+     "target": "method:ts-common:edu.fudan.common.entity.SeatClass#getCode()"
+    },
+    {
+     "source": "method:ts-order-service:order.entity.Order#<init>()",
+     "relation": "calls",
+     "target": "method:ts-common:edu.fudan.common.util.StringUtils#Date2String(java.util.Date)"
+    },
+    {
+     "source": "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)"
+    },
+    {
+     "source": "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-service:order.entity.OrderInfo#getLoginId()"
+    },
+    {
+     "source": "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-service:order.entity.OrderInfo#getState()"
+    },
+    {
+     "source": "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-service:order.entity.OrderInfo#isEnableBoughtDateQuery()"
+    },
+    {
+     "source": "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-service:order.entity.OrderInfo#isEnableStateQuery()"
+    },
+    {
+     "source": "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-service:order.entity.OrderInfo#isEnableTravelDateQuery()"
+    },
+    {
+     "source": "method:ts-order-service:order.service.OrderServiceImpl#queryOrdersForRefresh(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "calls",
+     "target": "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+    },
+    {
+     "source": "method:ts-auth-service:auth.security.UserDetailsServiceImpl#loadUserByUsername(java.lang.String)",
+     "relation": "data",
+     "target": "res:table:ts-auth-service.auth_user"
+    },
+    {
+     "source": "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+     "relation": "data",
+     "target": "res:table:ts-auth-service.auth_user"
+    },
+    {
+     "source": "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+     "relation": "data",
+     "target": "res:table:ts-auth-service.user_roles"
+    },
+    {
+     "source": "method:ts-consign-service:consign.service.ConsignServiceImpl#queryByAccountId(java.util.UUID,org.springframework.http.HttpHeaders)",
+     "relation": "data",
+     "target": "res:table:ts-consign-mysql.consign_record"
+    },
+    {
+     "source": "method:ts-contacts-service:contacts.service.ContactsServiceImpl#findContactsByAccountId(java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "data",
+     "target": "res:table:ts-contacts-service.contacts"
+    },
+    {
+     "source": "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders(other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "data",
+     "target": "res:table:ts-order-other-service.orders_other"
+    },
+    {
+     "source": "method:ts-order-service:order.service.OrderServiceImpl#queryOrders(order.entity.OrderInfo,java.lang.String,org.springframework.http.HttpHeaders)",
+     "relation": "data",
+     "target": "res:table:ts-order-service.orders"
+    }
+   ]
+  }
+ }
+}

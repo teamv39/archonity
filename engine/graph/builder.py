@@ -311,7 +311,13 @@ class GraphBuilder:
                             source_type, rule = "IR_BRANCH", ";".join(trace)
 
                 # Таблица ленивой коллекции: только если метод загрузил коллекцию сам (R10, факты archparse)
-                if (
+                rsu = getattr(self.rules, "route_stations_usage", "pruned")
+                if rsu != "pruned" and "route_stations" in t and "getRouteById" in m:
+                    if rsu == "all" or (rsu == "preserve" and any("preserve" in str(x).lower() for x in stack)):
+                        loaded = (True, f"H3.13:route_stations_{rsu}")
+                    else:
+                        loaded = self._collection_table_loaded(m, t)
+                elif (
                     getattr(self.rules, "route_distances_collection", "pruned") == "included"
                     and "getRouteByStartAndEnd" in m
                     and "route_distances" in t

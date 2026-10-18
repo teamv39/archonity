@@ -19,6 +19,11 @@ ROOT_DIR = Path(__file__).resolve().parent
 if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
+
 from engine.pipeline import ArchonityPipeline
 
 
@@ -121,11 +126,24 @@ def parse_args() -> argparse.Namespace:
         help="Таблица коллекции route_distances (Гипотеза 5.1): pruned — отсекать при getRouteByStartAndEnd (по умолчанию), included — абляция (включать в S5)",
     )
     parser.add_argument(
+        "--preserve-notification-lookup",
+        choices=("on", "off", "other_only"),
+        default="on",
+        help="Мертвый код формирования уведомлений в Preserve (Гипотеза 2.5): on — вызывать getAccount и SeatClass#getNameByCode перед закомментированным sendEmail (по умолчанию), other_only — отсекать в PreserveOtherServiceImpl (S2), off — отсекать во всех Preserve",
+    )
+    parser.add_argument(
         "--security-check-scope",
         choices=("all", "target_train_only"),
         default="all",
-        help="Режим проверки безопасности (Гипотеза 4.1): all — опрашивать оба сервиса заказов (по умолчанию), "
-             "target_train_only — абляция (опрашивать только сервис заказов целевого типа поезда, отсекая чужой)",
+        help="Изоляция проверки безопасности (Гипотеза 3.4): all — опрашивать оба сервиса заказов (по умолчанию), "
+             "target_train_only — опрашивать только сервис заказов целевого типа поезда (абляция)",
+    )
+    parser.add_argument(
+        "--route-stations-usage",
+        choices=("pruned", "preserve", "all"),
+        default="pruned",
+        help="Использование таблицы коллекции route_stations (Гипотеза 3.13): pruned — отсекать в getRouteById (по умолчанию), "
+             "preserve — включать при бронировании билетов (явный вызов route.getStations()), all — включать везде",
     )
     parser.add_argument(
         "--reparse",
@@ -147,16 +165,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--executor",
         choices=("legacy", "ir", "m4"),
-        default="ir",
-        help="Исполнитель шага: legacy — обход скелета с правилами, ir (синоним m4) — M4 по IR тел "
-             "методов data/ir (ADR-005, трёхзначная логика, мир БД сценария; по умолчанию); требует --grounder m1",
+        default="legacy",
+        help="Исполнитель шага: legacy — обход скелета с правилами (по умолчанию), ir (синоним m4) — M4 по IR тел "
+             "методов data/ir (ADR-005, трёхзначная логика, мир БД сценария); требует --grounder m1",
     )
     parser.add_argument(
         "--m4-unresolved-calls",
         choices=("mute", "emit"),
-        default="emit",
+        default="mute",
         help="M4: метод проекта на получателе известного типа без ребра в скелете (TripId#toString): mute — только "
-             "значение, emit — писать рёбра calls/executes (по умолчанию; подтверждено платформой: 0.93625)",
+             "значение, emit — писать рёбра calls/executes (подтверждено платформой: 0.93625)",
     )
     parser.add_argument(
         "--m4-success-retry",
@@ -303,6 +321,8 @@ def main() -> None:
         enum_member_calls=args.enum_member_calls,
         trip_food_query=args.trip_food_query,
         route_distances_collection=args.route_distances_collection,
+        route_stations_usage=args.route_stations_usage,
+        preserve_notification_lookup=args.preserve_notification_lookup,
         security_check_scope=args.security_check_scope,
         grounder=args.grounder,
         m1_options=m1_options,
