@@ -92,9 +92,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--station-food-collection",
-        choices=("step4_store_only", "all", "off"),
-        default="step4_store_only",
-        help="Таблица коллекции блюд station_food_list: step4_store_only — на шаге 4 в S2/S3 только магазины (по умолчанию), all — учитывать везде, off — исключить везде",
+        choices=("store_browse_only", "store_only", "step4_store_only", "all", "off"),
+        default="store_browse_only",
+        help="Таблица коллекции блюд station_food_list: store_browse_only — при просмотре каталога магазинов только магазины (по умолчанию), all — учитывать везде, off — исключить везде",
     )
     parser.add_argument(
         "--probe-orders-data",

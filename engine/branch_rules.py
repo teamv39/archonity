@@ -125,7 +125,10 @@ class RuleResolver:
             return bool(self.value)
 
         if self.type in ("profile_flag", "predicate"):
-            val = bool(getattr(profile, self.flag, False)) if (profile and self.flag) else False
+            if profile and self.flag and hasattr(profile, self.flag):
+                val = bool(getattr(profile, self.flag))
+            else:
+                val = bool(self.default)
             return not val if self.invert else val
 
         if self.type == "train_mode":
