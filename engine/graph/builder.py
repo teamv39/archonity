@@ -11,13 +11,39 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Protocol
 
 from engine.adapters.skeleton import SkeletonIndex
 from engine.decisions import DecisionLedger, rules_return_line
 from engine.entities import RepositoryCall, hydration, rows_exist
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
+
+
+@dataclass
+class TraversalContext:
+    """Состояние одного обхода шага: общее для legacy-раскрытия и перехватчика M4."""
+
+    seen_methods: set[tuple[str, str]]
+    edges_calls: set[tuple[str, str]]
+    edges_remote: set[tuple[str, str]]
+    edges_data: set[tuple[str, str]]
+    reached_via: dict[str, tuple[str, str, str | None]]
+    stack: list[tuple[str, str]]
+    ledger: DecisionLedger | None
+    profile: ScenarioProfile | None
+    scenario_state: ScenarioState | None
+    is_admin_scenario: bool
+    entries: frozenset[str]
+
+
+class MethodInterceptor(Protocol):
+    """Перехватчик методов обхода (M4): исполняет метод сам вместо раскрытия по скелету."""
+
+    def wants(self, method_id: str) -> bool: ...
+
+    def run(self, method_id: str, unit: str, ctx: TraversalContext, entry: bool) -> None: ...
 
 
 class GraphBuilder:
@@ -36,6 +62,7 @@ class GraphBuilder:
         profile: ScenarioProfile | None = None,
         scenario_state: ScenarioState | None = None,
         ledger: DecisionLedger | None = None,
+        interceptor: MethodInterceptor | None = None,
     ) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
         """Обход графа от точек входа.
 
@@ -46,6 +73,8 @@ class GraphBuilder:
             data: обращения к таблицам БД (method -> res:table:...)
 
         Если передан ledger, каждое решение по ребру (включение, отсев, удаление) пишется в журнал.
+        Если передан interceptor, методы, которые он хочет, исполняет он (через TraversalContext),
+        а legacy-раскрытие по скелету для них пропускается; остальные методы раскрываются как раньше.
         """
         self._ledger = ledger
         seen_methods: set[tuple[str, str]] = set()
@@ -58,7 +87,9 @@ class GraphBuilder:
         # Фильтруем сами точки входа от заведомого мертвого кода
         valid_entries = []
         for m in entry_methods:
-            if self.rules.is_dead_code_method(m, profile=profile, is_admin_scenario=is_admin_scenario):
+            # Точку входа, которую исполняет перехватчик, на мёртвый код не проверяем: решает M4
+            intercepted = interceptor is not None and interceptor.wants(m)
+            if not intercepted and self.rules.is_dead_code_method(m, profile=profile, is_admin_scenario=is_admin_scenario):
                 if ledger:
                     ledger.prune(
                         "executes", f"scenario:{ledger.scenario_id}", m, "DEFAULT_RULE",
@@ -72,11 +103,31 @@ class GraphBuilder:
         # Очередь обхода: (текущий_метод, deployment_unit)
         stack = [(m, self.index.unit_of(m)) for m in valid_entries]
 
+        # Контекст ссылается на те же объекты, что использует цикл: перехватчик пишет прямо в них
+        ctx = TraversalContext(
+            seen_methods=seen_methods,
+            edges_calls=edges_calls,
+            edges_remote=edges_remote,
+            edges_data=edges_data,
+            reached_via=reached_via,
+            stack=stack,
+            ledger=ledger,
+            profile=profile,
+            scenario_state=scenario_state,
+            is_admin_scenario=is_admin_scenario,
+            entries=frozenset(valid_entries),
+        )
+
         while stack:
             m, u = stack.pop()
             if (m, u) in seen_methods:
                 continue
             seen_methods.add((m, u))
+
+            # M4: метод исполняет перехватчик, раскрытие по скелету (в том числе R7) пропускается
+            if interceptor is not None and interceptor.wants(m):
+                interceptor.run(m, u, ctx, entry=m in ctx.entries)
+                continue
 
             # 0. Enum-вызовы по правилу R7 из AST IR пула методов
             if hasattr(self.index, "pool_ir") and self.index.pool_ir.has_method(m):
@@ -301,6 +352,7 @@ class GraphBuilder:
             scenario_meta,
             profile=profile,
             scenario_state=scenario_state,
+            interceptor=interceptor,
         )
 
         return active_methods, edges_calls, edges_remote, edges_data
@@ -456,6 +508,7 @@ class GraphBuilder:
         scenario_meta: dict[str, Any] | None = None,
         profile: ScenarioProfile | None = None,
         scenario_state: ScenarioState | None = None,
+        interceptor: MethodInterceptor | None = None,
     ) -> None:
         """Применение семантики Spring Security и гидрации JPA/MongoDB сущностей."""
         # 1. Spring Security Authentication Flow при логине через ts-auth-service
@@ -505,11 +558,13 @@ class GraphBuilder:
 
         # Фильтрация неактивного условия по дате в queryOrders
         table_targets = {t for _, t in edges_data}
-        if any("ts-order-other-service.orders_other" in t for t in table_targets):
-            query_orders = (
-                "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders("
-                "other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)"
-            )
+        query_orders = (
+            "method:ts-order-other-service:other.service.OrderOtherServiceImpl#queryOrders("
+            "other.entity.QueryInfo,java.lang.String,org.springframework.http.HttpHeaders)"
+        )
+        # Если queryOrders исполняет перехватчик, ветку по дате решает его IR, а не эта эвристика
+        query_orders_intercepted = interceptor is not None and interceptor.wants(query_orders)
+        if not query_orders_intercepted and any("ts-order-other-service.orders_other" in t for t in table_targets):
             string2date = "method:ts-common:edu.fudan.common.util.StringUtils#String2Date(java.lang.String)"
             # Если сценарий не фильтрует явно по датам поездки (как S0)
             if scenario_state is not None:

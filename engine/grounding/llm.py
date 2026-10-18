@@ -85,6 +85,10 @@ class LLMClient:
     def _path(self, key: str) -> Path:
         return self.cache_dir / f"{key.split(':', 1)[1]}.json"
 
+    def is_cached(self, key: str) -> bool:
+        """Есть ли файл кеша для ключа (без чтения; `refresh` не учитывается)."""
+        return self._path(key).is_file()
+
     def server_available(self) -> bool:
         if self._server_ok is None:
             try:
