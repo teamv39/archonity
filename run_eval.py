@@ -121,6 +121,12 @@ def parse_args() -> argparse.Namespace:
         help="Таблица коллекции route_distances (Гипотеза 5.1): pruned — отсекать при getRouteByStartAndEnd (по умолчанию), included — абляция (включать в S5)",
     )
     parser.add_argument(
+        "--preserve-notification-lookup",
+        choices=("on", "off", "other_only"),
+        default="on",
+        help="Мертвый код формирования уведомлений в Preserve (Гипотеза 2.5): on — вызывать getAccount и SeatClass#getNameByCode перед закомментированным sendEmail (по умолчанию), other_only — отсекать в PreserveOtherServiceImpl (S2), off — отсекать во всех Preserve",
+    )
+    parser.add_argument(
         "--reparse",
         action="store_true",
         help="Принудительный перезапуск archparse gradle перед прогоном",
@@ -296,6 +302,7 @@ def main() -> None:
         enum_member_calls=args.enum_member_calls,
         trip_food_query=args.trip_food_query,
         route_distances_collection=args.route_distances_collection,
+        preserve_notification_lookup=args.preserve_notification_lookup,
         grounder=args.grounder,
         m1_options=m1_options,
         executor=args.executor,

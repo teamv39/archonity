@@ -765,6 +765,16 @@ class Interpreter:
         for f in self.types.all_fields(tid):
             obj.fields[f["name"]] = default_value(f)
         cs = e.get("call")
+        pnl = getattr(self.rules, "preserve_notification_lookup", "on")
+        if pnl != "on":
+            is_other = "PreserveOtherServiceImpl" in fr.method
+            is_main = "PreserveServiceImpl" in fr.method
+            if (pnl == "other_only" and is_other) or (pnl == "off" and (is_other or is_main)):
+                if written == "NotifyInfo":
+                    if cs:
+                        for t in sorted(self.cs_calls.get(cs, ())):
+                            self.sink.prune("calls", fr.method, t, "FRAMEWORK_RULE", "dead_code_notification_dto")
+                    return obj
         ctors = [t for t in self.cs_calls.get(cs, ())] if cs else []
         if not ctors and e.get("target"):
             ctors = [e["target"]]
@@ -801,6 +811,16 @@ class Interpreter:
         recv = self.eval(recv_e, fr) if recv_e is not None else None
         raw_args = e.get("args") or []
         args = [self.eval(a, fr) for a in raw_args]
+        pnl = getattr(self.rules, "preserve_notification_lookup", "on")
+        if pnl != "on":
+            is_other = "PreserveOtherServiceImpl" in fr.method
+            is_main = "PreserveServiceImpl" in fr.method
+            if (pnl == "other_only" and is_other) or (pnl == "off" and (is_other or is_main)):
+                if callee in ("getAccount", "getNameByCode"):
+                    if cs:
+                        for t in sorted(self.cs_calls.get(cs, ())):
+                            self.sink.prune("calls", fr.method, t, "FRAMEWORK_RULE", "dead_code_notification_dto")
+                    return UNKNOWN
         if cs in self.cs_remote:
             return self.remote_call(fr, cs, callee, args)
         if cs in self.cs_data:
