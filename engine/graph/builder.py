@@ -134,7 +134,7 @@ class GraphBuilder:
                 for c_enum in self.index.pool_ir.enum_calls_by_method.get(m, []):
                     trace: list[str] = []
                     active = self.index.pool_ir.evaluate_guard(m, c_enum.guard, profile, scenario_state, trace=trace)
-                    enum_target = self.index.pool_ir.get_enum_target(c_enum)
+                    enum_target = self.index.pool_ir.get_enum_target(c_enum, skeleton_nodes=self.index.N)
                     if not active:
                         if ledger and enum_target:
                             ledger.prune("calls", m, enum_target, "IR_BRANCH", ";".join(trace),

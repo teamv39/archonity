@@ -322,3 +322,52 @@ def test_evaluate_guard_consign_is_present():
     assert pool.evaluate_guard(consign_mid, ("b85:then",), profile) is False
     assert pool.evaluate_guard(consign_mid, ("b85:else",), profile) is True
 
+
+def test_get_enum_target_dynamic():
+    from engine.ir import CallIR, EnumConstantIR
+
+    pool = MethodPoolIR.load()
+    call = CallIR(
+        file="SomeFile.java",
+        line=10,
+        col=20,
+        callee="getCode",
+        receiver="MyStatus.PAID",
+        kind="ENUM",
+        arg_count=0,
+        guard=(),
+        enum_constant=EnumConstantIR(
+            type_fqn="com.example.custom.MyStatus",
+            constant="PAID",
+        ),
+    )
+
+    fake_skeleton = {
+        "method:my-service:com.example.custom.MyStatus#getCode()": {
+            "kind": "method",
+            "name": "getCode",
+        }
+    }
+
+    # Динамический поиск по скелету
+    target = pool.get_enum_target(call, skeleton_nodes=fake_skeleton)
+    assert target == "method:my-service:com.example.custom.MyStatus#getCode()"
+
+    # Fallback для стандартных перечислений Train Ticket
+    call_order = CallIR(
+        file="SomeFile.java",
+        line=10,
+        col=20,
+        callee="getCode",
+        receiver="OrderStatus.PAID",
+        kind="ENUM",
+        arg_count=0,
+        guard=(),
+        enum_constant=EnumConstantIR(
+            type_fqn="edu.fudan.common.entity.OrderStatus",
+            constant="PAID",
+        ),
+    )
+    assert pool.get_enum_target(call_order) == "method:ts-common:edu.fudan.common.entity.OrderStatus#getCode()"
+
+
