@@ -386,6 +386,10 @@ class RuntimeRules:
     # чьё имя отличается одним токеном и чей API совпадает после снятия токена; names — `ts-common` и `other|\d+`.
     MODULE_ROLES_MODES = ("skeleton", "names")
 
+    # Модель состояния для M4: context (по умолчанию) — тонкий контекст пассажира
+    # (user_name, account_id) без классов Train Ticket; m3 — модель M3 (до feature/86).
+    M4_STATE_MODES = ("context", "m3")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -409,13 +413,15 @@ class RuntimeRules:
         spring_security: str = "semantic",
         m4_m3_refs: str = "off",
         module_roles: str = "skeleton",
+        m4_state: str = "context",
     ) -> None:
         for name, val, modes in (("jackson_ctor", jackson_ctor, self.JACKSON_CTOR_MODES),
                                  ("lombok_tostring", lombok_tostring, self.LOMBOK_TOSTRING_MODES),
                                  ("unbound_handlers", unbound_handlers, self.UNBOUND_HANDLER_MODES),
                                  ("spring_security", spring_security, self.SPRING_SECURITY_MODES),
                                  ("m4_m3_refs", m4_m3_refs, self.M4_M3_REFS_MODES),
-                                 ("module_roles", module_roles, self.MODULE_ROLES_MODES)):
+                                 ("module_roles", module_roles, self.MODULE_ROLES_MODES),
+                                 ("m4_state", m4_state, self.M4_STATE_MODES)):
             if val not in modes:
                 raise ValueError(f"{name}: {val!r}, ожидается одно из {modes}")
         self.jackson_ctor = jackson_ctor
@@ -424,6 +430,7 @@ class RuntimeRules:
         self.spring_security = spring_security
         self.m4_m3_refs = m4_m3_refs
         self.module_roles = module_roles
+        self.m4_state = m4_state
         if constructors not in self.CTOR_MODES:
             raise ValueError(f"constructors: {constructors!r}, ожидается одно из {self.CTOR_MODES}")
         if collection_tables_on_read not in self.COLLECTION_TABLE_MODES:

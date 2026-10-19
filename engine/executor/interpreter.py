@@ -1119,9 +1119,6 @@ class Interpreter:
         return result
 
     def _data_table_allowed(self, fr: Frame, t: str) -> tuple[bool, tuple[str, str]]:
-        sf_mode = getattr(self.rules, "station_food_collection", "store_browse_only")
-        if "station_food_list" in t and sf_mode == "off":
-            return False, ("FRAMEWORK_RULE", "store_browse_no_food_items")
         if getattr(self.rules, "collection_tables_on_read", "loaded") != "all":
             dec = self.index.entities.collection_table_loaded(fr.method, t)
             if dec is not None:

@@ -16,6 +16,37 @@ from engine.projection import project_constructors
 from engine.rules import RuntimeRules, ScenarioProfile
 from engine.state import ScenarioState
 
+@dataclasses.dataclass
+class ScenarioContext:
+    """Тонкий контекст пассажира для M4 без доменных структур Train Ticket (OrderStatus, TrainType)."""
+    user_name: str | None = None
+    account_id: str | None = None
+    scenario_id: str = "S?"
+
+    def apply_step(self, *args: Any, **kwargs: Any) -> None:
+        pass
+
+
+def resolve_passenger_context(
+    context: dict[str, Any] | None,
+    db_state: Any = None,
+    scenario_id: str = "S?",
+) -> ScenarioContext:
+    """Извлекает имя и идентификатор пассажира из README/контекста и таблицы пользователей дампа."""
+    context = context or {}
+    user_name = context.get("user_name", "fdse_microservice")
+    account_id = "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f"
+    if db_state is not None:
+        user_rows = db_state.get_table("user") if hasattr(db_state, "get_table") else []
+        for u in user_rows:
+            if u.get("user_name") == user_name:
+                account_id = u.get("user_id", account_id)
+        if user_rows and account_id == "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f" and not any(u.get("user_id") == account_id for u in user_rows):
+            account_id = user_rows[0].get("user_id", account_id)
+            user_name = user_rows[0].get("user_name", user_name)
+    return ScenarioContext(user_name=user_name, account_id=account_id, scenario_id=scenario_id)
+
+
 class ArchonityPipeline:
     """Оркестратор полного цикла статического анализа и сборки графа."""
 
@@ -55,6 +86,7 @@ class ArchonityPipeline:
         spring_security: str = "semantic",
         m4_m3_refs: str = "off",
         module_roles: str = "skeleton",
+        m4_state: str = "context",
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -96,6 +128,7 @@ class ArchonityPipeline:
             spring_security=spring_security,
             m4_m3_refs=m4_m3_refs,
             module_roles=module_roles,
+            m4_state=m4_state,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
@@ -146,18 +179,26 @@ class ArchonityPipeline:
     ) -> tuple[set[str], set[tuple[str, str]], set[tuple[str, str]], set[tuple[str, str]]]:
         """Обработка одного сценария: пошаговый grounding + state tracking + graph traversal + filtering."""
         sid = scenario_dict.get("id", "S?")
-        profile = ScenarioProfile.from_scenario(scenario_dict)
+        use_m4_context = (self.m4 is not None and getattr(self.rules, "m4_state", "context") == "context")
+        profile = (
+            ScenarioProfile.from_scenario(scenario_dict)
+            if not use_m4_context
+            else None
+        )
         self.ledger.begin_scenario(sid)
 
-        # Шаг 1: Инициализация изолированного состояния сценария (M3)
+        # Фаза 1: Инициализация состояния сценария
         if scenario_state is None:
             db_state = getattr(self.index, "db_state", None)
             context = getattr(self.index, "context", None)
-            scenario_state = ScenarioState.create_initial(
-                db_state=db_state.fork() if db_state else None,
-                scenario_profile=profile,
-                context=context,
-            )
+            if use_m4_context:
+                scenario_state = resolve_passenger_context(context, db_state=db_state, scenario_id=sid)
+            else:
+                scenario_state = ScenarioState.create_initial(
+                    db_state=db_state.fork() if db_state else None,
+                    scenario_profile=profile,
+                    context=context,
+                )
 
         step_texts = [st.get("action", "") for st in scenario_dict.get("steps") or []]
         scenario_meta = {
@@ -181,7 +222,7 @@ class ArchonityPipeline:
         # Шаг 2: Пошаговый обход графа (Step-by-step Execution)
         for st in scenario_dict.get("steps") or []:
             self.ledger.begin_step(st.get("n"))
-            step_profile = profile.for_step(st)
+            step_profile = profile.for_step(st) if profile is not None else None
             step_req = None
             if session is not None:
                 step_req = session.ground(st)
@@ -198,8 +239,9 @@ class ArchonityPipeline:
                     prev_files=prev_files,
                 )
             if not step_entries:
-                # Клиентский UI-шаг без обращения к бэкенду
-                scenario_state.apply_step(st, scenario_dict=scenario_dict)
+                # В UI-шагах нет сетевого вызова
+                if not isinstance(scenario_state, ScenarioContext):
+                    scenario_state.apply_step(st, scenario_dict=scenario_dict)
                 continue
 
             if self.m4 is not None and step_req is not None:
@@ -224,14 +266,14 @@ class ArchonityPipeline:
             all_data |= d
 
             # Применение мутаций текущего шага к состоянию сценария
-            if step_req is not None:
-                # M3 читает params через .get(k, default): пустые значения не передаём, чтобы сработал default
-                params = {k: v for k, v in step_req.params.items() if v is not None}
-                scenario_state.apply_step(dataclasses.replace(step_req, params=params), scenario_dict=scenario_dict)
-            else:
-                scenario_state.apply_step(st, scenario_dict=scenario_dict)
+            # Шаг 3: Обновление состояния после успешного шага
+            if not isinstance(scenario_state, ScenarioContext):
+                if step_req is not None:
+                    params = {k: v for k, v in step_req.params.items() if v is not None}
+                    scenario_state.apply_step(dataclasses.replace(step_req, params=params), scenario_dict=scenario_dict)
+                else:
+                    scenario_state.apply_step(st, scenario_dict=scenario_dict)
 
-        # Гарантия правила R19: каждый метод из связей calls/remote/data входит в executes
         r19 = {s for s, _ in all_calls | all_remote | all_data} | {t for _, t in all_calls | all_remote}
         self.ledger.begin_step(None)
         for m in sorted(r19 - all_methods):
