@@ -13,8 +13,10 @@ UnicodeEncodeError: 'charmap' codec can't encode character ...
 ### Правило
 Всегда запускать Python в режиме UTF-8:
 ```powershell
-$env:PYTHONUTF8=1; python run_eval.py
+$env:PYTHONUTF8=1; python run_eval.py --executor ir --m4-unresolved-calls emit
 ```
+Без ключей `run_eval.py` запускает legacy-исполнитель, это не выдача кода ([AGENTS.md](../AGENTS.md), «Выдача кода и рекорд»).
+
 или для одиночных команд:
 ```powershell
 $env:PYTHONUTF8=1; python scripts/decision_log.py --scenarios S2 S3
@@ -48,7 +50,7 @@ cmd /c gradlew.bat run --args="--pool all"
    ```
 4. **Проверка калибровки S0:**
    ```powershell
-   $env:PYTHONUTF8=1; python run_eval.py
+   $env:PYTHONUTF8=1; python run_eval.py --executor ir --m4-unresolved-calls emit
    ```
    Балл S0 обязан оставаться 1.0000.
 
@@ -81,6 +83,8 @@ pipeline = ArchonityPipeline(
 methods, calls, remote, data = pipeline.run_scenario(scenario_dict)
 ```
 
+Так пайплайн собирается с умолчаниями класса: `grounder="legacy"`, `executor="legacy"`, `unresolved_receiver_calls="mute"`. Это не выдача кода. Для неё нужны `grounder="m1"` с `m1_options`, `executor="ir"`, `unresolved_receiver_calls="emit"` — как их собирает `run_eval.py`. Для диагностики выдачи кода проще обёртка над `run_eval.py` ([agent_lessons.md](agent_lessons.md), раздел 4).
+
 ## 5. Диагностика решений: журнал решений (decision_log.py)
 
 Каждое решение по ребру (включение, отсев, удаление) пишет сам `GraphBuilder` в журнал `engine/decisions.py`. `run_eval.py` сохраняет журнал в `output/decisions.json` (evidence v2, ADR-005): для каждого ребра сценария — попало ли оно в ответ, на каких шагах, источник решения (`source_type`) и правило (`rule`), плюс все решения по шагам. Правило — это ID из `branch_rules.json` с предикатом (`BR_TRIP_GD_DISPATCH@b53:else`), R7/R15-R17, строка `rules.py` (`rules.py:508`) или имя правила движка.
@@ -93,6 +97,8 @@ $env:PYTHONUTF8=1; python scripts/decision_log.py --scenarios S2 S3
 - Список риска B — рёбра, отсеянные эвристиками `rules.py`, со строкой сработавшего правила.
 
 Скрипт не пересчитывает обход сам и на каждом прогоне проверяет, что журнал совпадает с ответом сценария.
+
+**Только legacy.** `decision_log.py` собирает пайплайн без ключей исполнителя, поэтому списки риска A и B относятся к legacy-исполнителю и `rules.py`, а не к выдаче кода. Для выдачи кода — `decisions.json` прогона `run_eval.py` с ключами из раздела 1 и `scripts/probe_edge_classes.py` ([agent_lessons.md](agent_lessons.md), раздел 4).
 
 ## 6. Git, .gitattributes и сгенерированные JSON
 
