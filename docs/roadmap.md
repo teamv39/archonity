@@ -97,7 +97,7 @@
 | 10 | 18.10 | Конструкторы только с вызовами проекта, без calls в конструкторы ([ADR-006](adr/adr-006_constructor_visibility.md)) | **0.98908** |
 | 11 | 19.10 | Зонд S3: добавление `TravelResult#isStatus()` в `executes` | **0.98931** |
 | 12 | 19.10 | Распространение `TravelResult#isStatus()` на все сценарии (S1–S7) | **0.99058** |
-| 13 | 19.10 | Зонд S3: удаление ложного Шага 4 (`StationFoodController#getFoodStoresOfStation` — в UI выбор станции выполняется в памяти JS, HTTP-запроса нет) | **0.99219** (прирост) |
+| 13 | 19.10 | Зонд S3: удаление ложного Шага 4 (`StationFoodController#getFoodStoresOfStation` — в UI выбор станции выполняется в памяти JS, HTTP-запроса нет; объяснение пересмотрено посылкой 27: `GET` Spring вызвать не может) | **0.99219** (прирост) |
 | 14 | 19.10 | Зонд S2: то же удаление ложного Шага 4 в S2 | **0.99374** (новый рекорд) |
 | 15 | 19.10 | Зонд S3: добавление `ConsignController#findByOrderId` | 0.99214 (опровергнуто: багаж по orderId в S3 не запрашивается) |
 | 16 | 19.10 | Зонд S7: исключение `RebookServiceImpl#getAuthorizationHeadersFrom` | 0.99331 (опровергнуто: метод есть в эталоне) |
@@ -107,7 +107,7 @@
 | 20 | 19.10 | **Выдача кода**: ветка `feature/81-code-matches-record`, коммит `3d99fe0`, `run_eval.py --executor ir --m4-unresolved-calls emit --no-server`. sha256 `submission.json` `3c329a55…4151`, воспроизводится из архива | **0.99457** (= посылка 17, рекорд даёт код) |
 | 21–26 | 19.10 | Замер ячеек S2/S3 (`scripts/probe_cells.py`): убран один вид рёбер в одном сценарии | S2: executes FN=2, calls 1 ошибка, data FN=2; S3 — то же; FP по executes и data = 0. Форма нехватки = один вход шага (2 метода, 1 вызов, 2 таблицы) |
 | 27 | 19.10 | Зонд: шаг 4 S2/S3 = `POST /stationfoodstores` (`getFoodStoresByStationNames`). `GET /stationfoodstores/{stationId}` сломан: `@PathVariable stationName` не совпадает с `{stationId}`, Spring не вызывает контроллер — единственный такой обработчик в проекте | **1.00000** |
-| 28 | 19.10 | Выдача кода с R20 «обработчик, который Spring вызвать не может» (ветка `feature/82-unbound-path-variable`), sha256 `94463c41…5a08` | ожидается 1.00000 |
+| 28 | 19.10 | Выдача кода с R20 «обработчик, который Spring вызвать не может» (ветка `feature/82-unbound-path-variable`), sha256 `94463c41…5a08` | **1.00000** (последнее решение на платформе — код) |
 
 Текущий рекорд платформы: **1.00000** — посылка 27, все сценарии 1.000; выдача кода совпадает с ней (`eval/records/submission_p27_1.00000.json`).
 

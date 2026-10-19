@@ -37,11 +37,12 @@ $env:PYTHONUTF8=1; python run_eval.py -o <папка>/submission.json
 Порядок чтения в новой сессии:
 
 1. [roadmap.md](./docs/roadmap.md) — где мы, что делаем сегодня, таблица посылок, кто за что отвечает.
-2. [agent_lessons.md](./docs/agent_lessons.md) — что уже известно о балле, что подтверждено, методика проверки гипотез. Читать перед новой гипотезой.
-3. [annotation_rules.md](./docs/annotation_rules.md) — как исполнение превращается в рёбра эталона.
-4. [ADR-005](./docs/adr/adr-005_scenario_execution_pipeline.md) и [ADR-006](./docs/adr/adr-006_constructor_visibility.md) — устройство пайплайна.
-5. [environment_guide.md](./docs/environment_guide.md) — перед запуском чего угодно.
-6. `hackaton/tt-challenge/` — пакет организаторов: README и REFERENCE **целиком** (одна гипотеза уже провалилась из-за пропущенной строки REFERENCE), скелет, сценарии, эталон S0.
+2. [testing_system.md](./docs/testing_system.md) — правила платформы и эталона: как считается балл, что видит эталон, как мерить по платформе, хронология до 1.0.
+3. [agent_lessons.md](./docs/agent_lessons.md) — что уже известно о балле, что подтверждено, методика проверки гипотез. Читать перед новой гипотезой.
+4. [annotation_rules.md](./docs/annotation_rules.md) — как исполнение превращается в рёбра эталона.
+5. [ADR-005](./docs/adr/adr-005_scenario_execution_pipeline.md) и [ADR-006](./docs/adr/adr-006_constructor_visibility.md) — устройство пайплайна.
+6. [environment_guide.md](./docs/environment_guide.md) — перед запуском чего угодно.
+7. `hackaton/tt-challenge/` — пакет организаторов: README и REFERENCE **целиком** (одна гипотеза уже провалилась из-за пропущенной строки REFERENCE), скелет, сценарии, эталон S0.
 
 По задаче:
 
