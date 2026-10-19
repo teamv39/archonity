@@ -12,7 +12,7 @@ $env:PYTHONUTF8=1; python scripts/compare_submissions.py eval/records/submission
 
 `submission_p17_0.99457.json` — посылка 17, **0.99457**, 19.10.
 
-- Ручная: посылка 10 (выдача кода после ADR-006) плюс правки посылок 11–14 и 17. В коде этих правок ещё нет, выдача кода от рекорда отличается ([roadmap.md](../../docs/roadmap.md), «Где мы»).
+- Ручная: посылка 10 (выдача кода после ADR-006) плюс правки посылок 11–14 и 17. С веткой `feature/81-code-matches-record` выдача кода (`run_eval.py --executor ir --m4-unresolved-calls emit`) совпадает с ним по множествам рёбер во всех сценариях; sha256 другой из-за порядка рёбер.
 - По сценариям: S1, S4, S5, S6, S7 — 1.000; S2 — 0.981; S3 — 0.981.
 - sha256 `0b2c1ccf8699b1c10c82d7230fc2de52cc468d6331b76c4adb4f97512ed4ca73`.
 
@@ -26,6 +26,13 @@ $env:PYTHONUTF8=1; python scripts/compare_submissions.py eval/records/submission
 | S5 | 544 | 188 | 268 | 51 | 37 |
 | S6 | 413 | 163 | 178 | 36 | 36 |
 | S7 | 392 | 156 | 174 | 31 | 31 |
+
+## Выдача кода с тем же баллом
+
+Посылка 20 (19.10): выдача кода, тот же балл 0.99457. Эталон воспроизводимости — её sha256, а не файл выше:
+
+- `submission.json` sha256 `3c329a55b4b02020fa72dfc215d99cbf085c7bc4a6e764baf76b7fcf1d884151`;
+- коммит `3d99fe0`, команда `python run_eval.py --executor ir --m4-unresolved-calls emit --no-server` (из кеша, без GPU и сервера LLM).
 
 ## Как обновлять
 

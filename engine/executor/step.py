@@ -257,6 +257,7 @@ class StepExecutor:
                   handler: str) -> Any:
         module = self.index.N.get(handler, {}).get("module")
         tid = self.it.types.resolve(ftype, module)
+        self.it.jackson_new(ftype, module, handler)
         obj = Obj(ftype, {}, open=True)
         fields = self.it.types.all_fields(tid)
         names = {f["name"] for f in fields}
@@ -330,11 +331,11 @@ class StepExecutor:
         self._verb = (getattr(step_req, "http", None) or {}).get("method")
         refs = getattr(step_req, "refs", None) or {}
         expected = getattr(step_req, "expected_outcome", "success")
-        args = self.handler_args(handler, params, refs, state)
         before = len(self.it.world.saved)
         world = self.it.world
         snapshot = world.db.fork() if getattr(self.it.rules, "m4_success_retry", "on") != "off" and world.db is not None             else None
-        sink, ret = self.it.run_handler(handler, args, expected, n)
+        # Аргументы строятся в sink шага: разбор тела запроса исполняет конструктор DTO (R7)
+        sink, ret = self.it.run_handler(handler, lambda: self.handler_args(handler, params, refs, state), expected, n)
         if snapshot is not None and expected != "refused" and _is_failure(ret)                 and any(isinstance(v, str) for v in params.values()):
             # Шаг по тексту успешен, а по конкретным значениям отказал: значения строковых параметров M1
             # (восстановлены LLM из английского текста: регистр, пробелы) не совпали с тем, что принял бэкенд.
@@ -354,8 +355,8 @@ class StepExecutor:
                 world.db = snapshot.fork()
                 del world.saved[before:]
                 dropped = sorted(k for k in params if relaxed.get(k, UNKNOWN) != params[k])
-                args = self.handler_args(handler, relaxed, refs, state)
-                sink, ret = self.it.run_handler(handler, args, expected, n)
+                sink, ret = self.it.run_handler(
+                    handler, lambda r=relaxed: self.handler_args(handler, r, refs, state), expected, n)
                 sink.unknowns.append({"method": handler, "branch": "step", "line": None,
                                       "decided": f"success_retry{level}:changed_params={','.join(dropped)}"})
                 if not _is_failure(ret):

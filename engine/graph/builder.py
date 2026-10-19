@@ -515,11 +515,24 @@ class GraphBuilder:
         edges_calls: set[tuple[str, str]],
         edges_data: set[tuple[str, str]],
     ) -> None:
-        """Методы и рёбра, которые исполняет Spring Security при логине (их не видно в теле getToken)."""
-        # 1. Spring Security Authentication Flow при логине через сервис аутентификации
-        auth_tokens = [m for m in active_methods if "TokenService" in m and "getToken" in m]
-        if auth_tokens:
-            token_method = auth_tokens[0]
+        """Методы и рёбра, которые исполняет Spring Security при аутентификации (UserDetailsService, OncePerRequestFilter)."""
+        # 1. Поиск модулей аутентификации по стандартному контракту Spring Security (loadUserByUsername)
+        auth_modules = {
+            n.get("module") for nid, n in self.index.N.items()
+            if n.get("kind") == "method" and n.get("name") == "loadUserByUsername" and n.get("module")
+        }
+        if not auth_modules:
+            return
+
+        # Ищем сервисный метод аутентификации (не REST-контроллер, а сервис, вызывающий провайдер аутентификации)
+        auth_service_methods = [
+            m for m in sorted(active_methods)
+            if self.index.N.get(m, {}).get("module") in auth_modules
+            and "controller" not in self.index.N.get(m, {}).get("owner", "").lower()
+            and self.index.N.get(m, {}).get("name") in ("getToken", "authenticate", "login")
+        ]
+        if auth_service_methods:
+            token_method = auth_service_methods[0]
             auth_module = self.index.N.get(token_method, {}).get("module", "")
 
             # 1a. UserDetailsService (стандартный контракт Spring Security loadUserByUsername)

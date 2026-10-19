@@ -17,7 +17,7 @@ import logging
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from engine.executor import library
 from engine.executor.values import next_uid
@@ -150,7 +150,10 @@ class Interpreter:
         self.world = World(db, self.types, self.index.entities, self.enum_value)
         self.beans = {}
 
-    def run_handler(self, handler: str, args: list[Any], expected: str, step: int | None) -> tuple[Sink, Any]:
+    def run_handler(self, handler: str, args: list[Any] | Callable[[], list[Any]], expected: str,
+                    step: int | None) -> tuple[Sink, Any]:
+        """Шаг: вход обработчика. `args` — список или функция, которая строит аргументы уже в sink шага
+        (разбор тела запроса исполняет конструктор DTO, его события — события шага)."""
         self.sink = Sink()
         self.expected = expected or "success"
         self.step = step
@@ -160,6 +163,8 @@ class Interpreter:
         self.sink.execute(handler, ("SKELETON", "ENTRY"), None)
         unit = self.index.unit_of(handler)
         try:
+            if callable(args):
+                args = args()
             ret = self.invoke(handler, None, args, unit, ("SKELETON", "ENTRY"))
         except _Abort:
             LOGGER.warning("M4: шаг %s прерван по бюджету вызовов", step)
@@ -765,16 +770,6 @@ class Interpreter:
         for f in self.types.all_fields(tid):
             obj.fields[f["name"]] = default_value(f)
         cs = e.get("call")
-        pnl = getattr(self.rules, "preserve_notification_lookup", "on")
-        if pnl != "on":
-            is_other = "PreserveOtherServiceImpl" in fr.method
-            is_main = "PreserveServiceImpl" in fr.method
-            if (pnl == "other_only" and is_other) or (pnl == "off" and (is_other or is_main)):
-                if written == "NotifyInfo":
-                    if cs:
-                        for t in sorted(self.cs_calls.get(cs, ())):
-                            self.sink.prune("calls", fr.method, t, "FRAMEWORK_RULE", "dead_code_notification_dto")
-                    return obj
         ctors = [t for t in self.cs_calls.get(cs, ())] if cs else []
         if not ctors and e.get("target"):
             ctors = [e["target"]]
@@ -811,29 +806,7 @@ class Interpreter:
         recv = self.eval(recv_e, fr) if recv_e is not None else None
         raw_args = e.get("args") or []
         args = [self.eval(a, fr) for a in raw_args]
-        pnl = getattr(self.rules, "preserve_notification_lookup", "on")
-        if pnl != "on":
-            is_other = "PreserveOtherServiceImpl" in fr.method
-            is_main = "PreserveServiceImpl" in fr.method
-            if (pnl == "other_only" and is_other) or (pnl == "off" and (is_other or is_main)):
-                if callee in ("getAccount", "getNameByCode"):
-                    if cs:
-                        for t in sorted(self.cs_calls.get(cs, ())):
-                            self.sink.prune("calls", fr.method, t, "FRAMEWORK_RULE", "dead_code_notification_dto")
-                    return UNKNOWN
-        scope = getattr(self.rules, "security_check_scope", "all")
-        if scope == "target_train_only":
-            train_mode = getattr(self, "train_mode", "both")
-            if callee == "getSecurityOrderOtherInfoFromOrder" and train_mode == "high_speed_only":
-                if cs:
-                    for t in sorted(self.cs_calls.get(cs, ())):
-                        self.sink.prune("calls", fr.method, t, "DEFAULT_RULE", "H3.4:security_check_target_train_only")
-                return Obj("edu.fudan.common.entity.OrderSecurity", {"orderNumInLastOneHour": 0, "orderNumOfValidOrder": 0}, open=False)
-            elif callee == "getSecurityOrderInfoFromOrder" and train_mode == "regular_only":
-                if cs:
-                    for t in sorted(self.cs_calls.get(cs, ())):
-                        self.sink.prune("calls", fr.method, t, "DEFAULT_RULE", "H3.4:security_check_target_train_only")
-                return Obj("edu.fudan.common.entity.OrderSecurity", {"orderNumInLastOneHour": 0, "orderNumOfValidOrder": 0}, open=False)
+        self.log_format(e, args, fr)
         if cs in self.cs_remote:
             return self.remote_call(fr, cs, callee, args)
         if cs in self.cs_data:
@@ -922,13 +895,6 @@ class Interpreter:
         chosen = self.select_handlers(cands, url, verb)
         rets: list[Any] = []
         for h, binding in chosen:
-            if (
-                getattr(self.rules, "security_check_scope", "all") == "target_train_only"
-                and "SecurityServiceImpl" in fr.method
-                and "OrderOtherController#securityInfoCheck" in h
-            ):
-                self.sink.prune("remote", fr.method, h, "DEFAULT_RULE", "ablate_security_check_order_other")
-                continue
             why = fr.why if len(chosen) == len(cands) else ("IR_BRANCH", f"R3:url_dispatch@{cs.rsplit('@', 1)[-1]}")
             self.sink.edge("remote", fr.method, h, why)
             self.sink.execute(h, why, f"remote|{fr.method}|{h}")
@@ -989,6 +955,7 @@ class Interpreter:
         for p in self.params.get(h, []):
             anns = {a.get("name"): a.get("args", "") for a in p.get("annotations") or []}
             if "RequestBody" in anns:
+                self.jackson_new(p.get("type"), self.N[h].get("module"), h)
                 out.append(self.jackson_fill(library.json_copy(body, p.get("type")), self.N[h].get("module")))
             elif "PathVariable" in anns:
                 m = re.search(r'"([^"]+)"', anns["PathVariable"] or "")
@@ -998,6 +965,104 @@ class Interpreter:
             else:
                 out.append(binding.get(p["name"], UNKNOWN))
         return out
+
+    def jackson_new(self, ftype: str | None, module: str | None, handler: str) -> None:
+        """Jackson создаёт тело запроса конструктором без аргументов (R7, ADR-006).
+
+        Исполняется только рукописный конструктор (узел скелета): из `RebookInfo()` вызывается
+        `StringUtils.Date2String`. Ребра в конструктор нет, в ответ его пропускает проекция R7, только если из него
+        исполнился вызов проекта. Значения конструктора в тело не идут: какие поля пришли в JSON, неизвестно,
+        поэтому тело строит вызывающий (`build_dto`, `json_copy`), а конструктор даёт только события.
+        """
+        if getattr(self.rules, "jackson_ctor", "on") != "on":
+            return
+        tid = self.types.resolve(ftype, module) if ftype else None
+        if not tid:
+            return
+        ctor = next((m for m in self.types.methods.get(tid, ())
+                     if self.N[m].get("name") == "<init>" and not (self.N[m].get("params_as_written") or [])), None)
+        if ctor is None or ctor not in self.ir:
+            return
+        why = ("FRAMEWORK_RULE", "R7:jackson_ctor")
+        self.sink.execute(ctor, why, f"jackson|{handler}|{ctor}")
+        obj = Obj(self.types.fqn(tid), {f["name"]: default_value(f) for f in self.types.all_fields(tid)}, open=False)
+        self.invoke(ctor, obj, [], self.index.unit_of(ctor), why)
+
+    # --- Lombok-toString при логировании (R5) --------------------------------
+
+    LOG_LEVELS = ("info", "warn", "error")  # уровень по умолчанию Spring Boot — INFO: debug/trace не форматируются
+    LOMBOK_TOSTRING = {"Data", "ToString", "Value"}
+
+    def is_logger(self, recv_e: dict[str, Any] | None, fr: Frame) -> bool:
+        """Приёмник — поле типа SLF4J Logger: `LOGGER` своего класса или `Cls.LOGGER`."""
+        if not recv_e:
+            return False
+        if recv_e.get("ref") == "field" and recv_e.get("name"):
+            name, owner = recv_e["name"], self.N.get(fr.method, {}).get("owner")
+        elif recv_e.get("field") and (recv_e.get("of") or {}).get("ref") == "type":
+            cls = recv_e["of"].get("name")
+            name = recv_e["field"]
+            owner = self.types.resolve(cls, fr.module) or self.types.resolve_simple(cls, fr.module)
+        else:
+            return False
+        return any(f.get("name") == name and (f.get("type") or "").endswith("Logger")
+                   for f in self.types.fields.get(owner or "", []))
+
+    def log_format(self, e: dict[str, Any], args: list[Any], fr: Frame) -> None:
+        """SLF4J подставляет аргументы в `{}` через toString: Lombok-toString читает поля через геттеры."""
+        raw = e.get("args") or []
+        if (getattr(self.rules, "lombok_tostring", "on") != "on" or e.get("callee") not in self.LOG_LEVELS
+                or not raw or "{}" not in str(raw[0].get("lit") or "") or not self.is_logger(e.get("recv"), fr)):
+            return
+        seen: set[int] = set()
+        for v in args[1:]:
+            self.lombok_tostring(v, fr, seen, 0)
+
+    def lombok_tostring(self, v: Any, fr: Frame, seen: set[int], depth: int) -> None:
+        """toString значения: рукописный — исполняется; сгенерированный Lombok — рукописные геттеры полей
+        исполняются (ребра calls нет, вызывает сгенерированный код, R5), вложенные объекты — так же."""
+        if depth > 4 or id(v) in seen:
+            return
+        seen.add(id(v))
+        if isinstance(v, ListV):
+            for x in v.items:
+                self.lombok_tostring(x, fr, seen, depth + 1)
+            return
+        if isinstance(v, MapV):
+            for x in list(v.data.values()):
+                self.lombok_tostring(x, fr, seen, depth + 1)
+            return
+        if not isinstance(v, Obj) or not v.type:
+            return
+        tid = self.types.resolve(v.type, fr.module)
+        if not tid:
+            return
+        why = ("FRAMEWORK_RULE", "R5:lombok_tostring")
+        own = {self.N[m].get("name"): m for m in self.types.methods.get(tid, ())
+               if not (self.N[m].get("params_as_written") or [])}
+        if "toString" in own:
+            m = own["toString"]
+            if m in self.ir:
+                self.sink.execute(m, why, f"tostring|{fr.method}|{m}")
+                self.invoke(m, v, [], self.index.unit_of(m), why)
+            return
+        anns = {a.get("name") for a in self.types.types.get(tid, {}).get("annotations") or []}
+        if not anns & self.LOMBOK_TOSTRING:
+            return
+        for f in self.types.fields.get(tid, []):
+            if "static" in (f.get("modifiers") or []):
+                continue
+            name = f["name"]
+            cap = name[:1].upper() + name[1:]
+            getter = own.get("is" + cap) if f.get("type") == "boolean" else None
+            getter = getter or own.get("get" + cap)
+            val = v.fields.get(name, UNKNOWN)
+            if getter and getter in self.ir:
+                self.sink.execute(getter, why, f"tostring|{fr.method}|{getter}")
+                r = self.invoke(getter, v, [], self.index.unit_of(getter), why)
+                if r is not UNKNOWN:
+                    val = r
+            self.lombok_tostring(val, fr, seen, depth + 1)
 
     def jackson_fill(self, obj: Any, module: str | None) -> Any:
         """Jackson заполняет DTO через сеттеры: рукописный сеттер (Station.setName нормализует имя) исполняется.
@@ -1055,20 +1120,8 @@ class Interpreter:
 
     def _data_table_allowed(self, fr: Frame, t: str) -> tuple[bool, tuple[str, str]]:
         sf_mode = getattr(self.rules, "station_food_collection", "store_browse_only")
-        if "station_food_list" in t and (sf_mode == "off" or (
-                sf_mode in ("store_browse_only", "store_only", "step4_store_only")
-                and "listFoodStoresByStationName" in fr.method)):
+        if "station_food_list" in t and sf_mode == "off":
             return False, ("FRAMEWORK_RULE", "store_browse_no_food_items")
-        if (getattr(self.rules, "route_distances_collection", "pruned") == "included"
-                and "getRouteByStartAndEnd" in fr.method and "route_distances" in t):
-            return True, ("STATE", "ablation:route_distances_included")
-        rsu = getattr(self.rules, "route_stations_usage", "pruned")
-        if "route_stations" in t and "getRouteById" in fr.method:
-            if rsu == "all":
-                return True, ("STATE", "H3.13:route_stations_usage_all")
-            elif rsu == "preserve":
-                if any("preserve" in m.lower() for m in self.stack):
-                    return True, ("STATE", "H3.13:route_stations_preserve")
         if getattr(self.rules, "collection_tables_on_read", "loaded") != "all":
             dec = self.index.entities.collection_table_loaded(fr.method, t)
             if dec is not None:

@@ -160,3 +160,38 @@ class TestExecutorE2E:
             answer |= {("data", a, b) for a, b in data}
             assert m4_pipeline.ledger.final_edges(sid) == answer, f"{sid}: журнал не совпадает с ответом"
             assert m4_pipeline.run_scenario(s) == first, f"{sid}: повторный прогон дал другой ответ"
+
+
+@pytest.fixture(scope="module")
+def m4_answers(m4_pipeline):
+    from engine.adapters.skeleton import load_json
+
+    return {sid: m4_pipeline.run_scenario(load_json(SCENARIOS / f"{sid}.json")) for sid in ("S1", "S2", "S3")}
+
+
+class TestFrameworkMechanisms:
+    """Механизмы, перенесённые из ручных посылок 11–17 (docs/researches/code_record_drift.md)."""
+
+    REBOOK_INFO = "method:ts-rebook-service:rebook.entity.RebookInfo#<init>()"
+    DATE2STRING = "method:ts-common:edu.fudan.common.util.StringUtils#Date2String(java.util.Date)"
+    IS_STATUS = "method:ts-common:edu.fudan.common.entity.TravelResult#isStatus()"
+    STATION_STORES = ("method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation("
+                      "java.lang.String,org.springframework.http.HttpHeaders)")
+
+    def test_jackson_runs_request_body_ctor(self, m4_answers) -> None:
+        methods, calls, _, _ = m4_answers["S2"]
+        assert self.REBOOK_INFO in methods
+        assert (self.REBOOK_INFO, self.DATE2STRING) in calls
+        assert not any(t == self.REBOOK_INFO for _, t in calls)  # ребра в конструктор нет (R7)
+
+    def test_lombok_tostring_in_logging_runs_handwritten_getter(self, m4_answers) -> None:
+        for sid in ("S1", "S2", "S3"):
+            methods, calls, _, _ = m4_answers[sid]
+            assert self.IS_STATUS in methods, sid
+            assert not any(t == self.IS_STATUS for _, t in calls), sid  # вызывает Lombok, не проект (R5)
+
+    def test_form_only_step_sends_no_request(self, m4_pipeline, m4_answers) -> None:
+        for sid in ("S2", "S3"):
+            assert self.STATION_STORES not in m4_answers[sid][0], sid
+            step4 = next(r for r in m4_pipeline.step_requests[sid] if r["step"] == 4)
+            assert step4["grounding"]["no_request"]["rule"] == "R20:form_only"

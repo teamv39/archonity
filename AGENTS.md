@@ -22,13 +22,13 @@
 
 ## Выдача кода и рекорд
 
-`python run_eval.py` **без ключей запускает legacy-исполнитель — это не выдача кода.** Выдачу кода даёт:
+Выдачу кода даёт запуск без дополнительных флагов:
 
 ```powershell
-$env:PYTHONUTF8=1; python run_eval.py --executor ir --m4-unresolved-calls emit -o <папка>/submission.json
+$env:PYTHONUTF8=1; python run_eval.py -o <папка>/submission.json
 ```
 
-`--grounder m1` и `--ctors caller_only` уже стоят по умолчанию. Умолчания `run_eval.py` исправляются по плану 21.10 ([roadmap.md](./docs/roadmap.md)); после этого блок обновить.
+Параметры `--executor ir`, `--m4-unresolved-calls emit`, `--grounder m1` и `--ctors caller_only` стоят по умолчанию.
 
 Лучшая посылка платформы — в [eval/records/](./eval/records/README.md). Рекорд может быть ручной правкой `submission.json`, тогда выдача кода от него отличается (roadmap, «Где мы»). Любую правку до посылки сравнивать с рекордом ребро в ребро: `scripts/compare_submissions.py`. Результаты посылок — таблица в roadmap.
 
