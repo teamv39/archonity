@@ -470,9 +470,13 @@ export function buildReactFlowElements(
 
     // 3. Scenario Playback состояние
     if (scenarioPlayback) {
+      const activeNodesSet = new Set<string>(scenarioPlayback.currentStep?.activeNodes || []);
+      if (scenarioPlayback.sourceNodeId) activeNodesSet.add(scenarioPlayback.sourceNodeId);
+      if (scenarioPlayback.targetNodeId) activeNodesSet.add(scenarioPlayback.targetNodeId);
+
       if (node.id === scenarioPlayback.sourceNodeId) {
         scenarioState = 'source';
-      } else if (node.id === scenarioPlayback.targetNodeId) {
+      } else if (activeNodesSet.has(node.id)) {
         scenarioState = 'target';
       } else {
         scenarioState = 'dimmed';
@@ -525,8 +529,11 @@ export function buildReactFlowElements(
     }
 
     if (scenarioPlayback) {
+      const activeEdgesSet = new Set<string>(scenarioPlayback.currentStep?.activeEdges || []);
+      if (scenarioPlayback.activeEdgeId) activeEdgesSet.add(scenarioPlayback.activeEdgeId);
+
       const isCurrentStepEdge =
-        edge.id === scenarioPlayback.activeEdgeId ||
+        activeEdgesSet.has(edge.id) ||
         (edge.source === scenarioPlayback.sourceNodeId && edge.target === scenarioPlayback.targetNodeId);
       scenarioState = isCurrentStepEdge ? 'active' : 'dimmed';
     }

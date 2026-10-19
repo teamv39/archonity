@@ -46,7 +46,7 @@ import {
   type NodeData,
   type EdgeData,
 } from './adapters/graphAdapter';
-import { mergePipelineFiles } from './adapters/dataLoader';
+import { mergePipelineFiles, normalizeCanonicalGraph } from './adapters/dataLoader';
 import {
   exportGraphToPng,
   exportGraphToSvg,
@@ -97,6 +97,28 @@ const VisualizerCanvas: React.FC = () => {
 
   // Всплывающие уведомления (Toast)
   const [toast, setToast] = useState<ToastState | null>(null);
+
+  // Автозагрузка полного канонического графа Train Ticket из public/data/
+  useEffect(() => {
+    fetch('/data/canonical_graph.json')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((raw: any) => {
+        const data = normalizeCanonicalGraph(raw);
+        if (data && Array.isArray(data.nodes) && data.nodes.length > 0) {
+          shouldResetPositionsRef.current = true;
+          setIsLoadingLayout(true);
+          setGraph(data);
+          setDatasetName(`Train Ticket Канонический (${data.nodes.length}N / ${data.edges.length}E)`);
+          setIsCustomDataset(true);
+        }
+      })
+      .catch((err) => {
+        console.warn('Fallback на встроенный граф:', err);
+      });
+  }, []);
 
   useEffect(() => {
     if (!toast) return;

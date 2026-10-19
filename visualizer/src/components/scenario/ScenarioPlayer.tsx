@@ -155,6 +155,11 @@ export const ScenarioPlayer: React.FC<ScenarioPlayerProps> = ({
                 {currentStep.endpoint}
               </span>
             )}
+            {currentStep.expectedOutcome && (
+              <span className="tag-pill" style={{ fontSize: 9, background: '#F0FDF4', color: '#166534', borderColor: '#BBF7D0' }}>
+                {currentStep.expectedOutcome}
+              </span>
+            )}
           </div>
         </div>
 
@@ -162,7 +167,47 @@ export const ScenarioPlayer: React.FC<ScenarioPlayerProps> = ({
           <strong>Действие:</strong> {currentStep.action}
         </div>
 
-        {currentStep.codeSnippet && (
+        {currentStep.handler && (
+          <div className="scenario-handler-box" title={currentStep.handler}>
+            <span style={{ color: '#0969DA', fontWeight: 700 }}>Handler: </span>
+            {currentStep.handler.replace(/^method:[^:]+:/, '')}
+          </div>
+        )}
+
+        {/* Теги правил и задействованных таблиц/сервисов */}
+        <div className="scenario-pill-row">
+          {currentStep.rules && currentStep.rules.length > 0 && (
+            <>
+              {currentStep.rules.map((rule) => (
+                <span key={rule} className="scenario-rule-badge" title={`Правило вывода: ${rule}`}>
+                  {rule}
+                </span>
+              ))}
+            </>
+          )}
+
+          {currentStep.tables && currentStep.tables.length > 0 && (
+            <>
+              {currentStep.tables.map((t) => (
+                <span key={t} className="scenario-table-badge" title={`Таблица БД: ${t}`}>
+                  SQL: {t.split('.').pop()}
+                </span>
+              ))}
+            </>
+          )}
+
+          {currentStep.services && currentStep.services.length > 2 && (
+            <>
+              {currentStep.services.filter(s => s !== currentStep.source && s !== currentStep.target).map((s) => (
+                <span key={s} className="scenario-svc-badge" title={`Участвующий сервис: ${s}`}>
+                  {s.replace('ts-', '')}
+                </span>
+              ))}
+            </>
+          )}
+        </div>
+
+        {Boolean(currentStep.codeSnippet || currentStep.reasoning) && (
           <div>
             <button
               type="button"
@@ -170,11 +215,20 @@ export const ScenarioPlayer: React.FC<ScenarioPlayerProps> = ({
               onClick={() => setShowCodeDetails((prev) => !prev)}
             >
               <Code size={10} style={{ display: 'inline', marginRight: 4, verticalAlign: 'middle' }} />
-              {showCodeDetails ? 'Скрыть фрагмент кода' : 'Показать фрагмент кода вызова'}
+              {showCodeDetails ? 'Скрыть подробности' : 'Показать обоснование и код'}
             </button>
 
             {showCodeDetails && (
-              <pre className="scenario-code-box">{currentStep.codeSnippet}</pre>
+              <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {currentStep.reasoning && (
+                  <div style={{ fontSize: 10, color: 'var(--text-secondary)', background: 'var(--bg-subtle)', padding: '4px 6px', border: '1px solid var(--border-hairline)' }}>
+                    {currentStep.reasoning}
+                  </div>
+                )}
+                {currentStep.codeSnippet && (
+                  <pre className="scenario-code-box">{currentStep.codeSnippet}</pre>
+                )}
+              </div>
             )}
           </div>
         )}

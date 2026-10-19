@@ -416,14 +416,18 @@ def main() -> None:
         json.dump(pipeline.ledger.to_dict(), f, ensure_ascii=False, indent=1)
     print(f"Журнал решений (evidence v2) сохранен в: {decisions_out}")
 
-    # Синхронизация с visualizer/public/data/
+    # Синхронизация с visualizer/
     vis_data_dir = ROOT_DIR / "visualizer" / "public" / "data"
     if vis_data_dir.is_dir():
-        import shutil
-        shutil.copy(canonical_out, vis_data_dir / "canonical_graph.json")
-        shutil.copy(evidence_out, vis_data_dir / "evidence.json")
-        shutil.copy(args.out, vis_data_dir / "submission.json")
-        print(f"Файлы синхронизированы с {vis_data_dir}")
+        try:
+            from scripts.export_visualizer_data import export_all
+            export_all()
+        except Exception as e:
+            import shutil
+            shutil.copy(canonical_out, vis_data_dir / "canonical_graph.json")
+            shutil.copy(evidence_out, vis_data_dir / "evidence.json")
+            shutil.copy(args.out, vis_data_dir / "submission.json")
+            print(f"Файлы базово синхронизированы с {vis_data_dir} (export_all: {e})")
 
     # Оценка через evaluate_golden.py
     if not args.no_eval and args.gold.is_file():
