@@ -207,3 +207,14 @@
 
 Не брались: словари `step.py` и `REF_ENTITIES`, промпт M1 — это Stage 0 (словари вынесены в `EntitySchema` параллельной веткой `feature/84-step-executor-universality`, влита сюда же; значения для Train Ticket прежние, раздел 2.2.1); признак отказа `*.Response` и нормализация строк при повторе шага — общего правила не нашлось; R20 `rebind` — до пересборки кеша LLM. `apply_spring_security` по-прежнему живёт в `builder.py` (legacy-модуль), но имён проекта в нём при умолчаниях больше нет.
 
+## 7. Обобщено 19.10 (ветка `feature/86-universality-refactoring`)
+
+По временному плану `TODO_universality_rules.md` выполнены следующие шаги обобщения:
+
+| № таблицы 3 | Что сделано | Флаг, откат | Как проверено |
+|---|---|---|---|
+| **11** | Модель M3 (`ScenarioState`, `ScenarioProfile`, `OrderStatus`, `TrainType`, `orders_other`) полностью выведена из пути исполнения M4. M4 использует изолированный `ScenarioContext` с пассажиром (`user_name` из `context/README.md`, `account_id` из дампа пользователей). Мутации `apply_step` для M4 опущены | `--m4-state m3` | sha256 `94463c41…5a08` совпадает ребро в ребро как с `context`, так и с `m3`; контрольный зонд без пассажира показал потерю `Order#<init>` и добавление `PaymentController#pay` |
+| **8** | Из `interpreter.py` удален рудимент с литералом таблицы `station_food_list` (режим абляции `sf_mode == "off"`). В `interpreter.py` больше нет литералов таблиц | — | sha256 `94463c41…5a08` совпадает байт в байт |
+| **9** | Флаги абляций legacy (`--probe-orders-data`, `--enum-member-calls`, `--trip-food-query`, `--route-distances-collection`, `--route-stations-usage`, `--preserve-notification-lookup`, `--security-check-scope`) помечены в `run_eval.py --help` как `(только legacy-исполнитель: --executor legacy)` | — | sha256 `94463c41…5a08` совпадает |
+| **2** | Зондирование синтетических DTO в `build_dto`: подтверждено, что `userName` (связка с логином в S4) и `documentNumber` (проверка дубликатов в S3) несут смысловую нагрузку. Наивный генератор моков по `@NotNull` приводит к расхождению графа в S5–S7 (sha256 `e116ae4b…`), подтверждая недопустимость слепой типизации без семантики | — | зонд зафиксирован в scratch |
+| **6** | Зондирование `pool_ir.json`: подтверждено, что `SkeletonIndex` использует `pool_ir` для связи вызовов (`calls_by_mid_line_col`). Удаление `TargetPool` допустимо только одновременно с генерацией общего пула через Gradle | — | зонд зафиксирован |
