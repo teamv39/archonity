@@ -87,6 +87,7 @@ class ArchonityPipeline:
         m4_m3_refs: str = "off",
         module_roles: str = "skeleton",
         m4_state: str = "context",
+        ref_kinds: str = "v7",
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -129,6 +130,7 @@ class ArchonityPipeline:
             m4_m3_refs=m4_m3_refs,
             module_roles=module_roles,
             m4_state=m4_state,
+            ref_kinds=ref_kinds,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)

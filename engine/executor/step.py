@@ -2,11 +2,14 @@
 
 Аргументы обработчика:
 - `@RequestBody` — DTO из `params` шага и ссылок `refs` (поля, которых не определил шаг, неизвестны);
+  значения по смыслу (ADR-007, решение 6): поле, по которому создающий метод ищет дубликат, — новое значение;
+  записанное шагом значение — следующим шагам; при входе — пассажир и пустые поля из `context` скелета;
 - `@PathVariable` — по имени из `params`, ссылок или текущего пользователя;
 - `@RequestHeader` — неизвестно.
 
 Ссылки `<first|second|new>_of_step_<n>` разрешаются по миру M4: `new` — сущность, сохранённая шагом n,
-`first`/`second` — элемент результата обработчика шага n; если не нашли — модель состояния M3.
+`first`/`second` — элемент результата обработчика шага n; если не нашли — модель состояния M3. Виды ссылок —
+из манифеста `engine/manifest.py`; виды M1 v7 переводятся в них (`--ref-kinds v7`, `_v7_refs`).
 """
 from __future__ import annotations
 
@@ -20,14 +23,11 @@ from engine.executor.values import UNKNOWN, EnumV, ListV, Obj, OptionalV, Wrappe
 from engine.executor.world import camel
 
 _REF = re.compile(r"^(first|second|new)_of_step_(\d+)$")
+# Виды M1 v7 (кеш m1-v7), которых нет в манифесте: вид манифеста с тем же смыслом. `train` — в StepExecutor._v7_refs
+_V7_KINDS = {"contact": "contacts", "price": "priceConfig", "consign": "consignRecord", "store": "stationFoodStore"}
 _WORDY = re.compile(r"^[A-Za-z][A-Za-z ,.'-]*$")
 
 _DEFAULT_SCHEMA = EntitySchema()
-_KIND_HINTS = _DEFAULT_SCHEMA._kind_hints
-_ID_FIELDS = _DEFAULT_SCHEMA._id_fields
-_USER_FIELDS = _DEFAULT_SCHEMA.user_fields
-_FIELD_ALIASES = _DEFAULT_SCHEMA._field_aliases
-
 
 
 class StepExecutor:
@@ -37,6 +37,7 @@ class StepExecutor:
                  judge: Any = None) -> None:
         self.index = index
         self.schema = EntitySchema(index)
+        self.ref_kinds = getattr(rules, "ref_kinds", "v7")  # словарь видов в StepRequest.refs (ADR-007)
         self.judge = judge  # engine.executor.judge.Judge (кеш, бюджет вызовов сервера) или None
         self.it = Interpreter(index, rules, Path(ir_dir), Path(targets_root) if targets_root else None,
                               self._ask_judge if judge is not None else None)
@@ -46,13 +47,17 @@ class StepExecutor:
         self._src: dict[str, list[str]] = {}
         self.results: dict[int, Any] = {}
         self.current_user: str | None = None
-        self.registered_username: str | None = None
+        self.written: dict[str, Any] = {}
         self.handlers: dict[int, str] = {}
         self.step_params: dict[int, dict[str, Any]] = {}
         self.step_refs: dict[int, dict[str, str]] = {}
         self.saved: dict[int, list[tuple[str, Obj]]] = {}
         self.unknowns: dict[str, list[dict[str, Any]]] = {}
         self.sid = "S?"
+        self._login_ids = _login_principal_ids(index.N)
+        self._login_blanks = _context_login_blanks(getattr(index, "sk", {}).get("context"))
+        self._reach: dict[str, set[str]] = {}
+        self._dedupe: dict[tuple[str, str | None], tuple[str, ...]] = {}
 
     def begin_scenario(self, sid: str) -> None:
         self.sid = sid
@@ -60,7 +65,7 @@ class StepExecutor:
         self.it.begin_scenario(db.fork() if db is not None and hasattr(db, "fork") else db)
         self.results = {}
         self.current_user = None
-        self.registered_username = None
+        self.written = {}
         self.handlers = {}
         self.step_params = {}
         self.step_refs = {}
@@ -231,58 +236,106 @@ class StepExecutor:
         fields = self.it.types.all_fields(tid)
         names = {f["name"] for f in fields}
         defaults: dict[str, Any] = {}
+        own_ids: set[str] = set()
+        fresh: set[str] = set()
         hname = self.index.N.get(handler, {}).get("name", "")
         if getattr(self, "_verb", None) == "POST" and re.match(r"(create|add|register|save|insert|new)", hname, re.I):
-            # Создание через POST: собственный ID новой сущности клиент не присылает (Jackson оставит null)
+            # Создание через POST: собственный ID новой сущности клиент не присылает (Jackson оставит null).
+            # Это и не ID текущего пользователя: при регистрации UserDto.userId пуст.
             own = [k for k in self.schema.known_kinds if self.schema.kind_rank(ftype, k) >= 2]
-            for name in ["id"] + [f for k in own for f in self.schema.id_fields(k)]:
-                if name in names and name not in params:
-                    defaults[name] = None
-        is_user_dto = self.schema.kind_rank(ftype, "user") >= 2 and "password" in names
-        if is_user_dto:
-            # Регистрация: DTO самого пользователя — ID текущего пассажира в него не подставляем. Имени нового
-            # пользователя в тексте шага нет; синтетическое имя нужно, чтобы следующий логин нашёл ту же строку.
-            user = None
-            if params.get("userName") is None and "userName" in names:
-                defaults["userName"] = self.registered_username = "m4-new-user"
-        is_contact_dto = self.schema.kind_rank(ftype, "contact") >= 2 and "documentNumber" in names
-        if is_contact_dto and getattr(self, "_verb", None) == "POST":
-            # Добавление контакта: синтетический номер документа исключает коллизию с существующими контактами
-            # аккаунта при проверке дубликатов в ContactsServiceImpl#create.
-            if "documentNumber" not in params:
-                defaults["documentNumber"] = "m4-new-contact-doc"
-            if "name" not in params:
-                defaults["name"] = "m4-new-companion"
-            if "phoneNumber" not in params:
-                defaults["phoneNumber"] = "13800000000"
-        if {"password", "verificationCode"} <= names:
-            # Логин: контекст скелета (context.account) — пассажир сценария (или зарегистрированный в сценарии),
-            # кода подтверждения нет
-            defaults = {"verificationCode": ""}
-            login = self.registered_username or getattr(self, "_user_name", None)
-            if login:
-                defaults["username"] = login
+            own_ids = {n for n in ["id"] + [f for k in own for f in self.schema.id_fields(k)]
+                       if n in names and n not in params}
+            defaults.update(dict.fromkeys(own_ids))
+            # Поле, по которому создающий метод ищет дубликат (чтение репозитория перед save): значения нет в тексте
+            # шага, а новая сущность создаётся — значение, которого нет в мире БД. Следующие шаги его переиспользуют.
+            for f in fields:
+                name = f["name"]
+                if name in self._dedupe_fields(handler, ftype) and name not in params and name not in own_ids \
+                        and f.get("type") == "java.lang.String":
+                    defaults[name] = f"m4-new-{name}"
+                    fresh.add(name)
+        if self._is_login(handler):
+            # Вход (Spring Security): поля, которых при входе нет по context скелета («no verification code at
+            # login»), — пустые; имя (UserDetails.getUsername) — пассажир context, если шаг не регистрировал своего
+            for name in names:
+                if _norm(name) in self._login_blanks:
+                    defaults[name] = ""
+                elif _norm(name) == "username" and getattr(self, "_user_name", None):
+                    defaults[name] = self._user_name
         if "consigneeName" in names:
-            # UI (client_ticket_book.js): имя, телефон и вес получателя багажа ставятся только при отмеченном
-            # «need consign»; без багажа полей в запросе нет (null). Имени нет в тексте шага, вес есть.
+            # UI (client_ticket_book.js) шлёт имя, телефон и вес получателя багажа одной группой, только при отмеченном
+            # «need consign». Вес 0 в тексте шага — багажа нет, полей группы в запросе нет (null). Имени и телефона в
+            # тексте нет: при весе больше 0 они неизвестны. Группу полей каталог UI пока не отдаёт (annotation_rules).
             w = params.get("consigneeWeight")
-            if isinstance(w, (int, float)) and not isinstance(w, bool):
-                defaults["consigneeName"] = "consignee" if w > 0 else None
-                defaults["consigneePhone"] = "consignee-phone" if w > 0 else None
+            if isinstance(w, (int, float)) and not isinstance(w, bool) and w <= 0:
+                defaults["consigneeName"] = defaults["consigneePhone"] = None
         for f in fields:
-            v = self.field_value(f["name"], params, ents, user, f.get("type"))
-            if v is UNKNOWN and f["name"] == "id":
+            name = f["name"]
+            v = self.field_value(name, params, ents, None if name in own_ids else user, f.get("type"))
+            if v is UNKNOWN and name == "id":
                 # DTO того же вида, что сущность ссылки (Consign и запись багажа): id — ID этой сущности
                 for kind, ent in ents.items():
                     if kind in self.schema.known_kinds and ent is not None and self.schema.kind_rank(ftype, kind) >= 2:
                         v = self.entity_id(ent, kind)
                         if v is not UNKNOWN:
                             break
-            if v is UNKNOWN and f["name"] in defaults:
-                v = defaults[f["name"]]
+            if v is UNKNOWN and _norm(name) in self.written:
+                # Значение, записанное прежним шагом (имя при регистрации -> вход)
+                v = self.written[_norm(name)]
+            if v is UNKNOWN and name in defaults:
+                v = defaults[name]
+                if name in fresh:
+                    self.written[_norm(name)] = v
             if v is not UNKNOWN:
-                obj.fields[f["name"]] = v
+                obj.fields[name] = v
         return self.it.jackson_fill(obj, module)
+
+    def _reachable(self, handler: str, depth: int = 4) -> set[str]:
+        """Методы проекта, достижимые из обработчика по рёбрам calls скелета (с реализациями интерфейсов)."""
+        if handler not in self._reach:
+            seen, frontier = {handler}, [handler]
+            for _ in range(depth):
+                nxt = []
+                for m in frontier:
+                    for t in self.index.calls.get(m, ()):
+                        for x in (t, *self.index.over.get(t, ())):
+                            if x not in seen:
+                                seen.add(x)
+                                nxt.append(x)
+                frontier = nxt
+            self._reach[handler] = seen
+        return self._reach[handler]
+
+    def _is_login(self, handler: str) -> bool:
+        """Обработчик входа: из него достижим метод с вызовом AuthenticationManager.authenticate."""
+        return not self._reachable(handler).isdisjoint(self._login_ids)
+
+    def _dedupe_fields(self, handler: str, ftype: str | None) -> tuple[str, ...]:
+        """Поля DTO, по которым метод, достижимый из обработчика, ищет дубликат: геттеры параметра этого типа в
+        аргументах чтения репозитория, после которого тот же метод сохраняет сущность (факты archparse)."""
+        key = (handler, ftype)
+        if key not in self._dedupe:
+            out: list[str] = []
+            for m in sorted(self._reachable(handler)):
+                saves = [c.line for c in self.index.entities.calls_by_method.get(m, ()) if c.operation == "SAVE"]
+                body = self.it.ir.get(m)
+                if not saves or not body:
+                    continue
+                ptypes = {p.get("name"): p.get("type") for p in body.get("params") or ()}
+                for call in _call_exprs(body.get("body")):
+                    at = re.search(r"@(\d+):(\d+)$", call["call"])
+                    rc = self.it.repo_calls.get((m, int(at.group(1)), int(at.group(2)))) if at else None
+                    if rc is None or rc.operation != "READ" or not any(line > rc.line for line in saves):
+                        continue
+                    for a in call.get("args") or ():
+                        if not isinstance(a, dict):
+                            continue
+                        recv, getter = a.get("recv") or {}, a.get("callee") or ""
+                        if recv.get("ref") == "param" and getter.startswith("get") and len(getter) > 3 \
+                                and not a.get("args") and simple_name(ptypes.get(recv.get("name"))) == simple_name(ftype):
+                            out.append(getter[3].lower() + getter[4:])
+            self._dedupe[key] = tuple(dict.fromkeys(out))
+        return self._dedupe[key]
 
     # --- шаг -----------------------------------------------------------------
 
@@ -296,6 +349,8 @@ class StepExecutor:
         self._user_name = getattr(state, "user_name", None)
         self._verb = (getattr(step_req, "http", None) or {}).get("method")
         refs = getattr(step_req, "refs", None) or {}
+        if self.ref_kinds == "v7":
+            refs = self._v7_refs(refs)
         expected = getattr(step_req, "expected_outcome", "success")
         before = len(self.it.world.saved)
         world = self.it.world
@@ -333,15 +388,47 @@ class StepExecutor:
             self.step_params[n] = params
             self.step_refs[n] = dict(refs)
             self.saved[n] = list(self.it.world.saved[before:])
-            # Текущий пассажир — из ответа логина (TokenDto.userId), как его берёт UI
-            payload = _payload(ret)
-            if isinstance(payload, Obj) and self.schema.kind_rank(payload.type, "user") >= 2:
-                uid = payload.fields.get("userId")
-                if isinstance(uid, str):
-                    self.current_user = uid
+            # Текущий пассажир — из ответа входа, как его берёт UI (client_id = data.userId)
+            uid = self._logged_in_user(sink, ret)
+            if uid is not None:
+                self.current_user = uid
         for u in sink.unknowns:
             self.unknowns[self.sid].append(dict(u, step=n))
         return self._emit(sink, ledger)
+
+    def _v7_refs(self, refs: dict[str, str]) -> dict[str, str]:
+        """Совместимость с видами M1 v7 (кеш m1-v7, до ADR-007): перевод в виды манифеста. Уйдёт с режимом v7.
+
+        `train` в v7 значит то тип поезда (S6: `new_of_step_3` после создания типа), то рейс из поиска (S4.6,
+        S7.10): тип поезда, если шаг ссылки сохранил или вернул сущность `trainType`, иначе рейс.
+        """
+        out: dict[str, str] = {}
+        for k, v in refs.items():
+            if k != "train":
+                out[_V7_KINDS.get(k, k)] = v
+        if "train" in refs:
+            m = _REF.match(refs["train"] or "")
+            n = int(m.group(2)) if m else -1
+            is_type = any(self.schema.is_kind(fqn, "trainType") for fqn, _ in self.saved.get(n, [])) \
+                or bool(_find_kind(_payload(self.results.get(n)), "trainType", schema=self.schema))
+            out.setdefault("trainType" if is_type else "trip", refs["train"])
+        return out
+
+    def _logged_in_user(self, sink: Sink, ret: Any) -> str | None:
+        """ID пользователя из ответа шага входа или None, если шаг не вход.
+
+        Вход — шаг, в котором исполнился метод с вызовом `AuthenticationManager.authenticate` (Spring Security).
+        ID — поле ответа с именем поля `@Id` класса `UserDetails` того же модуля (`User.userId` -> `TokenDto.userId`).
+        """
+        payload = _payload(ret)
+        if not isinstance(payload, Obj):
+            return None
+        for m in sink.methods:
+            for name in self._login_ids.get(m, ()):
+                v = payload.fields.get(name)
+                if isinstance(v, str):
+                    return v
+        return None
 
     # --- судья -----------------------------------------------------------------
 
@@ -443,6 +530,49 @@ class StepExecutor:
             for m, (st, rule, via) in sorted(sink.methods.items()):
                 ledger.execute(m, st, rule, via=via)
         return methods, calls, remote, data
+
+
+_AUTH_MANAGER = "org.springframework.security.authentication.AuthenticationManager"
+
+
+def _norm(name: str) -> str:
+    """Имя поля без регистра и разделителей: userName, username, user_name -> username."""
+    return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
+def _context_login_blanks(context: Any) -> frozenset[str]:
+    """Поля, которых при входе нет, по тексту context скелета: «no verification code at login» -> verificationcode."""
+    texts = context.values() if isinstance(context, dict) else ()
+    return frozenset(_norm(m.group(1)) for t in texts if isinstance(t, str)
+                     for m in re.finditer(r"\bno ([A-Za-z][A-Za-z ]*?) at login", t))
+
+
+def _call_exprs(x: Any):
+    """Выражения вызова в IR тела метода, в порядке обхода."""
+    if isinstance(x, dict):
+        if isinstance(x.get("call"), str) and x["call"].startswith("call:") and "callee" in x:
+            yield x
+        for v in x.values():
+            if isinstance(v, (dict, list)):
+                yield from _call_exprs(v)
+    elif isinstance(x, list):
+        for v in x:
+            yield from _call_exprs(v)
+
+
+def _login_principal_ids(nodes: dict[str, dict[str, Any]]) -> dict[str, tuple[str, ...]]:
+    """Методы входа (call_site `authenticate` у `AuthenticationManager`) -> поля `@Id` классов `UserDetails` модуля."""
+    entries = {n.get("method") for n in nodes.values() if n.get("kind") == "call_site"
+               and n.get("callee") == "authenticate" and n.get("receiver_type") == _AUTH_MANAGER}
+    principals: dict[str, set[str]] = {}
+    users = {nid: n.get("module") for nid, n in nodes.items()
+             if n.get("kind") == "type" and "UserDetails" in (n.get("implements_raw") or [])}
+    for n in nodes.values():
+        if n.get("kind") == "field" and n.get("owner") in users \
+                and any((a.get("name") if isinstance(a, dict) else a) in ("Id", "EmbeddedId")
+                        for a in n.get("annotations") or ()):
+            principals.setdefault(users[n["owner"]], set()).add(n.get("name", ""))
+    return {m: tuple(sorted(principals.get(nodes.get(m, {}).get("module"), ()))) for m in sorted(e for e in entries if e)}
 
 
 def _is_place_param(name: str, v: Any) -> bool:
