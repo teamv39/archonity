@@ -51,9 +51,9 @@ export interface EdgeData extends Record<string, unknown> {
 }
 
 export const NODE_DIMENSIONS: Record<string, { width: number; height: number }> = {
-  SERVICE: { width: 300, height: 130 },
-  DATABASE: { width: 250, height: 110 },
-  MESSAGE_QUEUE: { width: 250, height: 100 },
+  SERVICE: { width: 330, height: 145 },
+  DATABASE: { width: 290, height: 135 },
+  MESSAGE_QUEUE: { width: 270, height: 120 },
 };
 
 /**
