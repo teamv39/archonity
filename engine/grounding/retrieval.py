@@ -9,7 +9,7 @@ from typing import Protocol
 import numpy as np
 
 from engine.grounding.docs import HandlerCatalog
-from engine.grounding.text import BM25, expand_query, query_toks
+from engine.grounding.text import BM25, DOMAIN_SYN, expand_query, query_toks
 
 RRF_K = 60
 
@@ -114,11 +114,12 @@ class Ranked:
 
 class Retriever:
     def __init__(self, cat: HandlerCatalog, mode: str = "code_ui", embedder: Embedder | None = None,
-                 module_roles: str = "skeleton") -> None:
+                 module_roles: str = "skeleton", syn: dict[str, list[str]] | None = DOMAIN_SYN) -> None:
         self.cat = cat
         self.mode = mode
+        self.syn = syn  # синонимы BM25: DOMAIN_SYN в режиме M1 v7, None в v8 (ADR-007)
         self.ids = sorted(cat.handlers)
-        self.bm25 = BM25({nid: cat.bm25_tokens(nid, mode) for nid in self.ids})
+        self.bm25 = BM25({nid: cat.bm25_tokens(nid, mode, syn) for nid in self.ids})
         self.twins = twin_groups(cat, module_roles)
         self.embedder = embedder
         self.doc_vecs: np.ndarray | None = None
@@ -126,7 +127,7 @@ class Retriever:
             self.doc_vecs = embedder.embed_docs([(cat.handlers[nid].signature, cat.render(nid, mode)) for nid in self.ids])
 
     def rank_bm25(self, query: str) -> list[str]:
-        ranked = [h for _, h in self.bm25.rank(expand_query(query_toks(query)))]
+        ranked = [h for _, h in self.bm25.rank(expand_query(query_toks(query, self.syn)))]
         return ranked + [h for h in self.ids if h not in set(ranked)]
 
     def rank_dense(self, queries: list[str]) -> list[list[str]]:

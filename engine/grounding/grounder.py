@@ -25,9 +25,11 @@ from engine.grounding import prompts as P
 from engine.grounding.docs import HandlerCatalog, HandlerInfo
 from engine.grounding.binding import rebind
 from engine.grounding.llm import LLMClient
+from engine.grounding.profile import ProjectProfile, build_profile
 from engine.grounding.request import StepRequest
 from engine.grounding.retrieval import Ranked, Retriever
-from engine.grounding.ui_catalog import UIRequest, build_catalog
+from engine.grounding.text import DOMAIN_SYN
+from engine.grounding.ui_catalog import UIRequest, build_catalog, find_ui_dir
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TT = ROOT / "hackaton" / "tt-challenge"
@@ -84,24 +86,40 @@ class ScenarioSession:
 class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
-                 top_k: int = TOP_K, module_roles: str = "skeleton") -> None:
+                 top_k: int = TOP_K, module_roles: str = "skeleton", prompt: str = "v7") -> None:
+        """`prompt` — режим промпта (ADR-007): v8 — общий шаблон и профиль проекта, v7 — промпт до ADR-007."""
+        if prompt not in P.PROMPT_MODES:
+            raise ValueError(f"prompt: {prompt!r}, ожидается одно из {P.PROMPT_MODES}")
         self.ix = ix
         self.root = Path(targets_root)
-        self.ui = build_catalog(self.root, ix)
+        self.prompt = prompt
+        self.version = P.PROMPT_VERSIONS[prompt]
+        v7 = prompt == "v7"
+        self.ui_dir = find_ui_dir(self.root, ix)
+        self.ui = build_catalog(self.root, ix, self.ui_dir)
         self.cat = HandlerCatalog(ix, self.root, self.ui)
         emb = None
         if embedder:
-            from engine.grounding.embedder import make_embedder
+            from engine.grounding.embedder import QUERY_TASK, QUERY_TASK_V7, make_embedder
 
-            emb = make_embedder(embedder, allow_model=allow_embed_model)
-        self.retriever = Retriever(self.cat, render, emb, module_roles)
+            emb = make_embedder(embedder, allow_model=allow_embed_model, task=QUERY_TASK_V7 if v7 else QUERY_TASK)
+        self.retriever = Retriever(self.cat, render, emb, module_roles, syn=DOMAIN_SYN if v7 else None)
         self.llm = llm
         self.top_k = top_k
         self.labels = P.handler_labels(self.cat.handlers)
         self.by_label = {lb: h for h, lb in self.labels.items()}
         enums = enum_codes(ix, self.root)
-        self.system_select = P.system_prompt(enums, P.handler_index(self.cat.handlers, self.labels))
-        self.system_params = P.system_prompt(enums)
+        index = P.handler_index(self.cat.handlers, self.labels)
+        self.profile: ProjectProfile | None = None
+        if v7:
+            self.system_select = P.system_prompt(enums, index)
+            self.system_params = P.system_prompt(enums)
+        else:
+            self.profile = build_profile(ix, self.root, self.cat, self.ui, self.retriever.twins, llm)
+            env = (ix.sk.get("context") or {}).get("profile")
+            admin = any("admin" in h.module.split("-") for h in self.cat.handlers.values())
+            self.system_select = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin, index)
+            self.system_params = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin)
 
     def rebind(self, req: StepRequest) -> StepRequest | None:
         """R20: M1 выбрал обработчик, который Spring вызвать не может (`@PathVariable` не совпадает с шаблоном
@@ -135,22 +153,30 @@ class StepGrounder:
         reqs = sorted(h.ui, key=lambda r: ("/static/js/" in r.file, not r.pages, r.id))
         return [(r, self.ui.siblings(r)) for r in reqs]
 
+    def _candidate(self, h: str) -> str:
+        """Карточка кандидата; у близнеца — какие данные он обслуживает (v7 — типы поездов, v8 — профиль)."""
+        info = self.cat.handlers[h]
+        twin = h in self.retriever.twins
+        if self.prompt == "v7":
+            return P.candidate_block(self.labels[h], info, self._ui_for(info), P.train_kind(info.module) if twin else None)
+        return P.candidate_block(self.labels[h], info, self._ui_for(info),
+                                 twin=P.twin_note(self.profile, info.module) if twin else None)
+
     def ground_step(self, sc: dict[str, Any], st: dict[str, Any], ranked: Ranked, history: list[str]) -> StepRequest:
         n, action = st["n"], st.get("action") or ""
         cands = ranked.candidates(self.top_k, self.retriever.twins)
         prefix = P.scenario_block(sc) + "\n" + P.history_block(history) + "\n"
         grounding: dict[str, Any] = {"candidates": cands, "cache_keys": {}}
+        v7 = self.prompt == "v7"
+        if self.profile is not None and self.profile.key:
+            grounding["cache_keys"]["profile"] = self.profile.key
 
         sel = None
         if self.llm is not None:
-            blocks = "\n".join(
-                P.candidate_block(self.labels[h], self.cat.handlers[h], self._ui_for(self.cat.handlers[h]),
-                                  P.train_kind(self.cat.handlers[h].module) if h in self.retriever.twins else None)
-                for h in cands)
-            msgs = [{"role": "system", "content": self.system_select},
-                    {"role": "user", "content": prefix + P.SELECT_TASK.format(n=n, action=action, candidates=blocks)}]
-            sel, key = self.llm.complete_json("select", P.PROMPT_VERSION, msgs,
-                                              P.select_schema(list(self.by_label), n))
+            blocks = "\n".join(self._candidate(h) for h in cands)
+            task = (P.SELECT_TASK if v7 else P.SELECT_TASK_V8).format(n=n, action=action, candidates=blocks)
+            msgs = [{"role": "system", "content": self.system_select}, {"role": "user", "content": prefix + task}]
+            sel, key = self.llm.complete_json("select", self.version, msgs, P.select_schema(list(self.by_label), n))
             grounding["cache_keys"]["select"] = key
         if sel is not None and sel.get("handler") in self.by_label:
             handler = self.by_label[sel["handler"]]
@@ -178,9 +204,10 @@ class StepGrounder:
                 if k in names:
                     params[k], sources[k] = v, "UI"
         if self.llm is not None and grounding["source"] == "LLM" and P.needs_params(h):
-            msgs = [{"role": "system", "content": self.system_params},
-                    {"role": "user", "content": prefix + P.params_task(n, action, verb, path, h, fields, ui_req)}]
-            got, key = self.llm.complete_json("params", P.PROMPT_VERSION, msgs, P.params_schema(fields))
+            task = P.params_task(n, action, verb, path, h, fields, ui_req, P.PARAMS_TASK if v7 else P.PARAMS_TASK_V8,
+                                 optional=not v7)
+            msgs = [{"role": "system", "content": self.system_params}, {"role": "user", "content": prefix + task}]
+            got, key = self.llm.complete_json("params", self.version, msgs, P.params_schema(fields))
             grounding["cache_keys"]["params"] = key
             for k, v in (got or {}).items():
                 if v is not None and k in names:
@@ -271,13 +298,14 @@ def main() -> None:
     ap.add_argument("--no-server", action="store_true", help="LLM только из кеша")
     ap.add_argument("--no-cache", action="store_true", help="пересчитать ответы LLM")
     ap.add_argument("--top-k", type=int, default=TOP_K)
+    ap.add_argument("--prompt", choices=P.PROMPT_MODES, default="v7", help="режим промпта M1 (ADR-007)")
     a = ap.parse_args()
 
     paths = a.scenarios or sorted(glob.glob(str(TT / "scenarios" / "*.json")))
     ix = SkeletonIndex(load_json(a.skeleton))
     llm = None if a.no_llm else LLMClient(use_server=not a.no_server, refresh=a.no_cache)
     g = StepGrounder(ix, a.targets, embedder=None if a.no_embed else a.embedder,
-                     allow_embed_model=a.embed_model, llm=llm, top_k=a.top_k)
+                     allow_embed_model=a.embed_model, llm=llm, top_k=a.top_k, prompt=a.prompt)
     a.out.mkdir(parents=True, exist_ok=True)
     results: dict[str, list[StepRequest]] = {}
     for p in paths:

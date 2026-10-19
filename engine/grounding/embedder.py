@@ -20,7 +20,9 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 CACHE_DIR = ROOT / "cache" / "emb"
-QUERY_TASK = "Given a user action in a train ticket booking web app, retrieve the REST endpoint handler that implements it"
+# Инструкция запроса Qwen3-Embedding: общая (M1 v8) и прежняя, про Train Ticket (M1 v7, векторы кеша v7), ADR-007
+QUERY_TASK = "Given a user action in a web application, retrieve the REST endpoint handler that implements it"
+QUERY_TASK_V7 = "Given a user action in a train ticket booking web app, retrieve the REST endpoint handler that implements it"
 
 
 @dataclass(frozen=True)
@@ -39,12 +41,12 @@ class EmbedSpec:
 SPECS = {
     "qwen3-4b": EmbedSpec(
         "qwen3-4b", "Qwen/Qwen3-Embedding-4B",
-        query_fmt=f"Instruct: {QUERY_TASK}\nQuery: {{q}}", doc_fmt="{text}",
+        query_fmt="Instruct: {task}\nQuery: {q}", doc_fmt="{text}",
         tokenizer_kwargs={"padding_side": "left"},
     ),
     "qwen3-0.6b": EmbedSpec(
         "qwen3-0.6b", "Qwen/Qwen3-Embedding-0.6B",
-        query_fmt=f"Instruct: {QUERY_TASK}\nQuery: {{q}}", doc_fmt="{text}",
+        query_fmt="Instruct: {task}\nQuery: {q}", doc_fmt="{text}",
         tokenizer_kwargs={"padding_side": "left"},
     ),
     # Промпты из карточки EmbeddingGemma; float16 даёт NaN — только bfloat16/float32
@@ -80,8 +82,10 @@ class VectorCache:
 class STEmbedder:
     """Эмбеддер на sentence-transformers; модель грузится лениво, только на промахе кеша."""
 
-    def __init__(self, spec: EmbedSpec, allow_model: bool = True, batch_size: int = 8) -> None:
+    def __init__(self, spec: EmbedSpec, allow_model: bool = True, batch_size: int = 8,
+                 task: str = QUERY_TASK) -> None:
         self.spec = spec
+        self.task = task  # инструкция запроса ({task} в query_fmt)
         self.name = spec.name
         self.allow_model = allow_model
         self.batch_size = batch_size
@@ -131,7 +135,7 @@ class STEmbedder:
         return np.stack([self.cache.vecs[k] for k in keys])
 
     def embed_queries(self, texts: list[str]) -> np.ndarray | None:
-        return self._embed("query", [self.spec.query_fmt.format(q=t) for t in texts])
+        return self._embed("query", [self.spec.query_fmt.format(q=t, task=self.task) for t in texts])
 
     def embed_docs(self, docs: list[tuple[str, str]]) -> np.ndarray | None:
         return self._embed("doc", [self.spec.doc_fmt.format(title=t, text=x) for t, x in docs])
@@ -148,7 +152,7 @@ def _revision(repo: str) -> str | None:
         return None
 
 
-def make_embedder(name: str, allow_model: bool = True) -> STEmbedder:
+def make_embedder(name: str, allow_model: bool = True, task: str = QUERY_TASK) -> STEmbedder:
     if name not in SPECS:
         raise SystemExit(f"неизвестный эмбеддер {name}; есть: {', '.join(SPECS)}")
-    return STEmbedder(SPECS[name], allow_model=allow_model)
+    return STEmbedder(SPECS[name], allow_model=allow_model, task=task)

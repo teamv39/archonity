@@ -101,8 +101,8 @@ class LLMClient:
         return self._server_ok
 
     def complete_json(self, kind: str, prompt_version: str, messages: list[dict[str, str]],
-                      schema: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
-        """→ (ответ по схеме или None, ключ кеша)."""
+                      schema: dict[str, Any], max_tokens: int = MAX_TOKENS) -> tuple[dict[str, Any] | None, str]:
+        """→ (ответ по схеме или None, ключ кеша). `max_tokens` в ключ не входит: обрыв ответа виден по схеме."""
         key = self.key(prompt_version, messages, schema)
         path = self._path(key)
         if not self.refresh and path.is_file():
@@ -115,7 +115,7 @@ class LLMClient:
             "model": self.model,
             "messages": messages,
             "temperature": 0,
-            "max_tokens": MAX_TOKENS,
+            "max_tokens": max_tokens,
             "cache_prompt": True,
             "chat_template_kwargs": {"enable_thinking": False},
             "response_format": {"type": "json_schema", "json_schema": {"name": kind, "strict": True, "schema": schema}},

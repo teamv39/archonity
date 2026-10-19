@@ -16,8 +16,12 @@ from engine.grounding.request import OUTCOMES, REF_ENTITIES, REF_PICKS
 from engine.grounding.ui_catalog import UIRequest
 
 PROMPT_VERSION = "m1-v7"
+# Режимы промпта (ADR-007): v8 — общий шаблон, домен и правила близнецов из профиля проекта; v7 — до ADR-007, откат
+PROMPT_MODES = ("v8", "v7")
+PROMPT_VERSIONS = {"v8": "m1-v8", "v7": PROMPT_VERSION}
 CAND_SRC_LINES = 6
 
+# Режим v7: тексты до ADR-007, с доменом Train Ticket. Оставлены для отката (`--m1-prompt v7`, кеш m1-v7)
 SYSTEM = """You map steps of a user scenario in the Train Ticket web application to backend REST requests.
 Train Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.
 
@@ -53,6 +57,42 @@ Request fields (Java type):
 {ui_hints}
 Fill only the fields whose value follows from the step text or the scenario description: seat class, food, assurance, consignment weight and consignee, query filters and date ranges, names, numbers and dates of new entities. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."""
 
+# Режим v8 (ADR-007): без слов домена. Домен, правила близнецов — из профиля проекта (engine/grounding/profile.py),
+# окружение — из `context` скелета, модуль UI — из `find_ui_dir`
+SYSTEM_V8 = """You map steps of a user scenario in a web application to backend REST requests.
+{domain}The backend is a set of Java microservices behind a gateway; a browser UI ({ui}) sends the requests.{environment}
+
+Rules:
+- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.
+{twins}- When a UI variant is sent only under a condition, check the condition against the scenario.
+- A request that the web UI sends only in the response handler of another request is the UI's follow-up to that request. A step maps to the first request even when the scenario tells what happens after it; pick the follow-up only when the step asks for the follow-up action by itself.
+- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.
+{admin}- A step that the system refuses still sends its request: pick the handler that refuses it.
+
+Enum codes used in request fields:
+{enums}
+"""
+
+TWINS_V8 = """- Some services come in twins: the same API in two services, each keeping its own part of the data. First pick the handler that does what the step asks; then, if the handler has a twin, choose the side by the data the step works with. These rules choose only between the two services of a pair, not between other handlers:
+{rules}
+"""
+
+SELECT_TASK_V8 = """Current step {n}: {action}
+
+Candidate handlers (closest search matches):
+{candidates}
+
+Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "trip": "first_of_step_2" for the first trip found at step 2, "order": "new_of_step_6" for the order created at step 6). Leave refs empty when the request uses nothing from earlier steps."""
+# Пример refs — с видами ссылок v7 (`REF_ENTITIES`): виды меняет фаза B2 ADR-007 вместе с этим примером
+
+PARAMS_TASK_V8 = """Current step {n}: {action}
+Chosen request: {verb} {path} -> {signature}
+
+Request fields (Java type):
+{fields}
+{ui_hints}
+Fill only the fields whose value follows from the step text or the scenario description: the options and extras the step chooses, amounts and quantities, query filters and date ranges, names, numbers and dates of new entities. A field that the request leaves out keeps its Java default: 0 for numbers, false for booleans, null for strings and objects. When the step does not take an option ('without ...', 'no ...', or the same choice as an earlier step that did not take it), the web UI leaves out the fields it sends only for that option: give them their default, and give coded fields the enum code for none. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."""
+
 
 def enum_reference(enums: dict[str, list[str]]) -> str:
     return "\n".join(f"- {name}: {', '.join(consts)}" for name, consts in sorted(enums.items()))
@@ -62,6 +102,44 @@ def system_prompt(enums: dict[str, list[str]], index: str | None = None) -> str:
     """Индекс обработчиков нужен только вызову выбора; вызову параметров он лишний и отвлекает."""
     text = SYSTEM.format(enums=enum_reference(enums))
     return text + INDEX.format(index=index) if index else text
+
+
+def twin_rules_block(profile: Any) -> str:
+    """Правила выбора стороны пар близнецов из профиля, строка на пару; что хранит каждая сторона — в карточке
+    кандидата (`twin_note`). Пары без правила профилировщика пропускаются."""
+    out = []
+    for t in getattr(profile, "twins", ()):
+        if not (t.serves.get(t.base) and t.serves.get(t.variant) and t.choose_by):
+            continue
+        out.append(f"  - {t.base} (base) / {t.variant} (variant, marker '{t.marker}'): {t.choose_by}")
+    return "\n".join(out)
+
+
+def system_prompt_v8(enums: dict[str, list[str]], profile: Any, ui_dir: str | None, environment: str | None,
+                     admin: bool, index: str | None = None) -> str:
+    """Системный промпт v8: домен из профиля, окружение из `context` скелета, правило админки — если в проекте
+    есть модули админки."""
+    rules = twin_rules_block(profile)
+    summary = (getattr(profile, "domain_summary", "") or "").strip()
+    text = SYSTEM_V8.format(
+        domain=f"The application: {summary}\n" if summary else "",
+        ui=ui_dir or "web UI",
+        environment=f"\nEnvironment: {environment.strip()}" if environment else "",
+        twins=TWINS_V8.format(rules=rules) if rules else "",
+        admin="- Administrator steps (admin console) use admin services; other users' steps do not.\n" if admin else "",
+        enums=enum_reference(enums),
+    )
+    return text + INDEX.format(index=index) if index else text
+
+
+def twin_note(profile: Any, module: str) -> str | None:
+    """Строка карточки кандидата-близнеца (v8): что обслуживает этот модуль и его близнец, по профилю."""
+    got = profile.rule_for(module) if profile is not None else None
+    if got is None:
+        return None
+    t, other = got
+    side = "base" if module == t.base else "variant"
+    return f"twin of {other}; this {side} side: {t.serves[module]}"
 
 
 def handler_labels(handlers: dict[str, HandlerInfo]) -> dict[str, str]:
@@ -109,10 +187,13 @@ def _ui_line(r: UIRequest, siblings: list[UIRequest]) -> str:
 
 
 def candidate_block(label: str, h: HandlerInfo, ui: list[tuple[UIRequest, list[UIRequest]]],
-                    train_kind: str | None = None) -> str:
+                    train_kind: str | None = None, twin: str | None = None) -> str:
+    """`train_kind` — строка близнеца v7, `twin` — v8 (`twin_note`)."""
     lines = [f"{label}: " + "; ".join(f"{v} {p}" for v, p in h.routes)]
     lines.append(f"    handler {h.signature} in {h.module}")
-    if train_kind:
+    if twin:
+        lines.append(f"    {twin}")
+    elif train_kind:
         lines.append(f"    serves {train_kind} only; its twin serves the other kind")
     if h.body_fields:
         lines.append("    body: " + ", ".join(f["name"] for f in h.body_fields))
@@ -127,7 +208,7 @@ def candidate_block(label: str, h: HandlerInfo, ui: list[tuple[UIRequest, list[U
 
 
 def train_kind(module: str) -> str:
-    """Какие поезда обслуживает модуль из пары близнецов: `other` или цифра в имени — обычные."""
+    """Режим v7: какие поезда обслуживает модуль из пары близнецов: `other` или цифра в имени — обычные."""
     core = module.removeprefix("ts-").removesuffix("-service")
     if re.search(r"other|\d", core):
         return "regular trains (the 'Other' type, not G/D)"
@@ -181,7 +262,8 @@ def params_schema(fields: list[tuple[str, str, str]]) -> dict[str, Any]:
 
 
 def params_task(n: int, action: str, verb: str, path: str, h: HandlerInfo, fields: list[tuple[str, str, str]],
-                ui: UIRequest | None) -> str:
+                ui: UIRequest | None, template: str = PARAMS_TASK, optional: bool = False) -> str:
+    """`optional` (режим v8) — ещё и поля, которые UI шлёт только под условием, сгруппированные по условию."""
     flines = "\n".join(f"  {name} ({src}): {jt}" for name, src, jt in fields)
     hints = ""
     if ui is not None:
@@ -192,5 +274,12 @@ def params_task(n: int, action: str, verb: str, path: str, h: HandlerInfo, field
         if cond:
             hints += "Values the web UI sends under conditions:\n" + "\n".join(
                 f"  {c['field']}={c['value']!r} when {' && '.join(c['guards']) or 'always'}" for c in cond[:12]) + "\n"
-    return PARAMS_TASK.format(n=n, action=action, verb=verb, path=path, signature=h.signature, fields=flines,
-                              ui_hints=hints)
+        groups: dict[str, list[str]] = {}
+        for o in ui.body_opt if optional else []:
+            if any(o["field"] == f for f, _, _ in fields):
+                groups.setdefault(" && ".join(o["guards"]), []).append(o["field"])
+        if groups:
+            hints += "Fields the web UI sends only under a condition (otherwise it leaves them out):\n" + "\n".join(
+                f"  {', '.join(fs)} when {g}" for g, fs in list(groups.items())[:8]) + "\n"
+    return template.format(n=n, action=action, verb=verb, path=path, signature=h.signature, fields=flines,
+                           ui_hints=hints)

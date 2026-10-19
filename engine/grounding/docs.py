@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex
-from engine.grounding.text import ntoks
+from engine.grounding.text import DOMAIN_SYN, ntoks
 from engine.grounding.ui_catalog import UICatalog
 
 RENDERS = ("code", "code_ui")
@@ -131,11 +131,11 @@ class HandlerCatalog:
                 out.append(", ".join(bits))
         return "\n".join(out)
 
-    def bm25_tokens(self, nid: str, mode: str = "code_ui") -> list[str]:
-        """Токены для BM25: весь текст плюс имя метода и путь ещё раз (как в resolver)."""
+    def bm25_tokens(self, nid: str, mode: str = "code_ui", syn: dict[str, list[str]] | None = DOMAIN_SYN) -> list[str]:
+        """Токены для BM25: весь текст плюс имя метода и путь ещё раз (как в resolver); `syn` — см. `text.stem`."""
         h = self.handlers[nid]
-        extra = ntoks(h.name) * 2 + ntoks(" ".join(p for _, p in h.routes))
+        extra = ntoks(h.name, syn) * 2 + ntoks(" ".join(p for _, p in h.routes), syn)
         if mode == "code_ui":
             for r in h.ui:
-                extra += ntoks(r.function) + ntoks(" ".join(r.labels))
-        return ntoks(self.render(nid, mode)) + extra
+                extra += ntoks(r.function, syn) + ntoks(" ".join(r.labels), syn)
+        return ntoks(self.render(nid, mode), syn) + extra

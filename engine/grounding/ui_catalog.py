@@ -24,7 +24,6 @@ import tree_sitter_javascript as tsj
 
 from engine.adapters.skeleton import SkeletonIndex, path_segs
 
-UI_DIR = "ts-ui-dashboard"
 VENDOR = re.compile(
     r"(\.min\.|^(vue|angular|jquery|bootstrap|echarts|amazeui|iscroll|cropper|aliyun|react|lodash|moment|d3|three|npm)\b"
     r"|^vue-upload)",
@@ -65,6 +64,7 @@ class UIRequest:
     body_fields: list[str] = field(default_factory=list)
     body_consts: dict[str, Any] = field(default_factory=dict)
     body_cond: list[dict[str, Any]] = field(default_factory=list)
+    body_opt: list[dict[str, Any]] = field(default_factory=list)
     messages: list[str] = field(default_factory=list)
     handlers: list[str] = field(default_factory=list)
     group: str = ""
@@ -410,19 +410,22 @@ class _FileParser:
         return [("{" + _placeholder(expr) + "}", [])]
 
     def body(self, expr: ts.Node | None, ctx: _Ctx,
-             seen: frozenset[str] = frozenset()) -> tuple[list[str], dict[str, Any], list[dict[str, Any]]]:
-        """Тело запроса → (поля, литералы без условий, литералы под условием)."""
+             seen: frozenset[str] = frozenset()
+             ) -> tuple[list[str], dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
+        """Тело запроса → (поля, литералы без условий, литералы под условием, поля только под условием).
+
+        Поле только под условием: каждое присваивание стоит под общим условием, без него UI поле не шлёт."""
         if expr is None:
-            return [], {}, []
+            return [], {}, [], []
         if expr.type == "identifier" and _text(expr) in ctx.env:
             return self.body(ctx.env[_text(expr)], _Ctx({}, None, []), seen)
         if expr.type == "call_expression" and _callee(expr) == "JSON.stringify":
             args = expr.child_by_field_name("arguments")
             return self.body(args.named_children[0] if args and args.named_children else None, ctx, seen)
         if expr.type == "object":
-            return self._object_fields(expr, None)
+            return (*self._object_fields(expr, None), [])
         if expr.type != "identifier":
-            return [], {}, []
+            return [], {}, [], []
         name = _text(expr)
         assigns, scope = self._scope_assignments(name, expr)
         if name not in seen:
@@ -432,6 +435,7 @@ class _FileParser:
         fields: list[str] = []
         consts: dict[str, Any] = {}
         cond: list[dict[str, Any]] = []
+        opt: list[dict[str, Any]] = []
         seen: dict[str, list[tuple[bool, Any, list[str]]]] = collections.defaultdict(list)
         for _, v in assigns:
             if v is not None and v.type == "object":
@@ -461,7 +465,14 @@ class _FileParser:
                 for ok, val, g in vals:
                     if ok:
                         cond.append({"field": k, "value": val, "guards": g})
-        return fields, consts, cond
+            common: list[str] = []
+            for parts in zip(*(g for _, _, g in vals)):
+                if len(set(parts)) != 1:
+                    break
+                common.append(parts[0])
+            if common and all(g for _, _, g in vals):
+                opt.append({"field": k, "guards": common})
+        return fields, consts, cond, opt
 
     def _object_fields(self, obj: ts.Node, scope: ts.Node | None) -> tuple[list[str], dict[str, Any], list[dict[str, Any]]]:
         fields, consts = [], {}
@@ -535,7 +546,11 @@ class _FileParser:
         inner_guards = _guards(call, _action_fn(call))
         anchor = ctx.via if ctx.via is not None else call
         func, outer = _action_name(anchor)
-        fields, consts, cond = self.body(data, ctx)
+        fields, consts, cond, opt = self.body(data, ctx)
+        # условие, под которым стоит и сам запрос, поле не отделяет: без него не уходит весь запрос
+        call_guards = set(_guards(call, None))
+        opt = [{"field": o["field"], "guards": g} for o in opt
+               if (g := [x for x in o["guards"] if x not in call_guards])]
         msgs = []
         for n in _walk(msg_root):
             s = _string_value(n)
@@ -553,6 +568,7 @@ class _FileParser:
             "body_fields": fields,
             "body_consts": consts,
             "body_cond": cond,
+            "body_opt": opt,
             "messages": list(dict.fromkeys(msgs)),
         }
 
@@ -733,10 +749,26 @@ class UICatalog:
                 "pages_title": self.pages_title}
 
 
-def build_catalog(targets_root: str | Path, ix: SkeletonIndex) -> UICatalog:
-    """Каталог всех UI-запросов проекта, сопоставленных с обработчиками скелета."""
+def find_ui_dir(targets_root: str | Path, ix: SkeletonIndex) -> str | None:
+    """Модуль веб-интерфейса: каталог верхнего уровня, который не модуль Java скелета, с наибольшим числом
+    HTML-страниц (в Train Ticket — `ts-ui-dashboard`). None — страниц нет."""
     root = Path(targets_root)
-    ui_root = root / UI_DIR
+    java = {n.get("module") for n in ix.N.values() if n.get("module")}
+    best: tuple[int, str] | None = None
+    for d in sorted(p for p in root.iterdir() if p.is_dir() and p.name not in java and not p.name.startswith(".")):
+        pages = sum(1 for f in ui_files(d) if f.suffix in (".html", ".htm"))
+        if pages and (best is None or pages > best[0]):
+            best = (pages, d.name)
+    return best[1] if best else None
+
+
+def build_catalog(targets_root: str | Path, ix: SkeletonIndex, ui_dir: str | None = None) -> UICatalog:
+    """Каталог всех UI-запросов проекта, сопоставленных с обработчиками скелета; `ui_dir` — по `find_ui_dir`."""
+    root = Path(targets_root)
+    ui_dir = ui_dir or find_ui_dir(root, ix)
+    if ui_dir is None:
+        return UICatalog([], [], {})
+    ui_root = root / ui_dir
     script_pages: dict[str, list[str]] = collections.defaultdict(list)
     by_id: dict[str, str] = {}
     by_func: dict[str, list[str]] = collections.defaultdict(list)
@@ -785,7 +817,7 @@ def build_catalog(targets_root: str | Path, ix: SkeletonIndex) -> UICatalog:
                     file=rel, line=rec["line"], via_line=rec["via_line"], function=rec["function"],
                     outer=rec["outer"], pages=sorted(set(script_pages.get(rel, []))), labels=labels,
                     verb=rec["verb"], url=url, guards=guards, body_fields=rec["body_fields"],
-                    body_consts=rec["body_consts"], body_cond=rec["body_cond"], messages=rec["messages"],
+                    body_consts=rec["body_consts"], body_cond=rec["body_cond"], body_opt=rec["body_opt"], messages=rec["messages"],
                     handlers=hs, group=base,
                 )
                 if hs:
@@ -800,7 +832,7 @@ def main() -> None:
 
     from engine.adapters.skeleton import load_json
 
-    ap = argparse.ArgumentParser(description="Каталог UI-запросов ts-ui-dashboard")
+    ap = argparse.ArgumentParser(description="Каталог UI-запросов модуля веб-интерфейса")
     ap.add_argument("--skeleton", default="hackaton/tt-challenge/skeleton/trainticket.json.gz")
     ap.add_argument("--targets", default="hackaton/tt-challenge/targets/trainticket")
     ap.add_argument("-o", "--out", default="output/ui_catalog.json")
