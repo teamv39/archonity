@@ -1,8 +1,9 @@
 """Точный замер FP и FN одной ячейки «сценарий × вид» по итоговому баллу платформы.
 
 Зонд — базовый ответ, из которого убран один вид рёбер в одном сценарии. Балл сценария падает на IoU/4, итог —
-на IoU/28. Итог дан с 6 знаками, поэтому IoU ячейки известен с точностью ≈ 3e-5, а соседние значения
-(P - FP) / (P + FN) при малых FP и FN отличаются на ≥ 1e-3: решение единственное. Ячейки в одной посылке не
+на IoU/28. Итог дан с 5 значащими знаками после запятой, поэтому IoU ячейки известен с точностью ≈ 3e-4. Для data
+(P ≈ 30) этого хватает на единственное решение; для executes и calls остаётся 2–3 кандидата, спорное снимает
+совместная проверка суммы S2 + S3 (замер 19.10, посылки 21–26). Ячейки в одной посылке не
 совмещать — итог покажет только сумму.
 
     python scripts/probe_cells.py make  <base submission.json> <папка> [S2:data S3:calls ...]
@@ -22,7 +23,8 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 DEFAULT_CELLS = ("S2:executes", "S2:calls", "S2:data", "S3:executes", "S3:calls", "S3:data")
-TOL = 3e-5
+STEP = 1e-5  # точность итога платформы: показывает 6 знаков, но последний всегда 0
+TOL = 28 * STEP  # итог базы и зонда округлены: ±1 шаг разницы -> ±28 шагов IoU
 MAX_ERR = 6
 
 
@@ -84,7 +86,7 @@ def solve(man_p: str, totals_p: str) -> None:
         for n, (fp, fn) in zip(names, combo):
             P = man[n]["P"]
             by_s[man[n]["scenario"]] = by_s.get(man[n]["scenario"], 1.0) + (P - fp) / (P + fn)  # 1.0 — remote
-        if abs(sum(v / 4 for v in by_s.values()) - target) <= 3.5e-6:
+        if abs(sum(v / 4 for v in by_s.values()) - target) <= 3.5 * STEP:
             joint.append(combo)
     print()
     print(f"Совместно с итогом base ({base}): {len(joint)} решени(е/я)")

@@ -115,6 +115,8 @@
 | 18 | 19.10 | Зонд S3: отсечение геттеров enum `AssuranceType` | 0.99346 (опровергнуто: S3 упал до 0.973, геттеры enum есть в эталоне) |
 | 19 | 19.10 | Зонд S3: добавление каскада `FoodController#getAllFood` на Шаге 4 | 0.98795 (опровергнуто: S3 упал до 0.935, каскад из 26 рёбер — FP) |
 | 20 | 19.10 | **Выдача кода**: ветка `feature/81-code-matches-record`, коммит `3d99fe0`, `run_eval.py --executor ir --m4-unresolved-calls emit --no-server`. sha256 `submission.json` `3c329a55…4151`, воспроизводится из архива | **0.99457** (= посылка 17, рекорд даёт код) |
+| 21–26 | 19.10 | Замер ячеек S2/S3 (`scripts/probe_cells.py`): убран один вид рёбер в одном сценарии | S2: executes FN=2, calls 1 ошибка, data FN=2; S3 — то же; FP по executes и data = 0. Форма нехватки = один вход шага (2 метода, 1 вызов, 2 таблицы) |
+| 27 | 19.10 | Зонд: шаг 4 S2/S3 = `POST /stationfoodstores` (`getFoodStoresByStationNames`). `GET /stationfoodstores/{stationId}` сломан: `@PathVariable stationName` не совпадает с `{stationId}`, Spring не вызывает контроллер — единственный такой обработчик в проекте | ожидается 1.00000 |
 
 Текущий рекордный результат на платформе: **0.99457** (`eval/records/submission_p17_0.99457.json`, `output/submission_baseline_0_99457.json`). По сценариям: S1 1.000, S4 1.000, S5 1.000, S6 1.000, S7 1.000, S2 0.981, S3 0.981. 5 из 7 сценариев закрыты на 1.000000! Оставшийся дефицит: всего 0.00543 (ровно 10 рёбер: 4 в S3 и 6 в S2)! Подробный отчёт: [docs/how_we_achieved_0_99457.md](how_we_achieved_0_99457.md).
 
