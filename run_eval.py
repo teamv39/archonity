@@ -187,16 +187,16 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--executor",
         choices=("legacy", "ir", "m4"),
-        default="legacy",
-        help="Исполнитель шага: legacy — обход скелета с правилами (по умолчанию), ir (синоним m4) — M4 по IR тел "
-             "методов data/ir (ADR-005, трёхзначная логика, мир БД сценария); требует --grounder m1",
+        default="ir",
+        help="Исполнитель шага: ir (синоним m4, по умолчанию) — M4 по IR тел методов data/ir "
+             "(ADR-005, трёхзначная логика, мир БД сценария); legacy — обход скелета с правилами",
     )
     parser.add_argument(
         "--m4-unresolved-calls",
         choices=("mute", "emit"),
-        default="mute",
-        help="M4: метод проекта на получателе известного типа без ребра в скелете (TripId#toString): mute — только "
-             "значение, emit — писать рёбра calls/executes (подтверждено платформой: 0.93625)",
+        default="emit",
+        help="M4: метод проекта на получателе известного типа без ребра в скелете (TripId#toString): emit — писать "
+             "рёбра calls/executes (по умолчанию, подтверждено платформой: 0.93625), mute — только значение",
     )
     parser.add_argument(
         "--m4-success-retry",
