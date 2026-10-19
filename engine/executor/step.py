@@ -139,7 +139,9 @@ class StepExecutor:
             ent = self.resolve_ref(kind, prev, state, depth + 1)
             if ent is not None:
                 return ent
-        if state is not None and hasattr(state, "resolve_ref"):
+        # Модель состояния M3 последним слоем — только в режиме m4_m3_refs=on (до 20.10). Выдачу M3 здесь не
+        # меняла (зонд 20.10: при ответе None от M3 sha256 тот же), а держится на перечислениях Train Ticket.
+        if getattr(self.it.rules, "m4_m3_refs", "off") == "on" and state is not None and hasattr(state, "resolve_ref"):
             d = state.resolve_ref(kind, ref)
             if isinstance(d, dict):
                 return Obj(None, {camel(k): (v.value if hasattr(v, "value") else v) for k, v in d.items()
@@ -323,9 +325,6 @@ class StepExecutor:
         self._scenario = scenario or {}
         self._step_req = step_req
         handler = step_req.handler
-        from engine.rules import ScenarioProfile
-        prof = ScenarioProfile.from_scenario(self._scenario) if self._scenario else None
-        self.it.train_mode = prof.train_mode if prof else "both"
         params = {k: v for k, v in (getattr(step_req, "params", None) or {}).items() if v is not None}
         self._user_name = getattr(state, "user_name", None)
         self._verb = (getattr(step_req, "http", None) or {}).get("method")
