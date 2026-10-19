@@ -103,17 +103,21 @@
 | 7 | 18.10 | M4 + рёбра вызовов с неразрешённым получателем (`--m4-unresolved-calls emit`), архив `02-m4-unresolved-emit` | **0.936250** (прирост) |
 | 8 | 18.10 | M4 Миши (PR #59, `--executor m4`) — сравнение исполнителей | 0.914110 (ниже 7) |
 | 9 | 18.10 | M4 Миши поверх `dev`: M1 с `rebook`, правила `dev` в его исполнителе (PR #59 закрыт, [разбор](researches/m4_executor_score_0_92539.md)) | 0.925390 (ниже 7: отличается только S6, [OQ-12](open-questions.md#oq-12)) |
-| 10 | 18.10 | Конструкторы только с вызовами проекта, без calls в конструкторы ([ADR-006](adr/adr-006_constructor_visibility.md)), ручная | **0.98908** |
-| 11 | 19.10 | Зонд S3: добавление `TravelResult#isStatus()` в `executes`, ручная | **0.98931** |
-| 12 | 19.10 | Распространение `TravelResult#isStatus()` на все сценарии (S1–S7), ручная | **0.99058** |
-| 13 | 19.10 | Зонд S3: удаление ложного Шага 4 (`StationFoodController#getFoodStoresOfStation` — в UI выбор станции выполняется в памяти JS, HTTP-запроса нет), ручная | **0.99219** (прирост) |
-| 14 | 19.10 | Зонд S2: то же удаление ложного Шага 4 в S2, ручная. Архив `submission_baseline_0_99374.zip` у автора посылки | **0.99374** (новый рекорд) |
-| 15 | 19.10 | Зонд S3: добавление `ConsignController#findByOrderId`, ручная | 0.99214 (опровергнуто: багаж по orderId в S3 не запрашивается) |
-| 16 | 19.10 | Зонд S7: отсечение `RebookServiceImpl#getAuthorizationHeadersFrom`, ручная | 0.99331 (опровергнуто: метод есть в эталоне) |
+| 10 | 18.10 | Конструкторы только с вызовами проекта, без calls в конструкторы ([ADR-006](adr/adr-006_constructor_visibility.md)) | **0.98908** |
+| 11 | 19.10 | Зонд S3: добавление `TravelResult#isStatus()` в `executes` | **0.98931** |
+| 12 | 19.10 | Распространение `TravelResult#isStatus()` на все сценарии (S1–S7) | **0.99058** |
+| 13 | 19.10 | Зонд S3: удаление ложного Шага 4 (`StationFoodController#getFoodStoresOfStation` — в UI выбор станции выполняется в памяти JS, HTTP-запроса нет) | **0.99219** (прирост) |
+| 14 | 19.10 | Зонд S2: то же удаление ложного Шага 4 в S2 | **0.99374** (новый рекорд) |
+| 15 | 19.10 | Зонд S3: добавление `ConsignController#findByOrderId` | 0.99214 (опровергнуто: багаж по orderId в S3 не запрашивается) |
+| 16 | 19.10 | Зонд S7: исключение `RebookServiceImpl#getAuthorizationHeadersFrom` | 0.99331 (опровергнуто: метод есть в эталоне) |
+| 17 | 19.10 | Зонд S2 + S7: включение `RebookInfo#<init>()` (executes + calls `StringUtils#Date2String`) по [ADR-006](adr/adr-006_constructor_visibility.md) | **0.99457** (новый рекорд! S7=1.000, S2=0.981) |
+| 18 | 19.10 | Зонд S3: отсечение геттеров enum `AssuranceType` | 0.99346 (опровергнуто: S3 упал до 0.973, геттеры enum есть в эталоне) |
+| 19 | 19.10 | Зонд S3: добавление каскада `FoodController#getAllFood` на Шаге 4 | 0.98795 (опровергнуто: S3 упал до 0.935, каскад из 26 рёбер — FP) |
 
-Посылка 10 таблицы — это замер 10 из [разбора ADR-006](researches/constructor_project_calls_rule.md). Там же замеры 1–9 со своей нумерацией: 1–8 — `drop_<вид>` / `add_<вид>` по четырём видам рёбер (`scripts/probe_kind_counts.py`, 0.686–0.873), 9 — без конструкторов, из которых не вызван метод проекта (0.98759). Выдача кода после PR #77 совпадает с посылкой 10 ребро в ребро: архив `output/submission-77-ctor-visibility.zip`.
+Текущий рекордный результат на платформе: **0.99457** (`eval/records/submission_p17_0.99457.json`, `output/submission_baseline_0_99457.json`). По сценариям: S1 1.000, S4 1.000, S5 1.000, S6 1.000, S7 1.000, S2 0.981, S3 0.981. 5 из 7 сценариев закрыты на 1.000000! Оставшийся дефицит: всего 0.00543 (ровно 10 рёбер: 4 в S3 и 6 в S2)! Подробный отчёт: [docs/how_we_achieved_0_99457.md](how_we_achieved_0_99457.md).
 
-Статусы гипотез на 18.10 — [next_day_hypotheses_and_todo.md](researches/next_day_hypotheses_and_todo.md). Писались до замера FP/FN и посылок 10–16, поэтому перед проверкой сверять их с разделом «Куда стремимся».
+Посылка 10 таблицы — это замер 10 из [разбора ADR-006](researches/constructor_project_calls_rule.md). Выдача кода после PR #77 совпадает с посылкой 10 ребро в ребро (`--ctors caller_only` по умолчанию).
+Пул задач и гипотез на 24 часа зафиксирован в [docs/researches/next_day_hypotheses_and_todo.md](researches/next_day_hypotheses_and_todo.md).
 
 ## Ответственность
 
