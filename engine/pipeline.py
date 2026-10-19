@@ -51,7 +51,7 @@ class ArchonityPipeline:
         route_stations_usage: str = "pruned",
         jackson_ctor: str = "on",
         lombok_tostring: str = "on",
-        form_only_steps: str = "skip",
+        unbound_handlers: str = "rebind",
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -89,7 +89,7 @@ class ArchonityPipeline:
             security_check_scope=security_check_scope,
             jackson_ctor=jackson_ctor,
             lombok_tostring=lombok_tostring,
-            form_only_steps=form_only_steps,
+            unbound_handlers=unbound_handlers,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
@@ -179,13 +179,11 @@ class ArchonityPipeline:
             step_req = None
             if session is not None:
                 step_req = session.ground(st)
+                # R20: обработчик, который Spring вызвать не может, — шаг через рабочий обработчик того же
+                # контроллера. Замена после заземления: история шагов в промпте M1 и кеш LLM не меняются.
+                if self.rules.unbound_handlers == "rebind":
+                    step_req = self.m1.rebind(step_req) or step_req
                 step_entries = {step_req.handler}
-                # R20: действие формы UI без запроса. Решение после заземления: история шагов в промпте M1
-                # и кеш LLM не меняются.
-                form = self.m1.form_only(step_req) if self.rules.form_only_steps == "skip" else None
-                if form is not None:
-                    step_req.grounding["no_request"] = form
-                    step_entries = set()
                 self.step_requests[sid].append(step_req.to_dict())
             else:
                 step_entries, prev_files = self.grounder.ground_step(

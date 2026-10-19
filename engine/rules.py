@@ -368,9 +368,9 @@ class RuntimeRules:
     # форматируется сгенерированным toString, рукописные геттеры его полей исполняются; off — не моделируется.
     LOMBOK_TOSTRING_MODES = ("on", "off")
 
-    # Шаг — действие формы UI без запроса (R20): skip (по умолчанию) — шаг не исполняется; request — исполняется
-    # обработчик, который выбрал M1.
-    FORM_ONLY_STEP_MODES = ("skip", "request")
+    # Обработчик, который Spring вызвать не может (R20, @PathVariable не совпадает с шаблоном пути): rebind
+    # (по умолчанию) — шаг через рабочий обработчик того же контроллера с тем же входом; keep — как выбрал M1.
+    UNBOUND_HANDLER_MODES = ("rebind", "keep")
 
     def __init__(
         self,
@@ -391,16 +391,16 @@ class RuntimeRules:
         security_check_scope: str = "all",
         jackson_ctor: str = "on",
         lombok_tostring: str = "on",
-        form_only_steps: str = "skip",
+        unbound_handlers: str = "rebind",
     ) -> None:
         for name, val, modes in (("jackson_ctor", jackson_ctor, self.JACKSON_CTOR_MODES),
                                  ("lombok_tostring", lombok_tostring, self.LOMBOK_TOSTRING_MODES),
-                                 ("form_only_steps", form_only_steps, self.FORM_ONLY_STEP_MODES)):
+                                 ("unbound_handlers", unbound_handlers, self.UNBOUND_HANDLER_MODES)):
             if val not in modes:
                 raise ValueError(f"{name}: {val!r}, ожидается одно из {modes}")
         self.jackson_ctor = jackson_ctor
         self.lombok_tostring = lombok_tostring
-        self.form_only_steps = form_only_steps
+        self.unbound_handlers = unbound_handlers
         if constructors not in self.CTOR_MODES:
             raise ValueError(f"constructors: {constructors!r}, ожидается одно из {self.CTOR_MODES}")
         if collection_tables_on_read not in self.COLLECTION_TABLE_MODES:

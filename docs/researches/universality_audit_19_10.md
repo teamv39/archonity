@@ -83,6 +83,8 @@
 
 ### 2.3. Механизм R20: Действия формы UI без сетевых запросов (`form_actions.py`)
 
+> **Устарело 19.10.** `form_actions.py` и флаг `--form-only-steps` удалены: шаг 4 запрос шлёт, R20 теперь — обработчик, который Spring вызвать не может (`engine/grounding/binding.py`), [reaching_1_0.md](reaching_1_0.md).
+
 * **Файлы:** [engine/grounding/form_actions.py](file:///c:/Users/Pavel/IdeaProjects/archonity/engine/grounding/form_actions.py), [engine/grounding/grounder.py#L106-L121](file:///c:/Users/Pavel/IdeaProjects/archonity/engine/grounding/grounder.py#L106-L121), [engine/pipeline.py#L182-L188](file:///c:/Users/Pavel/IdeaProjects/archonity/engine/pipeline.py#L182-L188)
 * **Как реализовано в коде:**
   1. С помощью Tree-sitter парсятся JS-скрипты и HTML-страницы фронтенда (`ts-ui-dashboard/`).

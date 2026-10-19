@@ -154,11 +154,12 @@ def parse_args() -> argparse.Namespace:
              "геттеры полей исполняются (TravelResult#isStatus); on (по умолчанию) или off",
     )
     parser.add_argument(
-        "--form-only-steps",
-        choices=("skip", "request"),
-        default="skip",
-        help="R20: шаг, который в UI — действие формы без запроса (выбор станции из уже загруженного списка), "
-             "а выбранный M1 обработчик UI не вызывает: skip — шаг не исполняется (по умолчанию), request — исполняется",
+        "--unbound-handlers",
+        choices=("rebind", "keep"),
+        default="rebind",
+        help="R20: M1 выбрал обработчик, который Spring вызвать не может (@PathVariable не совпадает с шаблоном "
+             "пути, getFoodStoresOfStation): rebind — шаг через рабочий обработчик того же контроллера с тем же "
+             "входом (по умолчанию, посылка 27: 1.00000), keep — как выбрал M1",
     )
     parser.add_argument(
         "--route-stations-usage",
@@ -348,7 +349,7 @@ def main() -> None:
         security_check_scope=args.security_check_scope,
         jackson_ctor=args.jackson_ctor,
         lombok_tostring=args.lombok_tostring,
-        form_only_steps=args.form_only_steps,
+        unbound_handlers=args.unbound_handlers,
         grounder=args.grounder,
         m1_options=m1_options,
         executor=args.executor,
