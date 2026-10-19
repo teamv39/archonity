@@ -12,6 +12,8 @@
 
 | Документ | О чём |
 |---|---|
+| [universality_audit_after_1_0.md](universality_audit_after_1_0.md) | Детальный аудит универсальности пайплайна после взятия 1.00000: сводная таблица степеней специфичности, M1, M4, World, AST |
+| [two_stage_pipeline_research.md](two_stage_pipeline_research.md) | Исследование и план внедрения двухстадийного пайплайна (Stage 0: Project Profiling) для универсального Spring Boot анализатора |
 | [universality_audit_19_10.md](universality_audit_19_10.md) | Аудит универсальности пайплайна на 19.10: инвентаризация подгонок под Train Ticket, M4, зонды 11–19 против правил фреймворка |
 | [reaching_1_0.md](reaching_1_0.md) | Как дошли до 1.0: замер ячеек S2/S3, сломанный `@PathVariable`, правило R20 |
 | [code_record_drift.md](code_record_drift.md) | Чем выдача кода отличается от рекорда 0.99457: три механизма, прототипы, как переносить в код |
