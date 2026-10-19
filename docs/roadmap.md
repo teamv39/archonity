@@ -1,6 +1,6 @@
 # Дорожная карта Archonity v4
 
-Обновлено 19.10.2026. Заменяет v3 от 16.10: пайплайн построен, остались хвосты балла, воспроизводимость и сдача. Архитектура — [ADR-005](adr/adr-005_scenario_execution_pipeline.md) и [ADR-006](adr/adr-006_constructor_visibility.md), правила разметки — [annotation_rules.md](annotation_rules.md), что уже известно о балле — [agent_lessons.md](agent_lessons.md).
+Обновлено 19.10.2026. Заменяет v3 от 16.10: пайплайн построен, остались хвосты балла, воспроизводимость и сдача. Архитектура — [ADR-005](adr/adr-005_scenario_execution_pipeline.md) и [ADR-006](adr/adr-006_constructor_visibility.md), правила разметки — [annotation_rules.md](annotation_rules.md), что уже известно о балле — [agent_lessons.md](agent_lessons.md), глобальный аудит перед жюри — [global_optimization_and_judges_audit.md](researches/global_optimization_and_judges_audit.md).
 
 ## Где мы
 
@@ -59,6 +59,7 @@
 
 - Остатки, для которых найден механизм. Без механизма рёбра не добавляем.
 - [x] Умолчания `run_eval.py` = конфигурация рекорда: `--executor ir` и `--m4-unresolved-calls emit` установлены по умолчанию. Теперь `python run_eval.py` без ключей выдаёт рекорд 1.00000 байт в байт (проверено 19.10 на ветке `feature/82-unbound-path-variable`, sha256 `94463c41…5a08`).
+- [x] Глобальный аудит перед оценкой жюри: [global_optimization_and_judges_audit.md](researches/global_optimization_and_judges_audit.md) — анализ критериев отбора при 1.0, узкие места производительности (Tree-sitter JS 1.89с, дампы JSON 1.08с), карта специфичности M0–M5, стабильность тестов и план killer-фич (MCP-сервер).
 - `README.md` в корне для организаторов: что делает решение, как запустить, где кеш LLM, как пересчитать без GPU. Сейчас его нет, в архив попадает только `RUN.md` с командой.
 - Аудит частных правил. Актуальный список подгонок в пути M4 — [universality_audit_after_1_0.md](researches/universality_audit_after_1_0.md) (разделы 2.5 и 3): Spring Security по именам методов входа, словари `step.py`, модель M3; правило `station_food_list` по имени метода в M4 не действует (только legacy). Ещё есть флаги абляций с именами классов (`--preserve-notification-lookup`, `--security-check-scope`, `--route-stations-usage` и др.; при умолчаниях не действуют) и эвристики `rules.py` у legacy. Для каждого решить: обобщить через семантику Spring/JPA, оставить с обоснованием в `annotation_rules.md` или удалить отжившую абляцию. Риск — переобучение под 8 сценариев и вопросы при проверке кода.
   - [x] 19.10, ветка `feature/84-generalize-rules`: Spring Security по контракту фреймворка, M4 без M3, `ts-common` и близнецы из скелета — под флагами, выдача = рекорд байт в байт ([аудит, раздел 6](researches/universality_audit_after_1_0.md)). Словари `step.py` вынесены в `EntitySchema` (ветка Дениса `feature/84-step-executor-universality`, влита сюда же), но для Train Ticket значения прежние. Остались виды ссылок M1 и промпт M1 (Stage 0), `*.Response` и нормализация при повторе шага, флаги абляций.
