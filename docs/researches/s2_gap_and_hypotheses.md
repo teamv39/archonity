@@ -1,5 +1,7 @@
 # Анализ потерь баллов и пул гипотез для сценария S2
 
+> **Устарело.** Пул гипотез 18.10, балл 0.936, до [ADR-006](../adr/adr-006_constructor_visibility.md). Почти весь разрыв до 1.0 сидел в конструкторах, а не в ветках и шагах, поэтому оценки вклада гипотез здесь неверны. Текущее — [roadmap.md](../roadmap.md) и [agent_lessons.md](../agent_lessons.md). Гипотезы S2.3 и S2.4 roadmap предлагает перепроверить замером 20.10.
+
 **Дата:** 18 октября 2026 г.  
 **Контекст:** Пайплайн M4 IR-Executor (текущий скор **0.936250**, посылка `02-m4-unresolved-emit`)  
 **Ориентиры:** [roadmap.md](../roadmap.md), [AGENTS.md](../../AGENTS.md), [hypothesis_generation_guidelines.md](hypothesis_generation_guidelines.md), [next_day_hypotheses_and_todo.md](next_day_hypotheses_and_todo.md)

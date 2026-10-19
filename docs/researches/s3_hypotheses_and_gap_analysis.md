@@ -1,5 +1,7 @@
 # Комплексный аудит сценария S3 и пул гипотез для устранения отставания скора
 
+> **Устарело.** Пул гипотез 18.10, балл 0.936, до [ADR-006](../adr/adr-006_constructor_visibility.md). Почти весь разрыв до 1.0 сидел в конструкторах, а не в ветках и шагах, поэтому оценки вклада гипотез здесь неверны. Текущее — [roadmap.md](../roadmap.md) и [agent_lessons.md](../agent_lessons.md).
+
 **Дата составления:** 18.10.2026  
 **Контекст:** Соревнование TECHARENA 2026, трек «Семантический граф микросервисной архитектуры»  
 **Базовые документы:** [roadmap.md](../roadmap.md), [AGENTS.md](../../AGENTS.md), [ADR-005](../adr/adr-005_scenario_execution_pipeline.md), [annotation_rules.md](../annotation_rules.md), [s2_s3_gap_hypotheses.md](s2_s3_gap_hypotheses.md), [next_day_hypotheses_and_todo.md](next_day_hypotheses_and_todo.md)  

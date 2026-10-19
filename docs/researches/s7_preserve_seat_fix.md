@@ -1,5 +1,7 @@
 # Исправление отсева распределения мест в сценарии S7 (SeatController#create)
 
+> **Архив, 18.10.** Правка legacy-исполнителя (`engine/rules.py`). Выдачу кода (`--executor ir`) не определяет: эвристики `rules.py` M4 не использует.
+
 **Дата:** 18.10.2026  
 **Сценарий:** S7 («After collecting the ticket: refused cancellation and rebooking, changing the consignee, orders filtered by dates»)  
 **Компонент:** `engine/rules.py` (`ScenarioProfile`, `RuntimeRules.is_dead_code_method`, `RuntimeRules.is_dead_code_edge`)  

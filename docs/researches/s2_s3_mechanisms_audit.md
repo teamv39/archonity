@@ -1,5 +1,7 @@
 # Аудит механизмов S2 и S3 по правилам разметки (annotation_rules.md)
 
+> **Устарело.** Пул гипотез 17.10, балл 0.918, до [ADR-006](../adr/adr-006_constructor_visibility.md). Почти весь разрыв до 1.0 сидел в конструкторах, а не в ветках и шагах, поэтому оценки вклада гипотез здесь неверны. Текущее — [roadmap.md](../roadmap.md) и [agent_lessons.md](../agent_lessons.md).
+
 **Дата:** 17.10.2026  
 **Связанные документы:** [annotation_rules.md](../annotation_rules.md), [risk_audit_s2_s3.md](risk_audit_s2_s3.md), [adr-005](../adr/adr-005_scenario_execution_pipeline.md)
 
