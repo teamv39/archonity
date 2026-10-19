@@ -1,7 +1,7 @@
 # Аудит универсальности пайплайна Archonity после достижения 1.00000
 
 Дата: 19.10.2026  
-Статус: выдача кода = 1.00000 (посылка 28, ветка feature/82-unbound-path-variable в dev)  
+Статус: выдача кода = 1.00000 (посылка 28, ветка feature/82-unbound-path-variable в dev); пункты 7, 10–12 и 2.1.4 обобщены 19.10 (раздел 6)  
 Связано: testing_system.md, reaching_1_0.md, code_record_drift.md, annotation_rules.md  
 
 ---
@@ -65,15 +65,15 @@
 ### 2.2. Слой исполнения M4 (`engine/executor/step.py`)
 
 #### 1. Доменные словари сущностей, ключей и полей
-* **Файл:** `engine/executor/step.py` (строки 24–65)
+* **Файл:** `engine/executor/schema.py` (до 19.10 — `engine/executor/step.py`, строки 24–65)
+* **Статус:** частично (ветка `feature/84-step-executor-universality`). Словари вынесены из `step.py` в `EntitySchema` (`engine/executor/schema.py`), `StepExecutor` обращается к ним через `self.schema`. Для 12 видов, на которые ссылается M1 (`REF_ENTITIES`), действуют прежние значения: они лежат в `schema.py` как `_DEFAULT_KIND_HINTS` и `_DEFAULT_ID_FIELDS` без изменений. `_FIELD_ALIASES` перенесён как есть.
+* **Что даёт поиск по скелету:** типы с `@Entity` (27) и поля с `@Id`/`@EmbeddedId` добавляют 20 новых видов (`waitlistorder`, `trainfood`, `money` и др.), но прежние не меняют. M1 на новые виды не ссылается, поэтому выдача та же (sha256 `94463c41…5a08`, проверено 19.10). Имена ID-полей новых видов собираются из имени класса в нижнем регистре (`traintypeId` вместо `trainTypeId`), с полями DTO они не совпадут. В списке отбрасываемых суффиксов имени класса есть доменное `order`.
 * **В чём специфика:**
   * `_KIND_HINTS`: сопоставляет имена типов с 12 сущностями Train Ticket (`"train": ("traintype", "train")`, `"assurance": ("assurance",)`).
   * `_ID_FIELDS`: список первичных ключей (`orderId`, `tripId`, `contactsId`, `consignId`).
   * `_FIELD_ALIASES`: алиасы полей бронирования (`fromStation`, `startPlace`, `startStationName`, `travelDate`).
-* **Как должно быть в универсальном решении:**
-  * Виды сущностей определяются по JPA-аннотациям `@Entity`.
-  * Первичные ключи определяются по аннотации `@Id` у полей сущностей либо по стандартной конвенции JavaBeans (`<entity>Id` / `id`).
-  * Алиасы полей связываются через вычисление расстояния Левенштейна между именами полей и совпадение типов.
+* **Что осталось:** виды ссылок задаёт схема ответа M1 (`REF_ENTITIES`), а она входит в ключ кеша LLM. Брать виды и ID-поля из скелета вместо прежних значений можно вместе с пересборкой кеша (Stage 0, [two_stage_pipeline_research.md](two_stage_pipeline_research.md)). Тогда же — имена ID-полей с исходным регистром (`<поле @Id>` или `<simpleName>Id`) и без доменных суффиксов.
+
 
 #### 2. Синтетические дефолты в `build_dto`
 * **Файл:** `engine/executor/step.py` (строки 272–302)
@@ -158,7 +158,7 @@
 |---|---|---|---|---|---|
 | **1** | Rebind несвязанного `@PathVariable` | `engine/grounding/binding.py` | 🟡 Средняя | Проверка несвязываемости — общее правило Spring MVC; выбор замены — эвристика по одному случаю | До пересборки кеша LLM — оставить; при пересборке — исключить обработчик из каталога M1 и проверить выбор модели |
 | **2** | Синтетические дефолты DTO (`userName`, телефон, капча) | `engine/executor/step.py` | 🔴 Высокая | Упадет на проектах с другими `@NotNull` полями | Внедрить универсальный mock-генератор по типам |
-| **3** | Доменные сущности `_KIND_HINTS` и `_ID_FIELDS` | `engine/executor/step.py` | 🔴 Высокая | Анализатор знает только 12 сущностей Train Ticket | Извлекать сущности и `@Id` из JPA метаданных |
+| **3** | Доменные сущности `_KIND_HINTS` и `_ID_FIELDS` | `engine/executor/schema.py` | 🔴 Высокая, частично | Словари вынесены в `EntitySchema`; для 12 видов M1 — прежние значения, найденные по `@Entity` виды выдачу не меняют | Брать виды и ID-поля из скелета при пересборке кеша LLM (Stage 0) |
 | **4** | Системный промпт M1 (`SYSTEM`) | `engine/grounding/prompts.py` | 🔴 Высокая | Промпт прямо обучает модель на поездах и сервисах TT | Параметризовать через профиль проекта |
 | **5** | Проверка отказа `_is_failure` по `Response.status` | `engine/executor/step.py` | 🟡 Средняя | Завязано на класс `edu.fudan...Response` | Проверять HTTP-код `ResponseEntity` и стандартные поля |
 | **6** | Нормализация станций `_station_norm` | `engine/executor/step.py` | 🟡 Средняя | Специфика базы данных Train Ticket | Использовать JPA-сеттеры и `strip().lower()` |
@@ -192,4 +192,18 @@
 - Исправлено (2.4): `apply_spring_security`, M3 (`state.py`) и `ScenarioProfile` исполняются в режиме M4. Добавлен раздел 2.5 и строки 10–12 таблицы.
 - Исправлено (раздел 1): в правилах нет требования работать на любом проекте Spring Boot; есть «любой сценарий» и проверка кода.
 - Попутно: правило `station_food_list` по имени `listFoodStoresByStationName` живёт только в `builder.traverse` (legacy); в M4 оно не действует. Запись в roadmap «по именам решают два места» устарела.
+
+## 6. Обобщено 19.10 (ветка `feature/84-generalize-rules`)
+
+Взяты пункты, которые решаются правилом по семантике Spring/JPA или по фактам скелета, без Stage 0 ([two_stage_pipeline_research.md](two_stage_pipeline_research.md), раздел 7). Каждый — под флагом `run_eval.py`; по умолчанию новое правило, старый режим — для отката. Выдача с новыми умолчаниями и со старыми режимами всех трёх флагов — sha256 `94463c41…5a08` (рекорд p27).
+
+| № таблицы 3 | Что сделано | Флаг, откат | Как проверено |
+|---|---|---|---|
+| 10 | Spring Security: вход — call_site `authenticate` у `AuthenticationManager`; пользователь — `implements UserDetails`; `loadUserByUsername` — `implements UserDetailsService`, таблицы — `data_access` без ленивых коллекций (R10); фильтр — подкласс `OncePerRequestFilter`; ребро к `getPassword` — R6. Правило по `createToken` удалено: ребро `createToken → getUsername` даёт M4 | `--spring-security names` | без правила выдача теряет 10 рёбер в каждом сценарии, с новым — совпадает |
+| 11 | M4 не обращается к M3 при разрешении ссылок (`OrderStatus`, `TrainType`, `orders_other`). Пассажир — из `context/README.md` организаторов, как и было | `--m4-m3-refs on` | зонд: при ответе `None` от M3 выдача та же |
+| 12 | Мёртвое присваивание `Interpreter.train_mode` и `ScenarioProfile` в пути M4 удалены | — | sha256 |
+| 7 | Модуль типа при неоднозначном имени: вызывающий, затем его `depends_on` (без них — общие библиотеки), вместо `ts-common` | `--module-roles names` | `resolve`/`resolve_simple` совпадают по всем парам «тип × модуль» |
+| 2.1.4 | Близнецы M1: маркер — токен разницы имён модулей при совпадении API больше половины (`other`, `2`; у `admin`, `food`, `plan` не выше 0.33), вместо `other\|\d+` | `--module-roles names` | группы совпадают (60 = 60), промпт M1 и кеш LLM не меняются |
+
+Не брались: словари `step.py` и `REF_ENTITIES`, промпт M1 — это Stage 0 (словари вынесены в `EntitySchema` параллельной веткой `feature/84-step-executor-universality`, влита сюда же; значения для Train Ticket прежние, раздел 2.2.1); признак отказа `*.Response` и нормализация строк при повторе шага — общего правила не нашлось; R20 `rebind` — до пересборки кеша LLM. `apply_spring_security` по-прежнему живёт в `builder.py` (legacy-модуль), но имён проекта в нём при умолчаниях больше нет.
 

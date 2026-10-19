@@ -15,53 +15,19 @@ from pathlib import Path
 from typing import Any
 
 from engine.executor.interpreter import Interpreter, Sink
+from engine.executor.schema import EntitySchema, simple_name
 from engine.executor.values import UNKNOWN, EnumV, ListV, Obj, OptionalV, Wrapper
 from engine.executor.world import camel
 
 _REF = re.compile(r"^(first|second|new)_of_step_(\d+)$")
 _WORDY = re.compile(r"^[A-Za-z][A-Za-z ,.'-]*$")
 
-# Признаки вида сущности в простом имени типа
-_KIND_HINTS = {
-    "order": ("order",),
-    "trip": ("trip",),
-    "contact": ("contact",),
-    "user": ("user", "token", "account"),
-    "food": ("food",),
-    "store": ("store",),
-    "station": ("station",),
-    "route": ("route",),
-    "train": ("traintype", "train"),
-    "price": ("price",),
-    "consign": ("consign",),
-    "assurance": ("assurance",),
-}
+_DEFAULT_SCHEMA = EntitySchema()
+_KIND_HINTS = _DEFAULT_SCHEMA._kind_hints
+_ID_FIELDS = _DEFAULT_SCHEMA._id_fields
+_USER_FIELDS = _DEFAULT_SCHEMA.user_fields
+_FIELD_ALIASES = _DEFAULT_SCHEMA._field_aliases
 
-# Поля DTO и path-параметры, в которые идёт ID сущности ссылки
-_ID_FIELDS = {
-    "order": ("orderId", "id"),
-    "trip": ("tripId",),
-    "contact": ("contactsId", "contactId"),
-    "user": ("accountId", "userId", "loginId"),
-    "food": ("foodId",),
-    "store": ("storeId",),
-    "station": ("stationId",),
-    "route": ("routeId",),
-    "train": ("trainTypeId",),
-    "price": ("priceId",),
-    "consign": ("consignId",),
-    "assurance": ("assuranceId",),
-}
-_USER_FIELDS = ("accountId", "userId", "loginId")
-
-# Поле DTO -> поля сущности ссылки с тем же смыслом (как UI переносит их из ответа предыдущего шага)
-_FIELD_ALIASES = {
-    "from": ("from", "startStation", "startPlace", "startStationName", "fromStation"),
-    "to": ("to", "terminalStation", "endPlace", "terminalStationName", "toStation"),
-    "date": ("date", "travelDate", "departureTime"),
-    "tripId": ("tripId", "trainNumber"),
-    "oldTripId": ("trainNumber",),
-}
 
 
 class StepExecutor:
@@ -70,6 +36,7 @@ class StepExecutor:
     def __init__(self, index: Any, rules: Any, ir_dir: str | Path, targets_root: str | Path | None,
                  judge: Any = None) -> None:
         self.index = index
+        self.schema = EntitySchema(index)
         self.judge = judge  # engine.executor.judge.Judge (кеш, бюджет вызовов сервера) или None
         self.it = Interpreter(index, rules, Path(ir_dir), Path(targets_root) if targets_root else None,
                               self._ask_judge if judge is not None else None)
@@ -108,12 +75,12 @@ class StepExecutor:
             return None
         pick, n = m.group(1), int(m.group(2))
         if pick == "new":
-            cands = [(fqn, obj) for fqn, obj in self.saved.get(n, []) if _is_kind(fqn, kind)]
+            cands = [(fqn, obj) for fqn, obj in self.saved.get(n, []) if self.schema.is_kind(fqn, kind)]
             if cands:
-                top = max(_kind_rank(fqn, kind) for fqn, _ in cands)
-                return [obj for fqn, obj in cands if _kind_rank(fqn, kind) == top][-1]
+                top = max(self.schema.kind_rank(fqn, kind) for fqn, _ in cands)
+                return [obj for fqn, obj in cands if self.schema.kind_rank(fqn, kind) == top][-1]
         idx = 1 if pick == "second" else 0
-        found = _find_kind(_payload(self.results.get(n)), kind)
+        found = _find_kind(_payload(self.results.get(n)), kind, schema=self.schema)
         if found:
             ent = found[idx] if idx < len(found) else found[0]
             if self.entity_id(ent, kind) is not UNKNOWN:
@@ -127,9 +94,9 @@ class StepExecutor:
                 merged.fields.update({k: v for k, v in ent.fields.items() if v is not UNKNOWN and v is not None})
                 return merged
             return ent
-        saved_c = [(fqn, o) for fqn, o in self.saved.get(n, []) if _is_kind(fqn, kind)]
-        top = max((_kind_rank(fqn, kind) for fqn, _ in saved_c), default=0)
-        saved = [o for fqn, o in saved_c if _kind_rank(fqn, kind) == top]
+        saved_c = [(fqn, o) for fqn, o in self.saved.get(n, []) if self.schema.is_kind(fqn, kind)]
+        top = max((self.schema.kind_rank(fqn, kind) for fqn, _ in saved_c), default=0)
+        saved = [o for fqn, o in saved_c if self.schema.kind_rank(fqn, kind) == top]
         if saved:
             return saved[-1] if pick == "new" else saved[min(idx, len(saved) - 1)]
         # Шаг n не создавал и не возвращал сущность этого вида: та, на которую ссылался сам шаг n
@@ -139,7 +106,9 @@ class StepExecutor:
             ent = self.resolve_ref(kind, prev, state, depth + 1)
             if ent is not None:
                 return ent
-        if state is not None and hasattr(state, "resolve_ref"):
+        # Модель состояния M3 последним слоем — только в режиме m4_m3_refs=on (до feature/84). Выдачу M3 здесь не
+        # меняла (зонд 19.10: при ответе None от M3 sha256 тот же), а держится на перечислениях Train Ticket.
+        if getattr(self.it.rules, "m4_m3_refs", "off") == "on" and state is not None and hasattr(state, "resolve_ref"):
             d = state.resolve_ref(kind, ref)
             if isinstance(d, dict):
                 return Obj(None, {camel(k): (v.value if hasattr(v, "value") else v) for k, v in d.items()
@@ -152,7 +121,7 @@ class StepExecutor:
         w = self.it.world
         for fqn, table in sorted(w.table_of.items()):
             tid = self.it.types.resolve(fqn, module)
-            if not tid or self.it.types.types[tid].get("module") != module or not _is_kind(fqn, kind):
+            if not tid or self.it.types.types[tid].get("module") != module or not self.schema.is_kind(fqn, kind):
                 continue
             rows = w.rows(table)
             if rows:
@@ -163,7 +132,7 @@ class StepExecutor:
         """ID сущности ссылки; у обёрток (TripAllDetail) — ID вложенного объекта того же вида."""
         if not isinstance(ent, Obj) or depth > 2:
             return UNKNOWN
-        names = list(_ID_FIELDS.get(kind, ())) + ["id"]
+        names = list(self.schema.id_fields(kind)) + ["id"]
         if kind == "user":
             names = ["userId", "accountId", "id"]
         for name in names:
@@ -174,7 +143,7 @@ class StepExecutor:
                 return self.to_string(v)
             return v
         for k, v in ent.fields.items():
-            if isinstance(v, Obj) and (_is_kind(v.type, kind) or kind in k.lower()):
+            if isinstance(v, Obj) and (self.schema.is_kind(v.type, kind) or kind in k.lower()):
                 r = self.entity_id(v, kind, depth + 1)
                 if r is not UNKNOWN:
                     return r
@@ -221,15 +190,15 @@ class StepExecutor:
         if name in params and params[name] is not None:
             return self._typed(params[name], ftype)
         for kind, ent in ents.items():
-            if ent is not None and name in _ID_FIELDS.get(kind, ()):
+            if ent is not None and name in self.schema.id_fields(kind):
                 v = self.entity_id(ent, kind)
                 if v is not UNKNOWN:
                     return v
-        if name in _USER_FIELDS and user:
+        if name in self.schema.user_fields and user:
             return user
         if name == "id":
             return UNKNOWN
-        for alias in _FIELD_ALIASES.get(name, (name,)):
+        for alias in self.schema.field_aliases(name):
             for kind, ent in ents.items():
                 # сама сущность, затем вложенные объекты (TripAllDetail -> tripResponse)
                 layers = [ent] + ([x for x in ent.fields.values() if isinstance(x, Obj)] if isinstance(ent, Obj) else [])
@@ -265,18 +234,18 @@ class StepExecutor:
         hname = self.index.N.get(handler, {}).get("name", "")
         if getattr(self, "_verb", None) == "POST" and re.match(r"(create|add|register|save|insert|new)", hname, re.I):
             # Создание через POST: собственный ID новой сущности клиент не присылает (Jackson оставит null)
-            own = [k for k in _ID_FIELDS if _kind_rank(ftype, k) >= 2]
-            for name in ["id"] + [f for k in own for f in _ID_FIELDS[k]]:
+            own = [k for k in self.schema.known_kinds if self.schema.kind_rank(ftype, k) >= 2]
+            for name in ["id"] + [f for k in own for f in self.schema.id_fields(k)]:
                 if name in names and name not in params:
                     defaults[name] = None
-        is_user_dto = _kind_rank(ftype, "user") >= 2 and "password" in names
+        is_user_dto = self.schema.kind_rank(ftype, "user") >= 2 and "password" in names
         if is_user_dto:
             # Регистрация: DTO самого пользователя — ID текущего пассажира в него не подставляем. Имени нового
             # пользователя в тексте шага нет; синтетическое имя нужно, чтобы следующий логин нашёл ту же строку.
             user = None
             if params.get("userName") is None and "userName" in names:
                 defaults["userName"] = self.registered_username = "m4-new-user"
-        is_contact_dto = _kind_rank(ftype, "contact") >= 2 and "documentNumber" in names
+        is_contact_dto = self.schema.kind_rank(ftype, "contact") >= 2 and "documentNumber" in names
         if is_contact_dto and getattr(self, "_verb", None) == "POST":
             # Добавление контакта: синтетический номер документа исключает коллизию с существующими контактами
             # аккаунта при проверке дубликатов в ContactsServiceImpl#create.
@@ -305,7 +274,7 @@ class StepExecutor:
             if v is UNKNOWN and f["name"] == "id":
                 # DTO того же вида, что сущность ссылки (Consign и запись багажа): id — ID этой сущности
                 for kind, ent in ents.items():
-                    if kind in _ID_FIELDS and ent is not None and _kind_rank(ftype, kind) >= 2:
+                    if kind in self.schema.known_kinds and ent is not None and self.schema.kind_rank(ftype, kind) >= 2:
                         v = self.entity_id(ent, kind)
                         if v is not UNKNOWN:
                             break
@@ -323,9 +292,6 @@ class StepExecutor:
         self._scenario = scenario or {}
         self._step_req = step_req
         handler = step_req.handler
-        from engine.rules import ScenarioProfile
-        prof = ScenarioProfile.from_scenario(self._scenario) if self._scenario else None
-        self.it.train_mode = prof.train_mode if prof else "both"
         params = {k: v for k, v in (getattr(step_req, "params", None) or {}).items() if v is not None}
         self._user_name = getattr(state, "user_name", None)
         self._verb = (getattr(step_req, "http", None) or {}).get("method")
@@ -369,7 +335,7 @@ class StepExecutor:
             self.saved[n] = list(self.it.world.saved[before:])
             # Текущий пассажир — из ответа логина (TokenDto.userId), как его берёт UI
             payload = _payload(ret)
-            if isinstance(payload, Obj) and _kind_rank(payload.type, "user") >= 2:
+            if isinstance(payload, Obj) and self.schema.kind_rank(payload.type, "user") >= 2:
                 uid = payload.fields.get("userId")
                 if isinstance(uid, str):
                     self.current_user = uid
@@ -515,54 +481,48 @@ def _payload(v: Any) -> Any:
 
 
 def _simple(fqn: str | None) -> str:
-    return (fqn or "").rsplit(".", 1)[-1].split("$")[-1].lower()
+    return simple_name(fqn)
 
 
-def _kind_rank(fqn: str | None, kind: str) -> int:
+def _kind_rank(fqn: str | None, kind: str, schema: EntitySchema | None = None) -> int:
     """Насколько тип похож на вид сущности: 3 — имя совпадает, 2 — начинается с вида, 1 — содержит, 0 — нет."""
-    s = _simple(fqn)
-    best = 0
-    for h in _KIND_HINTS.get(kind, (kind,)):
-        if s in (h, h + "s"):
-            best = max(best, 3)
-        elif s.startswith(h):
-            best = max(best, 2)
-        elif h in s:
-            best = max(best, 1)
-    return best
+    return (schema or _DEFAULT_SCHEMA).kind_rank(fqn, kind)
 
 
-def _is_kind(fqn: str | None, kind: str) -> bool:
-    return _kind_rank(fqn, kind) > 0
+def _is_kind(fqn: str | None, kind: str, schema: EntitySchema | None = None) -> bool:
+    return (schema or _DEFAULT_SCHEMA).is_kind(fqn, kind)
 
 
-def _obj_is_kind(o: Obj, kind: str) -> bool:
+def _obj_is_kind(o: Obj, kind: str, schema: EntitySchema | None = None) -> bool:
     """Объект вида kind: по имени типа или по известному ID-полю вида (TravelAdvanceResultUnit.tripId)."""
-    if _is_kind(o.type, kind):
+    sch = schema or _DEFAULT_SCHEMA
+    if sch.is_kind(o.type, kind):
         return True
-    return any(isinstance(o.fields.get(f), str) for f in _ID_FIELDS.get(kind, ())[:1])
+    primary = sch.primary_id_field(kind)
+    return bool(primary and isinstance(o.fields.get(primary), str))
 
 
-def _find_kind(v: Any, kind: str, depth: int = 0) -> list[Any]:
+def _find_kind(v: Any, kind: str, depth: int = 0, schema: EntitySchema | None = None) -> list[Any]:
     """Объекты вида kind в результате шага: сам объект, элементы списка или поля (на 2 уровня)."""
+    sch = schema or _DEFAULT_SCHEMA
     if depth > 2 or v is None or v is UNKNOWN:
         return []
     if isinstance(v, ListV):
-        direct = [x for x in v.items if isinstance(x, Obj) and _obj_is_kind(x, kind)]
+        direct = [x for x in v.items if isinstance(x, Obj) and _obj_is_kind(x, kind, sch)]
         if direct:
             return direct
         out: list[Any] = []
         for x in v.items:
-            out.extend(_find_kind(x, kind, depth + 1)[:1])
+            out.extend(_find_kind(x, kind, depth + 1, sch)[:1])
         return out
     if isinstance(v, Obj):
-        if _is_kind(v.type, kind):
+        if sch.is_kind(v.type, kind):
             return [v]
         for k, x in v.fields.items():
             if isinstance(x, (Obj, ListV)):
-                if isinstance(x, Obj) and (_is_kind(x.type, kind) or kind in k.lower()):
+                if isinstance(x, Obj) and (sch.is_kind(x.type, kind) or kind in k.lower()):
                     return [x]
-                r = _find_kind(x, kind, depth + 1)
+                r = _find_kind(x, kind, depth + 1, sch)
                 if r:
                     return r
     return []

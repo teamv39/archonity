@@ -84,7 +84,7 @@ class ScenarioSession:
 class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
-                 top_k: int = TOP_K) -> None:
+                 top_k: int = TOP_K, module_roles: str = "skeleton") -> None:
         self.ix = ix
         self.root = Path(targets_root)
         self.ui = build_catalog(self.root, ix)
@@ -94,7 +94,7 @@ class StepGrounder:
             from engine.grounding.embedder import make_embedder
 
             emb = make_embedder(embedder, allow_model=allow_embed_model)
-        self.retriever = Retriever(self.cat, render, emb)
+        self.retriever = Retriever(self.cat, render, emb, module_roles)
         self.llm = llm
         self.top_k = top_k
         self.labels = P.handler_labels(self.cat.handlers)

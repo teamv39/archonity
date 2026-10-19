@@ -52,7 +52,8 @@ def parse_java_args(text: str) -> list[Any]:
 class TypeIndex:
     """Типы проекта из скелета: поля по порядку объявления, колонки, enum-константы, методы."""
 
-    def __init__(self, nodes: dict[str, dict[str, Any]], edges: list[dict[str, Any]], targets_root: Path | None) -> None:
+    def __init__(self, nodes: dict[str, dict[str, Any]], edges: list[dict[str, Any]], targets_root: Path | None,
+                 module_roles: str = "skeleton") -> None:
         self.nodes = nodes
         self.types: dict[str, dict[str, Any]] = {}  # type node id -> node
         self.by_fqn: dict[str, list[str]] = {}
@@ -70,14 +71,28 @@ class TypeIndex:
                 self.methods.setdefault(n.get("owner", ""), []).append(nid)
         for fl in self.fields.values():
             fl.sort(key=lambda f: f.get("line", 0))
+        # Зависимости модулей (depends_on скелета, из pom.xml): модуль -> модули, классы которых он видит
+        self.deps: dict[str, list[str]] = {}
         for e in edges:
             if e["type"] == "extends" and e["target"] in nodes:
                 self.super_of[e["source"]] = e["target"]
+            elif e["type"] == "depends_on":
+                self.deps.setdefault(e["source"].removeprefix("module:"), []).append(e["target"].removeprefix("module:"))
+        # Общие библиотеки проекта — модули, от которых зависят другие
+        self.shared = sorted({m for ms in self.deps.values() for m in ms})
+        self.module_roles = module_roles
         self.targets_root = targets_root
         self._enum_consts: dict[str, list[tuple[str, list[Any]]]] = {}
 
+    def _prefs(self, module: str | None) -> list[str | None]:
+        """Порядок модулей при неоднозначном имени типа: модуль вызывающего, затем его зависимости
+        (без известного модуля или зависимостей — общие библиотеки проекта); names — `ts-common`, как до feature/84."""
+        if self.module_roles == "names":
+            return [module, "ts-common"]
+        return [module, *(self.deps.get(module or "") or self.shared)]
+
     def resolve(self, fqn: str | None, module: str | None = None) -> str | None:
-        """ID узла типа по полному имени: сначала модуль вызывающего, потом ts-common, потом любой."""
+        """ID узла типа по полному имени: сначала модуль вызывающего, потом его зависимости, потом любой."""
         if not fqn:
             return None
         ids = self.by_fqn.get(fqn)
@@ -85,7 +100,7 @@ class TypeIndex:
             return None
         if len(ids) == 1:
             return ids[0]
-        for pref in (module, "ts-common"):
+        for pref in self._prefs(module):
             for i in ids:
                 if pref and self.types[i].get("module") == pref:
                     return i
@@ -94,7 +109,7 @@ class TypeIndex:
     def resolve_simple(self, simple: str, module: str | None) -> str | None:
         """Тип по простому имени в модуле (для instanceof и new без fqn)."""
         cands = [i for i, n in self.types.items() if n.get("fqn", "").rsplit(".", 1)[-1].split("$")[-1] == simple]
-        for pref in (module, "ts-common"):
+        for pref in self._prefs(module):
             for i in cands:
                 if self.types[i].get("module") == pref:
                     return i

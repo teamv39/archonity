@@ -52,6 +52,9 @@ class ArchonityPipeline:
         jackson_ctor: str = "on",
         lombok_tostring: str = "on",
         unbound_handlers: str = "rebind",
+        spring_security: str = "semantic",
+        m4_m3_refs: str = "off",
+        module_roles: str = "skeleton",
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -90,6 +93,9 @@ class ArchonityPipeline:
             jackson_ctor=jackson_ctor,
             lombok_tostring=lombok_tostring,
             unbound_handlers=unbound_handlers,
+            spring_security=spring_security,
+            m4_m3_refs=m4_m3_refs,
+            module_roles=module_roles,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)

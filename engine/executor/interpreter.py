@@ -100,7 +100,7 @@ class Interpreter:
         self.N: dict[str, dict[str, Any]] = index.N
         self.judge = judge
         sk_edges = index.sk.get("edges", [])
-        self.types = TypeIndex(self.N, sk_edges, targets_root)
+        self.types = TypeIndex(self.N, sk_edges, targets_root, getattr(rules, "module_roles", "skeleton"))
         self.ir: dict[str, dict[str, Any]] = {}
         for p in sorted(Path(ir_dir).glob("*.json")):
             with open(p, encoding="utf-8") as f:

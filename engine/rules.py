@@ -372,6 +372,20 @@ class RuntimeRules:
     # (по умолчанию) — шаг через рабочий обработчик того же контроллера с тем же входом; keep — как выбрал M1.
     UNBOUND_HANDLER_MODES = ("rebind", "keep")
 
+    # Spring Security при входе (builder.apply_spring_security): semantic (по умолчанию) — вход по вызову
+    # AuthenticationManager.authenticate, пользователь — класс с implements UserDetails, таблица — data_access
+    # loadUserByUsername без таблиц коллекций, фильтр — подкласс OncePerRequestFilter; names — по именам методов
+    # (getToken/authenticate/login, createToken) и подстроке `user` в имени таблицы, как до feature/84.
+    SPRING_SECURITY_MODES = ("semantic", "names")
+
+    # Запасной путь M4 к модели состояния M3 при разрешении ссылок шагов (StepExecutor.resolve_ref): off (по
+    # умолчанию) — ссылки разрешает только мир M4; on — как до feature/84, M3 (OrderStatus, TrainType) последним слоем.
+    M4_M3_REFS_MODES = ("off", "on")
+
+    # Роли модулей: skeleton (по умолчанию) — общий модуль типов по рёбрам depends_on скелета, близнецы M1 — модули,
+    # чьё имя отличается одним токеном и чей API совпадает после снятия токена; names — `ts-common` и `other|\d+`.
+    MODULE_ROLES_MODES = ("skeleton", "names")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -392,15 +406,24 @@ class RuntimeRules:
         jackson_ctor: str = "on",
         lombok_tostring: str = "on",
         unbound_handlers: str = "rebind",
+        spring_security: str = "semantic",
+        m4_m3_refs: str = "off",
+        module_roles: str = "skeleton",
     ) -> None:
         for name, val, modes in (("jackson_ctor", jackson_ctor, self.JACKSON_CTOR_MODES),
                                  ("lombok_tostring", lombok_tostring, self.LOMBOK_TOSTRING_MODES),
-                                 ("unbound_handlers", unbound_handlers, self.UNBOUND_HANDLER_MODES)):
+                                 ("unbound_handlers", unbound_handlers, self.UNBOUND_HANDLER_MODES),
+                                 ("spring_security", spring_security, self.SPRING_SECURITY_MODES),
+                                 ("m4_m3_refs", m4_m3_refs, self.M4_M3_REFS_MODES),
+                                 ("module_roles", module_roles, self.MODULE_ROLES_MODES)):
             if val not in modes:
                 raise ValueError(f"{name}: {val!r}, ожидается одно из {modes}")
         self.jackson_ctor = jackson_ctor
         self.lombok_tostring = lombok_tostring
         self.unbound_handlers = unbound_handlers
+        self.spring_security = spring_security
+        self.m4_m3_refs = m4_m3_refs
+        self.module_roles = module_roles
         if constructors not in self.CTOR_MODES:
             raise ValueError(f"constructors: {constructors!r}, ожидается одно из {self.CTOR_MODES}")
         if collection_tables_on_read not in self.COLLECTION_TABLE_MODES:

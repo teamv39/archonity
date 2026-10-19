@@ -162,6 +162,28 @@ def parse_args() -> argparse.Namespace:
              "входом (по умолчанию, посылка 27: 1.00000), keep — как выбрал M1",
     )
     parser.add_argument(
+        "--spring-security",
+        choices=("semantic", "names"),
+        default="semantic",
+        help="Spring Security при входе: semantic (по умолчанию) — вход по вызову AuthenticationManager.authenticate, "
+             "пользователь — implements UserDetails, таблица — data_access loadUserByUsername без коллекций, фильтр — "
+             "подкласс OncePerRequestFilter; names — по именам методов и таблиц, как до feature/84",
+    )
+    parser.add_argument(
+        "--m4-m3-refs",
+        choices=("off", "on"),
+        default="off",
+        help="M4: ссылки шагов, которых нет в мире M4, разрешать моделью состояния M3 (on, как до feature/84) или нет "
+             "(off, по умолчанию)",
+    )
+    parser.add_argument(
+        "--module-roles",
+        choices=("skeleton", "names"),
+        default="skeleton",
+        help="Общий модуль типов и близнецы M1: skeleton (по умолчанию) — по depends_on и совпадению API модулей, "
+             "имена которых отличаются одним токеном; names — 'ts-common' и 'other' или цифры в пути, как до feature/84",
+    )
+    parser.add_argument(
         "--route-stations-usage",
         choices=("pruned", "preserve", "all"),
         default="pruned",
@@ -325,6 +347,7 @@ def main() -> None:
         m1_options = {
             "embedder": None if args.no_embed else "qwen3-4b",
             "llm": None if args.no_llm else LLMClient(use_server=not args.no_server, refresh=args.no_cache),
+            "module_roles": args.module_roles,
         }
     print(f"Grounder:   {args.grounder}")
     if args.executor == "m4":
@@ -350,6 +373,9 @@ def main() -> None:
         jackson_ctor=args.jackson_ctor,
         lombok_tostring=args.lombok_tostring,
         unbound_handlers=args.unbound_handlers,
+        spring_security=args.spring_security,
+        m4_m3_refs=args.m4_m3_refs,
+        module_roles=args.module_roles,
         grounder=args.grounder,
         m1_options=m1_options,
         executor=args.executor,
