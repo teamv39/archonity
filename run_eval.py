@@ -181,7 +181,7 @@ def parse_args() -> argparse.Namespace:
         choices=("skeleton", "names"),
         default="skeleton",
         help="Общий модуль типов и близнецы M1: skeleton (по умолчанию) — по depends_on и совпадению API модулей, "
-             "имена которых отличаются одним токеном; names — 'ts-common' и other|\d+, как до 20.10",
+             "имена которых отличаются одним токеном; names — 'ts-common' и 'other' или цифры в пути, как до 20.10",
     )
     parser.add_argument(
         "--route-stations-usage",
@@ -347,6 +347,7 @@ def main() -> None:
         m1_options = {
             "embedder": None if args.no_embed else "qwen3-4b",
             "llm": None if args.no_llm else LLMClient(use_server=not args.no_server, refresh=args.no_cache),
+            "module_roles": args.module_roles,
         }
     print(f"Grounder:   {args.grounder}")
     if args.executor == "m4":
