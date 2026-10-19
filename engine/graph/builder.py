@@ -516,6 +516,10 @@ class GraphBuilder:
         edges_data: set[tuple[str, str]],
     ) -> None:
         """Методы и рёбра, которые исполняет Spring Security при аутентификации (UserDetailsService, OncePerRequestFilter)."""
+        if getattr(self.rules, "spring_security", "semantic") == "semantic":
+            self._spring_security_semantic(active_methods, edges_calls, edges_data)
+            return
+        # Режим names (до 20.10): вход и таблица пользователя — по именам.
         # 1. Поиск модулей аутентификации по стандартному контракту Spring Security (loadUserByUsername)
         auth_modules = {
             n.get("module") for nid, n in self.index.N.items()
@@ -594,6 +598,74 @@ class GraphBuilder:
             for tc in token_creators:
                 if user_name:
                     self._add_edge(edges_calls, "calls", tc, user_name, "FRAMEWORK_RULE", "spring_security")
+
+    # Типы и методы контракта Spring Security
+    _AUTH_MANAGER = "org.springframework.security.authentication.AuthenticationManager"
+    # Методы UserDetails, которые DaoAuthenticationProvider вызывает в authenticate: проверки до и после пароля,
+    # сам пароль, роли для итогового Authentication. getUsername провайдер не вызывает.
+    _PROVIDER_USER_METHODS = (
+        "isAccountNonLocked", "isEnabled", "isAccountNonExpired", "getPassword", "isCredentialsNonExpired",
+        "getAuthorities",
+    )
+
+    def _types_with_super(self, module: str | None, simple: str, attr: str) -> set[str]:
+        """Типы модуля (или всего проекта при module=None), у которых в extends/implements есть `simple`."""
+        return {
+            nid for nid, n in self.index.N.items()
+            if n.get("kind") == "type" and (module is None or n.get("module") == module)
+            and simple in (n.get(attr) or [])
+        }
+
+    def _spring_security_semantic(
+        self,
+        active_methods: set[str],
+        edges_calls: set[tuple[str, str]],
+        edges_data: set[tuple[str, str]],
+    ) -> None:
+        """Spring Security по контракту фреймворка, без имён проекта.
+
+        Вход — исполненный метод, в котором стоит вызов `AuthenticationManager.authenticate`. Его исполняет
+        DaoAuthenticationProvider: `loadUserByUsername` реализации `UserDetailsService` того же модуля (SQL — к
+        таблицам `data_access` этого метода, ленивые коллекции по R10 не загружены), затем методы `UserDetails`
+        загруженного пользователя. Ребро от входа к методу `UserDetails` — по R6: у входа есть call_site с тем же
+        именем. Фильтры — `doFilterInternal` подклассов `OncePerRequestFilter`.
+        """
+        N = self.index.N
+        cs_by_method: dict[str, list[dict[str, Any]]] = {}
+        for n in N.values():
+            if n.get("kind") == "call_site" and n.get("method") in active_methods:
+                cs_by_method.setdefault(n["method"], []).append(n)
+        entries = [
+            m for m in sorted(active_methods)
+            if any(c.get("callee") == "authenticate" and c.get("receiver_type") == self._AUTH_MANAGER
+                   for c in cs_by_method.get(m, ()))
+        ]
+        for entry in entries:
+            module = N.get(entry, {}).get("module")
+            # UserDetailsService: загрузка пользователя
+            services = self._types_with_super(module, "UserDetailsService", "implements_raw")
+            for ud in sorted(nid for nid, n in N.items() if n.get("kind") == "method"
+                             and n.get("owner") in services and n.get("name") == "loadUserByUsername"):
+                self._activate(active_methods, ud, "FRAMEWORK_RULE", "spring_security")
+                for t in sorted(self.index.wiring["data_access"].get(ud, ())):
+                    dec = self.index.entities.collection_table_loaded(ud, t)
+                    if dec is None or dec[0]:
+                        self._add_edge(edges_data, "data", ud, t, "FRAMEWORK_RULE", "spring_security")
+            # Фильтр запросов
+            filters = self._types_with_super(None, "OncePerRequestFilter", "extends_raw")
+            for nid, n in sorted(N.items()):
+                if n.get("kind") == "method" and n.get("owner") in filters and n.get("name") == "doFilterInternal":
+                    self._activate(active_methods, nid, "FRAMEWORK_RULE", "spring_security")
+            # UserDetails: методы, которые вызывает провайдер
+            users = self._types_with_super(module, "UserDetails", "implements_raw")
+            called_here = {c.get("callee") for c in cs_by_method.get(entry, ())}
+            for nid, n in sorted(N.items()):
+                if n.get("kind") != "method" or n.get("owner") not in users \
+                        or n.get("name") not in self._PROVIDER_USER_METHODS:
+                    continue
+                self._activate(active_methods, nid, "FRAMEWORK_RULE", "spring_security")
+                if n.get("name") in called_here:
+                    self._add_edge(edges_calls, "calls", entry, nid, "FRAMEWORK_RULE", "spring_security:R6")
 
     def _apply_framework_and_entity_lifecycle(
         self,
