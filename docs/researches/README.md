@@ -23,6 +23,7 @@
 | [probe_edge_classes.md](probe_edge_classes.md) | Классы рёбер для зондов, скрипт `probe_edge_classes.py`, правила зондирования |
 | [m4_executor.md](m4_executor.md) | Устройство исполнителя M4 по IR |
 | [m4_score_gap_and_judge.md](m4_score_gap_and_judge.md) | Почему судья не меняет выдачу ([OQ-13](../open-questions.md#oq-13)) |
+| [archparse_audit_and_optimizations.md](archparse_audit_and_optimizations.md) | Аудит модуля archparse: замеры времени, code smells, план оптимизации Java AST IR |
 | [model_selection.md](model_selection.md) | Выбор LLM и эмбеддингов для M1 и судьи |
 
 Рядом, вне этой папки: [eval/blind/notes.md](../../eval/blind/notes.md) — слепая разметка S3 и механизм `TravelResult#isStatus()` (H1).
