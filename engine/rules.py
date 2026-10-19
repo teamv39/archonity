@@ -360,6 +360,18 @@ class RuntimeRules:
     # ts-order-other-service для обычных)
     SECURITY_CHECK_SCOPE_MODES = ("all", "target_train_only")
 
+    # Конструктор тела запроса при разборе Jackson (R7, ADR-006): on (по умолчанию) — рукописный конструктор без
+    # аргументов у @RequestBody исполняется до обработчика, в ответ его пропускает проекция R7; off — не исполняется.
+    JACKSON_CTOR_MODES = ("on", "off")
+
+    # Lombok-toString при логировании (R5): on (по умолчанию) — аргумент SLF4J info/warn/error по шаблону с {}
+    # форматируется сгенерированным toString, рукописные геттеры его полей исполняются; off — не моделируется.
+    LOMBOK_TOSTRING_MODES = ("on", "off")
+
+    # Шаг — действие формы UI без запроса (R20): skip (по умолчанию) — шаг не исполняется; request — исполняется
+    # обработчик, который выбрал M1.
+    FORM_ONLY_STEP_MODES = ("skip", "request")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -377,7 +389,18 @@ class RuntimeRules:
         unresolved_receiver_calls: str = "mute",
         m4_success_retry: str = "on",
         security_check_scope: str = "all",
+        jackson_ctor: str = "on",
+        lombok_tostring: str = "on",
+        form_only_steps: str = "skip",
     ) -> None:
+        for name, val, modes in (("jackson_ctor", jackson_ctor, self.JACKSON_CTOR_MODES),
+                                 ("lombok_tostring", lombok_tostring, self.LOMBOK_TOSTRING_MODES),
+                                 ("form_only_steps", form_only_steps, self.FORM_ONLY_STEP_MODES)):
+            if val not in modes:
+                raise ValueError(f"{name}: {val!r}, ожидается одно из {modes}")
+        self.jackson_ctor = jackson_ctor
+        self.lombok_tostring = lombok_tostring
+        self.form_only_steps = form_only_steps
         if constructors not in self.CTOR_MODES:
             raise ValueError(f"constructors: {constructors!r}, ожидается одно из {self.CTOR_MODES}")
         if collection_tables_on_read not in self.COLLECTION_TABLE_MODES:

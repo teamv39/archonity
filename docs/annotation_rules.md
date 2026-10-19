@@ -87,7 +87,9 @@ call:method:ts-inside-payment-service:inside_payment.service.InsidePaymentServic
 - `UserDetailsServiceImpl#loadUserByUsername` вызывается из `authenticate` — `executes` и `data`, без `calls`.
 - Подтверждено платформой 17.10.2026 (0.91827 против 0.91709): рукописный `equals` сущности, который вызывает библиотека коллекций. `OrderServiceImpl#create` и `OrderOtherServiceImpl#create` проверяют `accountOrders.contains(order)`, `ArrayList` вызывает `order.equals(элемент)` обычным вызовом, не через отражение. Исполняется, только если у владельца уже есть заказы: S1, S2, S3, S5, S6, S7, но не S4 (новый пользователь). `equals` вызывает только геттеры Lombok, так что это одно ребро `executes`. Факты — archparse (`element_callbacks` в `entity_ir.json`), режим `RuntimeRules(element_callbacks=...)` или `run_eval.py --element-callbacks on|off`.
 
-Другие механизмы, которые вызывает фреймворк, разобраны 17.10 (блок 8 плана archparse) и новых рёбер не дают: слушатели RabbitMQ уже идут по R13, `MyCallable#call` (пул потоков travel-service) и `@Async` не исполняются на путях сценариев, `@ExceptionHandler` — только при ошибке входа, колбэков JPA (`@PrePersist`, `@PostLoad`) и `Comparable` в проекте нет, неявного `toString` у `TripId`/`LeftTicketInfo` на путях не найдено.
+Другие механизмы, которые вызывает фреймворк, разобраны 17.10 (блок 8 плана archparse) и новых рёбер не дают: слушатели RabbitMQ уже идут по R13, `MyCallable#call` (пул потоков travel-service) и `@Async` не исполняются на путях сценариев, `@ExceptionHandler` — только при ошибке входа, колбэков JPA (`@PrePersist`, `@PostLoad`) и `Comparable` в проекте нет.
+
+- Подтверждено платформой 19.10 (посылки 11–12, +0.0015): **Lombok-`toString` при логировании.** `BasicServiceImpl` пишет `LOGGER.info("...{}", result)`, SLF4J форматирует аргумент через `toString()`. У `TravelResult` он сгенерирован Lombok (`@Data`) и берёт поля через геттеры, если они есть; `isStatus()` написан руками и исполняется — `executes` во всех семи сценариях, `calls` нет. Правило: аргумент `info`/`warn`/`error` у поля типа SLF4J `Logger` по шаблону с `{}`; класс с `@Data`/`@ToString`/`@Value` — исполняются рукописные геттеры его собственных полей, вложенные объекты, списки и словари обходятся так же; рукописный `toString` исполняется сам. `debug`/`trace` не форматируются: своих настроек логирования в сервисах нет, уровень по умолчанию Spring Boot — INFO. Режим — `RuntimeRules(lombok_tostring=...)` или `run_eval.py --lombok-tostring on|off`, код — `Interpreter.log_format` ([разбор](researches/code_record_drift.md)).
 
 ### R6. Совпадение имени у ближайшего проектного кадра
 
@@ -135,6 +137,8 @@ Hibernate создаёт экземпляр и исполняет констру
 - `save` сущности с заданным id: Spring Data делает `merge`, Hibernate загружает строку и создаёт управляемую копию конструктором. Без id — `persist`, конструктор не вызывается;
 - `exists*`, `count*`, `@Modifying @Query` экземпляров не создают.
 
+Jackson создаёт тело запроса (`@RequestBody`) конструктором без аргументов — и на входе шага, и в принимающем сервисе межсервисного вызова. Рукописный конструктор исполняется, в ответ его пропускает правило выше. Подтверждено посылкой 17 (19.10, 0.99457): `RebookInfo()` вызывает `StringUtils.Date2String`, поэтому в S2 и S7 есть `executes RebookInfo#<init>()` и `calls RebookInfo#<init>() → Date2String`. Значения конструктора в тело не идут: какие поля пришли в JSON, неизвестно. Режим — `RuntimeRules(jackson_ctor=...)` или `run_eval.py --jackson-ctor on|off`, код — `Interpreter.jackson_new`.
+
 Встраиваемые поля (`@Embedded TripId` у `Trip`) создаются вместе с сущностью по тому же правилу. Элементы `@ElementCollection` (`Food`) не учитываются: коллекции ленивые.
 
 Режим — `RuntimeRules(constructors=...)` или `run_eval.py --ctors`, отбор делает проекция `engine/projection.py` (M5) на каждом шаге:
@@ -147,7 +151,7 @@ Hibernate создаёт экземпляр и исполняет констру
 
 Статус: README, S0.
 
-`OrderInfo#<init>()` и `OrderInfo#setLoginId(java.lang.String)` — узлы скелета, Jackson вызывает их при разборе тела запроса `queryOrdersForRefresh`, но в эталоне их нет. Правило: десериализация запроса и сериализация ответа методов не добавляют. `OrderInfo#<init>()` — частный случай R7: из него не вызван метод проекта. Для сеттеров правило остаётся эмпирическим.
+`OrderInfo#<init>()` и `OrderInfo#setLoginId(java.lang.String)` — узлы скелета, Jackson вызывает их при разборе тела запроса `queryOrdersForRefresh`, но в эталоне их нет. Правило: десериализация запроса и сериализация ответа методов не добавляют. `OrderInfo#<init>()` — частный случай R7: из него не вызван метод проекта, а `RebookInfo#<init>()` по той же причине в ответе есть (вызывает `Date2String`). Для сеттеров правило остаётся эмпирическим.
 
 ### R9. JWTUtil
 
@@ -251,6 +255,10 @@ data: TokenServiceImpl#getToken(...)                             -> res:table:ts
 Один шаг — один клиентский запрос через шлюз. Одинаковые обработчики разных шагов сливаются в множествах (в S0 6 шагов дают 5 входов: «Refresh» и «Refresh Paid» идут в один `OrderController#queryOrdersForRefresh`). Ответ — множество на весь сценарий, порядок и повторы не важны.
 
 «Refresh the list of orders» без типа поезда — один вход: `queryOrdersForRefresh` сервиса заказов по типу поезда заказа, с которым работает сценарий (`ts-order-service` для G/D, `ts-order-other-service` для остальных). UI в `queryMyOrderList` шлёт оба запроса, но второго в эталоне нет: S0 и платформа 17.10, [OQ-08](open-questions.md#oq-08).
+
+Шаг, которого в UI нет вовсе (цена заказа, запись страховки, расчёт возврата), шлёт запрос: обработчик выбирается по коду сервиса. Это видно по уникальным рёбрам таких шагов в S1, S4, S5, S7 — сценариях с баллом 1.000.
+
+Шаг — **действие формы без запроса**, если в UI он есть, но обработчик события элемента формы запроса не шлёт. «Browse the food stores at Suzhou station» в S2 и S3: магазины станций приходят в ответе `getAllFood` при открытии страницы бронирования, выбор станции (`onchange="preserveChangeFoodStation()"`) фильтрует его в памяти. Подтверждено посылками 13–14 (19.10, +0.0032). Правило (`engine/grounding/form_actions.py`, `StepGrounder.form_only`): обработчик, выбранный M1, не вызывается ни одним запросом UI, и все слова элемента формы (`id`, `name` без слов виджета, не меньше двух) есть в тексте шага; обработчик элемента ни сам, ни через вызываемые функции не шлёт AJAX. Решение принимается после заземления: выбор M1 и история в промпте не меняются, кеш LLM цел; в `step_requests.json` у шага `grounding.no_request`. Режим — `RuntimeRules(form_only_steps=...)` или `run_eval.py --form-only-steps skip|request`.
 
 ## Цифры для ориентира
 

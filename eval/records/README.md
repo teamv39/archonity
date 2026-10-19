@@ -12,7 +12,7 @@ $env:PYTHONUTF8=1; python scripts/compare_submissions.py eval/records/submission
 
 `submission_p17_0.99457.json` — посылка 17, **0.99457**, 19.10.
 
-- Ручная: посылка 10 (выдача кода после ADR-006) плюс правки посылок 11–14 и 17. В коде этих правок ещё нет, выдача кода от рекорда отличается ([roadmap.md](../../docs/roadmap.md), «Где мы»).
+- Ручная: посылка 10 (выдача кода после ADR-006) плюс правки посылок 11–14 и 17. С веткой `feature/81-code-matches-record` выдача кода (`run_eval.py --executor ir --m4-unresolved-calls emit`) совпадает с ним по множествам рёбер во всех сценариях; sha256 другой из-за порядка рёбер.
 - По сценариям: S1, S4, S5, S6, S7 — 1.000; S2 — 0.981; S3 — 0.981.
 - sha256 `0b2c1ccf8699b1c10c82d7230fc2de52cc468d6331b76c4adb4f97512ed4ca73`.
 

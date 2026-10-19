@@ -140,6 +140,27 @@ def parse_args() -> argparse.Namespace:
              "target_train_only — опрашивать только сервис заказов целевого типа поезда (абляция)",
     )
     parser.add_argument(
+        "--jackson-ctor",
+        choices=("on", "off"),
+        default="on",
+        help="M4, R7: Jackson создаёт тело запроса рукописным конструктором без аргументов (RebookInfo вызывает "
+             "Date2String); on — конструктор исполняется, в ответ его пропускает проекция R7 (по умолчанию), off — нет",
+    )
+    parser.add_argument(
+        "--lombok-tostring",
+        choices=("on", "off"),
+        default="on",
+        help="M4, R5: аргумент SLF4J info/warn/error по шаблону с {} форматируется Lombok-toString, рукописные "
+             "геттеры полей исполняются (TravelResult#isStatus); on (по умолчанию) или off",
+    )
+    parser.add_argument(
+        "--form-only-steps",
+        choices=("skip", "request"),
+        default="skip",
+        help="R20: шаг, который в UI — действие формы без запроса (выбор станции из уже загруженного списка), "
+             "а выбранный M1 обработчик UI не вызывает: skip — шаг не исполняется (по умолчанию), request — исполняется",
+    )
+    parser.add_argument(
         "--route-stations-usage",
         choices=("pruned", "preserve", "all"),
         default="pruned",
@@ -325,6 +346,9 @@ def main() -> None:
         route_stations_usage=args.route_stations_usage,
         preserve_notification_lookup=args.preserve_notification_lookup,
         security_check_scope=args.security_check_scope,
+        jackson_ctor=args.jackson_ctor,
+        lombok_tostring=args.lombok_tostring,
+        form_only_steps=args.form_only_steps,
         grounder=args.grounder,
         m1_options=m1_options,
         executor=args.executor,

@@ -49,6 +49,9 @@ class ArchonityPipeline:
         m4_judge_budget: int = 400,
         security_check_scope: str = "all",
         route_stations_usage: str = "pruned",
+        jackson_ctor: str = "on",
+        lombok_tostring: str = "on",
+        form_only_steps: str = "skip",
     ) -> None:
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
@@ -84,6 +87,9 @@ class ArchonityPipeline:
             unresolved_receiver_calls=unresolved_receiver_calls,
             m4_success_retry=m4_success_retry,
             security_check_scope=security_check_scope,
+            jackson_ctor=jackson_ctor,
+            lombok_tostring=lombok_tostring,
+            form_only_steps=form_only_steps,
         )
 
         # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
@@ -173,8 +179,14 @@ class ArchonityPipeline:
             step_req = None
             if session is not None:
                 step_req = session.ground(st)
-                self.step_requests[sid].append(step_req.to_dict())
                 step_entries = {step_req.handler}
+                # R20: действие формы UI без запроса. Решение после заземления: история шагов в промпте M1
+                # и кеш LLM не меняются.
+                form = self.m1.form_only(step_req) if self.rules.form_only_steps == "skip" else None
+                if form is not None:
+                    step_req.grounding["no_request"] = form
+                    step_entries = set()
+                self.step_requests[sid].append(step_req.to_dict())
             else:
                 step_entries, prev_files = self.grounder.ground_step(
                     st,

@@ -22,6 +22,8 @@ from typing import Any
 from engine.adapters.skeleton import SkeletonIndex, load_json
 from engine.grounding import prompts as P
 from engine.grounding.docs import HandlerCatalog, HandlerInfo
+from engine.grounding.form_actions import FormAction, build_form_actions
+from engine.grounding.form_actions import match as match_form_actions
 from engine.grounding.llm import LLMClient
 from engine.grounding.request import StepRequest
 from engine.grounding.retrieval import Ranked, Retriever
@@ -84,6 +86,7 @@ class StepGrounder:
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
                  top_k: int = TOP_K) -> None:
         self.root = Path(targets_root)
+        self._forms: list[FormAction] | None = None  # действия формы без запроса (R20), строятся при первом обращении
         self.ui = build_catalog(self.root, ix)
         self.cat = HandlerCatalog(ix, self.root, self.ui)
         emb = None
@@ -99,6 +102,22 @@ class StepGrounder:
         enums = enum_codes(ix, self.root)
         self.system_select = P.system_prompt(enums, P.handler_index(self.cat.handlers, self.labels))
         self.system_params = P.system_prompt(enums)
+
+    def form_only(self, req: StepRequest) -> dict[str, Any] | None:
+        """R20: шаг — действие формы UI без запроса, если выбранный обработчик UI не вызывает ни один запрос UI,
+        а текст шага описывает элемент формы, обработчик события которого запроса не шлёт.
+
+        Шаги, для которых в UI нет действия вовсе (цена заказа, запись страховки), остаются запросом по коду сервиса:
+        у них нет совпадения с элементом формы. Решение не трогает выбор M1 и историю в промпте (кеш LLM)."""
+        h = self.cat.handlers.get(req.handler)
+        if h is None or h.ui:
+            return None
+        if self._forms is None:
+            self._forms = build_form_actions(self.root)
+        hits = match_form_actions(self._forms, req.action)
+        if not hits:
+            return None
+        return {"rule": "R20:form_only", "ui_actions": [a.to_dict() for a in hits]}
 
     def begin(self, sc: dict[str, Any]) -> ScenarioSession:
         steps = sc.get("steps") or []

@@ -149,7 +149,7 @@ Python. Обёртка над `platform/evaluate_golden.py`: балл на S0, �
 }
 ```
 
-`handler` — ID узла скелета, всегда, и всегда один: шаг — один запрос. `params` — поля DTO обработчика (здесь `OrderTicketsInfo`) и path/query-параметры, которые определил текст шага или UI; коды перечислений — числами из исходника (`SeatClass.FIRSTCLASS` = 2). `expected_outcome`: `success` или `refused` (S7). `refs` — ссылки на результаты предыдущих шагов: ключ из словаря сущностей (`trip`, `contact`, `order`, `food`, `store`, `station`, `route`, `train`, `price`, `consign`, `assurance`, `user`), значение `<first|second|new>_of_step_<n>`. `grounding.source`: `LLM` или `RETRIEVAL` (фолбэк без LLM).
+`handler` — ID узла скелета, всегда, и всегда один: шаг — один запрос. `params` — поля DTO обработчика (здесь `OrderTicketsInfo`) и path/query-параметры, которые определил текст шага или UI; коды перечислений — числами из исходника (`SeatClass.FIRSTCLASS` = 2). `expected_outcome`: `success` или `refused` (S7). `refs` — ссылки на результаты предыдущих шагов: ключ из словаря сущностей (`trip`, `contact`, `order`, `food`, `store`, `station`, `route`, `train`, `price`, `consign`, `assurance`, `user`), значение `<first|second|new>_of_step_<n>`. `grounding.source`: `LLM` или `RETRIEVAL` (фолбэк без LLM). `grounding.no_request` (с 19.10) — шаг признан действием формы UI без запроса (правило R20 в [annotation_rules.md](../annotation_rules.md)); исполнитель шаг пропускает, `handler` остаётся выбором M1.
 
 ### IR (выход M2)
 

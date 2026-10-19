@@ -199,3 +199,42 @@ class TestGrounderFallback:
         assert reqs[0].handler.endswith("UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)")
         assert reqs[8].expected_outcome == "refused"  # «the system refuses»
         assert reqs[0].expected_outcome == "success"
+
+
+STATION_STORES = "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
+ORDER_PRICE = "method:ts-order-service:order.controller.OrderController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)"
+
+
+class TestFormOnlySteps:
+    """R20: шаг — действие формы UI без запроса (выбор станции из уже загруженного списка магазинов)."""
+
+    def test_words_split_and_singular(self) -> None:
+        from engine.grounding.form_actions import words
+
+        assert words("food-stores-list") == {"food", "store", "list"}
+        assert words("preserveChangeFoodStation") == {"preserve", "change", "food", "station"}
+
+    def test_catalog_has_station_select_without_request(self) -> None:
+        from engine.grounding.form_actions import build_form_actions
+
+        acts = build_form_actions(TARGETS)
+        station = [a for a in acts if a.function == "preserveChangeFoodStation" and a.file.endswith("client_ticket_book.html")]
+        assert station and station[0].words == ["food", "station"]
+        # обработчик, который шлёт запрос (initFoodSelect → /foodservice/foods), в каталог не попадает
+        assert not any(a.function == "initFoodSelect" for a in acts)
+
+    def _req(self, handler: str, action: str):
+        from engine.grounding.request import StepRequest
+
+        return StepRequest(scenario="S2", step=4, action=action, handler=handler, http={})
+
+    def test_form_only_decision(self, ix: SkeletonIndex) -> None:
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=None)
+        browse = g.form_only(self._req(STATION_STORES, "Browse the food stores at Suzhou station"))
+        assert browse is not None and browse["rule"] == "R20:form_only"
+        assert any(a["function"] == "preserveChangeFoodStation" for a in browse["ui_actions"])
+        # бронирование тоже трогает форму еды, но его обработчик UI вызывает: шаг шлёт запрос
+        assert g.form_only(self._req(PRESERVE_OTHER, "Book one first-class seat on the regular train for this "
+                                                     "contact, with food from a station store")) is None
+        # шаг без действия в UI: запрос по коду сервиса (так в эталоне)
+        assert g.form_only(self._req(ORDER_PRICE, "Check the price of the order")) is None

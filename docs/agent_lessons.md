@@ -26,7 +26,7 @@
   - **S3:** **0.981** (381 ребро)
 - 5 из 7 скрытых сценариев закрыты на **1.000000**!
 - Оставшийся дефицит до абсолютного идеала 1.00000: всего **0.00543** (сидит только в S2 и S3, ровно 10 рёбер)!
-- **Выдача кода** (`dev` после PR #77: `--executor ir --m4-unresolved-calls emit`, `--ctors caller_only` по умолчанию) совпадает с посылкой 10 ребро в ребро — 0.98908. Посылки 11–17 сохранены в `eval/records/submission_p17_0.99457.json` и `output/submission_baseline_0_99457.json`.
+- **Выдача кода** (`--executor ir --m4-unresolved-calls emit`, остальное по умолчанию) после ветки `feature/81-code-matches-record` совпадает с посылкой 17 (0.99457) ребро в ребро: Jackson-конструктор тела запроса (R7), Lombok-`toString` при логировании (R5), шаг — действие формы без запроса (R20), [разбор](researches/code_record_drift.md). Рекорд — `eval/records/submission_p17_0.99457.json`. С `--jackson-ctor off --lombok-tostring off --form-only-steps request` выдача байт в байт равна посылке 10.
 - Исполнитель M4 в `dev` — `engine/executor/` (PR #61). Исполнитель Миши (PR #59) закрыт без слияния; `--executor m4` — синоним `ir`.
 - Судья: схема `m4-judge-v3` в `dev`, кеш под v3 соберёт Миша. До этого `--judge cache` даёт одни промахи — на выдачу это не влияет (раздел 5).
 
