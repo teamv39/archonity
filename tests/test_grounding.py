@@ -186,6 +186,18 @@ class TestLLMCache:
         assert k != c.key("v2", msgs, {"type": "object"})
         assert k != LLMClient(model="m2", use_server=False, cache_dir=tmp_path).key("v1", msgs, {"type": "object"})
 
+    def test_sampling_in_key_only_when_given(self, tmp_path: Path) -> None:
+        import hashlib
+
+        c = LLMClient(model="m", use_server=False, cache_dir=tmp_path)
+        msgs = [{"role": "user", "content": "x"}]
+        raw = json.dumps({"model": "m", "prompt_version": "v1", "messages": msgs, "schema": {"type": "object"}},
+                         ensure_ascii=False, sort_keys=True)
+        # ключ жадного вызова — как до голосования (кеш m1-v7 и profile-v1 не сдвигается)
+        assert c.key("v1", msgs, {"type": "object"}) == "sha256:" + hashlib.sha256(raw.encode("utf-8")).hexdigest()
+        k1 = c.key("v1", msgs, {"type": "object"}, {"temperature": 0.7, "seed": 1})
+        assert k1 != c.key("v1", msgs, {"type": "object"}) != c.key("v1", msgs, {"type": "object"}, {"seed": 2})
+
     def test_cache_hit_without_server(self, tmp_path: Path) -> None:
         c = LLMClient(model="m", use_server=False, cache_dir=tmp_path)
         msgs = [{"role": "user", "content": "x"}]
@@ -317,12 +329,29 @@ class TestProjectProfile:
         g = StepGrounder(ix, TARGETS, embedder=None, llm=llm, prompt="v8")
         assert llm.calls == [("profile", "profile-v1")] and g.version == "m1-v8"
         assert "The application: A shop." in g.system_select
-        assert "ts-order-service (base) / ts-order-other-service (variant, marker 'other'): By kind." in g.system_select
-        assert "kind A orders" not in g.system_select  # что хранит сторона — только в карточке кандидата
+        assert "Some services come in twins" in g.system_select
+        # правило пары и что хранит сторона — только в карточке кандидата
+        assert "By kind." not in g.system_select and "kind A orders" not in g.system_select
         assert "Train Ticket" not in g.system_params and "/api/v1/<service>/**" in g.system_params
-        assert P.twin_note(g.profile, "ts-order-other-service") == "twin of ts-order-service; this variant side: kind B orders"
+        assert P.twin_note(g.profile, "ts-order-other-service") == (
+            "twin of ts-order-service; this variant side: kind B orders; choose the side by: By kind.")
         # у пары без правила профилировщика строки нет
         assert P.twin_note(g.profile, "ts-travel2-service") is None
+
+    def test_followup_note_from_server_answers(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
+        rebook = next(h for h in handlers.handlers if "RebookController#rebook(" in h)
+        assert handlers.answers(rebook)[2] == ["Please pay the different money!"]
+        card = StepGrounder(ix, TARGETS, embedder=None, prompt="v8")._candidate(rebook)
+        assert "only after POST /api/v1/rebookservice/rebook answers status 2" in card
+        assert "follow-up" not in StepGrounder(ix, TARGETS, embedder=None)._candidate(rebook)
+
+    def test_service_calls_in_card(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
+        rebook = next(h for h in handlers.handlers if "RebookController#rebook(" in h)
+        diff = next(h for h in handlers.handlers if "RebookController#payDifference(" in h)
+        assert "drawBackMoney" in handlers.service_calls(rebook)
+        assert "payDifferentMoney" in handlers.service_calls(diff) and "drawBackMoney" not in handlers.service_calls(diff)
+        assert "its service code calls: checkTime, drawBackMoney" in StepGrounder(ix, TARGETS, embedder=None,
+                                                                                 prompt="v8")._candidate(rebook)
 
     def test_bm25_without_domain_synonyms(self) -> None:
         from engine.grounding.text import query_toks

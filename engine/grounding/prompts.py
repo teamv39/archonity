@@ -73,8 +73,7 @@ Enum codes used in request fields:
 {enums}
 """
 
-TWINS_V8 = """- Some services come in twins: the same API in two services, each keeping its own part of the data. First pick the handler that does what the step asks; then, if the handler has a twin, choose the side by the data the step works with. These rules choose only between the two services of a pair, not between other handlers:
-{rules}
+TWINS_V8 = """- Some services come in twins: the same API in two services, each keeping its own part of the data. First pick the handler that does what the step asks; then, if that handler has a twin (its card says so), choose the side as the card says, by the data the step works with.
 """
 
 SELECT_TASK_V8 = """Current step {n}: {action}
@@ -82,7 +81,7 @@ SELECT_TASK_V8 = """Current step {n}: {action}
 Candidate handlers (closest search matches):
 {candidates}
 
-Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "trip": "first_of_step_2" for the first trip found at step 2, "order": "new_of_step_6" for the order created at step 6). Leave refs empty when the request uses nothing from earlier steps."""
+Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "trip": "first_of_step_2" for the first trip found at step 2, "order": "new_of_step_6" for the order created at step 6). A record that the request reads or changes comes from the step that found or created that record itself, not from the step of a record it belongs to. Leave refs empty when the request uses nothing from earlier steps."""
 # Пример refs — с видами ссылок v7 (`REF_ENTITIES`): виды меняет фаза B2 ADR-007 вместе с этим примером
 
 PARAMS_TASK_V8 = """Current step {n}: {action}
@@ -91,7 +90,7 @@ Chosen request: {verb} {path} -> {signature}
 Request fields (Java type):
 {fields}
 {ui_hints}
-Fill only the fields whose value follows from the step text or the scenario description: the options and extras the step chooses, amounts and quantities, query filters and date ranges, names, numbers and dates of new entities. A field that the request leaves out keeps its Java default: 0 for numbers, false for booleans, null for strings and objects. When the step does not take an option ('without ...', 'no ...', or the same choice as an earlier step that did not take it), the web UI leaves out the fields it sends only for that option: give them their default, and give coded fields the enum code for none. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."""
+Fill only the fields whose value follows from the step text or the scenario description: the options and extras the step chooses, amounts and quantities, query filters and date ranges, names, numbers and dates of new entities. Do not make up values that the text does not give, such as user names, passwords or codes: they are null. When the step does not take an option ('without ...', 'no ...', or the same choice as an earlier step that did not take it), the fields that the web UI sends only for that option keep their default, and coded fields get the enum code for none. Fields that an edit does not change are null. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."""
 
 
 def enum_reference(enums: dict[str, list[str]]) -> str:
@@ -104,28 +103,23 @@ def system_prompt(enums: dict[str, list[str]], index: str | None = None) -> str:
     return text + INDEX.format(index=index) if index else text
 
 
-def twin_rules_block(profile: Any) -> str:
-    """Правила выбора стороны пар близнецов из профиля, строка на пару; что хранит каждая сторона — в карточке
-    кандидата (`twin_note`). Пары без правила профилировщика пропускаются."""
-    out = []
-    for t in getattr(profile, "twins", ()):
-        if not (t.serves.get(t.base) and t.serves.get(t.variant) and t.choose_by):
-            continue
-        out.append(f"  - {t.base} (base) / {t.variant} (variant, marker '{t.marker}'): {t.choose_by}")
-    return "\n".join(out)
+def has_twin_rules(profile: Any) -> bool:
+    """Есть ли в профиле пара близнецов с правилом. Сами правила идут не в системный промпт, а в карточку
+    кандидата-близнеца (`twin_note`): список пар в системном промпте модель брала как правило выбора сервиса
+    («G/D → базовый сервис заказов») и выбирала по нему обработчик без UI."""
+    return any(t.serves.get(t.base) and t.serves.get(t.variant) and t.choose_by for t in getattr(profile, "twins", ()))
 
 
 def system_prompt_v8(enums: dict[str, list[str]], profile: Any, ui_dir: str | None, environment: str | None,
                      admin: bool, index: str | None = None) -> str:
     """Системный промпт v8: домен из профиля, окружение из `context` скелета, правило админки — если в проекте
     есть модули админки."""
-    rules = twin_rules_block(profile)
     summary = (getattr(profile, "domain_summary", "") or "").strip()
     text = SYSTEM_V8.format(
         domain=f"The application: {summary}\n" if summary else "",
         ui=ui_dir or "web UI",
         environment=f"\nEnvironment: {environment.strip()}" if environment else "",
-        twins=TWINS_V8.format(rules=rules) if rules else "",
+        twins=TWINS_V8 if has_twin_rules(profile) else "",
         admin="- Administrator steps (admin console) use admin services; other users' steps do not.\n" if admin else "",
         enums=enum_reference(enums),
     )
@@ -139,7 +133,7 @@ def twin_note(profile: Any, module: str) -> str | None:
         return None
     t, other = got
     side = "base" if module == t.base else "variant"
-    return f"twin of {other}; this {side} side: {t.serves[module]}"
+    return f"twin of {other}; this {side} side: {t.serves[module].rstrip('.')}; choose the side by: {t.choose_by}"
 
 
 def handler_labels(handlers: dict[str, HandlerInfo]) -> dict[str, str]:
@@ -186,9 +180,44 @@ def _ui_line(r: UIRequest, siblings: list[UIRequest]) -> str:
     return s
 
 
+RESPONSE_OF = "in the response handler of "
+# Проверка кода статуса в обработчике ответа UI: `result["status"] == 2`, `res.status === 2`
+STATUS_TEST = re.compile(r"""\w+(?:\[["']status["']\]|\.status)\s*===?\s*(-?\d+)""")
+
+
+def followup_notes(ui: list[tuple[UIRequest, list[UIRequest]]], answers: Any) -> list[str]:
+    """Режим v8: запрос, который UI шлёт из обработчика ответа другого запроса по коду статуса, — и что этот код
+    значит в исходнике первого запроса. `answers(verb, url)` → {код: сообщения} (`HandlerCatalog.answers`)."""
+    notes: list[str] = []
+    for r, sib in ui:
+        for x in [r] + sib:
+            first = next((g[len(RESPONSE_OF):] for g in x.guards if g.startswith(RESPONSE_OF)), None)
+            if not first or " " not in first:
+                continue
+            got = answers(*first.split(" ", 1))
+
+            def statuses(neg: bool) -> str:
+                codes = [int(m.group(1)) for g in x.guards if g.startswith("!(") == neg
+                         for m in [STATUS_TEST.search(g)] if m]
+                return ", ".join(f"status {c} (" + "; ".join(f"'{m}'" for m in got[c][:3]) + ")"
+                                 for c in dict.fromkeys(codes) if got.get(c))
+
+            when, unless = statuses(False), statuses(True)
+            if not when:
+                continue
+            note = (f"follow-up: the UI sends {x.verb} {x.url} by itself, not on a user action: only after {first} "
+                    f"answers {when}" + (f", not when it answers {unless}" if unless else "")
+                    + f". Otherwise the user's action ends with {first}.")
+            if note not in notes:
+                notes.append(note)
+    return notes
+
+
 def candidate_block(label: str, h: HandlerInfo, ui: list[tuple[UIRequest, list[UIRequest]]],
-                    train_kind: str | None = None, twin: str | None = None) -> str:
-    """`train_kind` — строка близнеца v7, `twin` — v8 (`twin_note`)."""
+                    train_kind: str | None = None, twin: str | None = None, notes: list[str] | None = None,
+                    calls: list[str] | None = None) -> str:
+    """`train_kind` — строка близнеца v7; `twin`, `notes` (`followup_notes`) и `calls` (`HandlerCatalog.service_calls`)
+    — v8."""
     lines = [f"{label}: " + "; ".join(f"{v} {p}" for v, p in h.routes)]
     lines.append(f"    handler {h.signature} in {h.module}")
     if twin:
@@ -197,10 +226,13 @@ def candidate_block(label: str, h: HandlerInfo, ui: list[tuple[UIRequest, list[U
         lines.append(f"    serves {train_kind} only; its twin serves the other kind")
     if h.body_fields:
         lines.append("    body: " + ", ".join(f["name"] for f in h.body_fields))
+    if calls:
+        lines.append("    its service code calls: " + ", ".join(calls))
     for r, sib in ui[:2]:
         lines.append("    " + _ui_line(r, sib))
     if not ui:
         lines.append("    UI: none (the web UI never calls it)")
+    lines += [f"    {x}" for x in notes or []]
     src = [ln for ln in h.source.splitlines()[1:] if ln not in ("}", "{")][:CAND_SRC_LINES]
     if src:
         lines.append("    code: " + " ".join(src))
@@ -279,7 +311,8 @@ def params_task(n: int, action: str, verb: str, path: str, h: HandlerInfo, field
             if any(o["field"] == f for f, _, _ in fields):
                 groups.setdefault(" && ".join(o["guards"]), []).append(o["field"])
         if groups:
-            hints += "Fields the web UI sends only under a condition (otherwise it leaves them out):\n" + "\n".join(
+            hints += ("Fields the web UI sends only under a condition; when it does not hold, the request leaves them out "
+                      "and they keep their Java default (0 for numbers, false for booleans, null otherwise):\n") + "\n".join(
                 f"  {', '.join(fs)} when {g}" for g, fs in list(groups.items())[:8]) + "\n"
     return template.format(n=n, action=action, verb=verb, path=path, signature=h.signature, fields=flines,
                            ui_hints=hints)

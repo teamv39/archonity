@@ -21,6 +21,10 @@ from engine.grounding.ui_catalog import UICatalog
 RENDERS = ("code", "code_ui")
 SRC_LINES = 30
 SKIP_PARAM_TYPES = {"HttpHeaders", "HttpServletRequest", "HttpServletResponse"}
+# Ответ с кодом статуса в исходнике: `new Response<>(2, "Please pay the different money!", data)`
+STATUS_ANSWER = re.compile(r'new\s+[A-Z]\w*(?:<[^>]*>)?\s*\(\s*(-?\d+)\s*,\s*"((?:[^"\\]|\\.)*)"')
+REACH_DEPTH = 4
+SERVICE_CALLS, CALLS_DEPTH = 12, 3
 
 
 @dataclass
@@ -63,6 +67,8 @@ class HandlerCatalog:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, ui: UICatalog) -> None:
         self.ix = ix
         self.root = Path(targets_root)
+        self._lines: dict[str, list[str]] = {}
+        self._answers: dict[str, dict[int, list[str]]] = {}
         N = ix.N
         params: dict[str, list[dict[str, Any]]] = collections.defaultdict(list)
         fields: dict[str, list[dict[str, str]]] = collections.defaultdict(list)
@@ -110,6 +116,60 @@ class HandlerCatalog:
             j -= 1
         body = [ln.strip() for ln in lines[j + 1:end] if ln.strip() and not re.match(r"\s*@", ln)]
         return "\n".join(body[:SRC_LINES])
+
+    def _method_lines(self, n: dict[str, Any]) -> list[str]:
+        f = n.get("file", "")
+        if f not in self._lines:
+            try:
+                self._lines[f] = (self.root / f).read_text(encoding="utf-8", errors="replace").splitlines()
+            except OSError:
+                self._lines[f] = []
+        return self._lines[f][n.get("line", 1) - 1:n.get("end", n.get("line", 1))]
+
+    def reach(self, nid: str, depth: int = REACH_DEPTH) -> list[str]:
+        """Методы модуля обработчика, достижимые из него по вызовам скелета (с реализациями интерфейсов), в порядке
+        обхода в ширину; сам обработчик первый."""
+        ix = self.ix
+        module = ix.N.get(nid, {}).get("module")
+        seen, frontier = [nid], [nid]
+        for _ in range(depth):
+            nxt = []
+            for m in frontier:
+                for c in sorted(set(ix.calls.get(m, ())) | set(ix.over.get(m, ()))):
+                    if c not in seen and ix.N.get(c, {}).get("module") == module:
+                        seen.append(c)
+                        nxt.append(c)
+            frontier = nxt
+        return seen
+
+    def answers(self, nid: str) -> dict[int, list[str]]:
+        """Ответы обработчика с кодом статуса: литералы `new X(<код>, "<сообщение>", ...)` в методах `reach`.
+        По ним видно, что значит статус, который проверяет UI в обработчике ответа."""
+        if nid in self._answers:
+            return self._answers[nid]
+        out: dict[int, list[str]] = {}
+        for m in sorted(self.reach(nid)):
+            for code, msg in STATUS_ANSWER.findall("\n".join(self._method_lines(self.ix.N[m]))):
+                msgs = out.setdefault(int(code), [])
+                if msg not in msgs:
+                    msgs.append(msg)
+        self._answers[nid] = out
+        return out
+
+    def service_calls(self, nid: str, limit: int = SERVICE_CALLS) -> list[str]:
+        """Имена методов модуля, которые выполняет обработчик (`reach`), без конструкторов, абстрактных методов и
+        коротких (геттеры, сеттеры): что делает обработчик внутри — `drawBackMoney`, `createConsign`."""
+        N = self.ix.N
+        own = N.get(nid, {}).get("name")
+        out: list[str] = []
+        for m in self.reach(nid, CALLS_DEPTH)[1:]:
+            n = N.get(m, {})
+            name = n.get("name")
+            if n.get("kind") != "method" or not name or name in ("<init>", own) or n.get("abstract") \
+                    or n.get("end", 0) - n.get("line", 0) < 3 or name in out:
+                continue
+            out.append(name)
+        return out[:limit]
 
     def render(self, nid: str, mode: str = "code_ui") -> str:
         h = self.handlers[nid]

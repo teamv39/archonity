@@ -11,6 +11,7 @@ LLM видит подробные карточки кандидатов и ин�
 from __future__ import annotations
 
 import argparse
+import collections
 import glob
 import json
 import re
@@ -29,12 +30,17 @@ from engine.grounding.profile import ProjectProfile, build_profile
 from engine.grounding.request import StepRequest
 from engine.grounding.retrieval import Ranked, Retriever
 from engine.grounding.text import DOMAIN_SYN
-from engine.grounding.ui_catalog import UIRequest, build_catalog, find_ui_dir
+from engine.grounding.ui_catalog import UIRequest, build_catalog, find_ui_dir, match_handlers
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TT = ROOT / "hackaton" / "tt-challenge"
 DEFAULT_EMBEDDER = "qwen3-4b"
 TOP_K = 10
+# Режим v8: выбор обработчика голосованием — SELECT_VOTES выборок с параметрами модели по умолчанию для режима без
+# thinking и seed 1..SELECT_VOTES (заданы заранее, под результат не подбираются); побеждает обработчик большинства,
+# при равенстве — встреченный раньше. При temperature 0 правка текста промпта переставляла пограничные шаги.
+SELECT_VOTES = 5
+SAMPLING = {"temperature": 0.7, "top_p": 0.8, "top_k": 20}
 REFUSED = re.compile(r"\b(refuse[sd]?|rejects?|rejected|denie[sd]|fails?)\b", re.I)
 ENUM_CONST = re.compile(r"^\s*([A-Z][A-Z0-9_]*)\s*(?:\(([^)]*)\))?\s*[,;]", re.M)
 
@@ -63,6 +69,12 @@ def enum_codes(ix: SkeletonIndex, targets_root: Path) -> dict[str, list[str]]:
             name = n["fqn"]
         out[name] = vals or sorted(consts)
     return out
+
+
+def _majority(xs: list[str]) -> str:
+    """Самое частое значение; при равенстве — встреченное раньше."""
+    c = collections.Counter(xs)
+    return max(c, key=lambda x: (c[x], -xs.index(x)))
 
 
 @dataclass
@@ -159,8 +171,35 @@ class StepGrounder:
         twin = h in self.retriever.twins
         if self.prompt == "v7":
             return P.candidate_block(self.labels[h], info, self._ui_for(info), P.train_kind(info.module) if twin else None)
-        return P.candidate_block(self.labels[h], info, self._ui_for(info),
-                                 twin=P.twin_note(self.profile, info.module) if twin else None)
+        ui = self._ui_for(info)
+        return P.candidate_block(self.labels[h], info, ui, twin=P.twin_note(self.profile, info.module) if twin else None,
+                                 notes=P.followup_notes(ui, self._answers), calls=self.cat.service_calls(h))
+
+    def _vote(self, msgs: list[dict[str, str]], schema: dict[str, Any],
+              grounding: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
+        """Выбор голосованием (`SELECT_VOTES`): обработчик большинства, затем среди его выборок — самый частый
+        ответ целиком (refs и исход), при равенстве — встреченный раньше."""
+        got = [self.llm.complete_json("select", self.version, msgs, schema, sampling={**SAMPLING, "seed": i + 1})
+               for i in range(SELECT_VOTES)]
+        valid = [(sel, key) for sel, key in got if sel is not None and sel.get("handler") in self.by_label]
+        grounding["cache_keys"]["select_votes"] = [key for _, key in got]
+        if not valid:
+            return None, got[0][1]
+        votes = collections.Counter(sel["handler"] for sel, _ in valid)
+        grounding["votes"] = dict(votes)
+        best = _majority([sel["handler"] for sel, _ in valid])
+        mine = [(sel, key) for sel, key in valid if sel["handler"] == best]
+        answers = [json.dumps({"refs": {k: v for k, v in (sel.get("refs") or {}).items() if v},
+                               "outcome": sel.get("expected_outcome")}, sort_keys=True) for sel, _ in mine]
+        return mine[answers.index(_majority(answers))]
+
+    def _answers(self, verb: str, url: str) -> dict[int, list[str]]:
+        """Коды ответа обработчиков запроса `verb url` из их исходника (для `followup_notes`)."""
+        out: dict[int, list[str]] = {}
+        for h in match_handlers(verb, url, self.ix.handlers):
+            for code, msgs in self.cat.answers(h).items():
+                out.setdefault(code, []).extend(m for m in msgs if m not in out[code])
+        return out
 
     def ground_step(self, sc: dict[str, Any], st: dict[str, Any], ranked: Ranked, history: list[str]) -> StepRequest:
         n, action = st["n"], st.get("action") or ""
@@ -176,7 +215,11 @@ class StepGrounder:
             blocks = "\n".join(self._candidate(h) for h in cands)
             task = (P.SELECT_TASK if v7 else P.SELECT_TASK_V8).format(n=n, action=action, candidates=blocks)
             msgs = [{"role": "system", "content": self.system_select}, {"role": "user", "content": prefix + task}]
-            sel, key = self.llm.complete_json("select", self.version, msgs, P.select_schema(list(self.by_label), n))
+            schema = P.select_schema(list(self.by_label), n)
+            if v7:
+                sel, key = self.llm.complete_json("select", self.version, msgs, schema)
+            else:
+                sel, key = self._vote(msgs, schema, grounding)
             grounding["cache_keys"]["select"] = key
         if sel is not None and sel.get("handler") in self.by_label:
             handler = self.by_label[sel["handler"]]

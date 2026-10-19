@@ -1,9 +1,10 @@
 """Клиент локальной LLM (`llama server` из llama.cpp, OpenAI-совместимый API) с кешем ответов в репозитории (ADR-005, «Кеш LLM»).
 
-- Ключ — sha256 от имени модели, версии промпта, сообщений и JSON-схемы ответа.
+- Ключ — sha256 от имени модели, версии промпта, сообщений и JSON-схемы ответа; у выборки ещё и её параметры (`sampling`).
 - Кеш — `cache/llm/<ключ>.json`, входит в сдачу. По умолчанию сначала кеш; на промахе — сервер, если доступен,
   иначе `None` (вызывающий берёт правило по умолчанию). `refresh=True` (`--no-cache`) пересчитывает всё.
-- `temperature = 0`, thinking выключен, вывод по JSON-схеме, вызовы по одному (параллельность не ускоряет).
+- По умолчанию `temperature = 0`; `sampling` (temperature, top_p, top_k, seed) — выборка, её ведёт голосование выбора
+  в режиме v8 (`grounder.SELECT_VOTES`). Thinking выключен, вывод по JSON-схеме, вызовы по одному.
 
 Сервер: `ARCHONITY_LLM_URL` (по умолчанию http://127.0.0.1:8080), имя модели для ключа — `ARCHONITY_LLM_MODEL`.
 Strict Local-First: адрес вне loopback и частной сети клиент не принимает (`LocalOnlyError`).
@@ -77,9 +78,13 @@ class LLMClient:
         self.stats = LLMStats()
         self._server_ok: bool | None = None
 
-    def key(self, prompt_version: str, messages: list[dict[str, str]], schema: dict[str, Any]) -> str:
-        raw = json.dumps({"model": self.model, "prompt_version": prompt_version, "messages": messages,
-                          "schema": schema}, ensure_ascii=False, sort_keys=True)
+    def key(self, prompt_version: str, messages: list[dict[str, str]], schema: dict[str, Any],
+            sampling: dict[str, Any] | None = None) -> str:
+        """`sampling` входит в ключ, только когда задан: ключи жадных вызовов (temperature 0) прежние."""
+        d: dict[str, Any] = {"model": self.model, "prompt_version": prompt_version, "messages": messages, "schema": schema}
+        if sampling:
+            d["sampling"] = sampling
+        raw = json.dumps(d, ensure_ascii=False, sort_keys=True)
         return "sha256:" + hashlib.sha256(raw.encode("utf-8")).hexdigest()
 
     def _path(self, key: str) -> Path:
@@ -101,9 +106,11 @@ class LLMClient:
         return self._server_ok
 
     def complete_json(self, kind: str, prompt_version: str, messages: list[dict[str, str]],
-                      schema: dict[str, Any], max_tokens: int = MAX_TOKENS) -> tuple[dict[str, Any] | None, str]:
-        """→ (ответ по схеме или None, ключ кеша). `max_tokens` в ключ не входит: обрыв ответа виден по схеме."""
-        key = self.key(prompt_version, messages, schema)
+                      schema: dict[str, Any], max_tokens: int = MAX_TOKENS,
+                      sampling: dict[str, Any] | None = None) -> tuple[dict[str, Any] | None, str]:
+        """→ (ответ по схеме или None, ключ кеша). `max_tokens` в ключ не входит: обрыв ответа виден по схеме.
+        `sampling` — параметры выборки (temperature, top_p, top_k, seed) вместо жадного вывода; входят в ключ."""
+        key = self.key(prompt_version, messages, schema, sampling)
         path = self._path(key)
         if not self.refresh and path.is_file():
             self.stats.hits += 1
@@ -120,6 +127,7 @@ class LLMClient:
             "chat_template_kwargs": {"enable_thinking": False},
             "response_format": {"type": "json_schema", "json_schema": {"name": kind, "strict": True, "schema": schema}},
         }
+        body.update(sampling or {})
         t0 = time.time()
         try:
             req = urllib.request.Request(f"{self.url}/v1/chat/completions", data=json.dumps(body).encode("utf-8"),
@@ -141,7 +149,7 @@ class LLMClient:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps({
             "key": key, "model": self.model, "prompt_version": prompt_version, "kind": kind,
-            "messages": messages, "schema": schema, "response": resp,
+            "messages": messages, "schema": schema, **({"sampling": sampling} if sampling else {}), "response": resp,
             "finish_reason": out["choices"][0].get("finish_reason"), "usage": usage, "seconds": round(dt, 2),
         }, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
         return resp, key
