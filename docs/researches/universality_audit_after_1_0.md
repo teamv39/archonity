@@ -1,7 +1,7 @@
 # Аудит универсальности пайплайна Archonity после достижения 1.00000
 
 Дата: 19.10.2026  
-Статус: выдача кода = 1.00000 (посылка 28, ветка feature/82-unbound-path-variable в dev)  
+Статус: выдача кода = 1.00000 (посылка 28, ветка feature/82-unbound-path-variable в dev); пункты 7, 10–12 и 2.1.4 обобщены 20.10 (раздел 6)  
 Связано: testing_system.md, reaching_1_0.md, code_record_drift.md, annotation_rules.md  
 
 ---
@@ -192,4 +192,18 @@
 - Исправлено (2.4): `apply_spring_security`, M3 (`state.py`) и `ScenarioProfile` исполняются в режиме M4. Добавлен раздел 2.5 и строки 10–12 таблицы.
 - Исправлено (раздел 1): в правилах нет требования работать на любом проекте Spring Boot; есть «любой сценарий» и проверка кода.
 - Попутно: правило `station_food_list` по имени `listFoodStoresByStationName` живёт только в `builder.traverse` (legacy); в M4 оно не действует. Запись в roadmap «по именам решают два места» устарела.
+
+## 6. Обобщено 20.10 (ветка `feature/84-generalize-rules`)
+
+Взяты пункты, которые решаются правилом по семантике Spring/JPA или по фактам скелета, без Stage 0 ([two_stage_pipeline_research.md](two_stage_pipeline_research.md), раздел 7). Каждый — под флагом `run_eval.py`; по умолчанию новое правило, старый режим — для отката. Выдача с новыми умолчаниями и со старыми режимами всех трёх флагов — sha256 `94463c41…5a08` (рекорд p27).
+
+| № таблицы 3 | Что сделано | Флаг, откат | Как проверено |
+|---|---|---|---|
+| 10 | Spring Security: вход — call_site `authenticate` у `AuthenticationManager`; пользователь — `implements UserDetails`; `loadUserByUsername` — `implements UserDetailsService`, таблицы — `data_access` без ленивых коллекций (R10); фильтр — подкласс `OncePerRequestFilter`; ребро к `getPassword` — R6. Правило по `createToken` удалено: ребро `createToken → getUsername` даёт M4 | `--spring-security names` | без правила выдача теряет 10 рёбер в каждом сценарии, с новым — совпадает |
+| 11 | M4 не обращается к M3 при разрешении ссылок (`OrderStatus`, `TrainType`, `orders_other`). Пассажир — из `context/README.md` организаторов, как и было | `--m4-m3-refs on` | зонд: при ответе `None` от M3 выдача та же |
+| 12 | Мёртвое присваивание `Interpreter.train_mode` и `ScenarioProfile` в пути M4 удалены | — | sha256 |
+| 7 | Модуль типа при неоднозначном имени: вызывающий, затем его `depends_on` (без них — общие библиотеки), вместо `ts-common` | `--module-roles names` | `resolve`/`resolve_simple` совпадают по всем парам «тип × модуль» |
+| 2.1.4 | Близнецы M1: маркер — токен разницы имён модулей при совпадении API больше половины (`other`, `2`; у `admin`, `food`, `plan` не выше 0.33), вместо `other\|\d+` | `--module-roles names` | группы совпадают (60 = 60), промпт M1 и кеш LLM не меняются |
+
+Не брались: словари `step.py` и `REF_ENTITIES`, промпт M1 — это Stage 0; признак отказа `*.Response` и нормализация строк при повторе шага — общего правила не нашлось; R20 `rebind` — до пересборки кеша LLM. `apply_spring_security` по-прежнему живёт в `builder.py` (legacy-модуль), но имён проекта в нём при умолчаниях больше нет.
 

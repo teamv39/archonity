@@ -107,6 +107,8 @@
 - R5: `--lombok-tostring` — аргументы `info`/`warn`/`error` с `{}` обходятся как Lombok-`toString`;
 - R20: `--unbound-handlers` — обработчик с несвязываемым `@PathVariable` заменяется рабочим того же контроллера (`engine/grounding/binding.py`).
 
+Обобщения 20.10 выдачу не меняют, только убирают имена Train Ticket из правил ([аудит, раздел 6](researches/universality_audit_after_1_0.md)): `--spring-security semantic` (Spring Security по контракту фреймворка), `--m4-m3-refs off` (M4 без модели M3), `--module-roles skeleton` (общий модуль по `depends_on`, близнецы по совпадению API). Старые режимы — `names`, `on`, `names`.
+
 `python run_eval.py` без ключей даёт рекорд 1.0 байт в байт (sha256 в [eval/records/](../eval/records/README.md)). Подробно: [code_record_drift.md](researches/code_record_drift.md) — как код догнал 0.99457, [reaching_1_0.md](researches/reaching_1_0.md) — как дошли до 1.0.
 
 По дороге одно правило пришлось заменить. R20 «шаг — действие формы без запроса» сошёлся с посылкой 20, но объяснял её неверно и прятал 5 рёбер в каждом из S2 и S3. Замер ячеек это показал.
