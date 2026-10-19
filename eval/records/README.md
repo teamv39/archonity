@@ -10,7 +10,7 @@ $env:PYTHONUTF8=1; python scripts/compare_submissions.py eval/records/submission
 
 ## Текущий рекорд
 
-`submission_p27_1.00000.json` — **1.00000**, 19.10. Это выдача кода (`python run_eval.py --executor ir --m4-unresolved-calls emit --no-server`, ветка `feature/82-unbound-path-variable`); по множествам рёбер она совпадает с посылкой 27 (ручной зонд, итог 1.00000). Отправка самой выдачи — посылка 28.
+`submission_p27_1.00000.json` — **1.00000**, 19.10. Это выдача кода (`python run_eval.py` без ключей, ветка `feature/82-unbound-path-variable`); по множествам рёбер она совпадает с посылкой 27 (ручной зонд, итог 1.00000). Отправка самой выдачи — посылка 28.
 
 - По сценариям: все 1.000.
 - sha256 `94463c41a72c244fc548cbb52d009cff7c65f44ad5e682b7176a156cb66a5a08` — эталон воспроизводимости.

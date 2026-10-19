@@ -8,7 +8,7 @@ description: >-
 
 # Сборка и валидация архива submission.zip
 
-> **Устарело (шаг 2).** `run_eval.py` без ключей запускает legacy (`--executor legacy --m4-unresolved-calls mute`), а выдачу кода даёт `--executor ir --m4-unresolved-calls emit`. Пока умолчания не исправлены ([roadmap.md](../../docs/roadmap.md), 21.10), запускать с этими ключами. Ожидаемые размеры архива и число тестов тоже писались 17.10.
+> **Устарело частично.** Шаг 2 снова верен: `run_eval.py` без ключей даёт конфигурацию рекорда 1.0 (с 19.10). Описание пайплайна (`GraphBuilder`, `RuntimeRules`), ожидаемые размеры архива и число тестов писались 17.10. Текущий рекорд и sha256 — [eval/records/](../../eval/records/README.md).
 
 Этот навык описывает полный регламент подготовки официального архива `output/submission.zip` для бенчмарка Train Ticket (TechArena 2026).
 

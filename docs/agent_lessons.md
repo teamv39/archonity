@@ -6,7 +6,7 @@
 
 ## 1. Где мы
 
-- **1.00000** — посылка 27 (19.10), все семь сценариев 1.000. Выдача кода (`run_eval.py --executor ir --m4-unresolved-calls emit --no-server`) после ветки `feature/82-unbound-path-variable` совпадает с ней ребро в ребро; рекорд — `eval/records/submission_p27_1.00000.json`.
+- **1.00000** — посылка 27 (19.10), все семь сценариев 1.000. Выдача кода (`python run_eval.py` без ключей) после ветки `feature/82-unbound-path-variable` совпадает с ней ребро в ребро; рекорд — `eval/records/submission_p27_1.00000.json`.
 - Путь от 0.98908 (посылка 10, ADR-006) до 1.0 — три правила из ручных посылок ([code_record_drift.md](researches/code_record_drift.md)) и одно из замера ячеек ([reaching_1_0.md](researches/reaching_1_0.md)):
   - R7: Jackson исполняет рукописный конструктор тела запроса (`RebookInfo()` → `Date2String`), `--jackson-ctor`;
   - R5: Lombok-`toString` при логировании через `{}` вызывает рукописные геттеры (`TravelResult#isStatus()`), `--lombok-tostring`;

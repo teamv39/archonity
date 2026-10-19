@@ -28,7 +28,7 @@
 $env:PYTHONUTF8=1; python run_eval.py -o <папка>/submission.json
 ```
 
-Параметры `--executor ir`, `--m4-unresolved-calls emit`, `--grounder m1` и `--ctors caller_only` стоят по умолчанию.
+По умолчанию стоят `--grounder m1`, `--executor ir`, `--m4-unresolved-calls emit`, `--ctors caller_only`, `--jackson-ctor on`, `--lombok-tostring on`, `--unbound-handlers rebind`. Без ключей выдача совпадает с рекордом 1.0 байт в байт (sha256 в [eval/records/](./eval/records/README.md)). LLM и эмбеддинги берутся из `cache/`: сервер не нужен.
 
 Лучшая посылка платформы — в [eval/records/](./eval/records/README.md). Рекорд может быть ручной правкой `submission.json`, тогда выдача кода от него отличается (roadmap, «Где мы»). Любую правку до посылки сравнивать с рекордом ребро в ребро: `scripts/compare_submissions.py`. Результаты посылок — таблица в roadmap.
 
