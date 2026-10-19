@@ -239,8 +239,37 @@ export const Inspector: React.FC<InspectorProps> = ({
                 <div className="cad-card">
                   <div className="card-section-title">
                     <FileCode size={12} />
-                    <span>ДОКАЗАТЕЛЬНАЯ БАЗА (EVIDENCE.JSON)</span>
+                    <span>ДОКАЗАТЕЛЬНАЯ БАЗА (DECISION LEDGER V2)</span>
                   </div>
+
+                  {selectedEdge.evidenceDetails.rule && (
+                    <div className="cad-field">
+                      <span className="cad-field-label">ПРАВИЛО АНАЛИЗАТОРА (RULE)</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                        <span className="tag-pill" style={{ background: '#FEF3C7', color: '#92400E', borderColor: '#FDE68A', fontWeight: 700 }}>
+                          {selectedEdge.evidenceDetails.rule}
+                        </span>
+                        {selectedEdge.evidenceDetails.source && (
+                          <span className="tag-pill" style={{ fontSize: 9 }}>
+                            {selectedEdge.evidenceDetails.source}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedEdge.evidenceDetails.steps && selectedEdge.evidenceDetails.steps.length > 0 && (
+                    <div className="cad-field">
+                      <span className="cad-field-label">ШАГИ СЦЕНАРИЯ</span>
+                      <div className="node-tags" style={{ marginTop: 2 }}>
+                        {selectedEdge.evidenceDetails.steps.map((st) => (
+                          <span key={st} className="tag-pill" style={{ fontSize: 9 }}>
+                            Шаг {st}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {selectedEdge.evidenceDetails.filePath && (
                     <div className="cad-field">

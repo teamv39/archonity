@@ -60,10 +60,35 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
     targetX,
     targetY,
     targetPosition,
+    curvature: 0.22,
   });
 
+  const markerId = `arrowhead-${id.replace(/[^a-zA-Z0-9_-]/g, '_')}`;
+
   if (!rawEdge) {
-    return <path id={id} className="react-flow__edge-path" d={edgePath} />;
+    return (
+      <>
+        <defs>
+          <marker
+            id={markerId}
+            viewBox="0 0 10 10"
+            refX="6"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto-start-reverse"
+          >
+            <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#71717A" />
+          </marker>
+        </defs>
+        <path
+          id={id}
+          className="react-flow__edge-path"
+          d={edgePath}
+          markerEnd={`url(#${markerId})`}
+        />
+      </>
+    );
   }
 
   // Определение цвета ребра: по протоколу или по слою происхождения
@@ -138,6 +163,20 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
 
   return (
     <>
+      <defs>
+        <marker
+          id={markerId}
+          viewBox="0 0 10 10"
+          refX="6"
+          refY="5"
+          markerWidth="7"
+          markerHeight="7"
+          orient="auto-start-reverse"
+        >
+          <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill={color} />
+        </marker>
+      </defs>
+
       {/* Прозрачный путь для удобного клика мышью */}
       <path
         d={edgePath}
@@ -152,6 +191,7 @@ export const CustomEdge: React.FC<EdgeProps> = memo((props) => {
         strokeWidth={strokeWidth}
         strokeDasharray={strokeDasharray}
         style={{ color }}
+        markerEnd={`url(#${markerId})`}
       />
 
       {showLabel && (
