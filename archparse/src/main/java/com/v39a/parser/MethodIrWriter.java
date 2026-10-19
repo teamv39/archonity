@@ -141,16 +141,18 @@ public class MethodIrWriter {
                     .filter(p -> rel(targetsDir, p).contains("/src/main/java/"))
                     .sorted().collect(Collectors.toList());
         }
-        List<Source> out = new ArrayList<>();
-        for (Path p : files) {
+        ThreadLocal<com.github.javaparser.JavaParser> parser = ThreadLocal.withInitial(com.github.javaparser.JavaParser::new);
+        return files.parallelStream().map(p -> {
             String rel = rel(targetsDir, p);
             try {
-                out.add(new Source(rel, rel.substring(0, rel.indexOf('/')), StaticJavaParser.parse(p)));
+                return parser.get().parse(p).getResult()
+                        .map(cu -> new Source(rel, rel.substring(0, rel.indexOf('/')), cu))
+                        .orElse(null);
             } catch (Exception e) {
                 System.err.println("Parse error, skipped: " + rel + ": " + e.getMessage());
+                return null;
             }
-        }
-        return out;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private static String rel(Path root, Path p) {

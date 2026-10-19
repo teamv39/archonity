@@ -181,17 +181,18 @@ public class EntityScanner {
                     .sorted()
                     .collect(Collectors.toList());
         }
-        List<SourceFile> out = new ArrayList<>();
-        for (Path p : javaFiles) {
+        ThreadLocal<com.github.javaparser.JavaParser> parser = ThreadLocal.withInitial(com.github.javaparser.JavaParser::new);
+        return javaFiles.parallelStream().map(p -> {
             String rel = rel(p);
             try {
-                CompilationUnit cu = StaticJavaParser.parse(p);
-                out.add(new SourceFile(rel, rel.substring(0, rel.indexOf('/')), cu));
+                return parser.get().parse(p).getResult()
+                        .map(cu -> new SourceFile(rel, rel.substring(0, rel.indexOf('/')), cu))
+                        .orElse(null);
             } catch (Exception e) {
                 System.err.println("Parse error, skipped: " + rel + ": " + e.getMessage());
+                return null;
             }
-        }
-        return out;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     private String rel(Path p) {
