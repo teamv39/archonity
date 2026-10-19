@@ -12,6 +12,7 @@
 
 | Документ | О чём |
 |---|---|
+| [universality_audit_19_10.md](universality_audit_19_10.md) | Аудит универсальности пайплайна на 19.10: инвентаризация подгонок под Train Ticket, M4, зонды 11–19 против правил фреймворка |
 | [code_record_drift.md](code_record_drift.md) | Чем выдача кода отличается от рекорда 0.99457: три механизма, прототипы, как переносить в код |
 | [../how_we_achieved_0_99457.md](../how_we_achieved_0_99457.md) | Путь к 0.99457, опровергнутые зонды 15–19. Раскладка остатка S2/S3 при FP = 0 — расчёт, не замер |
 | [constructor_project_calls_rule.md](constructor_project_calls_rule.md) | Откуда был разрыв 0.064: лишние конструкторы. Основание [ADR-006](../adr/adr-006_constructor_visibility.md), замеры 1–10 |
