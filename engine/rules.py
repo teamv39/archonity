@@ -375,11 +375,11 @@ class RuntimeRules:
     # Spring Security при входе (builder.apply_spring_security): semantic (по умолчанию) — вход по вызову
     # AuthenticationManager.authenticate, пользователь — класс с implements UserDetails, таблица — data_access
     # loadUserByUsername без таблиц коллекций, фильтр — подкласс OncePerRequestFilter; names — по именам методов
-    # (getToken/authenticate/login, createToken) и подстроке `user` в имени таблицы, как до 20.10.
+    # (getToken/authenticate/login, createToken) и подстроке `user` в имени таблицы, как до feature/84.
     SPRING_SECURITY_MODES = ("semantic", "names")
 
     # Запасной путь M4 к модели состояния M3 при разрешении ссылок шагов (StepExecutor.resolve_ref): off (по
-    # умолчанию) — ссылки разрешает только мир M4; on — как до 20.10, M3 (OrderStatus, TrainType) последним слоем.
+    # умолчанию) — ссылки разрешает только мир M4; on — как до feature/84, M3 (OrderStatus, TrainType) последним слоем.
     M4_M3_REFS_MODES = ("off", "on")
 
     # Роли модулей: skeleton (по умолчанию) — общий модуль типов по рёбрам depends_on скелета, близнецы M1 — модули,

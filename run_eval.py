@@ -167,13 +167,13 @@ def parse_args() -> argparse.Namespace:
         default="semantic",
         help="Spring Security при входе: semantic (по умолчанию) — вход по вызову AuthenticationManager.authenticate, "
              "пользователь — implements UserDetails, таблица — data_access loadUserByUsername без коллекций, фильтр — "
-             "подкласс OncePerRequestFilter; names — по именам методов и таблиц, как до 20.10",
+             "подкласс OncePerRequestFilter; names — по именам методов и таблиц, как до feature/84",
     )
     parser.add_argument(
         "--m4-m3-refs",
         choices=("off", "on"),
         default="off",
-        help="M4: ссылки шагов, которых нет в мире M4, разрешать моделью состояния M3 (on, как до 20.10) или нет "
+        help="M4: ссылки шагов, которых нет в мире M4, разрешать моделью состояния M3 (on, как до feature/84) или нет "
              "(off, по умолчанию)",
     )
     parser.add_argument(
@@ -181,7 +181,7 @@ def parse_args() -> argparse.Namespace:
         choices=("skeleton", "names"),
         default="skeleton",
         help="Общий модуль типов и близнецы M1: skeleton (по умолчанию) — по depends_on и совпадению API модулей, "
-             "имена которых отличаются одним токеном; names — 'ts-common' и 'other' или цифры в пути, как до 20.10",
+             "имена которых отличаются одним токеном; names — 'ts-common' и 'other' или цифры в пути, как до feature/84",
     )
     parser.add_argument(
         "--route-stations-usage",

@@ -139,8 +139,8 @@ class StepExecutor:
             ent = self.resolve_ref(kind, prev, state, depth + 1)
             if ent is not None:
                 return ent
-        # Модель состояния M3 последним слоем — только в режиме m4_m3_refs=on (до 20.10). Выдачу M3 здесь не
-        # меняла (зонд 20.10: при ответе None от M3 sha256 тот же), а держится на перечислениях Train Ticket.
+        # Модель состояния M3 последним слоем — только в режиме m4_m3_refs=on (до feature/84). Выдачу M3 здесь не
+        # меняла (зонд 19.10: при ответе None от M3 sha256 тот же), а держится на перечислениях Train Ticket.
         if getattr(self.it.rules, "m4_m3_refs", "off") == "on" and state is not None and hasattr(state, "resolve_ref"):
             d = state.resolve_ref(kind, ref)
             if isinstance(d, dict):

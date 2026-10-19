@@ -86,7 +86,7 @@ class TypeIndex:
 
     def _prefs(self, module: str | None) -> list[str | None]:
         """Порядок модулей при неоднозначном имени типа: модуль вызывающего, затем его зависимости
-        (без известного модуля или зависимостей — общие библиотеки проекта); names — `ts-common`, как до 20.10."""
+        (без известного модуля или зависимостей — общие библиотеки проекта); names — `ts-common`, как до feature/84."""
         if self.module_roles == "names":
             return [module, "ts-common"]
         return [module, *(self.deps.get(module or "") or self.shared)]

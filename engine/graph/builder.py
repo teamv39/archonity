@@ -519,7 +519,7 @@ class GraphBuilder:
         if getattr(self.rules, "spring_security", "semantic") == "semantic":
             self._spring_security_semantic(active_methods, edges_calls, edges_data)
             return
-        # Режим names (до 20.10): вход и таблица пользователя — по именам.
+        # Режим names (до feature/84): вход и таблица пользователя — по именам.
         # 1. Поиск модулей аутентификации по стандартному контракту Spring Security (loadUserByUsername)
         auth_modules = {
             n.get("module") for nid, n in self.index.N.items()

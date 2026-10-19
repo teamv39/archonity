@@ -22,7 +22,7 @@ class Embedder(Protocol):
     def embed_queries(self, texts: list[str]) -> np.ndarray | None: ...
 
 
-_NAMES_MARKER = re.compile(r"other|\d+")  # режим names (до 20.10): маркеры Train Ticket
+_NAMES_MARKER = re.compile(r"other|\d+")  # режим names (до feature/84): маркеры Train Ticket
 
 
 def _module_marker(base: str, variant: str) -> str | None:
@@ -65,7 +65,7 @@ def twin_markers(cat: HandlerCatalog, min_share: float = 0.5) -> list[str]:
 def twin_groups(cat: HandlerCatalog, module_roles: str = "skeleton") -> dict[str, list[str]]:
     """Близнецы: обработчики разных модулей с одинаковым путём после снятия маркера близнеца в сегментах
     (`travelservice` / `travel2service`, `order/refresh` / `orderOther/refresh`, `preserve` / `preserveOther`).
-    Маркеры — `twin_markers` (skeleton) или `other` и цифры (names, до 20.10)."""
+    Маркеры — `twin_markers` (skeleton) или `other` и цифры (names, до feature/84)."""
     if module_roles == "names":
         marker = _NAMES_MARKER
     else:
