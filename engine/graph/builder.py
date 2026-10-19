@@ -610,8 +610,9 @@ class GraphBuilder:
 
     def _types_with_super(self, module: str | None, simple: str, attr: str) -> set[str]:
         """Типы модуля (или всего проекта при module=None), у которых в extends/implements есть `simple`."""
+        type_dict = getattr(self.index, "type_nodes", self.index.N)
         return {
-            nid for nid, n in self.index.N.items()
+            nid for nid, n in type_dict.items()
             if n.get("kind") == "type" and (module is None or n.get("module") == module)
             and simple in (n.get(attr) or [])
         }
@@ -631,21 +632,39 @@ class GraphBuilder:
         именем. Фильтры — `doFilterInternal` подклассов `OncePerRequestFilter`.
         """
         N = self.index.N
-        cs_by_method: dict[str, list[dict[str, Any]]] = {}
-        for n in N.values():
-            if n.get("kind") == "call_site" and n.get("method") in active_methods:
-                cs_by_method.setdefault(n["method"], []).append(n)
+        cs_by_method = getattr(self.index, "cs_nodes_by_method", None)
+        if cs_by_method is None:
+            cs_by_method = {}
+            for n in N.values():
+                if n.get("kind") == "call_site" and n.get("method") in active_methods:
+                    cs_by_method.setdefault(n["method"], []).append(n)
+
         entries = [
             m for m in sorted(active_methods)
             if any(c.get("callee") == "authenticate" and c.get("receiver_type") == self._AUTH_MANAGER
                    for c in cs_by_method.get(m, ()))
         ]
+        if not entries:
+            return
+
+        methods_by_owner = getattr(self.index, "methods_by_owner", None)
+
         for entry in entries:
             module = N.get(entry, {}).get("module")
             # UserDetailsService: загрузка пользователя
             services = self._types_with_super(module, "UserDetailsService", "implements_raw")
-            for ud in sorted(nid for nid, n in N.items() if n.get("kind") == "method"
-                             and n.get("owner") in services and n.get("name") == "loadUserByUsername"):
+            if methods_by_owner is not None:
+                ud_candidates = [
+                    (nid, n) for s in sorted(services)
+                    for nid, n in methods_by_owner.get(s, ())
+                    if n.get("name") == "loadUserByUsername"
+                ]
+            else:
+                ud_candidates = [
+                    (nid, n) for nid, n in N.items()
+                    if n.get("kind") == "method" and n.get("owner") in services and n.get("name") == "loadUserByUsername"
+                ]
+            for ud, _ in sorted(ud_candidates, key=lambda x: x[0]):
                 self._activate(active_methods, ud, "FRAMEWORK_RULE", "spring_security")
                 for t in sorted(self.index.wiring["data_access"].get(ud, ())):
                     dec = self.index.entities.collection_table_loaded(ud, t)
@@ -653,16 +672,34 @@ class GraphBuilder:
                         self._add_edge(edges_data, "data", ud, t, "FRAMEWORK_RULE", "spring_security")
             # Фильтр запросов
             filters = self._types_with_super(None, "OncePerRequestFilter", "extends_raw")
-            for nid, n in sorted(N.items()):
-                if n.get("kind") == "method" and n.get("owner") in filters and n.get("name") == "doFilterInternal":
-                    self._activate(active_methods, nid, "FRAMEWORK_RULE", "spring_security")
+            if methods_by_owner is not None:
+                filter_candidates = [
+                    (nid, n) for f in sorted(filters)
+                    for nid, n in methods_by_owner.get(f, ())
+                    if n.get("name") == "doFilterInternal"
+                ]
+            else:
+                filter_candidates = [
+                    (nid, n) for nid, n in N.items()
+                    if n.get("kind") == "method" and n.get("owner") in filters and n.get("name") == "doFilterInternal"
+                ]
+            for nid, _ in sorted(filter_candidates, key=lambda x: x[0]):
+                self._activate(active_methods, nid, "FRAMEWORK_RULE", "spring_security")
             # UserDetails: методы, которые вызывает провайдер
             users = self._types_with_super(module, "UserDetails", "implements_raw")
             called_here = {c.get("callee") for c in cs_by_method.get(entry, ())}
-            for nid, n in sorted(N.items()):
-                if n.get("kind") != "method" or n.get("owner") not in users \
-                        or n.get("name") not in self._PROVIDER_USER_METHODS:
-                    continue
+            if methods_by_owner is not None:
+                user_candidates = [
+                    (nid, n) for u in sorted(users)
+                    for nid, n in methods_by_owner.get(u, ())
+                    if n.get("name") in self._PROVIDER_USER_METHODS
+                ]
+            else:
+                user_candidates = [
+                    (nid, n) for nid, n in N.items()
+                    if n.get("kind") == "method" and n.get("owner") in users and n.get("name") in self._PROVIDER_USER_METHODS
+                ]
+            for nid, n in sorted(user_candidates, key=lambda x: x[0]):
                 self._activate(active_methods, nid, "FRAMEWORK_RULE", "spring_security")
                 if n.get("name") in called_here:
                     self._add_edge(edges_calls, "calls", entry, nid, "FRAMEWORK_RULE", "spring_security:R6")
