@@ -1,5 +1,7 @@
 # Аудит зондирующей посылки: --security-check-scope (Гипотеза 4.1 / 3.4)
 
+> **Архив, 19.10.** Зонд опровергнут посылкой (0.936 → ~0.910): `securityInfoCheck` в `ts-order-other-service` исполняется во всех сценариях. Вывод раздела 3 («отсекать написанное в коде нельзя») перегнут: [ADR-006](../adr/adr-006_constructor_visibility.md) отсёк конструкторы, вызванные в коде, и поднял балл до 0.989.
+
 **Дата:** 19.10.2026  
 **Связанные документы:** [next_day_hypotheses_and_todo.md](next_day_hypotheses_and_todo.md), [s4_hypotheses_and_gap_analysis.md](s4_hypotheses_and_gap_analysis.md), [s3_hypotheses_and_gap_analysis.md](s3_hypotheses_and_gap_analysis.md)
 

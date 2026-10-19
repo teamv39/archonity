@@ -1,5 +1,7 @@
 # Рекомендации по поиску гипотез и построчному разбору сценариев S1–S7
 
+> **Устарело.** Методика на 18.10 (балл 0.936), до [ADR-006](../adr/adr-006_constructor_visibility.md). Действующая методика — [agent_lessons.md](../agent_lessons.md), разделы 4 и 7.
+
 **Дата:** 18 октября 2026 г.  
 **Контекст:** Пайплайн M4 IR-Executor (текущий скор **0.93625**, посылка `02-m4-unresolved-emit`)  
 **Ориентиры:** [REFERENCE.md](../../hackaton/tt-challenge/REFERENCE.md), [annotation_rules.md](../annotation_rules.md), [m4_executor.md](m4_executor.md)

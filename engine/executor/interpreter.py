@@ -1159,8 +1159,11 @@ class Interpreter:
         return obj, rows
 
     def _hydrate(self, fr: Frame, rc: Any, rows: Any) -> None:
-        """Конструкторы сущности при загрузке строк Hibernate (R7) и equals из list.contains."""
-        mode = getattr(self.rules, "entity_constructors_on_load", "project_calls")
+        """Конструкторы сущности при загрузке строк Hibernate (R7) и equals из list.contains.
+
+        Исполняются все конструкторы, которые допускает режим; в ответ их отбирает проекция (ADR-006).
+        """
+        mode = getattr(self.rules, "constructors", "caller_only")
         if mode == "off" or not rc.ctors:
             return
         allowed = self.index.entities.allowed_ctors(mode)

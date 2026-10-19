@@ -10,7 +10,8 @@ archparse (`--mode entities`) пишет `data/entity_ir.json`: сущности
 - удаление (`delete*`): Spring Data сначала загружает строку;
 - `save` сущности с заданным id: Spring Data делает merge, Hibernate создаёт управляемую копию.
 
-Конструктор с пустым телом в ответ не идёт: `Contacts#<init>()` в эталоне S0 нет, хотя контакты грузятся.
+Конструктор с пустым телом не исполняется: `Contacts#<init>()` в эталоне S0 нет, хотя контакты грузятся.
+Попадёт ли исполненный конструктор в ответ, решает проекция `engine/projection.py` (ADR-006).
 
 Таблица ленивой коллекции при чтении (правило R10) идёт в ответ, только если метод загрузил коллекцию сам
 (`collection_table_loaded`).
@@ -222,8 +223,12 @@ class EntityFacts:
         return False, f"R10:lazy_not_loaded(lines {lines})"
 
     def allowed_ctors(self, mode: str) -> frozenset[str] | None:
-        """Конструкторы, которые допускает режим правила (None — все с непустым телом)."""
-        if mode == "project_calls":
+        """Конструкторы, которые исполняются при загрузке в режиме `RuntimeRules.constructors`.
+
+        None — все с непустым телом (caller_only: в ответ их отбирает проекция по исполненным вызовам);
+        all — как до ADR-006, только с вызовом проектного метода в теле; off — ни одного.
+        """
+        if mode == "all":
             return self.ctors_with_project_calls
         if mode == "off":
             return frozenset()

@@ -1,5 +1,7 @@
 # Итоговый отчет верификации пула гипотез сценария S3
 
+> **Архив, 18.10.** Проверка 14 гипотез S3 на балле 0.936, до [ADR-006](../adr/adr-006_constructor_visibility.md). Опровергнутые повторять не нужно; текущий остаток S3 — [roadmap.md](../roadmap.md).
+
 **Дата:** 18.10.2026  
 **Ветка:** `feature/s3-hypotheses-eval`  
 **Базовый документ гипотез:** [`docs/researches/s3_hypotheses_and_gap_analysis.md`](s3_hypotheses_and_gap_analysis.md)  

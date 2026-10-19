@@ -7,3 +7,4 @@ data/entity_ir.json linguist-generated=true -diff
 data/ir/*.json linguist-generated=true -diff
 data/pool_ir.json binary
 
+eval/records/*.json binary linguist-generated=true

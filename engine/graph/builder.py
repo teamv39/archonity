@@ -387,7 +387,7 @@ class GraphBuilder:
         Возвращает [(конструктор, правило, ребро data, через которое он исполнился)].
         """
         entities = getattr(self.index, "entities", None)
-        mode = getattr(self.rules, "entity_constructors_on_load", "project_calls")
+        mode = getattr(self.rules, "constructors", "caller_only")
         if entities is None or mode == "off":
             return []
         out: list[tuple[str, str, str]] = []

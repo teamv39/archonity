@@ -1,5 +1,7 @@
 # Исследование возможностей повышения скора (TechArena 2026 Semantic Graph)
 
+> **Устарело.** Вывод раздела 3.1 опровергнут посылками 13–14: шаг 4 в S2/S3 не заземляется ни на `getFoodStoresOfStation`, ни на `getAllFood`, запроса нет вовсе. Остальное — разбор на балле 0.936, до [ADR-006](../adr/adr-006_constructor_visibility.md). Текущее — [roadmap.md](../roadmap.md) и [agent_lessons.md](../agent_lessons.md).
+
 **Дата:** 19 октября 2026 г.  
 **Ветка:** `feature/research-score-boost`  
 **Базовый рекорд команды:** **0.936250** (NSUts #1665732 / #1665704)  
