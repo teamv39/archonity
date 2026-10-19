@@ -3,7 +3,7 @@
 **Дата:** 19.10.2026
 **Сравниваются:** выдача `dev` на `40bb11e` (`run_eval.py --executor ir --m4-unresolved-calls emit --no-server`) и ручная посылка 17 ([eval/records/](../../eval/records/README.md)).
 **Итог:** разница — 18 рёбер, все объясняются тремя механизмами. Прототипы всех трёх вместе дают рекорд ребро в ребро во всех восьми сценариях, S0 = 1.0.
-**Статус:** реализовано в ветке `feature/81-code-matches-record` (флаги `--jackson-ctor`, `--lombok-tostring`, `--form-only-steps`, правила R7, R5, R20 в [annotation_rules.md](../annotation_rules.md)). Выдача кода = посылка 17 ребро в ребро. Отличия от прототипов: Jackson-конструктор исполняется и в принимающем сервисе межсервисного вызова (выдачу не меняет); действие формы сопоставляется по словам `id`/`name` элемента, без слов виджета.
+**Статус:** реализовано в ветке `feature/81-code-matches-record` (флаги `--jackson-ctor`, `--lombok-tostring`, правила R7, R5 в [annotation_rules.md](../annotation_rules.md)). **Механизм 3 пересмотрен:** «действие формы без запроса» было неверным объяснением, шаг 4 запрос шлёт; R20 теперь — обработчик, который Spring вызвать не может ([reaching_1_0.md](reaching_1_0.md), посылка 27: 1.00000), флаг `--form-only-steps` и `form_actions.py` удалены. Выдача кода = посылка 17 ребро в ребро. Отличия от прототипов: Jackson-конструктор исполняется и в принимающем сервисе межсервисного вызова (выдачу не меняет); действие формы сопоставляется по словам `id`/`name` элемента, без слов виджета.
 
 ## Разница
 
@@ -54,6 +54,8 @@ SLF4J форматирует аргумент через `toString()`. У `Trave
 
 ## 3. Шаг 4 в S2/S3: действие формы без запроса
 
+> **Пересмотрено 19.10.** Объяснение ниже неверно: шаг запрос шлёт, но `GET /stationfoodstores/{stationId}` Spring вызвать не может (`@PathVariable`), и эталон идёт через `POST /stationfoodstores`. Правило R20 заменено, посылка 27 — 1.00000 ([reaching_1_0.md](reaching_1_0.md)).
+
 В UI единственный запрос о еде — `getAllFood` при открытии страницы бронирования (`client_ticket_book.js:40`, `initFoodSelect`). Магазины станций приходят в его ответе (`foodStoreListMap`), выбор станции — `onchange="preserveChangeFoodStation()"` у `#food-station-list` — работает по этой карте, без запроса. `StationFoodController#getFoodStoresOfStation` UI не вызывает нигде. Бэкенд запрос не отсёк бы: маршрут в шлюзе есть, Security — `permitAll`.
 
 Простое правило «нет запроса в UI — нет запроса в эталоне» неверно. Шаги без запроса в UI (`eval/m1_steps.json`, статус `no_ui`) дают уникальные рёбра в S1.9, S1.14, S4.1, S4.10, S5.5, S7.8–10, а эти сценарии в рекорде равны 1.000: там эталон запрос шлёт, обработчик выбран по коду сервиса. Шаг 4 отличается тем, что действие в UI **есть**, но это элемент формы без запроса.
@@ -85,5 +87,7 @@ SLF4J форматирует аргумент через `toString()`. У `Trave
 $env:PYTHONUTF8=1; python scripts/drift/wrap_all.py --executor ir --m4-unresolved-calls emit --no-server -o <папка>/submission.json
 python scripts/compare_submissions.py <папка>/submission.json eval/records/submission_p17_0.99457.json --show 50
 ```
+
+Файл рекорда 0.99457 удалён из рабочей копии 19.10 (рекорд теперь 1.0), он есть в истории git: `git show 3a2ecfb:eval/records/submission_p17_0.99457.json`.
 
 Ожидаемый вывод: все восемь сценариев «совпадают».

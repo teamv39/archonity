@@ -3,36 +3,31 @@
 Лучшая посылка NSUTS — эталон для сравнения перед каждой новой посылкой ([agent_lessons.md](../../docs/agent_lessons.md), раздел 4):
 
 ```powershell
-$env:PYTHONUTF8=1; python scripts/compare_submissions.py eval/records/submission_p17_0.99457.json <ваш>/submission.json --show 20
+$env:PYTHONUTF8=1; python scripts/compare_submissions.py eval/records/submission_p27_1.00000.json <ваш>/submission.json --show 20
 ```
 
 Не изменилось ни одного ребра — посылка ничего не проверит.
 
 ## Текущий рекорд
 
-`submission_p17_0.99457.json` — посылка 17, **0.99457**, 19.10.
+`submission_p27_1.00000.json` — **1.00000**, 19.10. Это выдача кода (`python run_eval.py` без ключей, ветка `feature/82-unbound-path-variable`); по множествам рёбер она совпадает с посылкой 27 (ручной зонд, итог 1.00000). Отправка самой выдачи — посылка 28.
 
-- Ручная: посылка 10 (выдача кода после ADR-006) плюс правки посылок 11–14 и 17. С веткой `feature/81-code-matches-record` выдача кода (`run_eval.py --executor ir --m4-unresolved-calls emit`) совпадает с ним по множествам рёбер во всех сценариях; sha256 другой из-за порядка рёбер.
-- По сценариям: S1, S4, S5, S6, S7 — 1.000; S2 — 0.981; S3 — 0.981.
-- sha256 `0b2c1ccf8699b1c10c82d7230fc2de52cc468d6331b76c4adb4f97512ed4ca73`.
+- По сценариям: все 1.000.
+- sha256 `94463c41a72c244fc548cbb52d009cff7c65f44ad5e682b7176a156cb66a5a08` — эталон воспроизводимости.
+- Путь: [code_record_drift.md](../../docs/researches/code_record_drift.md), [reaching_1_0.md](../../docs/researches/reaching_1_0.md).
 
 | Сценарий | Всего | executes | calls | remote | data |
 |---|---|---|---|---|---|
 | S0 | 65 | 34 | 24 | 0 | 7 |
 | S1 | 426 | 167 | 184 | 36 | 39 |
-| S2 | 437 | 161 | 206 | 38 | 32 |
-| S3 | 381 | 150 | 168 | 30 | 33 |
+| S2 | 442 | 163 | 207 | 38 | 34 |
+| S3 | 386 | 152 | 169 | 30 | 35 |
 | S4 | 447 | 173 | 195 | 38 | 41 |
 | S5 | 544 | 188 | 268 | 51 | 37 |
 | S6 | 413 | 163 | 178 | 36 | 36 |
 | S7 | 392 | 156 | 174 | 31 | 31 |
 
-## Выдача кода с тем же баллом
-
-Посылка 20 (19.10): выдача кода, тот же балл 0.99457. Эталон воспроизводимости — её sha256, а не файл выше:
-
-- `submission.json` sha256 `3c329a55b4b02020fa72dfc215d99cbf085c7bc4a6e764baf76b7fcf1d884151`;
-- коммит `3d99fe0`, команда `python run_eval.py --executor ir --m4-unresolved-calls emit --no-server` (из кеша, без GPU и сервера LLM).
+Прежние рекорды в истории git: посылка 17 (0.99457, ручная, `submission_p17_0.99457.json`), посылка 20 (0.99457, выдача кода, sha256 `3c329a55…4151`).
 
 ## Как обновлять
 

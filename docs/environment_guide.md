@@ -13,9 +13,9 @@ UnicodeEncodeError: 'charmap' codec can't encode character ...
 ### Правило
 Всегда запускать Python в режиме UTF-8:
 ```powershell
-$env:PYTHONUTF8=1; python run_eval.py --executor ir --m4-unresolved-calls emit
+$env:PYTHONUTF8=1; python run_eval.py
 ```
-Без ключей `run_eval.py` запускает legacy-исполнитель, это не выдача кода ([AGENTS.md](../AGENTS.md), «Выдача кода и рекорд»).
+Без ключей `run_eval.py` даёт выдачу кода — конфигурацию рекорда ([AGENTS.md](../AGENTS.md), «Выдача кода и рекорд»). Legacy-исполнитель — только явно: `--grounder legacy --executor legacy`.
 
 или для одиночных команд:
 ```powershell
@@ -50,7 +50,7 @@ cmd /c gradlew.bat run --args="--pool all"
    ```
 4. **Проверка калибровки S0:**
    ```powershell
-   $env:PYTHONUTF8=1; python run_eval.py --executor ir --m4-unresolved-calls emit
+   $env:PYTHONUTF8=1; python run_eval.py
    ```
    Балл S0 обязан оставаться 1.0000.
 

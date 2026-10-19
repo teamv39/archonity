@@ -190,8 +190,14 @@ class TestFrameworkMechanisms:
             assert self.IS_STATUS in methods, sid
             assert not any(t == self.IS_STATUS for _, t in calls), sid  # вызывает Lombok, не проект (R5)
 
-    def test_form_only_step_sends_no_request(self, m4_pipeline, m4_answers) -> None:
+    def test_unbound_handler_rebound_to_station_names(self, m4_pipeline, m4_answers) -> None:
+        by_names = ("method:ts-station-food-service:food.service.StationFoodServiceImpl#getFoodStoresByStationNames("
+                    "java.util.List)")
         for sid in ("S2", "S3"):
-            assert self.STATION_STORES not in m4_answers[sid][0], sid
+            methods, _, _, data = m4_answers[sid]
+            assert self.STATION_STORES not in methods, sid  # Spring не вызывает сломанный обработчик
+            assert by_names in methods, sid
+            assert {t.split(":")[-1] for s, t in data if s == by_names} == {
+                "ts-station-food-service.station_food_store", "ts-station-food-service.station_food_list"}, sid
             step4 = next(r for r in m4_pipeline.step_requests[sid] if r["step"] == 4)
-            assert step4["grounding"]["no_request"]["rule"] == "R20:form_only"
+            assert step4["grounding"]["rebound"]["rule"] == "R20:unbound_path_variable"

@@ -15,6 +15,7 @@ import glob
 import json
 import re
 import sys
+import dataclasses
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -22,8 +23,7 @@ from typing import Any
 from engine.adapters.skeleton import SkeletonIndex, load_json
 from engine.grounding import prompts as P
 from engine.grounding.docs import HandlerCatalog, HandlerInfo
-from engine.grounding.form_actions import FormAction, build_form_actions
-from engine.grounding.form_actions import match as match_form_actions
+from engine.grounding.binding import rebind
 from engine.grounding.llm import LLMClient
 from engine.grounding.request import StepRequest
 from engine.grounding.retrieval import Ranked, Retriever
@@ -85,8 +85,8 @@ class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
                  top_k: int = TOP_K) -> None:
+        self.ix = ix
         self.root = Path(targets_root)
-        self._forms: list[FormAction] | None = None  # действия формы без запроса (R20), строятся при первом обращении
         self.ui = build_catalog(self.root, ix)
         self.cat = HandlerCatalog(ix, self.root, self.ui)
         emb = None
@@ -103,21 +103,19 @@ class StepGrounder:
         self.system_select = P.system_prompt(enums, P.handler_index(self.cat.handlers, self.labels))
         self.system_params = P.system_prompt(enums)
 
-    def form_only(self, req: StepRequest) -> dict[str, Any] | None:
-        """R20: шаг — действие формы UI без запроса, если выбранный обработчик UI не вызывает ни один запрос UI,
-        а текст шага описывает элемент формы, обработчик события которого запроса не шлёт.
+    def rebind(self, req: StepRequest) -> StepRequest | None:
+        """R20: M1 выбрал обработчик, который Spring вызвать не может (`@PathVariable` не совпадает с шаблоном
+        пути). Шаг идёт через рабочий обработчик того же контроллера с тем же входом (`engine/grounding/binding.py`).
 
-        Шаги, для которых в UI нет действия вовсе (цена заказа, запись страховки), остаются запросом по коду сервиса:
-        у них нет совпадения с элементом формы. Решение не трогает выбор M1 и историю в промпте (кеш LLM)."""
-        h = self.cat.handlers.get(req.handler)
-        if h is None or h.ui:
+        Замена — после заземления: выбор M1 и история в промпте следующих шагов не меняются, кеш LLM цел.
+        Параметры не переносятся: тело нового обработчика другое (имя станции → список имён)."""
+        got = rebind(self.ix, self.cat, req.handler)
+        if got is None:
             return None
-        if self._forms is None:
-            self._forms = build_form_actions(self.root)
-        hits = match_form_actions(self._forms, req.action)
-        if not hits:
-            return None
-        return {"rule": "R20:form_only", "ui_actions": [a.to_dict() for a in hits]}
+        handler, why = got
+        verb, path = self.cat.handlers[handler].routes[0]
+        return dataclasses.replace(req, handler=handler, http={"method": verb, "path": path}, params={},
+                                   ui_source=None, grounding=dict(req.grounding, rebound=why))
 
     def begin(self, sc: dict[str, Any]) -> ScenarioSession:
         steps = sc.get("steps") or []
