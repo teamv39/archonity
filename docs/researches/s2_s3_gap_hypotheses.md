@@ -1,5 +1,7 @@
 # Анализ задач парсера и гипотезы отставания сценариев S2 и S3
 
+> **Устарело.** Пул гипотез 17.10, балл 0.918, до [ADR-006](../adr/adr-006_constructor_visibility.md). Почти весь разрыв до 1.0 сидел в конструкторах, а не в ветках и шагах, поэтому оценки вклада гипотез здесь неверны. Текущее — [roadmap.md](../roadmap.md) и [agent_lessons.md](../agent_lessons.md).
+
 **Дата:** 17.10.2026  
 **Контекст:** [roadmap.md](../roadmap.md), [ADR-005](../adr/adr-005_scenario_execution_pipeline.md), [risk_audit_s2_s3.md](risk_audit_s2_s3.md), [s2_s3_mechanisms_audit.md](s2_s3_mechanisms_audit.md)  
 **Текущий общий балл:** 0.918270

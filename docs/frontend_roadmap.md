@@ -1,5 +1,7 @@
 # Дорожная карта разработки визуализатора архитектурного графа (visualizer/)
 
+> **Устарело.** Писалось под глобальный граф сервисов ([ADR-001](adr/adr-001_data_contracts_and_system_architecture.md)). Визуализатор под трассу сценария не переделан, планы по демо — [roadmap.md](roadmap.md), раздел «22.10».
+
 Документ фиксирует этапы, архитектурные слои и критерии готовности фронтенд-приложения визуализации графа зависимостей Archonity.
 
 Основано на решениях [ADR-001](adr/adr-001_data_contracts_and_system_architecture.md), [ADR-002](adr/adr-002_react_flow_visualizer.md), [ADR-004](adr/adr-004_hybrid_recovery_pipeline_and_arbitration.md) и требованиях [case_description.md](case_description.md).

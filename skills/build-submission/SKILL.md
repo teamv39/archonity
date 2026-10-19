@@ -8,6 +8,8 @@ description: >-
 
 # Сборка и валидация архива submission.zip
 
+> **Устарело (шаг 2).** `run_eval.py` без ключей запускает legacy (`--executor legacy --m4-unresolved-calls mute`), а выдачу кода даёт `--executor ir --m4-unresolved-calls emit`. Пока умолчания не исправлены ([roadmap.md](../../docs/roadmap.md), 21.10), запускать с этими ключами. Ожидаемые размеры архива и число тестов тоже писались 17.10.
+
 Этот навык описывает полный регламент подготовки официального архива `output/submission.zip` для бенчмарка Train Ticket (TechArena 2026).
 
 ---
