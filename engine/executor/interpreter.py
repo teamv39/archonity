@@ -770,16 +770,6 @@ class Interpreter:
         for f in self.types.all_fields(tid):
             obj.fields[f["name"]] = default_value(f)
         cs = e.get("call")
-        pnl = getattr(self.rules, "preserve_notification_lookup", "on")
-        if pnl != "on":
-            is_other = "PreserveOtherServiceImpl" in fr.method
-            is_main = "PreserveServiceImpl" in fr.method
-            if (pnl == "other_only" and is_other) or (pnl == "off" and (is_other or is_main)):
-                if written == "NotifyInfo":
-                    if cs:
-                        for t in sorted(self.cs_calls.get(cs, ())):
-                            self.sink.prune("calls", fr.method, t, "FRAMEWORK_RULE", "dead_code_notification_dto")
-                    return obj
         ctors = [t for t in self.cs_calls.get(cs, ())] if cs else []
         if not ctors and e.get("target"):
             ctors = [e["target"]]
@@ -817,29 +807,6 @@ class Interpreter:
         raw_args = e.get("args") or []
         args = [self.eval(a, fr) for a in raw_args]
         self.log_format(e, args, fr)
-        pnl = getattr(self.rules, "preserve_notification_lookup", "on")
-        if pnl != "on":
-            is_other = "PreserveOtherServiceImpl" in fr.method
-            is_main = "PreserveServiceImpl" in fr.method
-            if (pnl == "other_only" and is_other) or (pnl == "off" and (is_other or is_main)):
-                if callee in ("getAccount", "getNameByCode"):
-                    if cs:
-                        for t in sorted(self.cs_calls.get(cs, ())):
-                            self.sink.prune("calls", fr.method, t, "FRAMEWORK_RULE", "dead_code_notification_dto")
-                    return UNKNOWN
-        scope = getattr(self.rules, "security_check_scope", "all")
-        if scope == "target_train_only":
-            train_mode = getattr(self, "train_mode", "both")
-            if callee == "getSecurityOrderOtherInfoFromOrder" and train_mode == "high_speed_only":
-                if cs:
-                    for t in sorted(self.cs_calls.get(cs, ())):
-                        self.sink.prune("calls", fr.method, t, "DEFAULT_RULE", "H3.4:security_check_target_train_only")
-                return Obj("edu.fudan.common.entity.OrderSecurity", {"orderNumInLastOneHour": 0, "orderNumOfValidOrder": 0}, open=False)
-            elif callee == "getSecurityOrderInfoFromOrder" and train_mode == "regular_only":
-                if cs:
-                    for t in sorted(self.cs_calls.get(cs, ())):
-                        self.sink.prune("calls", fr.method, t, "DEFAULT_RULE", "H3.4:security_check_target_train_only")
-                return Obj("edu.fudan.common.entity.OrderSecurity", {"orderNumInLastOneHour": 0, "orderNumOfValidOrder": 0}, open=False)
         if cs in self.cs_remote:
             return self.remote_call(fr, cs, callee, args)
         if cs in self.cs_data:
@@ -928,13 +895,6 @@ class Interpreter:
         chosen = self.select_handlers(cands, url, verb)
         rets: list[Any] = []
         for h, binding in chosen:
-            if (
-                getattr(self.rules, "security_check_scope", "all") == "target_train_only"
-                and "SecurityServiceImpl" in fr.method
-                and "OrderOtherController#securityInfoCheck" in h
-            ):
-                self.sink.prune("remote", fr.method, h, "DEFAULT_RULE", "ablate_security_check_order_other")
-                continue
             why = fr.why if len(chosen) == len(cands) else ("IR_BRANCH", f"R3:url_dispatch@{cs.rsplit('@', 1)[-1]}")
             self.sink.edge("remote", fr.method, h, why)
             self.sink.execute(h, why, f"remote|{fr.method}|{h}")
