@@ -106,37 +106,37 @@ def parse_args() -> argparse.Namespace:
         "--probe-orders-data",
         choices=("on", "off"),
         default="on",
-        help="Зондирующий SELECT в S2 (шаги 9 и 10 к ts-order-service.orders): on — учитывать (по умолчанию), off — абляция (исключить)",
+        help="(только legacy-исполнитель: --executor legacy) Зондирующий SELECT в S2 (шаги 9 и 10 к ts-order-service.orders): on — учитывать (по умолчанию), off — абляция (исключить)",
     )
     parser.add_argument(
         "--enum-member-calls",
         choices=("on", "off"),
         default="on",
-        help="Вызовы методов перечисления AssuranceType (Гипотеза 3.1): on — учитывать вызовы геттеров перечисления в getAllAssuranceTypes (по умолчанию), off — абляция (исключить на шаге 15 в S3)",
+        help="(только legacy-исполнитель: --executor legacy) Вызовы методов перечисления AssuranceType (Гипотеза 3.1): on — учитывать вызовы геттеров перечисления в getAllAssuranceTypes (по умолчанию), off — абляция (исключить на шаге 15 в S3)",
     )
     parser.add_argument(
         "--trip-food-query",
         choices=("cascade", "direct_train_food"),
         default="cascade",
-        help="Режим запроса еды поездки в getAllFood (Гипотеза 1.1 / 4.1): cascade — опрашивать станционную еду (по умолчанию), direct_train_food — абляция (только поездное меню в S1/S4)",
+        help="(только legacy-исполнитель: --executor legacy) Режим запроса еды поездки в getAllFood (Гипотеза 1.1 / 4.1): cascade — опрашивать станционную еду (по умолчанию), direct_train_food — абляция (только поездное меню в S1/S4)",
     )
     parser.add_argument(
         "--route-distances-collection",
         choices=("pruned", "included"),
         default="pruned",
-        help="Таблица коллекции route_distances (Гипотеза 5.1): pruned — отсекать при getRouteByStartAndEnd (по умолчанию), included — абляция (включать в S5)",
+        help="(только legacy-исполнитель: --executor legacy) Таблица коллекции route_distances (Гипотеза 5.1): pruned — отсекать при getRouteByStartAndEnd (по умолчанию), included — абляция (включать в S5)",
     )
     parser.add_argument(
         "--preserve-notification-lookup",
         choices=("on", "off", "other_only"),
         default="on",
-        help="Мертвый код формирования уведомлений в Preserve (Гипотеза 2.5): on — вызывать getAccount и SeatClass#getNameByCode перед закомментированным sendEmail (по умолчанию), other_only — отсекать в PreserveOtherServiceImpl (S2), off — отсекать во всех Preserve",
+        help="(только legacy-исполнитель: --executor legacy) Мертвый код формирования уведомлений в Preserve (Гипотеза 2.5): on — вызывать getAccount и SeatClass#getNameByCode перед закомментированным sendEmail (по умолчанию), other_only — отсекать в PreserveOtherServiceImpl (S2), off — отсекать во всех Preserve",
     )
     parser.add_argument(
         "--security-check-scope",
         choices=("all", "target_train_only"),
         default="all",
-        help="Изоляция проверки безопасности (Гипотеза 3.4): all — опрашивать оба сервиса заказов (по умолчанию), "
+        help="(только legacy-исполнитель: --executor legacy) Изоляция проверки безопасности (Гипотеза 3.4): all — опрашивать оба сервиса заказов (по умолчанию), "
              "target_train_only — опрашивать только сервис заказов целевого типа поезда (абляция)",
     )
     parser.add_argument(
@@ -170,6 +170,13 @@ def parse_args() -> argparse.Namespace:
              "подкласс OncePerRequestFilter; names — по именам методов и таблиц, как до feature/84",
     )
     parser.add_argument(
+        "--m4-state",
+        choices=("context", "m3"),
+        default="context",
+        help="Модель состояния для M4: context — тонкий контекст пассажира из README/дампа (по умолчанию, универсально), "
+             "m3 — модель состояния M3 с предопределёнными классами Train Ticket (до feature/86)",
+    )
+    parser.add_argument(
         "--m4-m3-refs",
         choices=("off", "on"),
         default="off",
@@ -187,7 +194,7 @@ def parse_args() -> argparse.Namespace:
         "--route-stations-usage",
         choices=("pruned", "preserve", "all"),
         default="pruned",
-        help="Использование таблицы коллекции route_stations (Гипотеза 3.13): pruned — отсекать в getRouteById (по умолчанию), "
+        help="(только legacy-исполнитель: --executor legacy) Использование таблицы коллекции route_stations (Гипотеза 3.13): pruned — отсекать в getRouteById (по умолчанию), "
              "preserve — включать при бронировании билетов (явный вызов route.getStations()), all — включать везде",
     )
     parser.add_argument(
@@ -375,6 +382,7 @@ def main() -> None:
         unbound_handlers=args.unbound_handlers,
         spring_security=args.spring_security,
         m4_m3_refs=args.m4_m3_refs,
+        m4_state=args.m4_state,
         module_roles=args.module_roles,
         grounder=args.grounder,
         m1_options=m1_options,
