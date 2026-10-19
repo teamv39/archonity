@@ -27,6 +27,13 @@ $env:PYTHONUTF8=1; python scripts/compare_submissions.py eval/records/submission
 | S6 | 413 | 163 | 178 | 36 | 36 |
 | S7 | 392 | 156 | 174 | 31 | 31 |
 
+## Выдача кода с тем же баллом
+
+Посылка 20 (19.10): выдача кода, тот же балл 0.99457. Эталон воспроизводимости — её sha256, а не файл выше:
+
+- `submission.json` sha256 `3c329a55b4b02020fa72dfc215d99cbf085c7bc4a6e764baf76b7fcf1d884151`;
+- коммит `3d99fe0`, команда `python run_eval.py --executor ir --m4-unresolved-calls emit --no-server` (из кеша, без GPU и сервера LLM).
+
 ## Как обновлять
 
 Новый рекорд — новый файл `submission_p<номер посылки>_<балл>.json` и строка здесь. Старый файл удалить: он остаётся в истории git. Таблица посылок — в [roadmap.md](../../docs/roadmap.md).
