@@ -1120,20 +1120,8 @@ class Interpreter:
 
     def _data_table_allowed(self, fr: Frame, t: str) -> tuple[bool, tuple[str, str]]:
         sf_mode = getattr(self.rules, "station_food_collection", "store_browse_only")
-        if "station_food_list" in t and (sf_mode == "off" or (
-                sf_mode in ("store_browse_only", "store_only", "step4_store_only")
-                and "listFoodStoresByStationName" in fr.method)):
+        if "station_food_list" in t and sf_mode == "off":
             return False, ("FRAMEWORK_RULE", "store_browse_no_food_items")
-        if (getattr(self.rules, "route_distances_collection", "pruned") == "included"
-                and "getRouteByStartAndEnd" in fr.method and "route_distances" in t):
-            return True, ("STATE", "ablation:route_distances_included")
-        rsu = getattr(self.rules, "route_stations_usage", "pruned")
-        if "route_stations" in t and "getRouteById" in fr.method:
-            if rsu == "all":
-                return True, ("STATE", "H3.13:route_stations_usage_all")
-            elif rsu == "preserve":
-                if any("preserve" in m.lower() for m in self.stack):
-                    return True, ("STATE", "H3.13:route_stations_preserve")
         if getattr(self.rules, "collection_tables_on_read", "loaded") != "all":
             dec = self.index.entities.collection_table_loaded(fr.method, t)
             if dec is not None:
