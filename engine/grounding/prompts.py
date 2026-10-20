@@ -81,7 +81,7 @@ SELECT_TASK_V8 = """Current step {n}: {action}
 Candidate handlers (closest search matches):
 {candidates}
 
-Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "trip": "first_of_step_2" for the first trip found at step 2, "order": "new_of_step_6" for the order created at step 6). A record that the request reads or changes comes from the step that found or created that record itself, not from the step of a record it belongs to. Leave refs empty when the request uses nothing from earlier steps."""
+Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "trip": "first_of_step_2" for the first trip found at step 2, "order": "new_of_step_6" for the order created at step 6). Each key names the kind of what the referenced step found or created, not of what this request makes. A record that the request reads or changes comes from the step that found or created that record itself, not from the step of a record it belongs to. Leave refs empty when the request uses nothing from earlier steps."""
 # Пример refs — с видами ссылок v7 (`REF_ENTITIES`): виды меняет фаза B2 ADR-007 вместе с этим примером
 
 PARAMS_TASK_V8 = """Current step {n}: {action}
