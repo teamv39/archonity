@@ -254,6 +254,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
+    parser.add_argument(
+        "--require-cache",
+        action="store_true",
+        help="M1: только кеш (как --no-server); код выхода 2, если хоть одного ответа LLM нет в cache/llm — "
+             "выдача тогда построена не моделью (m1_report.json, README «Проверка без кеша»)",
+    )
     parser.add_argument("--no-embed", action="store_true", help="M1 без dense-ретривера (только BM25)")
     parser.add_argument(
         "--judge",
@@ -372,7 +378,8 @@ def main() -> None:
 
         m1_options = {
             "embedder": None if args.no_embed else "qwen3-4b",
-            "llm": None if args.no_llm else LLMClient(use_server=not args.no_server, refresh=args.no_cache),
+            "llm": None if args.no_llm else LLMClient(use_server=not (args.no_server or args.require_cache),
+                                                      refresh=args.no_cache and not args.require_cache),
             "module_roles": args.module_roles,
             "prompt": args.m1_prompt,
         }
@@ -417,6 +424,17 @@ def main() -> None:
     print("Генерация графов для сценариев...")
     adapter = pipeline.run_all(scenarios, output_path=args.out)
     print(f"Сабмишн успешно сохранен в: {args.out}")
+    m1_report = None
+    if args.grounder == "m1":
+        from engine.grounding.report import format_m1_report, m1_report as make_m1_report
+
+        llm = (m1_options or {}).get("llm")
+        emb = getattr(getattr(pipeline.m1, "retriever", None), "embedder", None)
+        m1_report = make_m1_report(pipeline.step_requests, llm.stats if llm is not None else None,
+                                   getattr(emb, "misses", 0))
+        with open(args.out.parent / "m1_report.json", "w", encoding="utf-8") as f:
+            json.dump(m1_report, f, ensure_ascii=False, indent=1)
+        print(format_m1_report(m1_report))
     if pipeline.m4 is not None:
         print_m4_stats(pipeline.m4.stats())
 
@@ -481,6 +499,14 @@ def main() -> None:
                 print("Ошибка при запуске evaluate_golden.py:", file=sys.stderr)
                 print(res.stderr, file=sys.stderr)
                 print(res.stdout)
+
+    if args.require_cache:
+        from engine.grounding.report import cache_only
+
+        if m1_report is None or not cache_only(m1_report):
+            print("--require-cache: выдача построена не целиком из кеша LLM (m1_report.json) — код выхода 2",
+                  file=sys.stderr)
+            sys.exit(2)
 
 
 if __name__ == "__main__":
