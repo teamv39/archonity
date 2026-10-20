@@ -36,9 +36,9 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 TT = ROOT / "hackaton" / "tt-challenge"
 DEFAULT_EMBEDDER = "qwen3-4b"
 TOP_K = 10
-# Режим v8: выбор обработчика голосованием — SELECT_VOTES выборок с параметрами модели по умолчанию для режима без
-# thinking и seed 1..SELECT_VOTES (заданы заранее, под результат не подбираются); побеждает обработчик большинства,
-# при равенстве — встреченный раньше. При temperature 0 правка текста промпта переставляла пограничные шаги.
+# Режим v8: выбор обработчика голосованием — жадный ответ и SELECT_VOTES выборок с параметрами модели по умолчанию
+# для режима без thinking и seed 1..SELECT_VOTES (заданы заранее, под результат не подбираются); побеждает
+# обработчик большинства (`StepGrounder._vote`). При temperature 0 правка текста промпта переставляла пограничные шаги.
 SELECT_VOTES = 5
 SAMPLING = {"temperature": 0.7, "top_p": 0.8, "top_k": 20}
 REFUSED = re.compile(r"\b(refuse[sd]?|rejects?|rejected|denie[sd]|fails?)\b", re.I)
@@ -177,17 +177,22 @@ class StepGrounder:
 
     def _vote(self, msgs: list[dict[str, str]], schema: dict[str, Any],
               grounding: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
-        """Выбор голосованием (`SELECT_VOTES`): обработчик большинства, затем среди его выборок — самый частый
-        ответ целиком (refs и исход), при равенстве — встреченный раньше."""
-        got = [self.llm.complete_json("select", self.version, msgs, schema, sampling={**SAMPLING, "seed": i + 1})
-               for i in range(SELECT_VOTES)]
+        """Выбор голосованием: жадный ответ и `SELECT_VOTES` выборок, обработчик большинства (при равенстве —
+        жадного ответа). Ответ целиком (refs, исход) — жадный, если его обработчик победил; иначе самый частый
+        среди выборок победителя. Выборки проверяют решение, детали — от жадного вывода: при temperature 0.7 refs
+        шумят (trip -> train для «первого рейса шага 2»)."""
+        got = [self.llm.complete_json("select", self.version, msgs, schema)]
+        got += [self.llm.complete_json("select", self.version, msgs, schema, sampling={**SAMPLING, "seed": i + 1})
+                for i in range(SELECT_VOTES)]
         valid = [(sel, key) for sel, key in got if sel is not None and sel.get("handler") in self.by_label]
         grounding["cache_keys"]["select_votes"] = [key for _, key in got]
         if not valid:
             return None, got[0][1]
-        votes = collections.Counter(sel["handler"] for sel, _ in valid)
-        grounding["votes"] = dict(votes)
+        grounding["votes"] = dict(collections.Counter(sel["handler"] for sel, _ in valid))
         best = _majority([sel["handler"] for sel, _ in valid])
+        greedy = got[0][0]
+        if greedy is not None and greedy.get("handler") == best:
+            return got[0]
         mine = [(sel, key) for sel, key in valid if sel["handler"] == best]
         answers = [json.dumps({"refs": {k: v for k, v in (sel.get("refs") or {}).items() if v},
                                "outcome": sel.get("expected_outcome")}, sort_keys=True) for sel, _ in mine]
