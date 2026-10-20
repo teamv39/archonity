@@ -20,6 +20,7 @@ PROMPT_VERSION = "m1-v7"
 PROMPT_MODES = ("v8", "v7")
 PROMPT_VERSIONS = {"v8": "m1-v8", "v7": PROMPT_VERSION}
 CAND_SRC_LINES = 6
+REF_PAIRS_MAX = 6
 
 # Режим v7: тексты до ADR-007, с доменом Train Ticket. Оставлены для отката (`--m1-prompt v7`, кеш m1-v7)
 SYSTEM = """You map steps of a user scenario in the Train Ticket web application to backend REST requests.
@@ -81,7 +82,7 @@ SELECT_TASK_V8 = """Current step {n}: {action}
 Candidate handlers (closest search matches):
 {candidates}
 
-Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "{ex1}": "first_of_step_2" for the first {ex1} found at step 2, "{ex2}": "new_of_step_6" for the {ex2} created at step 6). Each key names the kind of what the referenced step found or created, not of what this request makes. A record that the request reads or changes comes from the step that found or created that record itself, not from the step of a record it belongs to. Leave refs empty when the request uses nothing from earlier steps."""
+Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses, as kind and reference pairs in any order (e.g. {{"kind": "{ex1}", "ref": "first_of_step_2"}} for the first {ex1} found at step 2, {{"kind": "{ex2}", "ref": "new_of_step_6"}} for the {ex2} created at step 6). The kind of a pair is the kind of what the referenced step found or created, not of what this request makes. A record that the request reads or changes comes from the step that found or created that record itself, not from the step of a record it belongs to. Leave refs empty when the request uses nothing from earlier steps."""
 # Виды refs v8 — из манифеста сущностей (ADR-007, решение 2); пример — два вида, на которые чаще всего ссылаются поля
 # запросов обработчиков (`example_kinds`)
 
@@ -277,21 +278,46 @@ def train_kind(module: str) -> str:
     return "high-speed trains (GaoTie/DongChe, G/D)"
 
 
-def select_schema(labels: list[str], step: int, kinds: Iterable[str] = REF_ENTITIES) -> dict[str, Any]:
-    """`kinds` — виды refs: v7 — `REF_ENTITIES`, v8 — виды манифеста сущностей."""
+def select_schema(labels: list[str], step: int, kinds: Iterable[str] = REF_ENTITIES,
+                  ref_pairs: bool = False) -> dict[str, Any]:
+    """`kinds` — виды refs: v7 — `REF_ENTITIES`, v8 — виды манифеста сущностей.
+
+    `ref_pairs` (v8): refs — массив пар {kind, ref}, а не объект с ключом на вид. Грамматика JSON-схемы llama.cpp
+    пишет необязательные свойства объекта только в порядке схемы: после ключа `trip` ключ `contacts` уже не написать,
+    и модель брала ближайший доступный вид (`user`, `train`, `price`) вместо нужного."""
     ref_values = [f"{p}_of_step_{i}" for i in range(1, step) for p in REF_PICKS]
-    ref_props = {e: {"type": "string", "enum": ref_values} for e in kinds} if ref_values else {}
+    if ref_pairs:
+        item = {"type": "object", "properties": {"kind": {"type": "string", "enum": list(kinds)},
+                                                 "ref": {"type": "string", "enum": ref_values}},
+                "required": ["kind", "ref"], "additionalProperties": False}
+        refs = ({"type": "array", "items": item, "maxItems": REF_PAIRS_MAX} if ref_values
+                else {"type": "array", "maxItems": 0})
+    else:
+        ref_props = {e: {"type": "string", "enum": ref_values} for e in kinds} if ref_values else {}
+        refs = {"type": "object", "properties": ref_props, "additionalProperties": False}
     return {
         "type": "object",
         "properties": {
             "reasoning": {"type": "string", "maxLength": 400},
             "handler": {"type": "string", "enum": labels},
             "expected_outcome": {"type": "string", "enum": list(OUTCOMES)},
-            "refs": {"type": "object", "properties": ref_props, "additionalProperties": False},
+            "refs": refs,
         },
         "required": ["reasoning", "handler", "expected_outcome", "refs"],
         "additionalProperties": False,
     }
+
+
+def refs_of(sel: dict[str, Any]) -> dict[str, str]:
+    """refs ответа выбора как {вид: ссылка}: из объекта (v7) или из массива пар (v8; первая пара вида побеждает)."""
+    raw = sel.get("refs") or {}
+    if isinstance(raw, list):
+        out: dict[str, str] = {}
+        for x in raw:
+            if isinstance(x, dict) and x.get("kind") and x.get("ref"):
+                out.setdefault(x["kind"], x["ref"])
+        return out
+    return {k: v for k, v in raw.items() if v}
 
 
 JSON_TYPES = {

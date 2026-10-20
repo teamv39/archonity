@@ -203,7 +203,7 @@ class StepGrounder:
         if greedy is not None and greedy.get("handler") == best:
             return got[0]
         mine = [(sel, key) for sel, key in valid if sel["handler"] == best]
-        answers = [json.dumps({"refs": {k: v for k, v in (sel.get("refs") or {}).items() if v},
+        answers = [json.dumps({"refs": P.refs_of(sel),
                                "outcome": sel.get("expected_outcome")}, sort_keys=True) for sel, _ in mine]
         return mine[answers.index(_majority(answers))]
 
@@ -233,7 +233,7 @@ class StepGrounder:
                 ex1, ex2 = self.example_kinds or ("", "")
                 task = P.SELECT_TASK_V8.format(n=n, action=action, candidates=blocks, ex1=ex1, ex2=ex2)
             msgs = [{"role": "system", "content": self.system_select}, {"role": "user", "content": prefix + task}]
-            schema = P.select_schema(list(self.by_label), n, self.ref_kinds)
+            schema = P.select_schema(list(self.by_label), n, self.ref_kinds, ref_pairs=not v7)
             if v7:
                 sel, key = self.llm.complete_json("select", self.version, msgs, schema)
             else:
@@ -242,7 +242,7 @@ class StepGrounder:
         if sel is not None and sel.get("handler") in self.by_label:
             handler = self.by_label[sel["handler"]]
             outcome = sel.get("expected_outcome") or "success"
-            refs = {k: v for k, v in (sel.get("refs") or {}).items() if v}
+            refs = P.refs_of(sel)
             grounding.update(source="LLM", reasoning=sel.get("reasoning", ""), from_index=handler not in cands)
         else:
             handler = cands[0]

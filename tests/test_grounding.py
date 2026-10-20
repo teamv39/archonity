@@ -362,6 +362,13 @@ class TestProjectProfile:
         assert "Record kinds" not in g.system_params
         props = P.select_schema(list(g.by_label), 3, g.ref_kinds)["properties"]["refs"]["properties"]
         assert set(props) == set(g.ref_kinds)
+        # v8: refs — массив пар {kind, ref}: порядок видов свободный (грамматика схемы держит порядок свойств объекта)
+        pairs = P.select_schema(list(g.by_label), 3, g.ref_kinds, ref_pairs=True)["properties"]["refs"]
+        assert pairs["type"] == "array" and pairs["items"]["properties"]["kind"]["enum"] == list(g.ref_kinds)
+        sel = {"refs": [{"kind": "trip", "ref": "first_of_step_2"}, {"kind": "contacts", "ref": "new_of_step_3"},
+                        {"kind": "trip", "ref": "new_of_step_1"}]}
+        assert P.refs_of(sel) == {"trip": "first_of_step_2", "contacts": "new_of_step_3"}
+        assert P.refs_of({"refs": {"trip": "first_of_step_2", "order": None}}) == {"trip": "first_of_step_2"}
         # v7 — прежние виды
         assert StepGrounder(ix, TARGETS, embedder=None).ref_kinds == P.REF_ENTITIES
 
