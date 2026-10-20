@@ -27,10 +27,11 @@ from engine.grounding.docs import HandlerCatalog, HandlerInfo
 from engine.grounding.binding import rebind
 from engine.grounding.llm import LLMClient
 from engine.grounding.profile import ProjectProfile, build_profile
-from engine.grounding.request import StepRequest
+from engine.grounding.request import REF_ENTITIES, StepRequest
 from engine.grounding.retrieval import Ranked, Retriever
 from engine.grounding.text import DOMAIN_SYN
 from engine.grounding.ui_catalog import UIRequest, build_catalog, find_ui_dir, match_handlers
+from engine.manifest import entity_kinds
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TT = ROOT / "hackaton" / "tt-challenge"
@@ -123,14 +124,22 @@ class StepGrounder:
         enums = enum_codes(ix, self.root)
         index = P.handler_index(self.cat.handlers, self.labels)
         self.profile: ProjectProfile | None = None
+        self.ref_kinds: tuple[str, ...] = REF_ENTITIES
+        self.example_kinds: tuple[str, str] | None = None
         if v7:
             self.system_select = P.system_prompt(enums, index)
             self.system_params = P.system_prompt(enums)
         else:
+            # Виды refs — из манифеста сущностей (ADR-007, решение 2), M4 их понимает в режиме --ref-kinds v8
+            kinds = entity_kinds(ix)
+            self.ref_kinds = tuple(kinds)
+            self.example_kinds = P.example_kinds(kinds, self.cat.handlers)
+            modules = {n.get("fqn"): n.get("module", "") for n in ix.N.values() if n.get("kind") == "type"}
             self.profile = build_profile(ix, self.root, self.cat, self.ui, self.retriever.twins, llm)
             env = (ix.sk.get("context") or {}).get("profile")
             admin = any("admin" in h.module.split("-") for h in self.cat.handlers.values())
-            self.system_select = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin, index)
+            self.system_select = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin, index,
+                                                    P.ref_kinds_block(kinds, modules))
             self.system_params = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin)
 
     def rebind(self, req: StepRequest) -> StepRequest | None:
@@ -218,9 +227,13 @@ class StepGrounder:
         sel = None
         if self.llm is not None:
             blocks = "\n".join(self._candidate(h) for h in cands)
-            task = (P.SELECT_TASK if v7 else P.SELECT_TASK_V8).format(n=n, action=action, candidates=blocks)
+            if v7:
+                task = P.SELECT_TASK.format(n=n, action=action, candidates=blocks)
+            else:
+                ex1, ex2 = self.example_kinds or ("", "")
+                task = P.SELECT_TASK_V8.format(n=n, action=action, candidates=blocks, ex1=ex1, ex2=ex2)
             msgs = [{"role": "system", "content": self.system_select}, {"role": "user", "content": prefix + task}]
-            schema = P.select_schema(list(self.by_label), n)
+            schema = P.select_schema(list(self.by_label), n, self.ref_kinds)
             if v7:
                 sel, key = self.llm.complete_json("select", self.version, msgs, schema)
             else:

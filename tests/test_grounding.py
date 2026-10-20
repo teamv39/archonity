@@ -276,8 +276,7 @@ class TestProjectProfile:
     """ADR-007: промпт v8 без домена, профиль проекта, режим отката v7."""
 
     def test_v8_templates_have_no_domain_words(self) -> None:
-        # SELECT_TASK_V8 пока с примером refs на видах v7 (`REF_ENTITIES`): виды меняет фаза B2
-        for t in (P.SYSTEM_V8, P.TWINS_V8, P.PARAMS_TASK_V8):
+        for t in (P.SYSTEM_V8, P.TWINS_V8, P.SELECT_TASK_V8, P.PARAMS_TASK_V8, P.KINDS_V8):
             low = t.lower()
             assert not [w for w in DOMAIN_WORDS if w in low]
 
@@ -352,6 +351,19 @@ class TestProjectProfile:
         assert "payDifferentMoney" in handlers.service_calls(diff) and "drawBackMoney" not in handlers.service_calls(diff)
         assert "its service code calls: checkTime, drawBackMoney" in StepGrounder(ix, TARGETS, embedder=None,
                                                                                  prompt="v8")._candidate(rebook)
+
+    def test_v8_ref_kinds_from_manifest(self, ix: SkeletonIndex) -> None:
+        g = StepGrounder(ix, TARGETS, embedder=None, prompt="v8")
+        assert {"trainType", "trip", "consignRecord", "contacts", "priceConfig"} <= set(g.ref_kinds)
+        assert "train" not in g.ref_kinds and "consign" not in g.ref_kinds
+        # пример refs — два вида, на которые чаще всего ссылаются поля запросов
+        assert g.example_kinds == ("order", "trip")
+        assert "- consignRecord: ConsignRecord (ts-consign-service)" in g.system_select
+        assert "Record kinds" not in g.system_params
+        props = P.select_schema(list(g.by_label), 3, g.ref_kinds)["properties"]["refs"]["properties"]
+        assert set(props) == set(g.ref_kinds)
+        # v7 — прежние виды
+        assert StepGrounder(ix, TARGETS, embedder=None).ref_kinds == P.REF_ENTITIES
 
     def test_bm25_without_domain_synonyms(self) -> None:
         from engine.grounding.text import query_toks

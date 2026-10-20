@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 from engine.grounding.docs import SKIP_PARAM_TYPES, HandlerInfo
 from engine.grounding.request import OUTCOMES, REF_ENTITIES, REF_PICKS
@@ -81,8 +81,14 @@ SELECT_TASK_V8 = """Current step {n}: {action}
 Candidate handlers (closest search matches):
 {candidates}
 
-Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "trip": "first_of_step_2" for the first trip found at step 2, "order": "new_of_step_6" for the order created at step 6). Each key names the kind of what the referenced step found or created, not of what this request makes. A record that the request reads or changes comes from the step that found or created that record itself, not from the step of a record it belongs to. Leave refs empty when the request uses nothing from earlier steps."""
-# Пример refs — с видами ссылок v7 (`REF_ENTITIES`): виды меняет фаза B2 ADR-007 вместе с этим примером
+Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "{ex1}": "first_of_step_2" for the first {ex1} found at step 2, "{ex2}": "new_of_step_6" for the {ex2} created at step 6). Each key names the kind of what the referenced step found or created, not of what this request makes. A record that the request reads or changes comes from the step that found or created that record itself, not from the step of a record it belongs to. Leave refs empty when the request uses nothing from earlier steps."""
+# Виды refs v8 — из манифеста сущностей (ADR-007, решение 2); пример — два вида, на которые чаще всего ссылаются поля
+# запросов обработчиков (`example_kinds`)
+
+KINDS_V8 = """
+Record kinds for refs (entity classes that the services store):
+{kinds}
+"""
 
 PARAMS_TASK_V8 = """Current step {n}: {action}
 Chosen request: {verb} {path} -> {signature}
@@ -111,9 +117,9 @@ def has_twin_rules(profile: Any) -> bool:
 
 
 def system_prompt_v8(enums: dict[str, list[str]], profile: Any, ui_dir: str | None, environment: str | None,
-                     admin: bool, index: str | None = None) -> str:
+                     admin: bool, index: str | None = None, kinds: str | None = None) -> str:
     """Системный промпт v8: домен из профиля, окружение из `context` скелета, правило админки — если в проекте
-    есть модули админки."""
+    есть модули админки; у выбора — справочник видов refs (`ref_kinds_block`) и индекс обработчиков."""
     summary = (getattr(profile, "domain_summary", "") or "").strip()
     text = SYSTEM_V8.format(
         domain=f"The application: {summary}\n" if summary else "",
@@ -123,7 +129,31 @@ def system_prompt_v8(enums: dict[str, list[str]], profile: Any, ui_dir: str | No
         admin="- Administrator steps (admin console) use admin services; other users' steps do not.\n" if admin else "",
         enums=enum_reference(enums),
     )
+    if kinds:
+        text += KINDS_V8.format(kinds=kinds)
     return text + INDEX.format(index=index) if index else text
+
+
+def ref_kinds_block(kinds: dict[str, Any], modules: dict[str, str]) -> str:
+    """Справочник видов refs из манифеста: вид, класс сущности и модули, где он хранится (`modules`: FQN -> модуль)."""
+    out = []
+    for k, ek in sorted(kinds.items()):
+        classes = sorted({t.rsplit(".", 1)[-1] for t in ek.types})
+        mods = sorted({modules[t] for t in ek.types if modules.get(t)})
+        out.append(f"- {k}: {', '.join(classes)}" + (f" ({', '.join(mods)})" if mods else ""))
+    return "\n".join(out)
+
+
+def example_kinds(kinds: dict[str, Any], handlers: dict[str, HandlerInfo]) -> tuple[str, str]:
+    """Два вида для примера refs: на ID-поля которых (кроме `id`) чаще всего ссылаются поля запросов обработчиков."""
+    cnt = {k: 0 for k in kinds}
+    for h in handlers.values():
+        names = {f["name"] for f in h.body_fields} | {p["name"] for p in h.params}
+        for k, ek in kinds.items():
+            if names & (set(ek.id_fields) - {"id"}):
+                cnt[k] += 1
+    top = sorted(cnt, key=lambda k: (-cnt[k], k))
+    return (top[0], top[1]) if len(top) > 1 else (top[0], top[0])
 
 
 def twin_note(profile: Any, module: str) -> str | None:
@@ -247,9 +277,10 @@ def train_kind(module: str) -> str:
     return "high-speed trains (GaoTie/DongChe, G/D)"
 
 
-def select_schema(labels: list[str], step: int) -> dict[str, Any]:
+def select_schema(labels: list[str], step: int, kinds: Iterable[str] = REF_ENTITIES) -> dict[str, Any]:
+    """`kinds` — виды refs: v7 — `REF_ENTITIES`, v8 — виды манифеста сущностей."""
     ref_values = [f"{p}_of_step_{i}" for i in range(1, step) for p in REF_PICKS]
-    ref_props = {e: {"type": "string", "enum": ref_values} for e in REF_ENTITIES} if ref_values else {}
+    ref_props = {e: {"type": "string", "enum": ref_values} for e in kinds} if ref_values else {}
     return {
         "type": "object",
         "properties": {

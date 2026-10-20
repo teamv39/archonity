@@ -186,10 +186,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--ref-kinds",
         choices=("v7", "v8"),
-        default="v7",
-        help="Виды сущностей в ссылках шагов (StepRequest.refs, ADR-007): v7 — 12 видов M1 до ADR-007 (кеш m1-v7, "
-             "по умолчанию), M4 переводит их в виды манифеста; v8 — виды манифеста engine/manifest.py "
-             "(@Entity/@Embeddable скелета: contacts, priceConfig, consignRecord, trainType)",
+        default=None,
+        help="Виды сущностей в ссылках шагов (StepRequest.refs, ADR-007): v7 — 12 видов M1 до ADR-007 (кеш m1-v7), "
+             "M4 переводит их в виды манифеста; v8 — виды манифеста engine/manifest.py (@Entity/@Embeddable скелета: "
+             "contacts, priceConfig, consignRecord, trainType). По умолчанию — как у --m1-prompt: M1 v8 даёт виды v8",
     )
     parser.add_argument(
         "--module-roles",
@@ -262,7 +262,10 @@ def parse_args() -> argparse.Namespace:
              "cache — только кеш; off — без судьи (по умолчанию)",
     )
     parser.add_argument("--judge-budget", type=int, default=400, help="M4: вызовов сервера судьи на прогон")
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.ref_kinds is None:
+        args.ref_kinds = "v8" if args.m1_prompt == "v8" else "v7"
+    return args
 
 
 def resolve_scenario_paths(args_scenarios: list[str] | None) -> list[Path]:
