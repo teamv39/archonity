@@ -390,6 +390,10 @@ class RuntimeRules:
     # (user_name, account_id) без классов Train Ticket; m3 — модель M3 (до feature/86).
     M4_STATE_MODES = ("context", "m3")
 
+    # Виды сущностей в ссылках шагов StepRequest.refs (ADR-007): v7 (по умолчанию) — 12 видов M1 до ADR-007 (кеш
+    # m1-v7), M4 переводит их в виды манифеста (StepExecutor._v7_refs); v8 — виды манифеста engine/manifest.py.
+    REF_KINDS_MODES = ("v7", "v8")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -414,6 +418,7 @@ class RuntimeRules:
         m4_m3_refs: str = "off",
         module_roles: str = "skeleton",
         m4_state: str = "context",
+        ref_kinds: str = "v7",
     ) -> None:
         for name, val, modes in (("jackson_ctor", jackson_ctor, self.JACKSON_CTOR_MODES),
                                  ("lombok_tostring", lombok_tostring, self.LOMBOK_TOSTRING_MODES),
@@ -421,7 +426,8 @@ class RuntimeRules:
                                  ("spring_security", spring_security, self.SPRING_SECURITY_MODES),
                                  ("m4_m3_refs", m4_m3_refs, self.M4_M3_REFS_MODES),
                                  ("module_roles", module_roles, self.MODULE_ROLES_MODES),
-                                 ("m4_state", m4_state, self.M4_STATE_MODES)):
+                                 ("m4_state", m4_state, self.M4_STATE_MODES),
+                                 ("ref_kinds", ref_kinds, self.REF_KINDS_MODES)):
             if val not in modes:
                 raise ValueError(f"{name}: {val!r}, ожидается одно из {modes}")
         self.jackson_ctor = jackson_ctor
@@ -431,6 +437,7 @@ class RuntimeRules:
         self.m4_m3_refs = m4_m3_refs
         self.module_roles = module_roles
         self.m4_state = m4_state
+        self.ref_kinds = ref_kinds
         if constructors not in self.CTOR_MODES:
             raise ValueError(f"constructors: {constructors!r}, ожидается одно из {self.CTOR_MODES}")
         if collection_tables_on_read not in self.COLLECTION_TABLE_MODES:
