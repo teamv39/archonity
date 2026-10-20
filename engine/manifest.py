@@ -105,14 +105,8 @@ def _table(nid: str, n: dict[str, Any]) -> str:
 
 def _physical_name(name: str) -> str:
     """Имя таблицы по умолчанию в Spring Boot (CamelCaseToUnderscoresNamingStrategy): `TrainType` -> `train_type`."""
-    buf = list(name.replace(".", "_"))
-    i = 1
-    while i < len(buf) - 1:
-        if buf[i - 1].islower() and buf[i].isupper() and buf[i + 1].islower():
-            buf.insert(i, "_")
-            i += 1
-        i += 1
-    return "".join(buf).lower()
+    s = name.replace(".", "_")
+    return re.sub(r"(?<=[a-z0-9])([A-Z])", r"_\1", s).lower()
 
 
 __all__ = ["EntityKind", "entity_kinds", "kind_name"]

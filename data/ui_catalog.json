@@ -1,0 +1,3893 @@
+{
+ "requests": [
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_config.js:13<38",
+   "file": "ts-ui-dashboard/static/assets/js/admin_config.js",
+   "line": 13,
+   "function": "controller:configCtrl",
+   "verb": "GET",
+   "url": "/api/v1/adminbasicservice/adminbasic/configs",
+   "via_line": 38,
+   "outer": [
+    "controller:configCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_config.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllConfigs(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_config.js:13<38"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_config.js:47",
+   "file": "ts-ui-dashboard/static/assets/js/admin_config.js",
+   "line": 47,
+   "function": "deleteConfig",
+   "verb": "DELETE",
+   "url": "/api/v1/adminbasicservice/adminbasic/configs/{name}",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "deleteConfig",
+    "controller:configCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_config.html"
+   ],
+   "labels": [
+    "Delete"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_config.js:47"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_config.js:83",
+   "file": "ts-ui-dashboard/static/assets/js/admin_config.js",
+   "line": 83,
+   "function": "updateConfig",
+   "verb": "PUT",
+   "url": "/api/v1/adminbasicservice/adminbasic/configs",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "updateConfig",
+    "controller:configCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_config.html"
+   ],
+   "labels": [
+    "Update"
+   ],
+   "guards": [],
+   "body_fields": [
+    "name",
+    "value",
+    "description"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_config.js:83"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_config.js:120",
+   "file": "ts-ui-dashboard/static/assets/js/admin_config.js",
+   "line": 120,
+   "function": "addConfig",
+   "verb": "POST",
+   "url": "/api/v1/adminbasicservice/adminbasic/configs",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "addConfig",
+    "controller:configCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_config.html"
+   ],
+   "labels": [
+    "Add"
+   ],
+   "guards": [],
+   "body_fields": [
+    "name",
+    "value",
+    "description"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_config.js:120"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_contacts.js:13<38",
+   "file": "ts-ui-dashboard/static/assets/js/admin_contacts.js",
+   "line": 13,
+   "function": "controller:contactCtrl",
+   "verb": "GET",
+   "url": "/api/v1/adminbasicservice/adminbasic/contacts",
+   "via_line": 38,
+   "outer": [
+    "controller:contactCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_contacts.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllContacts(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_contacts.js:13<38"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_contacts.js:48",
+   "file": "ts-ui-dashboard/static/assets/js/admin_contacts.js",
+   "line": 48,
+   "function": "deleteContact",
+   "verb": "DELETE",
+   "url": "/api/v1/adminbasicservice/adminbasic/contacts/{id}",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "deleteContact",
+    "controller:contactCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_contacts.html"
+   ],
+   "labels": [
+    "Delete"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteContacts(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_contacts.js:48"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_contacts.js:87",
+   "file": "ts-ui-dashboard/static/assets/js/admin_contacts.js",
+   "line": 87,
+   "function": "updateContact",
+   "verb": "PUT",
+   "url": "/api/v1/adminbasicservice/adminbasic/contacts",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "updateContact",
+    "controller:contactCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_contacts.html"
+   ],
+   "labels": [
+    "Update"
+   ],
+   "guards": [],
+   "body_fields": [
+    "id",
+    "name",
+    "documentType",
+    "documentNumber",
+    "phoneNumber"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_contacts.js:87"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_contacts.js:127",
+   "file": "ts-ui-dashboard/static/assets/js/admin_contacts.js",
+   "line": 127,
+   "function": "addContact",
+   "verb": "POST",
+   "url": "/api/v1/adminbasicservice/adminbasic/contacts",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "addContact",
+    "controller:contactCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_contacts.html"
+   ],
+   "labels": [
+    "Add"
+   ],
+   "guards": [
+    "parseInt($('#add-contact-document-type').val())"
+   ],
+   "body_fields": [
+    "accountId",
+    "name",
+    "documentType",
+    "documentNumber",
+    "phoneNumber"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_contacts.js:127"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_price.js:13<38",
+   "file": "ts-ui-dashboard/static/assets/js/admin_price.js",
+   "line": 13,
+   "function": "controller:priceCtrl",
+   "verb": "GET",
+   "url": "/api/v1/adminbasicservice/adminbasic/prices",
+   "via_line": 38,
+   "outer": [
+    "controller:priceCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_price.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllPrices(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_price.js:13<38"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_price.js:47",
+   "file": "ts-ui-dashboard/static/assets/js/admin_price.js",
+   "line": 47,
+   "function": "deletePrice",
+   "verb": "DELETE",
+   "url": "/api/v1/adminbasicservice/adminbasic/prices/{id}",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "deletePrice",
+    "controller:priceCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_price.html"
+   ],
+   "labels": [
+    "Delete"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_price.js:47"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_price.js:87",
+   "file": "ts-ui-dashboard/static/assets/js/admin_price.js",
+   "line": 87,
+   "function": "updatePrice",
+   "verb": "PUT",
+   "url": "/api/v1/adminbasicservice/adminbasic/prices",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "updatePrice",
+    "controller:priceCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_price.html"
+   ],
+   "labels": [
+    "Update"
+   ],
+   "guards": [
+    "parseFloat($('#update-price-basic-price-rate').val()) && parseFloat($('#update-price-first-class-price-rate').val())"
+   ],
+   "body_fields": [
+    "id",
+    "routeId",
+    "trainType",
+    "basicPriceRate",
+    "firstClassPriceRate"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_price.js:87"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_price.js:131",
+   "file": "ts-ui-dashboard/static/assets/js/admin_price.js",
+   "line": 131,
+   "function": "addPrice",
+   "verb": "POST",
+   "url": "/api/v1/adminbasicservice/adminbasic/prices",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "addPrice",
+    "controller:priceCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_price.html"
+   ],
+   "labels": [
+    "Add"
+   ],
+   "guards": [
+    "parseFloat($('#add-price-basic-price-rate').val()) && parseFloat($('#add-price-first-class-price-rate').val())"
+   ],
+   "body_fields": [
+    "routeId",
+    "trainType",
+    "basicPriceRate",
+    "firstClassPriceRate"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_price.js:131"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_route.js:41",
+   "file": "ts-ui-dashboard/static/assets/js/admin_route.js",
+   "line": 41,
+   "function": "loadRecordList",
+   "verb": "GET",
+   "url": "/api/v1/adminrouteservice/adminroute",
+   "via_line": null,
+   "outer": [
+    "loadRecordList",
+    "factory:loadDataService"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_route.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-route-service:adminroute.controller.AdminRouteController#getAllRoutes(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_route.js:41"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_route.js:95",
+   "file": "ts-ui-dashboard/static/assets/js/admin_route.js",
+   "line": 95,
+   "function": "addNewRoute",
+   "verb": "POST",
+   "url": "/api/v1/adminrouteservice/adminroute",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "addNewRoute",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_route.html"
+   ],
+   "labels": [
+    "Add"
+   ],
+   "guards": [],
+   "body_fields": [
+    "stationList",
+    "distanceList",
+    "startStation",
+    "endStation"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_route.js:95"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_route.js:135",
+   "file": "ts-ui-dashboard/static/assets/js/admin_route.js",
+   "line": 135,
+   "function": "updateRoute",
+   "verb": "POST",
+   "url": "/api/v1/adminrouteservice/adminroute",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "updateRoute",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_route.html"
+   ],
+   "labels": [
+    "Update"
+   ],
+   "guards": [],
+   "body_fields": [
+    "id",
+    "stationList",
+    "distanceList",
+    "startStation",
+    "endStation"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_route.js:135"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_route.js:170",
+   "file": "ts-ui-dashboard/static/assets/js/admin_route.js",
+   "line": 170,
+   "function": "deleteRoute",
+   "verb": "DELETE",
+   "url": "/api/v1/adminrouteservice/adminroute/{routeId}",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "deleteRoute",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_route.html"
+   ],
+   "labels": [
+    "Delete"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-route-service:adminroute.controller.AdminRouteController#deleteRoute(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_route.js:170"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_station.js:13<39",
+   "file": "ts-ui-dashboard/static/assets/js/admin_station.js",
+   "line": 13,
+   "function": "controller:stationCtrl",
+   "verb": "GET",
+   "url": "/api/v1/adminbasicservice/adminbasic/stations",
+   "via_line": 39,
+   "outer": [
+    "controller:stationCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_station.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllStations(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_station.js:13<39"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_station.js:48",
+   "file": "ts-ui-dashboard/static/assets/js/admin_station.js",
+   "line": 48,
+   "function": "deleteStation",
+   "verb": "DELETE",
+   "url": "/api/v1/adminbasicservice/adminbasic/stations/{id}",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "deleteStation",
+    "controller:stationCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_station.html"
+   ],
+   "labels": [
+    "Delete"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_station.js:48"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_station.js:85",
+   "file": "ts-ui-dashboard/static/assets/js/admin_station.js",
+   "line": 85,
+   "function": "updateStation",
+   "verb": "PUT",
+   "url": "/api/v1/adminbasicservice/adminbasic/stations",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "updateStation",
+    "controller:stationCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_station.html"
+   ],
+   "labels": [
+    "Update"
+   ],
+   "guards": [
+    "parseInt($('#update-station-stay-time').val())"
+   ],
+   "body_fields": [
+    "id",
+    "name",
+    "stayTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_station.js:85"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_station.js:124",
+   "file": "ts-ui-dashboard/static/assets/js/admin_station.js",
+   "line": 124,
+   "function": "addStation",
+   "verb": "POST",
+   "url": "/api/v1/adminbasicservice/adminbasic/stations",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "addStation",
+    "controller:stationCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_station.html"
+   ],
+   "labels": [
+    "Add"
+   ],
+   "guards": [
+    "parseInt($('#add-station-stay-time').val())"
+   ],
+   "body_fields": [
+    "name",
+    "stayTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_station.js:124"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_train.js:13<38",
+   "file": "ts-ui-dashboard/static/assets/js/admin_train.js",
+   "line": 13,
+   "function": "controller:trainCtrl",
+   "verb": "GET",
+   "url": "/api/v1/adminbasicservice/adminbasic/trains",
+   "via_line": 38,
+   "outer": [
+    "controller:trainCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllTrains(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_train.js:13<38"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_train.js:47",
+   "file": "ts-ui-dashboard/static/assets/js/admin_train.js",
+   "line": 47,
+   "function": "deleteTrain",
+   "verb": "DELETE",
+   "url": "/api/v1/adminbasicservice/adminbasic/trains/{id}",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "deleteTrain",
+    "controller:trainCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [
+    "Delete"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_train.js:47"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_train.js:87",
+   "file": "ts-ui-dashboard/static/assets/js/admin_train.js",
+   "line": 87,
+   "function": "updateTrain",
+   "verb": "PUT",
+   "url": "/api/v1/adminbasicservice/adminbasic/trains",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "updateTrain",
+    "controller:trainCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [
+    "Update"
+   ],
+   "guards": [
+    "parseInt($('#update-train-economy-class').val()) && parseInt($('#update-train-confort-class').val()) && parseInt($('#update-train-average-speed').val())"
+   ],
+   "body_fields": [
+    "id",
+    "name",
+    "economyClass",
+    "confortClass",
+    "averageSpeed"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_train.js:87"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_train.js:129",
+   "file": "ts-ui-dashboard/static/assets/js/admin_train.js",
+   "line": 129,
+   "function": "addTrain",
+   "verb": "POST",
+   "url": "/api/v1/adminbasicservice/adminbasic/trains",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "addTrain",
+    "controller:trainCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [
+    "Add"
+   ],
+   "guards": [
+    "parseInt($('#add-train-economy-class').val()) && parseInt($('#add-train-confort-class').val()) && parseInt($('#add-train-average-speed').val())"
+   ],
+   "body_fields": [
+    "name",
+    "economyClass",
+    "confortClass",
+    "averageSpeed"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_train.js:129"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_travel.js:41",
+   "file": "ts-ui-dashboard/static/assets/js/admin_travel.js",
+   "line": 41,
+   "function": "loadRecordList",
+   "verb": "GET",
+   "url": "/api/v1/admintravelservice/admintravel",
+   "via_line": null,
+   "outer": [
+    "loadRecordList",
+    "factory:loadDataService"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_travel.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#getAllTravels(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_travel.js:41"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_travel.js:99",
+   "file": "ts-ui-dashboard/static/assets/js/admin_travel.js",
+   "line": 99,
+   "function": "addNewTravel",
+   "verb": "POST",
+   "url": "/api/v1/admintravelservice/admintravel",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "addNewTravel",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_travel.html"
+   ],
+   "labels": [
+    "Add"
+   ],
+   "guards": [],
+   "body_fields": [
+    "tripId",
+    "trainTypeName",
+    "routeId",
+    "startStationName",
+    "stationsName",
+    "terminalStationName",
+    "startTime",
+    "endTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_travel.js:99"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_travel.js:149",
+   "file": "ts-ui-dashboard/static/assets/js/admin_travel.js",
+   "line": 149,
+   "function": "updateTravel",
+   "verb": "PUT",
+   "url": "/api/v1/admintravelservice/admintravel",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "updateTravel",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_travel.html"
+   ],
+   "labels": [
+    "Update"
+   ],
+   "guards": [],
+   "body_fields": [
+    "tripId",
+    "trainTypeName",
+    "routeId",
+    "startStationName",
+    "stationsName",
+    "terminalStationName",
+    "startTime",
+    "endTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#updateTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_travel.js:149"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_travel.js:188",
+   "file": "ts-ui-dashboard/static/assets/js/admin_travel.js",
+   "line": 188,
+   "function": "deleteTravel",
+   "verb": "DELETE",
+   "url": "/api/v1/admintravelservice/admintravel/{type}{number}",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "deleteTravel",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_travel.html"
+   ],
+   "labels": [
+    "Delete"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#deleteTravel(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_travel.js:188"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_travel.js:220",
+   "file": "ts-ui-dashboard/static/assets/js/admin_travel.js",
+   "line": 220,
+   "function": "getTrainTypes",
+   "verb": "GET",
+   "url": "/api/v1/trainservice/trains",
+   "via_line": null,
+   "outer": [
+    "getTrainTypes"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_travel.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-train-service:train.controller.TrainController#query(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_travel.js:220"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_travel.js:259",
+   "file": "ts-ui-dashboard/static/assets/js/admin_travel.js",
+   "line": 259,
+   "function": "getRouteList",
+   "verb": "GET",
+   "url": "/api/v1/routeservice/routes",
+   "via_line": null,
+   "outer": [
+    "getRouteList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_travel.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-route-service:route.controller.RouteController#queryAll(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_travel.js:259"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_travel.js:296",
+   "file": "ts-ui-dashboard/static/assets/js/admin_travel.js",
+   "line": 296,
+   "function": "getStationList",
+   "verb": "GET",
+   "url": "/api/v1/stationservice/stations",
+   "via_line": null,
+   "outer": [
+    "getStationList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_travel.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-station-service:fdse.microservice.controller.StationController#query(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_travel.js:296"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_user.js:42",
+   "file": "ts-ui-dashboard/static/assets/js/admin_user.js",
+   "line": 42,
+   "function": "loadRecordList",
+   "verb": "GET",
+   "url": "/api/v1/adminuserservice/users",
+   "via_line": null,
+   "outer": [
+    "loadRecordList",
+    "factory:loadDataService"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_user.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-user-service:adminuser.controller.AdminUserController#getAllUsers(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_user.js:42"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_user.js:98",
+   "file": "ts-ui-dashboard/static/assets/js/admin_user.js",
+   "line": 98,
+   "function": "addNewUser",
+   "verb": "POST",
+   "url": "/api/v1/adminuserservice/users",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "addNewUser",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_user.html"
+   ],
+   "labels": [
+    "Add"
+   ],
+   "guards": [],
+   "body_fields": [
+    "userName",
+    "password",
+    "gender",
+    "email",
+    "documentType",
+    "documentNum"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_user.js:98"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_user.js:142",
+   "file": "ts-ui-dashboard/static/assets/js/admin_user.js",
+   "line": 142,
+   "function": "updateUser",
+   "verb": "PUT",
+   "url": "/api/v1/adminuserservice/users",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "updateUser",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_user.html"
+   ],
+   "labels": [
+    "Update"
+   ],
+   "guards": [],
+   "body_fields": [
+    "userId",
+    "userName",
+    "password",
+    "gender",
+    "email",
+    "documentType",
+    "documentNum"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-user-service:adminuser.controller.AdminUserController#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_user.js:142"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/admin_user.js:179",
+   "file": "ts-ui-dashboard/static/assets/js/admin_user.js",
+   "line": 179,
+   "function": "deleteUser",
+   "verb": "DELETE",
+   "url": "/api/v1/adminuserservice/users/{accountId}",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "deleteUser",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin_user.html"
+   ],
+   "labels": [
+    "Delete"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-user-service:adminuser.controller.AdminUserController#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/admin_user.js:179"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/adminlogin.js:9",
+   "file": "ts-ui-dashboard/static/assets/js/adminlogin.js",
+   "line": 9,
+   "function": "login",
+   "verb": "POST",
+   "url": "/api/v1/users/login",
+   "via_line": null,
+   "outer": [
+    "login",
+    "controller:loginCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/adminlogin.html"
+   ],
+   "labels": [
+    "Login",
+    "Submit"
+   ],
+   "guards": [],
+   "body_fields": [
+    "username",
+    "password"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/adminlogin.js:9"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_adsearch.js:61<47",
+   "file": "ts-ui-dashboard/static/assets/js/client_adsearch.js",
+   "line": 61,
+   "function": "adSearchPath",
+   "verb": "POST",
+   "url": "/api/v1/travelplanservice/travelPlan/minStation",
+   "via_line": 47,
+   "outer": [
+    "adSearchPath"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_adsearch.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "selectType == 0"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_adsearch.js:61<47"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_adsearch.js:102<49",
+   "file": "ts-ui-dashboard/static/assets/js/client_adsearch.js",
+   "line": 102,
+   "function": "adSearchPath",
+   "verb": "POST",
+   "url": "/api/v1/travelplanservice/travelPlan/cheapest",
+   "via_line": 49,
+   "outer": [
+    "adSearchPath"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_adsearch.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "!(selectType == 0)",
+    "selectType == 1"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_adsearch.js:102<49"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_adsearch.js:138<51",
+   "file": "ts-ui-dashboard/static/assets/js/client_adsearch.js",
+   "line": 138,
+   "function": "adSearchPath",
+   "verb": "POST",
+   "url": "/api/v1/travelplanservice/travelPlan/quickest",
+   "via_line": 51,
+   "outer": [
+    "adSearchPath"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_adsearch.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "!(selectType == 0)",
+    "!(selectType == 1)",
+    "selectType == 2"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_adsearch.js:138<51"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_collect.js:44<38",
+   "file": "ts-ui-dashboard/static/assets/js/client_collect.js",
+   "line": 44,
+   "function": "queryMyOrderList",
+   "verb": "POST",
+   "url": "/api/v1/orderservice/order/refresh",
+   "via_line": 38,
+   "outer": [
+    "queryMyOrderList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_ticket_collect.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [
+    "loginId",
+    "enableStateQuery",
+    "enableTravelDateQuery",
+    "enableBoughtDateQuery",
+    "travelDateStart",
+    "travelDateEnd",
+    "boughtDateStart",
+    "boughtDateEnd"
+   ],
+   "body_consts": {
+    "enableStateQuery": false,
+    "enableTravelDateQuery": false,
+    "enableBoughtDateQuery": false,
+    "travelDateStart": null,
+    "travelDateEnd": null,
+    "boughtDateStart": null,
+    "boughtDateEnd": null
+   },
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "no ticket to collect",
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_collect.js:44<38"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_collect.js:44<39",
+   "file": "ts-ui-dashboard/static/assets/js/client_collect.js",
+   "line": 44,
+   "function": "queryMyOrderList",
+   "verb": "POST",
+   "url": "/api/v1/orderOtherService/orderOther/refresh",
+   "via_line": 39,
+   "outer": [
+    "queryMyOrderList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_ticket_collect.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [
+    "loginId",
+    "enableStateQuery",
+    "enableTravelDateQuery",
+    "enableBoughtDateQuery",
+    "travelDateStart",
+    "travelDateEnd",
+    "boughtDateStart",
+    "boughtDateEnd"
+   ],
+   "body_consts": {
+    "enableStateQuery": false,
+    "enableTravelDateQuery": false,
+    "enableBoughtDateQuery": false,
+    "travelDateStart": null,
+    "travelDateEnd": null,
+    "boughtDateStart": null,
+    "boughtDateEnd": null
+   },
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "no ticket to collect",
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_collect.js:44<39"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_collect.js:104",
+   "file": "ts-ui-dashboard/static/assets/js/client_collect.js",
+   "line": 104,
+   "function": "collectTicket",
+   "verb": "GET",
+   "url": "/api/v1/executeservice/execute/collected/{orderId}",
+   "via_line": null,
+   "outer": [
+    "collectTicket"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_ticket_collect.html"
+   ],
+   "labels": [
+    "Collect"
+   ],
+   "guards": [
+    "orderId != '' && orderId != \"\""
+   ],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "- you can enter station with your order id !",
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_collect.js:104"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_consign_list.js:10",
+   "file": "ts-ui-dashboard/static/assets/js/client_consign_list.js",
+   "line": 10,
+   "function": "queryMyConsign",
+   "verb": "GET",
+   "url": "/api/v1/consignservice/consigns/account/{accountid}",
+   "via_line": null,
+   "outer": [
+    "queryMyConsign"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_consign_list.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-consign-service:consign.controller.ConsignController#findByAccountId(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_consign_list.js:10"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_enter_station.js:43<37",
+   "file": "ts-ui-dashboard/static/assets/js/client_enter_station.js",
+   "line": 43,
+   "function": "queryMyOrderList",
+   "verb": "POST",
+   "url": "/api/v1/orderservice/order/refresh",
+   "via_line": 37,
+   "outer": [
+    "queryMyOrderList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_enter_station.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [
+    "loginId",
+    "enableStateQuery",
+    "enableTravelDateQuery",
+    "enableBoughtDateQuery",
+    "travelDateStart",
+    "travelDateEnd",
+    "boughtDateStart",
+    "boughtDateEnd"
+   ],
+   "body_consts": {
+    "enableStateQuery": false,
+    "enableTravelDateQuery": false,
+    "enableBoughtDateQuery": false,
+    "travelDateStart": null,
+    "travelDateEnd": null,
+    "boughtDateStart": null,
+    "boughtDateEnd": null
+   },
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "no ticket to enter statrion"
+   ],
+   "handlers": [
+    "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_enter_station.js:43<37"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_enter_station.js:43<38",
+   "file": "ts-ui-dashboard/static/assets/js/client_enter_station.js",
+   "line": 43,
+   "function": "queryMyOrderList",
+   "verb": "POST",
+   "url": "/api/v1/orderOtherService/orderOther/refresh",
+   "via_line": 38,
+   "outer": [
+    "queryMyOrderList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_enter_station.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [
+    "loginId",
+    "enableStateQuery",
+    "enableTravelDateQuery",
+    "enableBoughtDateQuery",
+    "travelDateStart",
+    "travelDateEnd",
+    "boughtDateStart",
+    "boughtDateEnd"
+   ],
+   "body_consts": {
+    "enableStateQuery": false,
+    "enableTravelDateQuery": false,
+    "enableBoughtDateQuery": false,
+    "travelDateStart": null,
+    "travelDateEnd": null,
+    "boughtDateStart": null,
+    "boughtDateEnd": null
+   },
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "no ticket to enter statrion"
+   ],
+   "handlers": [
+    "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_enter_station.js:43<38"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_enter_station.js:98",
+   "file": "ts-ui-dashboard/static/assets/js/client_enter_station.js",
+   "line": 98,
+   "function": "enterStation",
+   "verb": "GET",
+   "url": "/api/v1/executeservice/execute/execute/{orderId}",
+   "via_line": null,
+   "outer": [
+    "enterStation"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_enter_station.html"
+   ],
+   "labels": [
+    "Enter Station"
+   ],
+   "guards": [
+    "orderId != '' && orderId != \"\""
+   ],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "server send message:",
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_enter_station.js:98"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_login.js:45",
+   "file": "ts-ui-dashboard/static/assets/js/client_login.js",
+   "line": 45,
+   "function": "login",
+   "verb": "POST",
+   "url": "/api/v1/users/login",
+   "via_line": null,
+   "outer": [
+    "login"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_login.html"
+   ],
+   "labels": [
+    "Login",
+    "Submit"
+   ],
+   "guards": [],
+   "body_fields": [
+    "username",
+    "password",
+    "verificationCode"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Not Login"
+   ],
+   "handlers": [
+    "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_login.js:45"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:58<53",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 58,
+   "function": "queryMyOrderList",
+   "verb": "POST",
+   "url": "/api/v1/orderservice/order/refresh",
+   "via_line": 53,
+   "outer": [
+    "queryMyOrderList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [
+    "loginId",
+    "enableStateQuery",
+    "enableTravelDateQuery",
+    "enableBoughtDateQuery",
+    "travelDateStart",
+    "travelDateEnd",
+    "boughtDateStart",
+    "boughtDateEnd"
+   ],
+   "body_consts": {
+    "enableStateQuery": false,
+    "enableTravelDateQuery": false,
+    "enableBoughtDateQuery": false,
+    "travelDateStart": null,
+    "travelDateEnd": null,
+    "boughtDateStart": null,
+    "boughtDateEnd": null
+   },
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:58<53"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:58<54",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 58,
+   "function": "queryMyOrderList",
+   "verb": "POST",
+   "url": "/api/v1/orderOtherService/orderOther/refresh",
+   "via_line": 54,
+   "outer": [
+    "queryMyOrderList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [
+    "loginId",
+    "enableStateQuery",
+    "enableTravelDateQuery",
+    "enableBoughtDateQuery",
+    "travelDateStart",
+    "travelDateEnd",
+    "boughtDateStart",
+    "boughtDateEnd"
+   ],
+   "body_consts": {
+    "enableStateQuery": false,
+    "enableTravelDateQuery": false,
+    "enableBoughtDateQuery": false,
+    "travelDateStart": null,
+    "travelDateEnd": null,
+    "boughtDateStart": null,
+    "boughtDateEnd": null
+   },
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:58<54"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:90",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 90,
+   "function": "getStationNameById",
+   "verb": "GET",
+   "url": "/api/v1/stationservice/stations/name/{stationId}",
+   "via_line": null,
+   "outer": [
+    "getStationNameById"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-station-service:fdse.microservice.controller.StationController#queryById(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:90"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:125",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 125,
+   "function": "payMyOrder",
+   "verb": "POST",
+   "url": "/api/v1/inside_pay_service/inside_payment",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "payMyOrder"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "Pay"
+   ],
+   "guards": [],
+   "body_fields": [
+    "orderId",
+    "tripId"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Pay Fail. Reason Not Clear.Please check the order status before you try.",
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:125"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:170",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 170,
+   "function": "cancelOrder",
+   "verb": "GET",
+   "url": "/api/v1/cancelservice/cancel/refound/{orderId}",
+   "via_line": null,
+   "outer": [
+    "cancelOrder"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "Cancel"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:170"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:213",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 213,
+   "function": "reBook",
+   "verb": "POST",
+   "url": "/api/v1/rebookservice/rebook",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "reBook"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "ReBook"
+   ],
+   "guards": [],
+   "body_fields": [
+    "orderId",
+    "oldTripId",
+    "tripId",
+    "seatType",
+    "date"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "unKnow payDifference error!",
+    "Token is expired! please login first!",
+    "unKnow rebook error！"
+   ],
+   "handlers": [
+    "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:213"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:234",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 234,
+   "function": "reBook",
+   "verb": "POST",
+   "url": "/api/v1/rebookservice/rebook/difference",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "success",
+    "onConfirm",
+    "reBook"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "ReBook"
+   ],
+   "guards": [
+    "in the response handler of POST /api/v1/rebookservice/rebook",
+    "!(result[\"status\"] == 1)",
+    "result[\"status\"] == 2",
+    "result.data['differenceMoney'] != null || result.data['differenceMoney'] != 'null'"
+   ],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "unKnow payDifference error!"
+   ],
+   "handlers": [
+    "method:ts-rebook-service:rebook.controller.RebookController#payDifference(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:234"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:287",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 287,
+   "function": "onPay",
+   "verb": "GET",
+   "url": "/api/v1/cancelservice/cancel/{orderId}/{client_id}",
+   "via_line": null,
+   "outer": [
+    "onPay"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "Yes."
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:287"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:364",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 364,
+   "function": "consignOrder",
+   "verb": "PUT",
+   "url": "/api/v1/consignservice/consigns",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "consignOrder"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "Consign"
+   ],
+   "guards": [],
+   "body_fields": [
+    "accountId",
+    "handleDate",
+    "targetDate",
+    "from",
+    "to",
+    "orderId",
+    "consignee",
+    "phone",
+    "weight",
+    "id",
+    "isWithin"
+   ],
+   "body_consts": {
+    "isWithin": false
+   },
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-consign-service:consign.controller.ConsignController#updateConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:364"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:397",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 397,
+   "function": "queryConsignByOrderId",
+   "verb": "GET",
+   "url": "/api/v1/consignservice/consigns/order/{orderId}",
+   "via_line": null,
+   "outer": [
+    "queryConsignByOrderId"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:397"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:485<451",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 485,
+   "function": "searchRouteList",
+   "verb": "POST",
+   "url": "/api/v1/travel2service/trips/left",
+   "via_line": 451,
+   "outer": [
+    "searchRouteList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "this.trainTypeSelected == 0"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-travel2-service:travel2.controller.Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:485<451"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:485<458",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 485,
+   "function": "searchRouteList",
+   "verb": "POST",
+   "url": "/api/v1/travel2service/trips/left",
+   "via_line": 458,
+   "outer": [
+    "searchRouteList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "this.trainTypeSelected == 2"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-travel2-service:travel2.controller.Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:485<458"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:524<452",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 524,
+   "function": "searchRouteList",
+   "verb": "POST",
+   "url": "/api/v1/travelservice/trips/left",
+   "via_line": 452,
+   "outer": [
+    "searchRouteList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "this.trainTypeSelected == 0"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:524<452"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:524<455",
+   "file": "ts-ui-dashboard/static/assets/js/client_order_list.js",
+   "line": 524,
+   "function": "searchRouteList",
+   "verb": "POST",
+   "url": "/api/v1/travelservice/trips/left",
+   "via_line": 455,
+   "outer": [
+    "searchRouteList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_order_list.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "this.trainTypeSelected == 1"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_order_list.js:524<455"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:56",
+   "file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js",
+   "line": 56,
+   "function": "refresh_booking_contacts",
+   "verb": "GET",
+   "url": "/api/v1/contactservice/contacts/account/{client_id}",
+   "via_line": null,
+   "outer": [
+    "refresh_booking_contacts"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_ticket_book.html"
+   ],
+   "labels": [
+    "Refresh Contacts"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "<label><input class='booking_contacts_select' name='booking_contacts' type='rad…",
+    "<input id='booking_new_contacts_name'>",
+    "<select id='booking_new_contacts_documentType' class='booking_contacts_document…",
+    "<option value='1' selected = 'selected'>ID Card</option>",
+    "<option value='2'>Passport</option>",
+    "<option value='3'>Other</option>",
+    "<input id='booking_new_contacts_documentNum'>",
+    "<input id='booking_new_contacts_phoneNum'>",
+    "<label><input id='booking_new_contacts_select' class='booking_contacts_select' …",
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:56"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:115",
+   "file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js",
+   "line": 115,
+   "function": "getAssuranceType",
+   "verb": "GET",
+   "url": "/api/v1/assuranceservice/assurances/types",
+   "via_line": null,
+   "outer": [
+    "getAssuranceType"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_ticket_book.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssuranceType(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:115"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:192",
+   "file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js",
+   "line": 192,
+   "function": "initFoodSelect",
+   "verb": "GET",
+   "url": "/api/v1/foodservice/foods/{date}/{startStation}/{endStation}/{tripId}",
+   "via_line": null,
+   "outer": [
+    "initFoodSelect"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_ticket_book.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:192"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:518#0",
+   "file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js",
+   "line": 518,
+   "function": "click:#ticket_select_contacts_confirm_btn",
+   "verb": "POST",
+   "url": "/api/v1/preserveservice/preserve",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "click:#ticket_select_contacts_confirm_btn"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_ticket_book.html"
+   ],
+   "labels": [
+    "Select"
+   ],
+   "guards": [
+    "selectContactsStatus == true",
+    "tripType == 'G' || tripType == 'D'"
+   ],
+   "body_fields": [
+    "accountId",
+    "contactsId",
+    "tripId",
+    "seatType",
+    "date",
+    "from",
+    "to",
+    "assurance",
+    "foodType",
+    "foodName",
+    "foodPrice",
+    "stationName",
+    "storeName",
+    "handleDate",
+    "consigneeName",
+    "consigneePhone",
+    "consigneeWeight",
+    "isWithin"
+   ],
+   "body_consts": {},
+   "body_cond": [
+    {
+     "field": "seatType",
+     "value": "2",
+     "guards": [
+      "$(\"#sub_setType\").text().indexOf(\"confort\") >= 0"
+     ]
+    },
+    {
+     "field": "seatType",
+     "value": "3",
+     "guards": [
+      "!($(\"#sub_setType\").text().indexOf(\"confort\") >= 0)"
+     ]
+    },
+    {
+     "field": "foodType",
+     "value": 1,
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "$('#sub_foodType').text().indexOf(\"Train\")"
+     ]
+    },
+    {
+     "field": "foodType",
+     "value": 2,
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "!($('#sub_foodType').text().indexOf(\"Train\"))",
+      "$('#sub_foodType').text().indexOf(\"Station\")"
+     ]
+    },
+    {
+     "field": "foodType",
+     "value": 0,
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "!($('#sub_foodType').text().indexOf(\"Train\"))",
+      "!($('#sub_foodType').text().indexOf(\"Station\"))"
+     ]
+    },
+    {
+     "field": "foodType",
+     "value": 0,
+     "guards": [
+      "!(null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text())"
+     ]
+    },
+    {
+     "field": "stationName",
+     "value": "",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "$('#sub_foodType').text().indexOf(\"Train\")"
+     ]
+    },
+    {
+     "field": "storeName",
+     "value": "",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "$('#sub_foodType').text().indexOf(\"Train\")"
+     ]
+    },
+    {
+     "field": "isWithin",
+     "value": false,
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    }
+   ],
+   "body_opt": [
+    {
+     "field": "foodName",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()"
+     ]
+    },
+    {
+     "field": "foodPrice",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()"
+     ]
+    },
+    {
+     "field": "stationName",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()"
+     ]
+    },
+    {
+     "field": "storeName",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()"
+     ]
+    },
+    {
+     "field": "handleDate",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    },
+    {
+     "field": "consigneeName",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    },
+    {
+     "field": "consigneePhone",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    },
+    {
+     "field": "consigneeWeight",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    },
+    {
+     "field": "isWithin",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    }
+   ],
+   "messages": [
+    "please go to order list to pay for it!",
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:518"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:518#1",
+   "file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js",
+   "line": 518,
+   "function": "click:#ticket_select_contacts_confirm_btn",
+   "verb": "POST",
+   "url": "/api/v1/preserveotherservice/preserveOther",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "click:#ticket_select_contacts_confirm_btn"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_ticket_book.html"
+   ],
+   "labels": [
+    "Select"
+   ],
+   "guards": [
+    "selectContactsStatus == true",
+    "!(tripType == 'G' || tripType == 'D')"
+   ],
+   "body_fields": [
+    "accountId",
+    "contactsId",
+    "tripId",
+    "seatType",
+    "date",
+    "from",
+    "to",
+    "assurance",
+    "foodType",
+    "foodName",
+    "foodPrice",
+    "stationName",
+    "storeName",
+    "handleDate",
+    "consigneeName",
+    "consigneePhone",
+    "consigneeWeight",
+    "isWithin"
+   ],
+   "body_consts": {},
+   "body_cond": [
+    {
+     "field": "seatType",
+     "value": "2",
+     "guards": [
+      "$(\"#sub_setType\").text().indexOf(\"confort\") >= 0"
+     ]
+    },
+    {
+     "field": "seatType",
+     "value": "3",
+     "guards": [
+      "!($(\"#sub_setType\").text().indexOf(\"confort\") >= 0)"
+     ]
+    },
+    {
+     "field": "foodType",
+     "value": 1,
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "$('#sub_foodType').text().indexOf(\"Train\")"
+     ]
+    },
+    {
+     "field": "foodType",
+     "value": 2,
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "!($('#sub_foodType').text().indexOf(\"Train\"))",
+      "$('#sub_foodType').text().indexOf(\"Station\")"
+     ]
+    },
+    {
+     "field": "foodType",
+     "value": 0,
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "!($('#sub_foodType').text().indexOf(\"Train\"))",
+      "!($('#sub_foodType').text().indexOf(\"Station\"))"
+     ]
+    },
+    {
+     "field": "foodType",
+     "value": 0,
+     "guards": [
+      "!(null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text())"
+     ]
+    },
+    {
+     "field": "stationName",
+     "value": "",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "$('#sub_foodType').text().indexOf(\"Train\")"
+     ]
+    },
+    {
+     "field": "storeName",
+     "value": "",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()",
+      "$('#sub_foodType').text().indexOf(\"Train\")"
+     ]
+    },
+    {
+     "field": "isWithin",
+     "value": false,
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    }
+   ],
+   "body_opt": [
+    {
+     "field": "foodName",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()"
+     ]
+    },
+    {
+     "field": "foodPrice",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()"
+     ]
+    },
+    {
+     "field": "stationName",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()"
+     ]
+    },
+    {
+     "field": "storeName",
+     "guards": [
+      "null != $('#sub_foodType').text() && \"\" != $('#sub_foodType').text()"
+     ]
+    },
+    {
+     "field": "handleDate",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    },
+    {
+     "field": "consigneeName",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    },
+    {
+     "field": "consigneePhone",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    },
+    {
+     "field": "consigneeWeight",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    },
+    {
+     "field": "isWithin",
+     "guards": [
+      "$('#need-consign-or-not').is(\":checked\")"
+     ]
+    }
+   ],
+   "messages": [
+    "please go to order list to pay for it!",
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:518"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:572",
+   "file": "ts-ui-dashboard/static/assets/js/client_ticket_book.js",
+   "line": 572,
+   "function": "preserveCreateNewContacts",
+   "verb": "POST",
+   "url": "/api/v1/contactservice/contacts",
+   "via_line": null,
+   "outer": [
+    "preserveCreateNewContacts"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/client_ticket_book.html"
+   ],
+   "labels": [
+    "Select"
+   ],
+   "guards": [],
+   "body_fields": [
+    "name",
+    "accountId",
+    "documentType",
+    "documentNumber",
+    "phoneNumber"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/client_ticket_book.js:572"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/index.js:130<116",
+   "file": "ts-ui-dashboard/static/assets/js/index.js",
+   "line": 130,
+   "function": "searchTravel",
+   "verb": "POST",
+   "url": "/api/v1/travelservice/trips/left",
+   "via_line": 116,
+   "outer": [
+    "searchTravel"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/index.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "train_type == 0"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/index.js:130<116"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/index.js:130<117",
+   "file": "ts-ui-dashboard/static/assets/js/index.js",
+   "line": 130,
+   "function": "searchTravel",
+   "verb": "POST",
+   "url": "/api/v1/travel2service/trips/left",
+   "via_line": 117,
+   "outer": [
+    "searchTravel"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/index.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "train_type == 0"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-travel2-service:travel2.controller.Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/index.js:130<117"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/index.js:130<120",
+   "file": "ts-ui-dashboard/static/assets/js/index.js",
+   "line": 130,
+   "function": "searchTravel",
+   "verb": "POST",
+   "url": "/api/v1/travelservice/trips/left",
+   "via_line": 120,
+   "outer": [
+    "searchTravel"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/index.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "!(train_type == 0)",
+    "train_type == 1"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/index.js:130<120"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/index.js:130<122",
+   "file": "ts-ui-dashboard/static/assets/js/index.js",
+   "line": 130,
+   "function": "searchTravel",
+   "verb": "POST",
+   "url": "/api/v1/travel2service/trips/left",
+   "via_line": 122,
+   "outer": [
+    "searchTravel"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/index.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "!(train_type == 0)",
+    "!(train_type == 1)",
+    "train_type == 2"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-travel2-service:travel2.controller.Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/index.js:130<122"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/old_index.js:41",
+   "file": "ts-ui-dashboard/static/assets/js/old_index.js",
+   "line": 41,
+   "function": "loadRecordList",
+   "verb": "GET",
+   "url": "/api/v1/adminorderservice/adminorder",
+   "via_line": null,
+   "outer": [
+    "loadRecordList",
+    "factory:loadDataService"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin.html",
+    "ts-ui-dashboard/static/admin_config.html",
+    "ts-ui-dashboard/static/admin_contacts.html",
+    "ts-ui-dashboard/static/admin_price.html",
+    "ts-ui-dashboard/static/admin_station.html",
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/old_index.js:41"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/old_index.js:97",
+   "file": "ts-ui-dashboard/static/assets/js/old_index.js",
+   "line": 97,
+   "function": "addNewOrder",
+   "verb": "POST",
+   "url": "/api/v1/adminorderservice/adminorder",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "addNewOrder",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin.html",
+    "ts-ui-dashboard/static/admin_config.html",
+    "ts-ui-dashboard/static/admin_contacts.html",
+    "ts-ui-dashboard/static/admin_price.html",
+    "ts-ui-dashboard/static/admin_station.html",
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [
+    "Add"
+   ],
+   "guards": [],
+   "body_fields": [
+    "boughtDate",
+    "travelDate",
+    "travelTime",
+    "accountId",
+    "contactsName",
+    "documentType",
+    "contactsDocumentNumber",
+    "trainNumber",
+    "coachNumber",
+    "seatClass",
+    "seatNumber",
+    "from",
+    "to",
+    "status",
+    "price"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-order-service:adminorder.controller.AdminOrderController#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/old_index.js:97"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/old_index.js:159",
+   "file": "ts-ui-dashboard/static/assets/js/old_index.js",
+   "line": 159,
+   "function": "updateOrder",
+   "verb": "PUT",
+   "url": "/api/v1/adminorderservice/adminorder",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "updateOrder",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin.html",
+    "ts-ui-dashboard/static/admin_config.html",
+    "ts-ui-dashboard/static/admin_contacts.html",
+    "ts-ui-dashboard/static/admin_price.html",
+    "ts-ui-dashboard/static/admin_station.html",
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [
+    "Update"
+   ],
+   "guards": [],
+   "body_fields": [
+    "id",
+    "boughtDate",
+    "travelDate",
+    "travelTime",
+    "accountId",
+    "contactsName",
+    "documentType",
+    "contactsDocumentNumber",
+    "trainNumber",
+    "coachNumber",
+    "seatClass",
+    "seatNumber",
+    "from",
+    "to",
+    "status",
+    "price"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-order-service:adminorder.controller.AdminOrderController#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/old_index.js:159"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/old_index.js:207",
+   "file": "ts-ui-dashboard/static/assets/js/old_index.js",
+   "line": 207,
+   "function": "deleteOrder",
+   "verb": "DELETE",
+   "url": "/api/v1/adminorderservice/adminorder/{orderId}/{trainNumber}",
+   "via_line": null,
+   "outer": [
+    "onConfirm",
+    "deleteOrder",
+    "controller:indexCtrl"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin.html",
+    "ts-ui-dashboard/static/admin_config.html",
+    "ts-ui-dashboard/static/admin_contacts.html",
+    "ts-ui-dashboard/static/admin_price.html",
+    "ts-ui-dashboard/static/admin_station.html",
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [
+    "Delete"
+   ],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-admin-order-service:adminorder.controller.AdminOrderController#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/old_index.js:207"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/old_index.js:290",
+   "file": "ts-ui-dashboard/static/assets/js/old_index.js",
+   "line": 290,
+   "function": "getUserList",
+   "verb": "GET",
+   "url": "/api/v1/userservice/users",
+   "via_line": null,
+   "outer": [
+    "getUserList"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin.html",
+    "ts-ui-dashboard/static/admin_config.html",
+    "ts-ui-dashboard/static/admin_contacts.html",
+    "ts-ui-dashboard/static/admin_price.html",
+    "ts-ui-dashboard/static/admin_station.html",
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-user-service:user.controller.UserController#getAllUser(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/old_index.js:290"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/old_index.js:335",
+   "file": "ts-ui-dashboard/static/assets/js/old_index.js",
+   "line": 335,
+   "function": "getContactOptions",
+   "verb": "GET",
+   "url": "/api/v1/contactservice/contacts/account/{accountId}",
+   "via_line": null,
+   "outer": [
+    "getContactOptions"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin.html",
+    "ts-ui-dashboard/static/admin_config.html",
+    "ts-ui-dashboard/static/admin_contacts.html",
+    "ts-ui-dashboard/static/admin_price.html",
+    "ts-ui-dashboard/static/admin_station.html",
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/old_index.js:335"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/old_index.js:374",
+   "file": "ts-ui-dashboard/static/assets/js/old_index.js",
+   "line": 374,
+   "function": "getTravelOptions",
+   "verb": "GET",
+   "url": "/api/v1/admintravelservice/admintravel",
+   "via_line": null,
+   "outer": [
+    "getTravelOptions"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/admin.html",
+    "ts-ui-dashboard/static/admin_config.html",
+    "ts-ui-dashboard/static/admin_contacts.html",
+    "ts-ui-dashboard/static/admin_price.html",
+    "ts-ui-dashboard/static/admin_station.html",
+    "ts-ui-dashboard/static/admin_train.html"
+   ],
+   "labels": [],
+   "guards": [],
+   "body_fields": [],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "Token is expired! please login first!"
+   ],
+   "handlers": [
+    "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#getAllTravels(org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/assets/js/old_index.js:374"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:96<86",
+   "file": "ts-ui-dashboard/static/js/flowAdvancedSearch.js",
+   "line": 96,
+   "function": "click:#flow_advance_reserve_booking_button",
+   "verb": "POST",
+   "url": "/api/v1/travelplanservice/travelPlan/cheapest",
+   "via_line": 86,
+   "outer": [
+    "click:#flow_advance_reserve_booking_button"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/old_index.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "!(selectType == 0)",
+    "selectType == 1"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "<select class='form-control booking_seat_class'>",
+    "<option value='2'>1st -",
+    "<option value='3'>2st -",
+    "<td class='booking_seat_price_confort noshow_component'>",
+    "<td class='booking_seat_price_economy noshow_component'>",
+    "<button class='btn btn-primary advance_ticket_booking_button'>"
+   ],
+   "handlers": [
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:96<86"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:144<88",
+   "file": "ts-ui-dashboard/static/js/flowAdvancedSearch.js",
+   "line": 144,
+   "function": "click:#flow_advance_reserve_booking_button",
+   "verb": "POST",
+   "url": "/api/v1/travelplanservice/travelPlan/quickest",
+   "via_line": 88,
+   "outer": [
+    "click:#flow_advance_reserve_booking_button"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/old_index.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "!(selectType == 0)",
+    "!(selectType == 1)",
+    "selectType == 2"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "<select class='form-control booking_seat_class'>",
+    "<option value='2'>1st -",
+    "<option value='3'>2st -",
+    "<td class='booking_seat_price_confort noshow_component'>",
+    "<td class='booking_seat_price_economy noshow_component'>",
+    "<button class='btn btn-primary advance_ticket_booking_button'>"
+   ],
+   "handlers": [
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:144<88"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:192<84",
+   "file": "ts-ui-dashboard/static/js/flowAdvancedSearch.js",
+   "line": 192,
+   "function": "click:#flow_advance_reserve_booking_button",
+   "verb": "POST",
+   "url": "/api/v1/travelplanservice/travelPlan/minStation",
+   "via_line": 84,
+   "outer": [
+    "click:#flow_advance_reserve_booking_button"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/old_index.html"
+   ],
+   "labels": [
+    "Search"
+   ],
+   "guards": [
+    "selectType == 0"
+   ],
+   "body_fields": [
+    "startPlace",
+    "endPlace",
+    "departureTime"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [
+    "<select class='form-control booking_seat_class'>",
+    "<option value='2'>1st -",
+    "<option value='3'>2st -",
+    "<td class='booking_seat_price_confort noshow_component'>",
+    "<td class='booking_seat_price_economy noshow_component'>",
+    "<button class='btn btn-primary advance_ticket_booking_button'>"
+   ],
+   "handlers": [
+    "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:192<84"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/orderRebook.js:35",
+   "file": "ts-ui-dashboard/static/js/orderRebook.js",
+   "line": 35,
+   "function": "click:#rebook_pay_button",
+   "verb": "POST",
+   "url": "/api/v1/rebookservice/rebook/difference",
+   "via_line": null,
+   "outer": [
+    "click:#rebook_pay_button"
+   ],
+   "pages": [
+    "ts-ui-dashboard/static/old_index.html"
+   ],
+   "labels": [
+    "Pay"
+   ],
+   "guards": [],
+   "body_fields": [
+    "orderId",
+    "oldTripId",
+    "tripId",
+    "seatType",
+    "date"
+   ],
+   "body_consts": {},
+   "body_cond": [],
+   "body_opt": [],
+   "messages": [],
+   "handlers": [
+    "method:ts-rebook-service:rebook.controller.RebookController#payDifference(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
+   ],
+   "group": "ts-ui-dashboard/static/js/orderRebook.js:35"
+  }
+ ],
+ "unresolved": [
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_consign_list.js:58",
+   "verb": "POST",
+   "url": "/logout",
+   "function": "logOutClient"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_consign_list.js:90",
+   "verb": "POST",
+   "url": "/station/queryById",
+   "function": "getStationNameById"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/client_order_list.js:570",
+   "verb": "POST",
+   "url": "/getVoucher",
+   "function": "printVancher"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/index.js:67",
+   "verb": "POST",
+   "url": "/logout",
+   "function": "logOutClient"
+  },
+  {
+   "id": "ts-ui-dashboard/static/assets/js/index.js:270",
+   "verb": "POST",
+   "url": "/login",
+   "function": "login"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/assurance.js:7",
+   "verb": "GET",
+   "url": "/assurance/findAll",
+   "function": "click:#refresh_assurance_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/assurance.js:62",
+   "verb": "POST",
+   "url": "/assurance/modifyAssurance",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/assurance.js:102",
+   "verb": "POST",
+   "url": "/assurance/create",
+   "function": "click:#create_assurance_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/basicInformation.js:62",
+   "verb": "POST",
+   "url": "/basic/queryForTravel",
+   "function": "click:#basic_information_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/bs_main.js:59<47",
+   "verb": "POST",
+   "url": "/travel/query",
+   "function": "click:#travel_booking_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/bs_main.js:59<48",
+   "verb": "POST",
+   "url": "/travel2/query",
+   "function": "click:#travel_booking_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/bs_main.js:59<50",
+   "verb": "POST",
+   "url": "/travel/query",
+   "function": "click:#travel_booking_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/bs_main.js:59<52",
+   "verb": "POST",
+   "url": "/travel2/query",
+   "function": "click:#travel_booking_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/bs_main.js:129",
+   "verb": "POST",
+   "url": "/login",
+   "function": "click:#flow_advance_reserve_login_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/bs_main.js:223",
+   "verb": "POST",
+   "url": "/login",
+   "function": "click:#flow_preserve_login_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/config.js:25",
+   "verb": "POST",
+   "url": "/config/update",
+   "function": "click:#config_update_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/config.js:51",
+   "verb": "GET",
+   "url": "/config/queryAll",
+   "function": "click:#config_query_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/contacts.js:31",
+   "verb": "POST",
+   "url": "/contacts/create",
+   "function": "click:#add_contacts_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/contacts.js:72",
+   "verb": "POST",
+   "url": "/contacts/modifyContacts",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/contacts.js:103",
+   "verb": "POST",
+   "url": "/contacts/deleteContacts",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/contacts.js:131",
+   "verb": "GET",
+   "url": "/contacts/findAll",
+   "function": "refresh_contacts"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/executeTicket.js:16",
+   "verb": "POST",
+   "url": "/execute/execute",
+   "function": "click:#execute_order_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/executeTicket.js:52",
+   "verb": "POST",
+   "url": "/execute/collected",
+   "function": "click:#single_collect_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:42",
+   "verb": "POST",
+   "url": "/login",
+   "function": "click:#flow_advance_reserve_login_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:283",
+   "verb": "GET",
+   "url": "/contacts/findContacts",
+   "function": "flow_advance_refresh_booking_contacts"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:336",
+   "verb": "GET",
+   "url": "/assurance/getAllAssuranceType",
+   "function": "flow_advance_getAssuranceType"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:456",
+   "verb": "POST",
+   "url": "/contacts/create",
+   "function": "flow_advance_preserveCreateNewContacts"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:513",
+   "verb": "POST",
+   "url": "/food/getFood",
+   "function": "flow_advance_initFoodSelect"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:702#0",
+   "verb": "POST",
+   "url": "/preserve",
+   "function": "click:#flow_advance_reserve_ticket_confirm_confirm_btn"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:702#1",
+   "verb": "POST",
+   "url": "/preserveOther",
+   "function": "click:#flow_advance_reserve_ticket_confirm_confirm_btn"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:745",
+   "verb": "POST",
+   "url": "/inside_payment/pay",
+   "function": "click:#flow_advance_reserve_pay_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:779",
+   "verb": "POST",
+   "url": "/execute/collected",
+   "function": "click:#flow_advanced_reserve_collect_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowAdvancedSearch.js:812",
+   "verb": "POST",
+   "url": "/execute/execute",
+   "function": "click:#flow_advanced_reserve_execute_order_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:45",
+   "verb": "POST",
+   "url": "/login",
+   "function": "click:#flow_preserve_login_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:129<109",
+   "verb": "POST",
+   "url": "/travel/query",
+   "function": "click:#travel_booking_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:129<110",
+   "verb": "POST",
+   "url": "/travel2/query",
+   "function": "click:#travel_booking_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:129<112",
+   "verb": "POST",
+   "url": "/travel/query",
+   "function": "click:#travel_booking_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:129<114",
+   "verb": "POST",
+   "url": "/travel2/query",
+   "function": "click:#travel_booking_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:241",
+   "verb": "POST",
+   "url": "/food/getFood",
+   "function": "initFoodSelect"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:374",
+   "verb": "GET",
+   "url": "/contacts/findContacts",
+   "function": "refresh_booking_contacts"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:427",
+   "verb": "GET",
+   "url": "/assurance/getAllAssuranceType",
+   "function": "getAssuranceType"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:545",
+   "verb": "POST",
+   "url": "/contacts/create",
+   "function": "preserveCreateNewContacts"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:656#0",
+   "verb": "POST",
+   "url": "/preserve",
+   "function": "click:#ticket_confirm_confirm_btn"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:656#1",
+   "verb": "POST",
+   "url": "/preserveOther",
+   "function": "click:#ticket_confirm_confirm_btn"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:700",
+   "verb": "POST",
+   "url": "/inside_payment/pay",
+   "function": "click:#preserve_pay_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:735",
+   "verb": "POST",
+   "url": "/execute/collected",
+   "function": "click:#preserve_collect_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowPreserve.js:769",
+   "verb": "POST",
+   "url": "/execute/execute",
+   "function": "click:#preserve_order_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:47<42",
+   "verb": "POST",
+   "url": "/order/queryForRefresh",
+   "function": "queryMyOrder"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:47<43",
+   "verb": "POST",
+   "url": "/orderOther/queryForRefresh",
+   "function": "queryMyOrder"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:256",
+   "verb": "POST",
+   "url": "/station/queryById",
+   "function": "getStationNameById"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:346<333",
+   "verb": "POST",
+   "url": "/travel/query",
+   "function": "click:#travel_rebook_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:346<334",
+   "verb": "POST",
+   "url": "/travel2/query",
+   "function": "click:#travel_rebook_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:346<336",
+   "verb": "POST",
+   "url": "/travel/query",
+   "function": "click:#travel_rebook_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:346<338",
+   "verb": "POST",
+   "url": "/travel2/query",
+   "function": "click:#travel_rebook_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:429",
+   "verb": "POST",
+   "url": "/rebook/rebook",
+   "function": "click:#ticket_rebook_confirm_confirm_btn"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:476",
+   "verb": "POST",
+   "url": "/rebook/payDifference",
+   "function": "click:#ticket_rebook_pay_panel_confirm"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:529",
+   "verb": "POST",
+   "url": "/inside_payment/pay",
+   "function": "click:#pay_for_not_paid_pay_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:568",
+   "verb": "POST",
+   "url": "/cancelCalculateRefund",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/flowRebook.js:604",
+   "verb": "POST",
+   "url": "/cancelOrder",
+   "function": "click:#ticket_cancel_panel_confirm"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/food.js:16",
+   "verb": "POST",
+   "url": "/food/getFood",
+   "function": "click:#query_food_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/food.js:144",
+   "verb": "GET",
+   "url": "/food/findAllFoodOrder",
+   "function": "click:#query_food_order_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/insidePayment.js:8",
+   "verb": "GET",
+   "url": "/inside_payment/queryAccount",
+   "function": "click:#inside_payment_query_account_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/insidePayment.js:37",
+   "verb": "GET",
+   "url": "/inside_payment/queryPayment",
+   "function": "click:#inside_payment_query_payment_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/insidePayment.js:69",
+   "verb": "GET",
+   "url": "/inside_payment/queryAddMoney",
+   "function": "click:#inside_payment_query_add_money_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/insidePayment.js:112",
+   "verb": "POST",
+   "url": "/inside_payment/pay",
+   "function": "click:#inside_payment_pay_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/login.js:26",
+   "verb": "POST",
+   "url": "/login",
+   "function": "click:#login_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/news.js:4",
+   "verb": "GET",
+   "url": "/news-service/news",
+   "function": "click:#refresh_news_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/notification.js:62",
+   "verb": "POST",
+   "url": "/notification/preserve_success",
+   "function": "click:#notification_send_email_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/notification.js:79",
+   "verb": "POST",
+   "url": "/notification/order_create_success",
+   "function": "click:#notification_send_email_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/notification.js:96",
+   "verb": "POST",
+   "url": "/notification/order_changed_success",
+   "function": "click:#notification_send_email_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:25<9",
+   "verb": "GET",
+   "url": "/order/findAll",
+   "function": "click:#refresh_order_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:25<10",
+   "verb": "GET",
+   "url": "/orderOther/findAll",
+   "function": "click:#refresh_order_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:25<13",
+   "verb": "GET",
+   "url": "/order/findAll",
+   "function": "click:#refresh_order_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:25<16",
+   "verb": "GET",
+   "url": "/orderOther/findAll",
+   "function": "click:#refresh_order_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:25<91#0",
+   "verb": "GET",
+   "url": "",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:25<91#1",
+   "verb": "GET",
+   "url": "/order/modifyOrderStatus",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:25<91#2",
+   "verb": "GET",
+   "url": "/orderOther/modifyOrderStatus",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:79#0",
+   "verb": "POST",
+   "url": "",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:79#1",
+   "verb": "POST",
+   "url": "/order/modifyOrderStatus",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/order.js:79#2",
+   "verb": "POST",
+   "url": "/orderOther/modifyOrderStatus",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/orderCancel.js:16",
+   "verb": "POST",
+   "url": "/cancelOrder",
+   "function": "click:#single_cancel_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/orderCancel.js:48",
+   "verb": "POST",
+   "url": "/cancelCalculateRefund",
+   "function": "click:#single_cancel_refund_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/orderRebook.js:86",
+   "verb": "POST",
+   "url": "/rebook/rebook",
+   "function": "click:#single_rebook_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/payment.js:8",
+   "verb": "GET",
+   "url": "/payment/query",
+   "function": "click:#payment_query_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/payment.js:56",
+   "verb": "POST",
+   "url": "/payment/pay",
+   "function": "click:#payment_pay_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/price.js:8",
+   "verb": "GET",
+   "url": "/price/queryAll",
+   "function": "click:#price_queryAll_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/price.js:67",
+   "verb": "POST",
+   "url": "/price/create",
+   "function": "click:#price_create_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/register.js:45",
+   "verb": "POST",
+   "url": "/register",
+   "function": "click:#register_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/route.js:7",
+   "verb": "GET",
+   "url": "/route/queryAll",
+   "function": "click:#refresh_route_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/route.js:65",
+   "verb": "POST",
+   "url": "/route/createAndModify",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/route.js:112",
+   "verb": "POST",
+   "url": "/route/createAndModify",
+   "function": "click:#create_route_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/routePlan.js:18<13",
+   "verb": "POST",
+   "url": "/routePlan/minStopStations",
+   "function": "click:#travel_min_stop_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/routePlan.js:78<73",
+   "verb": "POST",
+   "url": "/routePlan/quickestRoute",
+   "function": "click:#travel_quickest_route_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/routePlan.js:138<133",
+   "verb": "POST",
+   "url": "/routePlan/cheapestRoute",
+   "function": "click:#travel_cheapest_route_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/securityCheck.js:16",
+   "verb": "POST",
+   "url": "/security/check",
+   "function": "click:#security_check_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/securityCheck.js:48",
+   "verb": "GET",
+   "url": "/securityConfig/findAll",
+   "function": "refresh_security_config"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/securityCheck.js:94",
+   "verb": "POST",
+   "url": "/securityConfig/update",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/securityCheck.js:124",
+   "verb": "POST",
+   "url": "/securityConfig/delete",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/sso.js:13",
+   "verb": "GET",
+   "url": "/account/findAll",
+   "function": "refresh_account"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/sso.js:55",
+   "verb": "POST",
+   "url": "/account/modify",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/sso.js:87",
+   "verb": "GET",
+   "url": "/account/findAllLogin",
+   "function": "refresh_login_account"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/sso.js:127",
+   "verb": "POST",
+   "url": "/logout",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/sso.js:165",
+   "verb": "POST",
+   "url": "/logout",
+   "function": "click:#logout_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/station.js:26",
+   "verb": "POST",
+   "url": "/station/update",
+   "function": "click:#station_update_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/station.js:50",
+   "verb": "GET",
+   "url": "/station/query",
+   "function": "click:#station_query_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/ticketInformation.js:63",
+   "verb": "POST",
+   "url": "/ticketinfo/queryForTravel",
+   "function": "click:#ticketinfo_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/ticketOffice.js:71",
+   "verb": "GET",
+   "url": "/office/getRegionList",
+   "function": "getRegionList"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/ticketOffice.js:112",
+   "verb": "POST",
+   "url": "/office/getSpecificOffices",
+   "function": "click:#query_office_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/ticketOffice.js:205",
+   "verb": "POST",
+   "url": "/office/updateOffice",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/ticketOffice.js:241",
+   "verb": "POST",
+   "url": "/office/deleteOffice",
+   "function": "onclick"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/ticketOffice.js:285",
+   "verb": "POST",
+   "url": "/office/addOffice",
+   "function": "createOffice"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/train.js:30",
+   "verb": "POST",
+   "url": "/train/update",
+   "function": "click:#train_update_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/train.js:59",
+   "verb": "GET",
+   "url": "/train/query",
+   "function": "click:#train_query_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/travel.js:41",
+   "verb": "GET",
+   "url": "/travel/queryAll",
+   "function": "click:#travel_queryAll_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/travel.js:77",
+   "verb": "GET",
+   "url": "/travel2/queryAll",
+   "function": "click:#travel2_queryAll_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/travel.js:156",
+   "verb": "POST",
+   "url": "/travel/update",
+   "function": "click:#travel_update_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/travel.js:220",
+   "verb": "POST",
+   "url": "/travel2/update",
+   "function": "click:#travel2_update_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/travelTransit.js:20<15",
+   "verb": "POST",
+   "url": "/travelPlan/getTransferResult",
+   "function": "click:#transit_search_button"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/upload.js:103",
+   "verb": "POST",
+   "url": "/api/v1/avatar",
+   "function": "upload"
+  },
+  {
+   "id": "ts-ui-dashboard/static/js/voucher.js:24",
+   "verb": "POST",
+   "url": "/getVoucher",
+   "function": "onLoadBody"
+  }
+ ],
+ "pages_title": {
+  "ts-ui-dashboard/static/add&delete.html": "Train Ticket System",
+  "ts-ui-dashboard/static/admin.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/admin_config.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/admin_contacts.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/admin_price.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/admin_route.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/admin_station.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/admin_train.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/admin_travel.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/admin_user.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/adminlogin.html": "TrainTicket Login",
+  "ts-ui-dashboard/static/client_adsearch.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/client_consign_list.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/client_enter_station.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/client_login.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/client_order_list.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/client_ticket_book.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/client_ticket_collect.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/index.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/old_index.html": "Train Ticket System",
+  "ts-ui-dashboard/static/upload_avatar.html": "TrainTicket Admin",
+  "ts-ui-dashboard/static/voucher.html": "Voucher Detail"
+ }
+}
