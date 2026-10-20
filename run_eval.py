@@ -184,6 +184,14 @@ def parse_args() -> argparse.Namespace:
              "(off, по умолчанию)",
     )
     parser.add_argument(
+        "--ref-kinds",
+        choices=("v7", "v8"),
+        default="v7",
+        help="Виды сущностей в ссылках шагов (StepRequest.refs, ADR-007): v7 — 12 видов M1 до ADR-007 (кеш m1-v7, "
+             "по умолчанию), M4 переводит их в виды манифеста; v8 — виды манифеста engine/manifest.py "
+             "(@Entity/@Embeddable скелета: contacts, priceConfig, consignRecord, trainType)",
+    )
+    parser.add_argument(
         "--module-roles",
         choices=("skeleton", "names"),
         default="skeleton",
@@ -391,6 +399,7 @@ def main() -> None:
         spring_security=args.spring_security,
         m4_m3_refs=args.m4_m3_refs,
         m4_state=args.m4_state,
+        ref_kinds=args.ref_kinds,
         module_roles=args.module_roles,
         grounder=args.grounder,
         m1_options=m1_options,
