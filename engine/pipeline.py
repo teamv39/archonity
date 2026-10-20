@@ -47,6 +47,45 @@ def resolve_passenger_context(
     return ScenarioContext(user_name=user_name, account_id=account_id, scenario_id=scenario_id)
 
 
+@dataclasses.dataclass
+class PipelineConfig:
+    """Типизированная конфигурация оркестратора конвейера."""
+    rules_path: str | Path | None = None
+    db_dump_path: str | Path | None = None
+    db_state: Any = None
+    pool_ir: MethodPoolIR | None = None
+    ir_path: str | Path | None = None
+    entity_ir_path: str | Path | None = None
+    constructors: str = "caller_only"
+    collection_tables_on_read: str = "loaded"
+    element_callbacks: str = "on"
+    rabbitmq_delivery: str = "on"
+    station_food_collection: str = "store_browse_only"
+    probe_orders_data: str = "on"
+    enum_member_calls: str = "on"
+    trip_food_query: str = "cascade"
+    route_distances_collection: str = "pruned"
+    preserve_notification_lookup: str = "on"
+    grounder: str = "legacy"
+    m1_options: dict[str, Any] | None = None
+    executor: str = "legacy"
+    method_ir_dir: str | Path | None = None
+    unresolved_receiver_calls: str = "mute"
+    m4_success_retry: str = "on"
+    m4_judge: str = "off"
+    m4_judge_budget: int = 400
+    security_check_scope: str = "all"
+    route_stations_usage: str = "pruned"
+    jackson_ctor: str = "on"
+    lombok_tostring: str = "on"
+    unbound_handlers: str = "rebind"
+    spring_security: str = "semantic"
+    m4_m3_refs: str = "off"
+    module_roles: str = "skeleton"
+    m4_state: str = "context"
+    ref_kinds: str | None = None
+
+
 class ArchonityPipeline:
     """Оркестратор полного цикла статического анализа и сборки графа."""
 
@@ -54,120 +93,107 @@ class ArchonityPipeline:
         self,
         skeleton_path: str | Path,
         targets_root: str | Path,
-        rules_path: str | Path | None = None,
-        db_dump_path: str | Path | None = None,
-        db_state: Any = None,
-        pool_ir: MethodPoolIR | None = None,
-        ir_path: str | Path | None = None,
-        entity_ir_path: str | Path | None = None,
-        constructors: str = "caller_only",
-        collection_tables_on_read: str = "loaded",
-        element_callbacks: str = "on",
-        rabbitmq_delivery: str = "on",
-        station_food_collection: str = "store_browse_only",
-        probe_orders_data: str = "on",
-        enum_member_calls: str = "on",
-        trip_food_query: str = "cascade",
-        route_distances_collection: str = "pruned",
-        preserve_notification_lookup: str = "on",
-        grounder: str = "legacy",
-        m1_options: dict[str, Any] | None = None,
-        executor: str = "legacy",
-        method_ir_dir: str | Path | None = None,
-        unresolved_receiver_calls: str = "mute",
-        m4_success_retry: str = "on",
-        m4_judge: str = "off",
-        m4_judge_budget: int = 400,
-        security_check_scope: str = "all",
-        route_stations_usage: str = "pruned",
-        jackson_ctor: str = "on",
-        lombok_tostring: str = "on",
-        unbound_handlers: str = "rebind",
-        spring_security: str = "semantic",
-        m4_m3_refs: str = "off",
-        module_roles: str = "skeleton",
-        m4_state: str = "context",
-        ref_kinds: str | None = None,
+        config: PipelineConfig | None = None,
+        **kwargs: Any,
     ) -> None:
+        cfg = dataclasses.replace(config) if config is not None else PipelineConfig()
+        for k, v in kwargs.items():
+            if hasattr(cfg, k):
+                setattr(cfg, k, v)
+        self.config = cfg
+
         # Виды refs (ADR-007) — как у промпта M1: M1 v8 (по умолчанию) даёт виды манифеста, v7 и legacy — прежние 12
-        if ref_kinds is None:
-            ref_kinds = "v8" if grounder == "m1" and (m1_options or {}).get("prompt", "v8") == "v8" else "v7"
+        if self.config.ref_kinds is None:
+            self.config.ref_kinds = (
+                "v8"
+                if self.config.grounder == "m1" and (self.config.m1_options or {}).get("prompt", "v8") == "v8"
+                else "v7"
+            )
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
 
         sk_dict = load_json(self.skeleton_path)
         self.index = SkeletonIndex(
             sk_dict,
-            db_dump_path=db_dump_path,
-            db_state=db_state,
-            pool_ir=pool_ir,
-            ir_path=ir_path,
-            entity_ir_path=entity_ir_path,
+            db_dump_path=self.config.db_dump_path,
+            db_state=self.config.db_state,
+            pool_ir=self.config.pool_ir,
+            ir_path=self.config.ir_path,
+            entity_ir_path=self.config.entity_ir_path,
         )
 
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
 
         self.rules = RuntimeRules(
-            rules_path,
-            constructors=constructors,
-            collection_tables_on_read=collection_tables_on_read,
-            element_callbacks=element_callbacks,
-            rabbitmq_delivery=rabbitmq_delivery,
-            station_food_collection=station_food_collection,
-            probe_orders_data=probe_orders_data,
-            enum_member_calls=enum_member_calls,
-            trip_food_query=trip_food_query,
-            route_distances_collection=route_distances_collection,
-            route_stations_usage=route_stations_usage,
-            preserve_notification_lookup=preserve_notification_lookup,
-            unresolved_receiver_calls=unresolved_receiver_calls,
-            m4_success_retry=m4_success_retry,
-            security_check_scope=security_check_scope,
-            jackson_ctor=jackson_ctor,
-            lombok_tostring=lombok_tostring,
-            unbound_handlers=unbound_handlers,
-            spring_security=spring_security,
-            m4_m3_refs=m4_m3_refs,
-            module_roles=module_roles,
-            m4_state=m4_state,
-            ref_kinds=ref_kinds,
+            self.config.rules_path,
+            constructors=self.config.constructors,
+            collection_tables_on_read=self.config.collection_tables_on_read,
+            element_callbacks=self.config.element_callbacks,
+            rabbitmq_delivery=self.config.rabbitmq_delivery,
+            station_food_collection=self.config.station_food_collection,
+            probe_orders_data=self.config.probe_orders_data,
+            enum_member_calls=self.config.enum_member_calls,
+            trip_food_query=self.config.trip_food_query,
+            route_distances_collection=self.config.route_distances_collection,
+            route_stations_usage=self.config.route_stations_usage,
+            preserve_notification_lookup=self.config.preserve_notification_lookup,
+            unresolved_receiver_calls=self.config.unresolved_receiver_calls,
+            m4_success_retry=self.config.m4_success_retry,
+            security_check_scope=self.config.security_check_scope,
+            jackson_ctor=self.config.jackson_ctor,
+            lombok_tostring=self.config.lombok_tostring,
+            unbound_handlers=self.config.unbound_handlers,
+            spring_security=self.config.spring_security,
+            m4_m3_refs=self.config.m4_m3_refs,
+            module_roles=self.config.module_roles,
+            m4_state=self.config.m4_state,
+            ref_kinds=self.config.ref_kinds,
         )
 
-        self.grounder_mode = grounder
+        self.grounder_mode = self.config.grounder
         self.grounder = None
         self.m1 = None
         self.step_requests: dict[str, list[dict[str, Any]]] = {}
-        if grounder == "legacy":
+        if self.config.grounder == "legacy":
             self.grounder = ScenarioGrounder(self.index, self.targets_root)
-        elif grounder == "m1":
+        elif self.config.grounder == "m1":
             from engine.grounding.grounder import StepGrounder
 
-            self.m1 = StepGrounder(self.index, self.targets_root, **(m1_options or {}))
+            self.m1 = StepGrounder(self.index, self.targets_root, **(self.config.m1_options or {}))
         else:
-            raise ValueError(f"неизвестный grounder: {grounder}")
+            raise ValueError(f"неизвестный grounder: {self.config.grounder}")
 
         self.builder = GraphBuilder(self.index, self.rules)
         self.ledger = DecisionLedger()
 
-        self.executor_mode = executor
+        self.executor_mode = self.config.executor
         self.m4 = None
-        if executor == "ir":
-            if grounder != "m1":
+        if self.config.executor == "ir":
+            if self.config.grounder != "m1":
                 raise ValueError("executor=ir работает от StepRequest M1: нужен grounder=m1")
             from engine.executor.step import StepExecutor
 
-            ir_dir = Path(method_ir_dir) if method_ir_dir else Path(__file__).resolve().parent.parent / "data" / "ir"
+            ir_dir = (
+                Path(self.config.method_ir_dir)
+                if self.config.method_ir_dir
+                else Path(__file__).resolve().parent.parent / "data" / "ir"
+            )
             judge = None
-            llm = (m1_options or {}).get("llm")
-            if m4_judge != "off" and llm is not None:
+            llm = (self.config.m1_options or {}).get("llm")
+            if self.config.m4_judge != "off" and llm is not None:
                 # Судья M4 с кешем и бюджетом вызовов сервера (engine/executor/judge.py)
                 from engine.executor.judge import Judge
 
-                judge = Judge(self.targets_root, self.index.sk.get("context"), llm, mode=m4_judge,
-                              budget=m4_judge_budget)
+                judge = Judge(
+                    self.targets_root,
+                    self.index.sk.get("context"),
+                    llm,
+                    mode=self.config.m4_judge,
+                    budget=self.config.m4_judge_budget,
+                )
             self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root, judge=judge)
-        elif executor != "legacy":
-            raise ValueError(f"неизвестный executor: {executor}")
+        elif self.config.executor != "legacy":
+            raise ValueError(f"неизвестный executor: {self.config.executor}")
 
     def run_scenario(
         self,

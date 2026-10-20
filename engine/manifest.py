@@ -78,8 +78,13 @@ def _fqn(nid: str, n: dict[str, Any]) -> str:
     return n.get("fqn") or nid.split(":", 2)[-1]
 
 
-def _simple(fqn: str) -> str:
-    return fqn.rsplit(".", 1)[-1].split("$")[-1]
+def simple_name(fqn: str | None, lower: bool = False) -> str:
+    """Простое имя класса без пакетов и вложенных классов."""
+    s = (fqn or "").rsplit(".", 1)[-1].split("$")[-1]
+    return s.lower() if lower else s
+
+
+_simple = simple_name
 
 
 def _ann_arg(a: dict[str, Any] | None, key: str) -> str | None:
@@ -94,6 +99,15 @@ def _ann_arg(a: dict[str, Any] | None, key: str) -> str | None:
     return m.group(1) if m and m.group(1) else None
 
 
+def camel_to_snake(name: str) -> str:
+    """Имя таблицы по умолчанию в Spring Boot (CamelCaseToUnderscoresNamingStrategy): `TrainType` -> `train_type`."""
+    s = name.replace(".", "_")
+    return re.sub(r"(?<=[a-z0-9])([A-Z])", r"_\1", s).lower()
+
+
+_physical_name = camel_to_snake
+
+
 def _table(nid: str, n: dict[str, Any]) -> str:
     """Узел таблицы сущности: `res:table:<схема>.<имя>`."""
     table = _annotation(n, "Table")
@@ -103,10 +117,4 @@ def _table(nid: str, n: dict[str, Any]) -> str:
     return f"res:table:{schema}.{name}"
 
 
-def _physical_name(name: str) -> str:
-    """Имя таблицы по умолчанию в Spring Boot (CamelCaseToUnderscoresNamingStrategy): `TrainType` -> `train_type`."""
-    s = name.replace(".", "_")
-    return re.sub(r"(?<=[a-z0-9])([A-Z])", r"_\1", s).lower()
-
-
-__all__ = ["EntityKind", "entity_kinds", "kind_name"]
+__all__ = ["EntityKind", "entity_kinds", "kind_name", "simple_name", "camel_to_snake"]

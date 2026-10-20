@@ -6,10 +6,13 @@
 from __future__ import annotations
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex
+
+logger = logging.getLogger(__name__)
 
 
 class EvidenceLogger:
@@ -46,8 +49,8 @@ class EvidenceLogger:
                     for r in routes:
                         if sid := r.get("id"):
                             self._gateway_routes[sid] = r
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("Не удалось прочитать gateway routes из %s: %s", self.configs_topology_path, e)
 
     def extract_snippet(self, file_path_rel: str, line: int, context: int = 2) -> str:
         """Извлечение сниппета реального исходного кода вокруг указанной строки с кэшированием."""

@@ -13,12 +13,13 @@ from pathlib import Path
 from typing import Any
 
 from engine.executor.values import UNKNOWN, EnumV, ListV, Obj, OptionalV, equals_value
+from engine.manifest import camel_to_snake
 
 _uuid = itertools.count(1)
 
 
 def snake(name: str) -> str:
-    return re.sub(r"(?<=[a-z0-9])([A-Z])", r"_\1", name).lower()
+    return camel_to_snake(name)
 
 
 def camel(col: str) -> str:

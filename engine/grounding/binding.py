@@ -33,17 +33,15 @@ def _stem(name: str) -> str:
     return s.lower()
 
 
-_PARAMS: dict[int, dict[str, list[dict[str, Any]]]] = {}
-
-
 def _params(ix: SkeletonIndex) -> dict[str, list[dict[str, Any]]]:
-    if id(ix) not in _PARAMS:
-        idx: dict[str, list[dict[str, Any]]] = {}
+    cached = getattr(ix, "_param_cache", None)
+    if cached is None:
+        cached = {}
         for n in ix.N.values():
             if n.get("kind") == "parameter":
-                idx.setdefault(n["method"], []).append(n)
-        _PARAMS[id(ix)] = idx
-    return _PARAMS[id(ix)]
+                cached.setdefault(n["method"], []).append(n)
+        setattr(ix, "_param_cache", cached)
+    return cached
 
 
 def path_variables(ix: SkeletonIndex, handler: str) -> list[str]:
