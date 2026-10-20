@@ -9,18 +9,23 @@
 from __future__ import annotations
 
 import collections
+import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex
-from engine.grounding.text import ntoks
+from engine.grounding.text import DOMAIN_SYN, ntoks
 from engine.grounding.ui_catalog import UICatalog
 
 RENDERS = ("code", "code_ui")
 SRC_LINES = 30
 SKIP_PARAM_TYPES = {"HttpHeaders", "HttpServletRequest", "HttpServletResponse"}
+# Ответ с кодом статуса в исходнике: `new Response<>(2, "Please pay the different money!", data)`
+STATUS_ANSWER = re.compile(r'new\s+[A-Z]\w*(?:<[^>]*>)?\s*\(\s*(-?\d+)\s*,\s*"((?:[^"\\]|\\.)*)"')
+REACH_DEPTH = 4
+SERVICE_CALLS, CALLS_DEPTH = 12, 3
 
 
 @dataclass
@@ -57,12 +62,70 @@ def _param_source(anns: list[dict[str, Any]]) -> str:
     return "other"
 
 
+def ir_text(e: Any) -> str:
+    """Выражение IR (M2) как текст Java: `priceOld.compareTo(priceNew) > 0`."""
+    if not isinstance(e, dict):
+        return "?"
+    if "bin" in e:
+        return f"{ir_text(e.get('l'))} {e['bin']} {ir_text(e.get('r'))}"
+    if "un" in e:
+        inner = e.get("e")
+        t = ir_text(inner)
+        return f"{e['un']}({t})" if isinstance(inner, dict) and "bin" in inner else f"{e['un']}{t}"
+    if "callee" in e:
+        args = ", ".join(ir_text(a) for a in e.get("args") or [])
+        recv = e.get("recv")
+        return f"{ir_text(recv)}.{e['callee']}({args})" if recv else f"{e['callee']}({args})"
+    if "lit" in e:
+        v = e["lit"]
+        return "null" if v is None else (f'"{v}"' if isinstance(v, str) else str(v).lower() if isinstance(v, bool)
+                                         else str(v))
+    if "constant" in e:
+        return f"{str(e.get('enum') or '').rsplit('.', 1)[-1]}.{e['constant']}"
+    if "field" in e:
+        return f"{ir_text(e.get('of'))}.{e['field']}" if e.get("of") else e["field"]
+    if "name" in e:
+        return e["name"]
+    if "this" in e:
+        return "this"
+    if "new" in e:
+        return f"new {e['new']}(...)"
+    return "?"
+
+
+def _status_returns(stmts: list[dict[str, Any]], guard: tuple[str, ...]):
+    """(код, условия) для `return new X(<int>, "<str>", ...)` в теле IR; условия — стек `if` сверху вниз."""
+    for s in stmts:
+        if not isinstance(s, dict):
+            continue
+        if s.get("op") == "return":
+            args = (s.get("expr") or {}).get("args") or []
+            if (s.get("expr") or {}).get("new") and len(args) >= 2 and isinstance(args[0].get("lit"), int) \
+                    and not isinstance(args[0].get("lit"), bool) and isinstance(args[1].get("lit"), str):
+                yield args[0]["lit"], guard
+            continue
+        if s.get("op") == "if":
+            cond = ir_text(s.get("cond"))
+            yield from _status_returns(s.get("then") or [], guard + (cond,))
+            yield from _status_returns(s.get("else") or [], guard + (f"!({cond})",))
+            continue
+        for v in s.values():
+            if isinstance(v, list) and v and isinstance(v[0], dict) and "op" in v[0]:
+                yield from _status_returns(v, guard)
+
+
 class HandlerCatalog:
     """Все обработчики скелета с их описанием и UI-запросами."""
 
-    def __init__(self, ix: SkeletonIndex, targets_root: str | Path, ui: UICatalog) -> None:
+    def __init__(self, ix: SkeletonIndex, targets_root: str | Path, ui: UICatalog,
+                 ir_dir: str | Path | None = None) -> None:
+        """`ir_dir` — IR тел методов (`data/ir`, выход M2): по нему `answer_guards` видит условия возвратов."""
         self.ix = ix
         self.root = Path(targets_root)
+        self.ir_dir = Path(ir_dir) if ir_dir else None
+        self._ir: dict[str, dict[str, Any]] = {}
+        self._lines: dict[str, list[str]] = {}
+        self._answers: dict[str, dict[int, list[str]]] = {}
         N = ix.N
         params: dict[str, list[dict[str, Any]]] = collections.defaultdict(list)
         fields: dict[str, list[dict[str, str]]] = collections.defaultdict(list)
@@ -111,6 +174,83 @@ class HandlerCatalog:
         body = [ln.strip() for ln in lines[j + 1:end] if ln.strip() and not re.match(r"\s*@", ln)]
         return "\n".join(body[:SRC_LINES])
 
+    def _method_lines(self, n: dict[str, Any]) -> list[str]:
+        f = n.get("file", "")
+        if f not in self._lines:
+            try:
+                self._lines[f] = (self.root / f).read_text(encoding="utf-8", errors="replace").splitlines()
+            except OSError:
+                self._lines[f] = []
+        return self._lines[f][n.get("line", 1) - 1:n.get("end", n.get("line", 1))]
+
+    def reach(self, nid: str, depth: int = REACH_DEPTH) -> list[str]:
+        """Методы модуля обработчика, достижимые из него по вызовам скелета (с реализациями интерфейсов), в порядке
+        обхода в ширину; сам обработчик первый."""
+        ix = self.ix
+        module = ix.N.get(nid, {}).get("module")
+        seen, frontier = [nid], [nid]
+        for _ in range(depth):
+            nxt = []
+            for m in frontier:
+                for c in sorted(set(ix.calls.get(m, ())) | set(ix.over.get(m, ()))):
+                    if c not in seen and ix.N.get(c, {}).get("module") == module:
+                        seen.append(c)
+                        nxt.append(c)
+            frontier = nxt
+        return seen
+
+    def answers(self, nid: str) -> dict[int, list[str]]:
+        """Ответы обработчика с кодом статуса: литералы `new X(<код>, "<сообщение>", ...)` в методах `reach`.
+        По ним видно, что значит статус, который проверяет UI в обработчике ответа."""
+        if nid in self._answers:
+            return self._answers[nid]
+        out: dict[int, list[str]] = {}
+        for m in sorted(self.reach(nid)):
+            for code, msg in STATUS_ANSWER.findall("\n".join(self._method_lines(self.ix.N[m]))):
+                msgs = out.setdefault(int(code), [])
+                if msg not in msgs:
+                    msgs.append(msg)
+        self._answers[nid] = out
+        return out
+
+    def answer_guards(self, nid: str) -> dict[int, list[str]]:
+        """Условия, при которых обработчик возвращает ответ с кодом статуса: стек условий ветвлений IR над
+        `return new X(<код>, "<сообщение>", ...)` в методах `reach`, по коду. Без IR — пусто."""
+        out: dict[int, list[str]] = {}
+        for m in self.reach(nid):
+            body = self._ir_method(m)
+            for code, guard in _status_returns(body or [], ()):
+                text = " && ".join(guard) or "always"
+                if text not in out.setdefault(code, []):
+                    out[code].append(text)
+        return out
+
+    def _ir_method(self, nid: str) -> list[dict[str, Any]] | None:
+        module = self.ix.N.get(nid, {}).get("module")
+        if not module or self.ir_dir is None:
+            return None
+        if module not in self._ir:
+            try:
+                self._ir[module] = json.loads((self.ir_dir / f"{module}.json").read_text(encoding="utf-8"))["methods"]
+            except (OSError, ValueError, KeyError):
+                self._ir[module] = {}
+        return (self._ir[module].get(nid) or {}).get("body")
+
+    def service_calls(self, nid: str, limit: int = SERVICE_CALLS) -> list[str]:
+        """Имена методов модуля, которые выполняет обработчик (`reach`), без конструкторов, абстрактных методов и
+        коротких (геттеры, сеттеры): что делает обработчик внутри — `drawBackMoney`, `createConsign`."""
+        N = self.ix.N
+        own = N.get(nid, {}).get("name")
+        out: list[str] = []
+        for m in self.reach(nid, CALLS_DEPTH)[1:]:
+            n = N.get(m, {})
+            name = n.get("name")
+            if n.get("kind") != "method" or not name or name in ("<init>", own) or n.get("abstract") \
+                    or n.get("end", 0) - n.get("line", 0) < 3 or name in out:
+                continue
+            out.append(name)
+        return out[:limit]
+
     def render(self, nid: str, mode: str = "code_ui") -> str:
         h = self.handlers[nid]
         out = [f"{v} {p}" for v, p in h.routes]
@@ -131,11 +271,11 @@ class HandlerCatalog:
                 out.append(", ".join(bits))
         return "\n".join(out)
 
-    def bm25_tokens(self, nid: str, mode: str = "code_ui") -> list[str]:
-        """Токены для BM25: весь текст плюс имя метода и путь ещё раз (как в resolver)."""
+    def bm25_tokens(self, nid: str, mode: str = "code_ui", syn: dict[str, list[str]] | None = DOMAIN_SYN) -> list[str]:
+        """Токены для BM25: весь текст плюс имя метода и путь ещё раз (как в resolver); `syn` — см. `text.stem`."""
         h = self.handlers[nid]
-        extra = ntoks(h.name) * 2 + ntoks(" ".join(p for _, p in h.routes))
+        extra = ntoks(h.name, syn) * 2 + ntoks(" ".join(p for _, p in h.routes), syn)
         if mode == "code_ui":
             for r in h.ui:
-                extra += ntoks(r.function) + ntoks(" ".join(r.labels))
-        return ntoks(self.render(nid, mode)) + extra
+                extra += ntoks(r.function, syn) + ntoks(" ".join(r.labels), syn)
+        return ntoks(self.render(nid, mode), syn) + extra

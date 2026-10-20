@@ -1,0 +1,108 @@
+{
+ "key": "sha256:108fca094b82dae496b394b5d02a4d113b25dc75f63d2552e4678ce5112726c2",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "m1-v8",
+ "kind": "params",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You map steps of a user scenario in a web application to backend REST requests.\nThe application: Train Ticket is a microservice-based train ticket booking system for passengers, managing orders, reservations, travel routes, and user accounts.\nThe backend is a set of Java microservices behind a gateway; a browser UI (ts-ui-dashboard) sends the requests.\nEnvironment: Default Spring profile of every service; gateway on port 18888 routes /api/v1/<service>/** by service name; MySQL 8, RabbitMQ, Nacos; no external network.\n\nRules:\n- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.\n- Some services come in twins: the same API in two services, each keeping its own part of the data. First pick the handler that does what the step asks; then, if that handler has a twin (its card says so), choose the side as the card says, by the data the step works with.\n- When a UI variant is sent only under a condition, check the condition against the scenario.\n- A request that the web UI sends only in the response handler of another request is the UI's follow-up to that request. A step maps to the first request even when the scenario tells what happens after it; pick the follow-up only when the step asks for the follow-up action by itself.\n- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.\n- Administrator steps (admin console) use admin services; other users' steps do not.\n- A step that the system refuses still sends its request: pick the handler that refuses it.\n\nEnum codes used in request fields:\n- AssuranceType: TRAFFIC_ACCIDENT=1 (Traffic Accident Assurance, 3.0)\n- DocumentType: NONE=0 (Null), ID_CARD=1 (ID Card), PASSPORT=2 (Passport), OTHER=3 (Other)\n- Gender: NONE=0 (Null), MALE=1 (Male), FEMALE=2 (Female), OTHER=3 (Other)\n- MoneyType: A=Add Money (1), D=Draw Back Money (2)\n- OrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CHANGE=3 (Cancel & Rebook), CANCEL=4 (Cancel), REFUNDS=5 (Refunded), USED=6 (Used)\n- PaymentType: P=Payment (1), D=Difference (2), O=Outside Payment (3), E=Difference & Outside Payment (4)\n- SeatClass: NONE=0 (NoSeat), BUSINESS=1 (GreenSeat), FIRSTCLASS=2 (FirstClassSeat), SECONDCLASS=3 (SecondClassSeat), HARDSEAT=4 (HardSeat), SOFTSEAT=5 (SoftSeat), HARDBED=6 (HardBed), SOFTBED=7 (SoftBed), HIGHSOFTBED=8 (HighSoftSeat)\n- Type: G=G (1), D=D (2), Z=Z (3), T=T (4), K=K (5)\n- WaitListOrderStatus: NOTPAID=0 (Not Paid), PAID=1 (Paid & Not Collected), COLLECTED=2 (Collected), CANCEL=3 (Cancel), REFUNDS=4 (Refunded), EXPIRED=5 (Expired)\n"
+  },
+  {
+   "role": "user",
+   "content": "Scenario S5: Advanced search: the cheapest, the quickest and the fewest-stops trips, a transfer via Suzhou; booking the cheapest trip, collecting the ticket and entering the station\nDescription: A registered passenger logs in and uses the advanced search from Shanghai to Nanjing on 1 October 2026 three times: for the cheapest trips, for the quickest trips and for the trips with the fewest stops. They also ask for trips with a transfer at Suzhou (Shanghai — Suzhou — Nanjing) on the same date. The cheapest option turns out to be a regular train (the 'Other' train type, not high-speed): they open its details, take the first contact from their contact book and book a first-class seat on it without food, assurance or consignment. They refresh their list of orders, pay for the order from the internal account balance, collect the ticket and enter the station (board the train) with it.\nSteps:\n1. Log in with username and password\n2. Advanced search: the cheapest trips from Shanghai to Nanjing on 1 October 2026\n3. Advanced search: the quickest trips from Shanghai to Nanjing on 1 October 2026\n4. Advanced search: the trips with the fewest stops from Shanghai to Nanjing on 1 October 2026\n5. Ask for trips with a transfer at Suzhou (Shanghai — Suzhou — Nanjing) on 1 October 2026\n6. Open the details of the cheapest trip found (a regular, 'Other'-type train)\n7. Open the contact book and take the first contact\n8. Book a first-class seat on the cheapest (regular) trip for this contact, without food, assurance or consignment\n9. Refresh the list of orders\n10. Pay for the order from the internal account balance\n11. Collect the ticket for the order\n12. Enter the station (board the train) with the order\n\nRequests of earlier steps:\nstep 1: POST /api/v1/users/login -> UserController#getToken [ts-auth-service] (success)\nstep 2: POST /api/v1/travelplanservice/travelPlan/cheapest -> TravelPlanController#getByCheapest [ts-travel-plan-service] (success)\nstep 3: POST /api/v1/travelplanservice/travelPlan/quickest -> TravelPlanController#getByQuickest [ts-travel-plan-service] (success)\nstep 4: POST /api/v1/travelplanservice/travelPlan/minStation -> TravelPlanController#getByMinStation [ts-travel-plan-service] (success)\nstep 5: POST /api/v1/travelplanservice/travelPlan/transferResult -> TravelPlanController#getTransferResult [ts-travel-plan-service] (success)\nstep 6: POST /api/v1/travel2service/trip_detail -> Travel2Controller#getTripAllDetailInfo [ts-travel2-service] (success)\nstep 7: GET /api/v1/contactservice/contacts/account/{accountId} -> ContactsController#findContactsByAccountId [ts-contacts-service] (success)\nstep 8: POST /api/v1/preserveotherservice/preserveOther -> PreserveOtherController#preserve [ts-preserve-other-service] (success)\n\nCurrent step 9: Refresh the list of orders\nChosen request: POST /api/v1/orderOtherService/orderOther/refresh -> OrderOtherController#queryOrdersForRefresh(QueryInfo qi)\n\nRequest fields (Java type):\n  loginId (body): String\n  travelDateStart (body): String\n  travelDateEnd (body): String\n  boughtDateStart (body): String\n  boughtDateEnd (body): String\n  state (body): int\n  enableTravelDateQuery (body): boolean\n  enableBoughtDateQuery (body): boolean\n  enableStateQuery (body): boolean\nValues the web UI always sends: enableStateQuery=False, enableTravelDateQuery=False, enableBoughtDateQuery=False, travelDateStart=None, travelDateEnd=None, boughtDateStart=None, boughtDateEnd=None\n\nFill only the fields whose value follows from the step text or the scenario description: the options and extras the step chooses, amounts and quantities, query filters and date ranges, names, numbers and dates of new entities. Do not make up values that the text does not give, such as user names, passwords or codes: they are null. When the step does not take an option ('without ...', 'no ...', or the same choice as an earlier step that did not take it), the fields that the web UI sends only for that option keep their default, and coded fields get the enum code for none. Fields that an edit does not change are null. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "loginId": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "travelDateStart": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "travelDateEnd": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "boughtDateStart": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "boughtDateEnd": {
+    "type": [
+     "string",
+     "null"
+    ]
+   },
+   "state": {
+    "type": [
+     "integer",
+     "null"
+    ]
+   },
+   "enableTravelDateQuery": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   },
+   "enableBoughtDateQuery": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   },
+   "enableStateQuery": {
+    "type": [
+     "boolean",
+     "null"
+    ]
+   }
+  },
+  "required": [
+   "loginId",
+   "travelDateStart",
+   "travelDateEnd",
+   "boughtDateStart",
+   "boughtDateEnd",
+   "state",
+   "enableTravelDateQuery",
+   "enableBoughtDateQuery",
+   "enableStateQuery"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "loginId": null,
+  "travelDateStart": null,
+  "travelDateEnd": null,
+  "boughtDateStart": null,
+  "boughtDateEnd": null,
+  "state": null,
+  "enableTravelDateQuery": false,
+  "enableBoughtDateQuery": false,
+  "enableStateQuery": false
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 86,
+  "prompt_tokens": 1840,
+  "total_tokens": 1926,
+  "prompt_tokens_details": {
+   "cached_tokens": 1148
+  }
+ },
+ "seconds": 1.86
+}

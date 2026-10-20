@@ -33,7 +33,8 @@ VERB_SYN = {
     **{v: ["delete", "remove", "cancel"] for v in ("cancel", "delete", "remove", "withdraw")},
 }
 
-# Дополнительные бизнес-синонимы
+# Синонимы Train Ticket: legacy `resolver.py` и M1 в режиме v7. M1 v8 их не берёт (ADR-007, решение 5):
+# синонимы — работа эмбеддера
 DOMAIN_SYN = {
     "consignments": ["consign", "consigns", "consignee"],
     "consignment": ["consign", "consigns", "consignee"],
@@ -44,11 +45,11 @@ DOMAIN_SYN = {
 }
 
 
-def stem(w: str) -> str:
-    """Улучшенный стеммер: обрабатывает окончания и специфические суффиксы."""
+def stem(w: str, syn: dict[str, list[str]] | None = DOMAIN_SYN) -> str:
+    """Улучшенный стеммер: обрабатывает окончания и специфические суффиксы; `syn` — словарь синонимов или None."""
     w_lower = w.lower()
-    if w_lower in DOMAIN_SYN:
-        return DOMAIN_SYN[w_lower][0]
+    if syn and w_lower in syn:
+        return syn[w_lower][0]
 
     if len(w) >= 5 and w.endswith("ies"):
         return w[:-3] + "y"
@@ -65,18 +66,18 @@ def stem(w: str) -> str:
     return w
 
 
-def ntoks(t: str | None) -> list[str]:
-    return [stem(w) for w in toks(t)]
+def ntoks(t: str | None, syn: dict[str, list[str]] | None = DOMAIN_SYN) -> list[str]:
+    return [stem(w, syn) for w in toks(t)]
 
 
-def query_toks(text: str) -> list[str]:
+def query_toks(text: str, syn: dict[str, list[str]] | None = DOMAIN_SYN) -> list[str]:
     """Токены подписи шага без отрицаемых слов."""
-    base_tokens = ntoks(NEG.sub(" ", text))
+    base_tokens = ntoks(NEG.sub(" ", text), syn)
     expanded: list[str] = []
     for t in base_tokens:
         expanded.append(t)
-        if t in DOMAIN_SYN:
-            expanded.extend(DOMAIN_SYN[t])
+        if syn and t in syn:
+            expanded.extend(syn[t])
     return expanded
 
 
