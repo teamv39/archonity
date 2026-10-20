@@ -30,7 +30,6 @@ class SubmissionAdapter:
     ) -> None:
         edges: list[dict[str, str]] = []
 
-        # 1. executes: scenario:S<N> -> method:...
         for m in sorted(methods):
             edges.append({
                 "source": f"scenario:{scenario_id}",
@@ -38,7 +37,6 @@ class SubmissionAdapter:
                 "target": m,
             })
 
-        # 2. calls: method -> method
         for s, t in sorted(calls):
             edges.append({
                 "source": s,
@@ -46,7 +44,6 @@ class SubmissionAdapter:
                 "target": t,
             })
 
-        # 3. remote: method -> method (другого сервиса)
         for s, t in sorted(remote):
             edges.append({
                 "source": s,
@@ -54,7 +51,6 @@ class SubmissionAdapter:
                 "target": t,
             })
 
-        # 4. data: method -> res:table:...
         for s, t in sorted(data):
             edges.append({
                 "source": s,
@@ -64,7 +60,6 @@ class SubmissionAdapter:
 
         self.scenarios[scenario_id] = edges
 
-        # Регистрация в EvidenceLogger
         if self.evidence_logger:
             for s, t in remote:
                 self.evidence_logger.record_remote_call(s, t, scenario_id=scenario_id)
@@ -84,7 +79,7 @@ class SubmissionAdapter:
         }
 
     def to_canonical_graph(self) -> dict[str, Any]:
-        """Преобразование предсказанных связей в канонический формат графа для visualizer/ (ADR-001 / ADR-002)."""
+        """Преобразование предсказанных связей в канонический формат графа для visualizer/ (ADR-002 / ADR-005)."""
         nodes_map: dict[str, dict[str, Any]] = {}
         edges_list: list[dict[str, Any]] = []
         seen_edges: set[str] = set()

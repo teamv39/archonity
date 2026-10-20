@@ -1,6 +1,6 @@
 """Модуль логирования доказательств (Evidence Log) связей графа.
 
-Реализует спецификацию ADR-001 (раздел 5) и ADR-002 для проверяемости каждого ребра
+Реализует спецификацию ADR-005 (контракт evidence.json) и ADR-002 для проверяемости каждого ребра
 в visualizer/ и перед экспертным жюри.
 """
 from __future__ import annotations
@@ -128,7 +128,7 @@ class EvidenceLogger:
         file_path = src_node.get("file", "")
         line_num = src_node.get("line", 0)
 
-        # Fallback на определение сущности таблицы в скелете, если у метода нет file/line
+        # Определение сущности таблицы в скелете, если у метода нет файла или строки
         if not file_path:
             tbl_node = self.index.N.get(table_node, {})
             if origins := tbl_node.get("origin"):
@@ -191,7 +191,7 @@ class EvidenceLogger:
         return edge_id
 
     def to_dict(self) -> dict[str, Any]:
-        """Экспорт Evidence Log в соответствии с форматом ADR-001 (словарь по edge_id)."""
+        """Экспорт Evidence Log в соответствии со спецификацией ADR-005 / ADR-002 (словарь по edge_id)."""
         return dict(sorted(self.evidence.items()))
 
     def save(self, output_path: str | Path) -> None:

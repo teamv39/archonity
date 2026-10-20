@@ -175,19 +175,19 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
     t = act.lower()
     intent_eps: set[str] = set()
 
-    # 0. Вход в систему (Log in)
+    # Вход в систему (Log in)
     if re.search(r"\blog\s*in\b", t):
         intent_eps.add(
             "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)"
         )
 
-    # 1. Регистрация нового пассажира
+    # Регистрация нового пассажира
     if re.search(r"\bregister\b.*?(?:account|passenger|user)\b", t):
         intent_eps.add(
             "method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)"
         )
 
-    # 2. Контактная книга: добавление нового контакта vs открытие книги контактов
+    # Контактная книга: добавление нового контакта vs открытие книги контактов
     if re.search(r"\badd\b.*?\bcontact\b", t):
         intent_eps.add(
             "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)"
@@ -197,7 +197,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)"
         )
 
-    # 3. Поиск поездов (GaoTie/DongChe против обычных)
+    # Поиск поездов (GaoTie/DongChe против обычных)
     if re.search(r"\bsearch\b.*?\btrains?\b", t):
         if getattr(profile, "train_mode", "both") == "regular_only":
             intent_eps.add(
@@ -215,7 +215,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
                 "method:ts-travel2-service:travel2.controller.Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
             )
 
-    # 4. Бронирование билета (VERB book ... seat/ticket/trip)
+    # Бронирование билета (VERB book ... seat/ticket/trip)
     if re.search(r"\b(?:book|reserve)\b.*?\b(?:seat|ticket|trip)\b", t):
         if getattr(profile, "train_mode", "both") == "regular_only":
             intent_eps.add(
@@ -226,7 +226,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
                 "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)"
             )
 
-    # 5. Обновление списка заказов (UI client_order_list опрашивает оба сервиса)
+    # Обновление списка заказов (UI client_order_list опрашивает оба сервиса)
     if re.search(r"\brefresh\b.*?\border", t):
         intent_eps.add(
             "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
@@ -235,7 +235,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
         )
 
-    # 5.1 Проверка цены заказа (Check the price of the order)
+    # Проверка цены заказа (Check the price of the order)
     if re.search(r"\bcheck\b.*?\bprice\b", t):
         if getattr(profile, "train_mode", "both") == "regular_only":
             intent_eps.add(
@@ -246,7 +246,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
                 "method:ts-order-service:order.controller.OrderController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)"
             )
 
-    # 5.2 Просмотр деталей заказа (Open the order)
+    # Просмотр деталей заказа (Open the order)
     if re.search(r"\bopen\s+(?:the\s+)?(?:first\s+|second\s+)?(?:new\s+)?order\b", t):
         if getattr(profile, "train_mode", "both") == "regular_only":
             intent_eps.add(
@@ -257,13 +257,13 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
                 "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)"
             )
 
-    # 6. Оплата заказа (в веб-интерфейсе точка входа всегда InsidePaymentController#pay; при пустом балансе он сам обращается к PaymentController через remote_call)
+    # Оплата заказа (в веб-интерфейсе точка входа всегда InsidePaymentController#pay; при пустом балансе он сам обращается к PaymentController через remote_call)
     if re.search(r"\bpay\s+for\b.*?\border\b", t) or re.search(r"\bpay\b", t):
         intent_eps.add(
             "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)"
         )
 
-    # 7. Варианты расширенного поиска маршрутов
+    # Варианты расширенного поиска маршрутов
     if "fewest stops" in t or "minstation" in t:
         intent_eps.add(
             "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByMinStation(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
@@ -281,7 +281,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)"
         )
 
-    # 8. Административные действия (S6)
+    # Административные действия (S6)
     if getattr(profile, "is_admin", False):
         if re.search(r"\badd\b.*?\bprice\b", t):
             intent_eps.add(
@@ -308,7 +308,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
                 "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)"
             )
 
-    # 9. Получение билета и проход на посадку
+    # Получение билета и проход на посадку
     if re.search(r"\b(enter\s+the\s+station|board\s+the\s+train)\b", t):
         intent_eps.add(
             "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -318,7 +318,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)"
         )
 
-    # 10. Расчет возврата и отмена заказа
+    # Расчет возврата и отмена заказа
     if re.search(r"\b(?:ask\s+.*?refund\w*|how\s+much\s+.*?refund\w*)\b", t):
         intent_eps.add(
             "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -328,13 +328,13 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
         )
 
-    # 11. Перебронирование
+    # Перебронирование
     if re.search(r"\brebook\b", t):
         intent_eps.add(
             "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"
         )
 
-    # 12. Просмотр деталей рейса (Open details of the trip found)
+    # Просмотр деталей рейса (Open details of the trip found)
     if re.search(r"\bopen\b.*?\bdetails?\b.*?\btrip\b", t) or re.search(
         r"\bdetails?\s+of\s+(?:the\s+)?(?:first\s+|new\s+|cheapest\s+)?trip\b", t
     ):
@@ -347,7 +347,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
                 "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)"
             )
 
-    # 13. Просмотр меню питания в поезде и точек питания на вокзале
+    # Просмотр меню питания в поезде и точек питания на вокзале
     if re.search(r"\b(?:food\s+menu|menu\s+offered)\b", t):
         intent_eps.add(
             "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
@@ -357,7 +357,7 @@ def get_intent_guarantees(act: str, profile: Any) -> set[str]:
             "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
         )
 
-    # 14. Запросы багажа и страховок к конкретным заказам
+    # Запросы багажа и страховок к конкретным заказам
     if re.search(r"\bassurance\s+(?:\(insurance\)\s+)?record\b", t):
         intent_eps.add(
             "method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)"
