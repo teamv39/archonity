@@ -26,6 +26,7 @@
 | [m4_score_gap_and_judge.md](m4_score_gap_and_judge.md) | Почему судья не меняет выдачу ([OQ-13](../open-questions.md#oq-13)) |
 | [archparse_audit_and_optimizations.md](archparse_audit_and_optimizations.md) | Аудит модуля archparse: замеры времени, code smells, план оптимизации Java AST IR |
 | [model_selection.md](model_selection.md) | Выбор LLM и эмбеддингов для M1 и судьи |
+| [gpu_dependence_and_cpu_fallback_study.md](gpu_dependence_and_cpu_fallback_study.md) | Работа без GPU и без кеша: что есть, замеры холодного старта (0.575 без LLM), почему legacy не запасной путь, план подстраховки (раздел 7) |
 
 Рядом, вне этой папки: [eval/blind/notes.md](../../eval/blind/notes.md) — слепая разметка S3 и механизм `TravelResult#isStatus()` (H1).
 
