@@ -51,7 +51,7 @@ Python. Загружает скелет и строит индексы: узлы
 
 ### M1. Заземление шагов
 
-Python + LLM, код — `engine/grounding/`. Превращает шаг сценария в `StepRequest`. В конвейере по умолчанию с 17.10 (`run_eval.py --grounder m1`); старый `engine/resolver.py` — `--grounder legacy`.
+Python + LLM, код — `engine/grounding/`. Превращает шаг сценария в `StepRequest`. В конвейере по умолчанию с 17.10 (`run_eval.py --grounder m1`); старый `engine/resolver.py` — `--grounder legacy`. Промпт по умолчанию с 21.10 — `v8` (без слов домена, [ADR-007](adr-007_project_profile.md)); `--m1-prompt v7` — прежний, откат до сдачи 22.10.
 
 1. **Каталог UI** (`ui_catalog.py`) из модуля веб-интерфейса (`find_ui_dir`: каталог верхнего уровня, не модуль Java, с наибольшим числом HTML-страниц; в Train Ticket — `ts-ui-dashboard/`) по AST tree-sitter-javascript. Запись — один запрос: JS-функция действия, страница, надписи кнопок, глагол, шаблон URL (`"/cancel/" + orderId` → `/cancel/{orderId}`), поля тела. Шаблон сопоставляется с `@RequestMapping` по полному пути. Отдельно хранятся:
    - варианты URL с условием, когда UI выбирает путь по данным (`tripType == 'G' || tripType == 'D'` → preserve, иначе preserveOther);

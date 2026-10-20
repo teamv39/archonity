@@ -342,7 +342,7 @@ class TestProjectProfile:
         assert handlers.answers(rebook)[2] == ["Please pay the different money!"]
         card = StepGrounder(ix, TARGETS, embedder=None, prompt="v8")._candidate(rebook)
         assert "only after POST /api/v1/rebookservice/rebook answers status 2" in card
-        assert "follow-up" not in StepGrounder(ix, TARGETS, embedder=None)._candidate(rebook)
+        assert "follow-up" not in StepGrounder(ix, TARGETS, embedder=None, prompt="v7")._candidate(rebook)
 
     def test_answer_guards_from_ir(self, ix: SkeletonIndex, catalog) -> None:
         from engine.grounding.grounder import ROOT
@@ -381,7 +381,7 @@ class TestProjectProfile:
         assert P.refs_of(sel) == {"trip": "first_of_step_2", "contacts": "new_of_step_3"}
         assert P.refs_of({"refs": {"trip": "first_of_step_2", "order": None}}) == {"trip": "first_of_step_2"}
         # v7 — прежние виды
-        assert StepGrounder(ix, TARGETS, embedder=None).ref_kinds == P.REF_ENTITIES
+        assert StepGrounder(ix, TARGETS, embedder=None, prompt="v7").ref_kinds == P.REF_ENTITIES
 
     def test_bm25_without_domain_synonyms(self) -> None:
         from engine.grounding.text import query_toks

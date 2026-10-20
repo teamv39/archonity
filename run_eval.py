@@ -246,9 +246,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--m1-prompt",
         choices=("v7", "v8"),
-        default="v7",
-        help="Промпт M1 (ADR-007): v7 — до ADR-007, с доменом Train Ticket, кеш m1-v7 (по умолчанию, рекорд); "
-             "v8 — общий шаблон, домен и правила близнецов из профиля проекта (ответ LLM-профилировщика), кеш m1-v8",
+        default="v8",
+        help="Промпт M1 (ADR-007): v8 — общий шаблон, домен и правила близнецов из профиля проекта (ответ "
+             "LLM-профилировщика), виды refs из манифеста, кеш m1-v8 (по умолчанию с 21.10, рекорд); v7 — до ADR-007, "
+             "с доменом Train Ticket, кеш m1-v7 (флаг отката до сдачи 22.10, тот же рекорд)",
     )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")

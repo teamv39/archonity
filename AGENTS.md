@@ -28,7 +28,9 @@
 $env:PYTHONUTF8=1; python run_eval.py -o <папка>/submission.json
 ```
 
-По умолчанию стоят `--grounder m1`, `--executor ir`, `--m4-unresolved-calls emit`, `--ctors caller_only`, `--jackson-ctor on`, `--lombok-tostring on`, `--unbound-handlers rebind`. Без ключей выдача совпадает с рекордом 1.0 байт в байт (sha256 в [eval/records/](./eval/records/README.md)). LLM и эмбеддинги берутся из `cache/`: сервер не нужен.
+По умолчанию стоят `--grounder m1`, `--m1-prompt v8`, `--executor ir`, `--m4-unresolved-calls emit`, `--ctors caller_only`, `--jackson-ctor on`, `--lombok-tostring on`, `--unbound-handlers rebind`; `--ref-kinds` следует за `--m1-prompt`. Без ключей выдача совпадает с рекордом 1.0 байт в байт (sha256 в [eval/records/](./eval/records/README.md)). LLM и эмбеддинги берутся из `cache/`: сервер не нужен.
+
+`--m1-prompt v8` (с 21.10) — промпт M1 без слов домена: домен и правила близнецов из профиля проекта, виды ссылок из манифеста сущностей ([ADR-007](./docs/adr/adr-007_project_profile.md)). `--m1-prompt v7` — прежний промпт с доменом Train Ticket, тот же рекорд; флаг отката до сдачи 22.10. Правка промпта или карточек M1 меняет ключи кеша `m1-v8`: пересборка — на GPU (`scripts/start_llm.ps1`), после неё сверять выдачу с рекордом. Шаг S2.14 держится на ничьей голосов (ADR-007, «Хрупко»).
 
 Лучшая посылка платформы — в [eval/records/](./eval/records/README.md). Рекорд может быть ручной правкой `submission.json`, тогда выдача кода от него отличается (roadmap, «Где мы»). Любую правку до посылки сравнивать с рекордом ребро в ребро: `scripts/compare_submissions.py`. Результаты посылок — таблица в roadmap.
 

@@ -99,7 +99,7 @@ class ScenarioSession:
 class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
-                 top_k: int = TOP_K, module_roles: str = "skeleton", prompt: str = "v7") -> None:
+                 top_k: int = TOP_K, module_roles: str = "skeleton", prompt: str = "v8") -> None:
         """`prompt` — режим промпта (ADR-007): v8 — общий шаблон и профиль проекта, v7 — промпт до ADR-007."""
         if prompt not in P.PROMPT_MODES:
             raise ValueError(f"prompt: {prompt!r}, ожидается одно из {P.PROMPT_MODES}")
@@ -368,7 +368,7 @@ def main() -> None:
     ap.add_argument("--no-server", action="store_true", help="LLM только из кеша")
     ap.add_argument("--no-cache", action="store_true", help="пересчитать ответы LLM")
     ap.add_argument("--top-k", type=int, default=TOP_K)
-    ap.add_argument("--prompt", choices=P.PROMPT_MODES, default="v7", help="режим промпта M1 (ADR-007)")
+    ap.add_argument("--prompt", choices=P.PROMPT_MODES, default="v8", help="режим промпта M1 (ADR-007); v7 — откат")
     a = ap.parse_args()
 
     paths = a.scenarios or sorted(glob.glob(str(TT / "scenarios" / "*.json")))

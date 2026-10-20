@@ -87,8 +87,11 @@ class ArchonityPipeline:
         m4_m3_refs: str = "off",
         module_roles: str = "skeleton",
         m4_state: str = "context",
-        ref_kinds: str = "v7",
+        ref_kinds: str | None = None,
     ) -> None:
+        # Виды refs (ADR-007) — как у промпта M1: M1 v8 (по умолчанию) даёт виды манифеста, v7 и legacy — прежние 12
+        if ref_kinds is None:
+            ref_kinds = "v8" if grounder == "m1" and (m1_options or {}).get("prompt", "v8") == "v8" else "v7"
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
 
