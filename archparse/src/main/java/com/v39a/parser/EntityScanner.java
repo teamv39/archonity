@@ -10,7 +10,10 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
+import com.v39a.enumres.EnumResolver;
+import com.v39a.model.CallIR;
 import com.v39a.model.EntityReportIR;
+import com.v39a.model.EnumConstantIR;
 import com.v39a.model.MethodIR;
 
 import java.io.IOException;
@@ -365,9 +368,66 @@ public class EntityScanner {
         if (ctor.isEmpty()) {
             return null;
         }
+        BlockStmt body = ctor.get().getBody();
+        List<CallIR> calls = new ArrayList<>();
+
+        body.walk(node -> {
+            if (isInsideAnonymousClass(node, ctor.get())) {
+                return;
+            }
+            if (node instanceof MethodCallExpr call) {
+                int line = call.getName().getBegin().map(p -> p.line).orElse(0);
+                int col = AstUtils.skeletonCol(call.getName());
+                String callee = call.getNameAsString();
+                String receiver = call.getScope().map(Expression::toString).orElse("this");
+                EnumConstantIR enumConst = EnumResolver.resolveCall(call, sf.cu());
+                int argCount = call.getArguments().size();
+                String kind;
+                if (enumConst != null) {
+                    kind = "ENUM";
+                } else if ("this".equals(receiver) || (!call.getScope().isPresent() && isClassMethod(cid, callee))) {
+                    kind = "SAME_CLASS";
+                } else {
+                    kind = "OTHER";
+                }
+                calls.add(new CallIR(sf.relFile(), line, col, callee, receiver, kind, argCount, List.of(), enumConst));
+            } else if (node instanceof ObjectCreationExpr creation) {
+                int line = creation.getType().getBegin().map(p -> p.line).orElse(0);
+                int col = AstUtils.skeletonCol(creation);
+                String callee = "<init>";
+                String receiver = creation.getType().asString();
+                int argCount = creation.getArguments().size();
+                calls.add(new CallIR(sf.relFile(), line, col, callee, receiver, "CONSTRUCTOR", argCount, List.of(), null));
+            }
+        });
+
+        if (calls.isEmpty()) {
+            return null;
+        }
+
+        calls.sort(Comparator.comparingInt(CallIR::getLine).thenComparingInt(CallIR::getCol));
         String id = "method:" + sf.module() + ":" + fqn + "#<init>()";
-        MethodIR ir = AstAnalyzer.analyzeConstructor(id, sf.relFile(), ctor.get(), sf.cu(), new TypeIndex(sf.cu(), cid));
-        return ir.getCalls().isEmpty() ? null : ir;
+        MethodIR ir = new MethodIR(id, sf.relFile());
+        ir.setCalls(calls);
+        return ir;
+    }
+
+    private static boolean isClassMethod(ClassOrInterfaceDeclaration cid, String name) {
+        for (MethodDeclaration m : cid.getMethods()) {
+            if (m.getNameAsString().equals(name)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isInsideAnonymousClass(Node node, ConstructorDeclaration ctor) {
+        Node cur = node.getParentNode().orElse(null);
+        while (cur != null && cur != ctor) {
+            if (cur instanceof ObjectCreationExpr oce && oce.getAnonymousClassBody().isPresent()) {
+                return true;
+            }
+            cur = cur.getParentNode().orElse(null);
+        }
+        return false;
     }
 
     // ------------------------------------------------------------------
@@ -447,7 +507,7 @@ public class EntityScanner {
         EntityReportIR.RepositoryCall rc = new EntityReportIR.RepositoryCall();
         rc.file = sf.relFile();
         rc.line = call.getName().getBegin().map(p -> p.line).orElse(0);
-        rc.col = AstAnalyzer.skeletonCol(call.getName());
+        rc.col = AstUtils.skeletonCol(call.getName());
         rc.callee = call.getNameAsString();
         rc.repository = repo.name();
         rc.entity = entity == null ? null : entity.ir().type;
@@ -533,7 +593,7 @@ public class EntityScanner {
             cb.method = "method:" + entity.ir().module + ":" + entity.ir().type + "#equals(java.lang.Object)";
             cb.via = c.getNameAsString();
             cb.line = line(c.getName());
-            cb.col = AstAnalyzer.skeletonCol(c.getName());
+            cb.col = AstUtils.skeletonCol(c.getName());
             out.add(cb);
         }
         if (!out.isEmpty()) {

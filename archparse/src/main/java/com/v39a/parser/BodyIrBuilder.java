@@ -129,7 +129,7 @@ public class BodyIrBuilder {
             }
         } else if (s instanceof IfStmt is) {
             ObjectNode o = op("if", s);
-            o.put("id", AstAnalyzer.branchId(is));
+            o.put("id", AstUtils.branchId(is));
             o.set("cond", expr(is.getCondition()));
             o.set("then", block(is.getThenStmt()));
             o.set("else", is.getElseStmt().map(this::block).orElse(F.arrayNode()));
@@ -178,7 +178,7 @@ public class BodyIrBuilder {
             out.add(o);
         } else if (s instanceof ForEachStmt fe) {
             ObjectNode o = op("foreach", s);
-            o.put("id", AstAnalyzer.loopId(fe));
+            o.put("id", AstUtils.loopId(fe));
             VariableDeclarator v = fe.getVariable().getVariable(0);
             o.put("var", v.getNameAsString());
             o.put("var_type", v.getType().asString());
@@ -189,7 +189,7 @@ public class BodyIrBuilder {
             out.add(o);
         } else if (s instanceof TryStmt ts) {
             ObjectNode o = op("try", s);
-            o.put("id", AstAnalyzer.tryId(ts));
+            o.put("id", AstUtils.tryId(ts));
             locals.push(new HashSet<>());
             ArrayNode res = o.putArray("resources");
             for (Expression r : ts.getResources()) {
@@ -245,7 +245,7 @@ public class BodyIrBuilder {
             out.add(o);
         } else if (s instanceof ExplicitConstructorInvocationStmt eci) {
             ObjectNode call = F.objectNode();
-            putCallId(call, file, line(eci), AstAnalyzer.skeletonCol(eci), null);
+            putCallId(call, file, line(eci), AstUtils.skeletonCol(eci), null);
             call.put("callee", eci.isThis() ? "this" : "super");
             call.putNull("recv");
             ArrayNode args = call.putArray("args");
@@ -389,11 +389,11 @@ public class BodyIrBuilder {
             ObjectNode o = F.objectNode();
             o.put("method_ref", mr.toString());
             // скелет ставит колонку на имя после "::", у "::new" — на начало выражения
-            int col = AstAnalyzer.skeletonCol(mr);
+            int col = AstUtils.skeletonCol(mr);
             int line = line(mr);
             if (!"new".equals(mr.getIdentifier()) && mr.getEnd().isPresent()) {
                 line = mr.getEnd().get().line;
-                col = AstAnalyzer.skeletonCol(mr, line, mr.getEnd().get().column - mr.getIdentifier().length() + 1);
+                col = AstUtils.skeletonCol(mr, line, mr.getEnd().get().column - mr.getIdentifier().length() + 1);
             }
             String cs = skeleton.callSite(file, line, col);
             if (cs != null) {
@@ -593,7 +593,7 @@ public class BodyIrBuilder {
         } else if (recv != null && "type".equals(recv.path("ref").asText())) {
             owner = project.resolveType(recv.get("name").asText(), cu, module);
         }
-        putCallId(o, file, line(mc.getName()), AstAnalyzer.skeletonCol(mc.getName()),
+        putCallId(o, file, line(mc.getName()), AstUtils.skeletonCol(mc.getName()),
                 owner == null ? null : skeleton.uniqueMethod(owner, mc.getNameAsString(), mc.getArguments().size()));
         o.put("callee", mc.getNameAsString());
         o.set("recv", recv);
@@ -610,7 +610,7 @@ public class BodyIrBuilder {
             o.put("fqn", fqn);
         }
         SkeletonGraph.MethodNode ctor = fqn == null ? null : skeleton.uniqueMethod(fqn, "<init>", oce.getArguments().size());
-        String cs = skeleton.callSite(file, line(oce), AstAnalyzer.skeletonCol(oce));
+        String cs = skeleton.callSite(file, line(oce), AstUtils.skeletonCol(oce));
         if (cs != null) {
             callSitesSeen.add(cs);
             o.put("call", cs);
@@ -670,7 +670,7 @@ public class BodyIrBuilder {
         ObjectNode o = F.objectNode();
         ObjectNode inner = o.putObject("lambda");
         inner.put("line", line(le));
-        inner.put("col", AstAnalyzer.skeletonCol(le));
+        inner.put("col", AstUtils.skeletonCol(le));
         ArrayNode ps = inner.putArray("params");
         Set<String> names = new HashSet<>();
         for (Parameter p : le.getParameters()) {
