@@ -28,13 +28,9 @@ public class TypeIndex {
     private final List<String> wildcardImports = new ArrayList<>();
     private final Map<String, String> fieldTypes = new HashMap<>();
 
-    // Известные классы в ts-common / spring для wildcard-резолюции
+    // Известные классы Spring для wildcard-резолюции
     private static final Map<String, String> COMMON_WILDCARD_TYPES = new HashMap<>();
     static {
-        COMMON_WILDCARD_TYPES.put("Order", "edu.fudan.common.entity.Order");
-        COMMON_WILDCARD_TYPES.put("OrderStatus", "edu.fudan.common.entity.OrderStatus");
-        COMMON_WILDCARD_TYPES.put("SeatClass", "edu.fudan.common.entity.SeatClass");
-        COMMON_WILDCARD_TYPES.put("Response", "edu.fudan.common.util.Response");
         COMMON_WILDCARD_TYPES.put("HttpHeaders", "org.springframework.http.HttpHeaders");
         COMMON_WILDCARD_TYPES.put("HttpStatus", "org.springframework.http.HttpStatus");
         COMMON_WILDCARD_TYPES.put("ResponseEntity", "org.springframework.http.ResponseEntity");
