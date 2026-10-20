@@ -57,6 +57,7 @@ class TypeIndex:
         self.nodes = nodes
         self.types: dict[str, dict[str, Any]] = {}  # type node id -> node
         self.by_fqn: dict[str, list[str]] = {}
+        self.by_simple: dict[str, list[str]] = {}
         self.fields: dict[str, list[dict[str, Any]]] = {}  # type node id -> field nodes
         self.methods: dict[str, list[str]] = {}  # type node id -> method ids
         self.super_of: dict[str, str] = {}
@@ -64,7 +65,10 @@ class TypeIndex:
             k = n.get("kind")
             if k == "type":
                 self.types[nid] = n
-                self.by_fqn.setdefault(n.get("fqn", ""), []).append(nid)
+                fqn = n.get("fqn", "")
+                self.by_fqn.setdefault(fqn, []).append(nid)
+                simple_name = fqn.rsplit(".", 1)[-1].split("$")[-1]
+                self.by_simple.setdefault(simple_name, []).append(nid)
             elif k == "field":
                 self.fields.setdefault(n.get("owner", ""), []).append(dict(n, id=nid))
             elif k == "method":
@@ -108,12 +112,14 @@ class TypeIndex:
 
     def resolve_simple(self, simple: str, module: str | None) -> str | None:
         """Тип по простому имени в модуле (для instanceof и new без fqn)."""
-        cands = [i for i, n in self.types.items() if n.get("fqn", "").rsplit(".", 1)[-1].split("$")[-1] == simple]
+        cands = self.by_simple.get(simple)
+        if not cands:
+            return None
         for pref in self._prefs(module):
             for i in cands:
                 if self.types[i].get("module") == pref:
                     return i
-        return cands[0] if cands else None
+        return cands[0]
 
     def all_fields(self, type_id: str | None) -> list[dict[str, Any]]:
         out: list[dict[str, Any]] = []

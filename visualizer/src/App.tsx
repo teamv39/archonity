@@ -46,7 +46,7 @@ import {
   type NodeData,
   type EdgeData,
 } from './adapters/graphAdapter';
-import { mergePipelineFiles } from './adapters/dataLoader';
+import { mergePipelineFiles, normalizeCanonicalGraph } from './adapters/dataLoader';
 import {
   exportGraphToPng,
   exportGraphToSvg,
@@ -98,6 +98,27 @@ const VisualizerCanvas: React.FC = () => {
   // Всплывающие уведомления (Toast)
   const [toast, setToast] = useState<ToastState | null>(null);
 
+  // Автозагрузка полного канонического графа Train Ticket из public/data/
+  useEffect(() => {
+    fetch('/data/canonical_graph.json')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((raw: any) => {
+        const data = normalizeCanonicalGraph(raw);
+        if (data && Array.isArray(data.nodes) && data.nodes.length > 0) {
+          setIsLoadingLayout(true);
+          setGraph(data);
+          setDatasetName(`Train Ticket Канонический (${data.nodes.length}N / ${data.edges.length}E)`);
+          setIsCustomDataset(true);
+        }
+      })
+      .catch((err) => {
+        console.warn('Fallback на встроенный граф:', err);
+      });
+  }, []);
+
   useEffect(() => {
     if (!toast) return;
     const timer = setTimeout(() => {
@@ -142,11 +163,18 @@ const VisualizerCanvas: React.FC = () => {
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isScenarioPlaying, setIsScenarioPlaying] = useState<boolean>(false);
 
-  // Базовая стабильная раскладка графа
-  const [positions, setPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
+  // Согласованное состояние топологической раскладки графа
+  const [layoutState, setLayoutState] = useState<{
+    positions: Map<string, { x: number; y: number }>;
+    direction: DagDirection;
+    version: number;
+  }>({
+    positions: new Map(),
+    direction: 'RIGHT',
+    version: 0,
+  });
   const [isLoadingLayout, setIsLoadingLayout] = useState<boolean>(false);
-  const lastDirectionRef = React.useRef(direction);
-  const shouldResetPositionsRef = React.useRef<boolean>(true);
+  const lastAppliedLayoutVersionRef = React.useRef<number>(-1);
 
   // Изменение ширины правого сайдбара (Splitter)
   const [sidebarWidth, setSidebarWidth] = useState<number>(() => {
@@ -194,11 +222,16 @@ const VisualizerCanvas: React.FC = () => {
   // Стабильная топологическая раскладка: пересчитывается ТОЛЬКО при смене графа или направления (LR/TB)
   useEffect(() => {
     let isCancelled = false;
+    setIsLoadingLayout(true);
 
     computeLayout(graph.nodes, graph.edges, direction)
       .then((newPositions) => {
         if (!isCancelled) {
-          setPositions(newPositions);
+          setLayoutState((prev) => ({
+            positions: newPositions,
+            direction,
+            version: prev.version + 1,
+          }));
           setIsLoadingLayout(false);
         }
       })
@@ -260,30 +293,28 @@ const VisualizerCanvas: React.FC = () => {
 
   // Синхронизация элементов React Flow с сохранением стабильных позиций
   useEffect(() => {
-    if (positions.size === 0) return;
+    if (layoutState.positions.size === 0) return;
 
     const { flowNodes, flowEdges } = buildReactFlowElements(
       filteredNodes,
       filteredEdges,
-      positions,
+      layoutState.positions,
       blastRadius,
       callTrace,
       colorMode,
       searchQuery,
       reachabilityMode,
       deadCodeDisplay,
-      direction,
+      layoutState.direction,
       graph,
       playbackState
     );
 
-    const isDirectionChanged = lastDirectionRef.current !== direction;
-    lastDirectionRef.current = direction;
-    const shouldForceReset = shouldResetPositionsRef.current || isDirectionChanged;
+    const isNewLayout = lastAppliedLayoutVersionRef.current !== layoutState.version;
 
     setNodes((currentNodes) => {
-      if (shouldForceReset || currentNodes.length === 0) {
-        shouldResetPositionsRef.current = false;
+      if (isNewLayout || currentNodes.length === 0) {
+        lastAppliedLayoutVersionRef.current = layoutState.version;
         return flowNodes;
       }
       const currentPosMap = new Map(currentNodes.map((n) => [n.id, n.position]));
@@ -297,37 +328,33 @@ const VisualizerCanvas: React.FC = () => {
     });
 
     setEdges(flowEdges);
+
+    if (isNewLayout) {
+      const timer = setTimeout(() => {
+        fitView({ padding: 0.2, duration: 350 });
+      }, 100);
+      return () => clearTimeout(timer);
+    }
   }, [
     filteredNodes,
     filteredEdges,
-    positions,
+    layoutState,
     blastRadius,
     callTrace,
     colorMode,
     searchQuery,
     reachabilityMode,
     deadCodeDisplay,
-    direction,
     graph,
     playbackState,
     setNodes,
     setEdges,
+    fitView,
   ]);
-
-  // Автоматический зум и центрирование при готовности позиций
-  useEffect(() => {
-    if (!isLoadingLayout && positions.size > 0) {
-      const timer = setTimeout(() => {
-        fitView({ padding: 0.25, duration: 300 });
-      }, 50);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoadingLayout, positions, direction, fitView]);
 
   // Обработчик загрузки нового графа (из модалки или dropzone)
   const handleLoadGraph = useCallback(
     (newGraph: CanonicalGraph, summary: string, sourceName: string) => {
-      shouldResetPositionsRef.current = true;
       setIsLoadingLayout(true);
       setGraph(newGraph);
       setDatasetName(sourceName);
@@ -521,7 +548,6 @@ const VisualizerCanvas: React.FC = () => {
   // Управление сценарным плеером (ADR-003, RFC-05)
   const ensureBenchmarkLoadedForScenario = useCallback(() => {
     if (graph.nodes.length < 19) {
-      shouldResetPositionsRef.current = true;
       setIsLoadingLayout(true);
       setGraph(trainTicketBenchmarkGraph);
       setDatasetName('Train Ticket Benchmark (19N / 27E)');
@@ -616,7 +642,6 @@ const VisualizerCanvas: React.FC = () => {
 
   // Быстрое переключение пресетов датасета
   const handleLoadBenchmarkSlice = useCallback(() => {
-    shouldResetPositionsRef.current = true;
     setIsLoadingLayout(true);
     setGraph(trainTicketBenchmarkGraph);
     setDatasetName('Train Ticket Benchmark (19N / 27E)');
@@ -633,7 +658,6 @@ const VisualizerCanvas: React.FC = () => {
   }, []);
 
   const handleLoadStandardDemo = useCallback(() => {
-    shouldResetPositionsRef.current = true;
     setIsLoadingLayout(true);
     setGraph(demoGraph);
     setDatasetName('ДЕМО (Train Ticket — 9 сервисов)');
@@ -671,7 +695,6 @@ const VisualizerCanvas: React.FC = () => {
   }, []);
 
   const handleResetAll = useCallback(() => {
-    shouldResetPositionsRef.current = true;
     setIsLoadingLayout(true);
     setSelectedNodeId(null);
     setSelectedEdgeId(null);
@@ -698,11 +721,12 @@ const VisualizerCanvas: React.FC = () => {
     // Принудительный пересчет и сброс местоположения всех сущностей
     computeLayout(graph.nodes, graph.edges, 'RIGHT')
       .then((newPositions) => {
-        setPositions(newPositions);
+        setLayoutState((prev) => ({
+          positions: newPositions,
+          direction: 'RIGHT',
+          version: prev.version + 1,
+        }));
         setIsLoadingLayout(false);
-        setTimeout(() => {
-          fitView({ padding: 0.25, duration: 350 });
-        }, 50);
       })
       .catch((err) => {
         console.error('Ошибка сброса позиций ELK:', err);

@@ -12,6 +12,7 @@
 
 | Документ | О чём |
 |---|---|
+| [global_optimization_and_judges_audit.md](global_optimization_and_judges_audit.md) | Глобальный аудит перед оценкой жюри: критерии отбора при 1.0, узкие места скорости, карта специфичности M0–M5, тесты, упаковка и план killer-фич |
 | [universality_audit_after_1_0.md](universality_audit_after_1_0.md) | Детальный аудит универсальности пайплайна после взятия 1.00000: сводная таблица степеней специфичности, M1, M4, World, AST |
 | [metamorphic_testing.md](metamorphic_testing.md) | Метаморфное тестирование конвейера: проверка поведения без разметки эталонов (MR-1 — MR-5) |
 | [two_stage_pipeline_research.md](two_stage_pipeline_research.md) | Исследование и план внедрения двухстадийного пайплайна (Stage 0: Project Profiling) для универсального Spring Boot анализатора |
@@ -23,6 +24,7 @@
 | [probe_edge_classes.md](probe_edge_classes.md) | Классы рёбер для зондов, скрипт `probe_edge_classes.py`, правила зондирования |
 | [m4_executor.md](m4_executor.md) | Устройство исполнителя M4 по IR |
 | [m4_score_gap_and_judge.md](m4_score_gap_and_judge.md) | Почему судья не меняет выдачу ([OQ-13](../open-questions.md#oq-13)) |
+| [archparse_audit_and_optimizations.md](archparse_audit_and_optimizations.md) | Аудит модуля archparse: замеры времени, code smells, план оптимизации Java AST IR |
 | [model_selection.md](model_selection.md) | Выбор LLM и эмбеддингов для M1 и судьи |
 
 Рядом, вне этой папки: [eval/blind/notes.md](../../eval/blind/notes.md) — слепая разметка S3 и механизм `TravelResult#isStatus()` (H1).

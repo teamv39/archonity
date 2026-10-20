@@ -265,3 +265,50 @@
   border-radius: 0;
   margin-top: 4px;
 }
+
+.scenario-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.scenario-handler-box {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-hairline);
+  padding: 3px 6px;
+  color: var(--text-primary);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.scenario-rule-badge {
+  font-size: 8.5px;
+  font-weight: 700;
+  padding: 1px 4px;
+  background: #FEF3C7;
+  color: #92400E;
+  border: 1px solid #FDE68A;
+}
+
+.scenario-table-badge {
+  font-size: 8.5px;
+  font-weight: 600;
+  padding: 1px 4px;
+  background: #ECFDF5;
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+}
+
+.scenario-svc-badge {
+  font-size: 8.5px;
+  font-weight: 600;
+  padding: 1px 4px;
+  background: #F3F4F6;
+  color: #374151;
+  border: 1px solid #E5E7EB;
+}
+
