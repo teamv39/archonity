@@ -394,6 +394,12 @@ class RuntimeRules:
     # m1-v7), M4 переводит их в виды манифеста (StepExecutor._v7_refs); v8 — виды манифеста engine/manifest.py.
     REF_KINDS_MODES = ("v7", "v8")
 
+    # Соглашения проекта в M4 (feature/102): code (по умолчанию) — из кода: ответ-обёртка и значение успеха
+    # (engine/executor/envelope.py), строки шага при повторе — значения мира БД, поля тела — источники из шаблона UI
+    # (UIRequest.body_src); names — как до feature/102: Response/status/1, нормализация названий станций по подстрокам
+    # имени параметра, алиасы tripId/oldTripId <- trainNumber.
+    M4_CONVENTIONS_MODES = ("code", "names")
+
     def __init__(
         self,
         rules_path: str | Path | None = None,
@@ -419,6 +425,7 @@ class RuntimeRules:
         module_roles: str = "skeleton",
         m4_state: str = "context",
         ref_kinds: str = "v7",
+        m4_conventions: str = "code",
     ) -> None:
         for name, val, modes in (("jackson_ctor", jackson_ctor, self.JACKSON_CTOR_MODES),
                                  ("lombok_tostring", lombok_tostring, self.LOMBOK_TOSTRING_MODES),
@@ -427,7 +434,8 @@ class RuntimeRules:
                                  ("m4_m3_refs", m4_m3_refs, self.M4_M3_REFS_MODES),
                                  ("module_roles", module_roles, self.MODULE_ROLES_MODES),
                                  ("m4_state", m4_state, self.M4_STATE_MODES),
-                                 ("ref_kinds", ref_kinds, self.REF_KINDS_MODES)):
+                                 ("ref_kinds", ref_kinds, self.REF_KINDS_MODES),
+                                 ("m4_conventions", m4_conventions, self.M4_CONVENTIONS_MODES)):
             if val not in modes:
                 raise ValueError(f"{name}: {val!r}, ожидается одно из {modes}")
         self.jackson_ctor = jackson_ctor
@@ -438,6 +446,7 @@ class RuntimeRules:
         self.module_roles = module_roles
         self.m4_state = m4_state
         self.ref_kinds = ref_kinds
+        self.m4_conventions = m4_conventions
         if constructors not in self.CTOR_MODES:
             raise ValueError(f"constructors: {constructors!r}, ожидается одно из {self.CTOR_MODES}")
         if collection_tables_on_read not in self.COLLECTION_TABLE_MODES:

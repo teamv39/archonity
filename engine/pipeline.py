@@ -84,6 +84,7 @@ class PipelineConfig:
     module_roles: str = "skeleton"
     m4_state: str = "context"
     ref_kinds: str | None = None
+    m4_conventions: str = "code"
 
 
 class ArchonityPipeline:
@@ -148,6 +149,7 @@ class ArchonityPipeline:
             module_roles=self.config.module_roles,
             m4_state=self.config.m4_state,
             ref_kinds=self.config.ref_kinds,
+            m4_conventions=self.config.m4_conventions,
         )
 
         self.grounder_mode = self.config.grounder

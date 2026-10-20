@@ -13,6 +13,7 @@
 | Документ | О чём |
 |---|---|
 | [global_optimization_and_judges_audit.md](global_optimization_and_judges_audit.md) | Глобальный аудит перед оценкой жюри: критерии отбора при 1.0, узкие места скорости, карта специфичности M0–M5, тесты, упаковка и план killer-фич |
+| [m4_code_derived_conventions.md](m4_code_derived_conventions.md) | Алиасы полей, повтор шага и признак отказа в M4: ставки, общие правила из кода (`--m4-conventions`), что осталось за M1 |
 | [universality_audit_after_1_0.md](universality_audit_after_1_0.md) | Детальный аудит универсальности пайплайна после взятия 1.00000: сводная таблица степеней специфичности, M1, M4, World, AST |
 | [metamorphic_testing.md](metamorphic_testing.md) | Метаморфное тестирование конвейера: проверка поведения без разметки эталонов (MR-1 — MR-5) |
 | [two_stage_pipeline_research.md](two_stage_pipeline_research.md) | Исследование и план внедрения двухстадийного пайплайна (Stage 0: Project Profiling) для универсального Spring Boot анализатора |

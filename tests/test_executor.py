@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 from engine.adapters.db import DatabaseState
+from engine.executor.envelope import NAMES
 from engine.executor.interpreter import arm_fails, match_template
 from engine.executor.library import _date_call, call_library, new_library
 from engine.executor.values import (
@@ -74,8 +75,8 @@ class TestStructure:
                                     "args": [{"lit": 0, "type": "int"}]}},
             {"op": "return", "expr": {"name": "response", "ref": "local"}},
         ]
-        assert arm_fails(fail_new) and arm_fails(fail_var) and arm_fails([{"op": "throw", "expr": {}}])
-        assert not arm_fails(ok_new) and not arm_fails([])
+        assert arm_fails(fail_new, NAMES) and arm_fails(fail_var, NAMES) and arm_fails([{"op": "throw", "expr": {}}], NAMES)
+        assert not arm_fails(ok_new, NAMES) and not arm_fails([], NAMES)
 
 
 class _It:

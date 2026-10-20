@@ -154,7 +154,7 @@ class StepGrounder:
         handler, why = got
         verb, path = self.cat.handlers[handler].routes[0]
         return dataclasses.replace(req, handler=handler, http={"method": verb, "path": path}, params={},
-                                   ui_source=None, grounding=dict(req.grounding, rebound=why))
+                                   ui_source=None, body_src={}, grounding=dict(req.grounding, rebound=why))
 
     def begin(self, sc: dict[str, Any]) -> ScenarioSession:
         steps = sc.get("steps") or []
@@ -289,6 +289,7 @@ class StepGrounder:
             scenario=sc.get("id", "S?"), step=n, action=action, handler=handler,
             http={"method": verb, "path": path}, params=params, expected_outcome=outcome, refs=refs,
             ui_source={"file": ui_req.file, "line": ui_req.line} if ui_req is not None else None,
+            body_src=dict(ui_req.body_src) if ui_req is not None else {},
             grounding=grounding,
         )
 

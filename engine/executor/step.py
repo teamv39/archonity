@@ -17,6 +17,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from engine.executor.envelope import Envelope
 from engine.executor.interpreter import Interpreter, Sink
 from engine.executor.schema import EntitySchema, simple_name
 from engine.executor.values import UNKNOWN, EnumV, ListV, Obj, OptionalV, Wrapper
@@ -44,6 +45,7 @@ class StepExecutor:
         self.targets_root = Path(targets_root) if targets_root else None
         self._scenario: dict[str, Any] = {}
         self._step_req: Any = None
+        self._body_src: dict[str, str] = {}
         self._src: dict[str, list[str]] = {}
         self.results: dict[int, Any] = {}
         self.current_user: str | None = None
@@ -85,7 +87,7 @@ class StepExecutor:
                 top = max(self.schema.kind_rank(fqn, kind) for fqn, _ in cands)
                 return [obj for fqn, obj in cands if self.schema.kind_rank(fqn, kind) == top][-1]
         idx = 1 if pick == "second" else 0
-        found = _find_kind(_payload(self.results.get(n)), kind, schema=self.schema)
+        found = _find_kind(_payload(self.results.get(n), self.it.envelope), kind, schema=self.schema)
         if found:
             ent = found[idx] if idx < len(found) else found[0]
             if self.entity_id(ent, kind) is not UNKNOWN:
@@ -203,7 +205,12 @@ class StepExecutor:
             return user
         if name == "id":
             return UNKNOWN
-        for alias in self.schema.field_aliases(name):
+        names = getattr(self.it.rules, "m4_conventions", "code") == "names"
+        aliases = self.schema.field_aliases(name, names)
+        if not names and self._body_src.get(name) and self._body_src[name] not in aliases:
+            # Поле, которое UI берёт из другого поля записи прежнего шага (каталог UI)
+            aliases = (*aliases, self._body_src[name])
+        for alias in aliases:
             for kind, ent in ents.items():
                 # сама сущность, затем вложенные объекты (TripAllDetail -> tripResponse)
                 layers = [ent] + ([x for x in ent.fields.values() if isinstance(x, Obj)] if isinstance(ent, Obj) else [])
@@ -354,6 +361,7 @@ class StepExecutor:
         params = {k: v for k, v in (getattr(step_req, "params", None) or {}).items() if v is not None}
         self._user_name = getattr(state, "user_name", None)
         self._verb = (getattr(step_req, "http", None) or {}).get("method")
+        self._body_src = dict(getattr(step_req, "body_src", None) or {})
         refs = getattr(step_req, "refs", None) or {}
         if self.ref_kinds == "v7":
             refs = self._v7_refs(refs)
@@ -363,16 +371,22 @@ class StepExecutor:
         snapshot = world.db.fork() if getattr(self.it.rules, "m4_success_retry", "on") != "off" and world.db is not None             else None
         # Аргументы строятся в sink шага: разбор тела запроса исполняет конструктор DTO (R7)
         sink, ret = self.it.run_handler(handler, lambda: self.handler_args(handler, params, refs, state), expected, n)
-        if snapshot is not None and expected != "refused" and _is_failure(ret)                 and any(isinstance(v, str) for v in params.values()):
+        if snapshot is not None and expected != "refused" and _is_failure(ret, self.it.envelope)                 and any(isinstance(v, str) for v in params.values()):
             # Шаг по тексту успешен, а по конкретным значениям отказал: значения строковых параметров M1
             # (восстановлены LLM из английского текста: регистр, пробелы) не совпали с тем, что принял бэкенд.
             # Откат мира и повтор шага со строковыми параметрами UNKNOWN.
-            # Ступень 1: названия станций и мест в форме, в которой их хранит Train Ticket
-            #   (Station.setName, StringUtils.String2Lower: без пробелов, строчными).
+            # Ступень 1: словесные строки — в том виде, в каком значение лежит в мире БД (`_world_string`: текст
+            #   «Ning Bo» — запись значения «ningbo», которое сохранил сеттер проекта); в режиме names — названия
+            #   станций по подстрокам имени параметра, без пробелов и строчными.
             # Ступень 2: неизвестны словесные строки (станции, типы поездов); ID и время остаются.
             # Ступень 3: неизвестны все строки.
+            if getattr(self.it.rules, "m4_conventions", "code") == "names":
+                first = {k: (_station_norm(v) if _is_place_param(k, v) else v) for k, v in params.items()}
+            else:
+                first = {k: (self._world_string(v) if isinstance(v, str) and _WORDY.match(v) else v)
+                         for k, v in params.items()}
             ladder = (
-                (1, {k: (_station_norm(v) if _is_place_param(k, v) else v) for k, v in params.items()}),
+                (1, first),
                 (2, {k: v for k, v in params.items() if not (isinstance(v, str) and _WORDY.match(v))}),
                 (3, {k: v for k, v in params.items() if not isinstance(v, str)}),
             )
@@ -386,7 +400,7 @@ class StepExecutor:
                     handler, lambda r=relaxed: self.handler_args(handler, r, refs, state), expected, n)
                 sink.unknowns.append({"method": handler, "branch": "step", "line": None,
                                       "decided": f"success_retry{level}:changed_params={','.join(dropped)}"})
-                if not _is_failure(ret):
+                if not _is_failure(ret, self.it.envelope):
                     break
         if n is not None:
             self.results[n] = ret
@@ -402,6 +416,27 @@ class StepExecutor:
             self.unknowns[self.sid].append(dict(u, step=n))
         return self._emit(sink, ledger)
 
+    def _world_string(self, v: str) -> str:
+        """Строка шага в том виде, в каком значение хранит мир БД: каждая часть (через запятую) заменяется значением
+        строки таблицы с тем же ключом (`_canon`: строчные буквы и цифры). Из нескольких таких значений — то, что
+        встречается в большем числе колонок (в данных прогрева рядом с `shanghai` в 10 колонках есть `Shang Hai`
+        в одной); при равенстве или без совпадений часть остаётся как есть."""
+        w = self.it.world
+        tables = set(w.table_of.values()) | {t for c in w.collections_of.values() for t in c.values()}
+        cols: dict[str, dict[str, set[tuple[str, str]]]] = {}
+        for t in sorted(tables):
+            for row in w.rows(t):
+                for col, x in row.items():
+                    if isinstance(x, str) and x:
+                        cols.setdefault(_canon(x), {}).setdefault(x, set()).add((t, col))
+        out = []
+        for part in v.split(","):
+            cands = sorted(cols.get(_canon(part), {}).items(), key=lambda kv: -len(kv[1]))
+            if cands and (len(cands) == 1 or len(cands[0][1]) > len(cands[1][1])):
+                part = cands[0][0]
+            out.append(part)
+        return ",".join(out)
+
     def _v7_refs(self, refs: dict[str, str]) -> dict[str, str]:
         """Совместимость с видами M1 v7 (кеш m1-v7, до ADR-007): перевод в виды манифеста. Уйдёт с режимом v7.
 
@@ -416,7 +451,7 @@ class StepExecutor:
             m = _REF.match(refs["train"] or "")
             n = int(m.group(2)) if m else -1
             is_type = any(self.schema.is_kind(fqn, "trainType") for fqn, _ in self.saved.get(n, [])) \
-                or bool(_find_kind(_payload(self.results.get(n)), "trainType", schema=self.schema))
+                or bool(_find_kind(_payload(self.results.get(n), self.it.envelope), "trainType", schema=self.schema))
             out.setdefault("trainType" if is_type else "trip", refs["train"])
         return out
 
@@ -426,7 +461,7 @@ class StepExecutor:
         Вход — шаг, в котором исполнился метод с вызовом `AuthenticationManager.authenticate` (Spring Security).
         ID — поле ответа с именем поля `@Id` класса `UserDetails` того же модуля (`User.userId` -> `TokenDto.userId`).
         """
-        payload = _payload(ret)
+        payload = _payload(ret, self.it.envelope)
         if not isinstance(payload, Obj):
             return None
         for m in sink.methods:
@@ -581,7 +616,13 @@ def _login_principal_ids(nodes: dict[str, dict[str, Any]]) -> dict[str, tuple[st
     return {m: tuple(sorted(principals.get(nodes.get(m, {}).get("module"), ()))) for m in sorted(e for e in entries if e)}
 
 
+def _canon(s: str) -> str:
+    """Ключ сравнения строки шага со значением мира БД: только строчные буквы и цифры."""
+    return re.sub(r"[^0-9a-z]", "", s.casefold())
+
+
 def _is_place_param(name: str, v: Any) -> bool:
+    """Режим names (до feature/102): параметр-название места по подстрокам имени."""
     n = name.lower()
     return isinstance(v, str) and bool(_WORDY.match(v)) and any(h in n for h in ("station", "place", "from", "to"))
 
@@ -590,25 +631,25 @@ def _station_norm(v: str) -> str:
     return ",".join(p.replace(" ", "").lower() for p in v.split(","))
 
 
-def _is_failure(ret: Any) -> bool:
-    """Ответ обработчика — отказ: Response со статусом, известным и не равным 1."""
+def _is_failure(ret: Any, env: Envelope | None) -> bool:
+    """Ответ обработчика — отказ: обёртка проекта (`envelope.py`) со статусом, известным и не равным успеху."""
     v = ret
     for _ in range(3):
         if isinstance(v, Wrapper):
             v = v.body
-    if isinstance(v, Obj) and (v.type or "").endswith(".Response"):
-        st = v.fields.get("status")
-        return isinstance(st, int) and not isinstance(st, bool) and st != 1
+    if env is not None and isinstance(v, Obj) and env.is_type(v.type):
+        st = v.fields.get(env.status)
+        return isinstance(st, int) and not isinstance(st, bool) and st != env.success
     return False
 
 
-def _payload(v: Any) -> Any:
-    """Данные ответа обработчика: ResponseEntity -> Response -> data."""
+def _payload(v: Any, env: Envelope | None) -> Any:
+    """Данные ответа обработчика: ResponseEntity -> обёртка проекта -> её поле данных."""
     for _ in range(4):
         if isinstance(v, Wrapper):
             v = v.body
-        elif isinstance(v, Obj) and (v.type or "").endswith(".Response"):
-            v = v.get("data")
+        elif env is not None and env.data and isinstance(v, Obj) and env.is_type(v.type):
+            v = v.get(env.data)
         elif isinstance(v, OptionalV):
             v = v.value
         else:

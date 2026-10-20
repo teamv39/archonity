@@ -244,6 +244,14 @@ def parse_args() -> argparse.Namespace:
              "строковыми параметрами (on по умолчанию)",
     )
     parser.add_argument(
+        "--m4-conventions",
+        choices=("code", "names"),
+        default="code",
+        help="M4: соглашения проекта — code (по умолчанию) из кода: ответ-обёртка и значение успеха, строки шага "
+             "при повторе — значения мира БД, поля тела — источники из шаблона UI; names — как до feature/102 "
+             "(Response/status/1, нормализация названий станций, алиасы tripId/oldTripId)",
+    )
+    parser.add_argument(
         "--m1-prompt",
         choices=("v7", "v8"),
         default="v8",
@@ -410,6 +418,7 @@ def main() -> None:
         executor=args.executor,
         unresolved_receiver_calls=args.m4_unresolved_calls,
         m4_success_retry=args.m4_success_retry,
+        m4_conventions=args.m4_conventions,
         m4_judge=args.judge,
         m4_judge_budget=args.judge_budget,
     )

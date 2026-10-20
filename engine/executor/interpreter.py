@@ -1,7 +1,8 @@
 """Исполнитель M4 (ADR-005): идёт по IR тел методов (`data/ir`) и пишет события исполнения.
 
 - Условие считается по значениям в трёхзначной логике (TRUE, FALSE, UNKNOWN).
-- UNKNOWN: правило успешного пути (плечо, которое кончается отказом `Response(0, ...)`/`throw`, не берём,
+- UNKNOWN: правило успешного пути (плечо, которое кончается отказом — ответом-обёрткой со статусом не успеха
+  (`envelope.py`), `throw` или `null` — не берём,
   если шаг не ожидает отказа), иначе исполняются оба плеча (как обход скелета).
 - Вызов проектного метода — рекурсивный вход (цели из скелета: `calls`, `runtime_dispatch`, CHA; `target`
   IR для вызовов без рёбер скелета, R7). RestTemplate — вход в обработчик другого сервиса, цель выбирается
@@ -19,7 +20,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable
 
-from engine.executor import library
+from engine.executor import envelope, library
+from engine.executor.envelope import Envelope
 from engine.executor.values import next_uid
 from engine.executor.values import (
     UNKNOWN, Bean, Concat, EnumV, Lambda, ListV, MapV, MethodRef, Obj, OptionalV, TypeRef, Wrapper,
@@ -105,6 +107,10 @@ class Interpreter:
         for p in sorted(Path(ir_dir).glob("*.json")):
             with open(p, encoding="utf-8") as f:
                 self.ir.update(json.load(f).get("methods", {}))
+        # Ответ-обёртка проекта (класс, статус, успех, данные): из кода или, в режиме отката, зашитое соглашение
+        self.envelope: Envelope | None = (
+            envelope.NAMES if getattr(rules, "m4_conventions", "code") == "names"
+            else envelope.derive(index, self.ir, targets_root))
         # Рёбра скелета по call_site
         self.cs_calls: dict[str, set[str]] = {}
         self.cs_dispatch: dict[str, set[str]] = {}
@@ -392,7 +398,7 @@ class Interpreter:
             return comp
         # UNKNOWN: правило успешного пути, затем судья, иначе оба плеча (ADR-005: сначала правила по умолчанию)
         if self.expected != "refused":
-            tf, ef = arm_fails(then_s), arm_fails(else_s)
+            tf, ef = arm_fails(then_s, self.envelope), arm_fails(else_s, self.envelope)
             if tf != ef:
                 arm = "else" if tf else "then"
                 why = ("DEFAULT_RULE", f"success_path:{short}@{bid}:{arm}")
@@ -1361,26 +1367,24 @@ def iter_items(v: Any) -> tuple[list[Any], bool]:
     return [], False
 
 
-_FAIL_CTORS = ("Response",)
-
-
-def is_failure_expr(e: Any) -> bool:
+def is_failure_expr(e: Any, env: Envelope | None) -> bool:
+    """Выражение ответа — отказ: `new <обёртка>(<статус не успеха>, ...)` (в т.ч. внутри ok/status/body) или null."""
     if not isinstance(e, dict):
         return False
-    if "new" in e and re.sub(r"<.*>", "", e["new"]).rsplit(".", 1)[-1] in _FAIL_CTORS:
+    if "new" in e and env is not None and env.is_type(e["new"]):
         args = e.get("args") or []
         if args and isinstance(args[0], dict) and "lit" in args[0]:
-            return args[0]["lit"] != 1
+            return args[0]["lit"] != env.success
         return False
     if "call" in e and e.get("callee") in ("ok", "status", "body") and e.get("args"):
-        return is_failure_expr(e["args"][-1])
+        return is_failure_expr(e["args"][-1], env)
     if "lit" in e and e.get("type") == "null":
         return True
     return False
 
 
-def arm_fails(stmts: list[dict[str, Any]]) -> bool:
-    """Плечо кончается отказом на всех путях: throw, return Response(статус != 1) или return null."""
+def arm_fails(stmts: list[dict[str, Any]], env: Envelope | None) -> bool:
+    """Плечо кончается отказом на всех путях: throw, return обёртки со статусом не успеха (`envelope.py`) или null."""
     if not stmts:
         return False
     last = stmts[-1]
@@ -1390,24 +1394,24 @@ def arm_fails(stmts: list[dict[str, Any]]) -> bool:
     if op == "return":
         e = last.get("expr")
         if isinstance(e, dict) and "name" in e and "call" not in e:
-            return any(_sets_failure_status(x, e["name"]) for x in stmts[:-1])
-        return is_failure_expr(e)
+            return any(_sets_failure_status(x, e["name"], env) for x in stmts[:-1])
+        return is_failure_expr(e, env)
     if op == "if":
-        return bool(last.get("else")) and arm_fails(last.get("then") or []) and arm_fails(last.get("else") or [])
+        return bool(last.get("else")) and arm_fails(last.get("then") or [], env)             and arm_fails(last.get("else") or [], env)
     if op in ("block", "try"):
-        return arm_fails(last.get("body") or [])
+        return arm_fails(last.get("body") or [], env)
     return False
 
 
-def _sets_failure_status(stmt: dict[str, Any], var: str) -> bool:
-    """`var.setStatus(0)` на верхнем уровне плеча: ответ-отказ, который вернут переменной."""
+def _sets_failure_status(stmt: dict[str, Any], var: str, env: Envelope | None) -> bool:
+    """`var.set<Статус>(<не успех>)` на верхнем уровне плеча: ответ-отказ, который вернут переменной."""
     e = stmt.get("expr") if stmt.get("op") == "expr" else None
-    if not isinstance(e, dict) or e.get("callee") != "setStatus":
+    if env is None or not isinstance(e, dict) or e.get("callee") != env.setter:
         return False
     recv = e.get("recv") or {}
     args = e.get("args") or []
     return (recv.get("name") == var and bool(args) and isinstance(args[0], dict) and "lit" in args[0]
-            and args[0]["lit"] != 1 and args[0].get("type") == "int")
+            and args[0]["lit"] != env.success and args[0].get("type") == "int")
 
 
 def iter_calls(x: Any):
