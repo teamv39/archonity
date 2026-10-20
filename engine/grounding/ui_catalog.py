@@ -13,6 +13,7 @@ from __future__ import annotations
 import collections
 import html.parser
 import json
+import logging
 import os
 import re
 from dataclasses import asdict, dataclass, field
@@ -23,6 +24,8 @@ import tree_sitter as ts
 import tree_sitter_javascript as tsj
 
 from engine.adapters.skeleton import SkeletonIndex, path_segs
+
+logger = logging.getLogger(__name__)
 
 VENDOR = re.compile(
     r"(\.min\.|^(vue|angular|jquery|bootstrap|echarts|amazeui|iscroll|cropper|aliyun|react|lodash|moment|d3|three|npm)\b"
@@ -784,8 +787,8 @@ def build_catalog(
             with open(resolved_cache, "r", encoding="utf-8") as f:
                 d = json.load(f)
             return UICatalog.from_dict(d)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Не удалось загрузить кэш UI-каталога из %s: %s", resolved_cache, e)
 
     root = Path(targets_root)
     ui_dir = ui_dir or find_ui_dir(root, ix)
@@ -852,8 +855,8 @@ def build_catalog(
         resolved_cache.parent.mkdir(parents=True, exist_ok=True)
         with open(resolved_cache, "w", encoding="utf-8") as f:
             json.dump(catalog.to_dict(), f, ensure_ascii=False, indent=1)
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("Не удалось сохранить кэш UI-каталога в %s: %s", resolved_cache, e)
     return catalog
 
 

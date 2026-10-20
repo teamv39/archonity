@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from engine.manifest import EntityKind, entity_kinds
+from engine.manifest import EntityKind, camel_to_snake, entity_kinds, simple_name as _canonical_simple_name
 
 _FIELD_ALIASES: dict[str, tuple[str, ...]] = {
     "from": ("from", "startStation", "startPlace", "startStationName", "fromStation"),
@@ -26,9 +26,9 @@ _FIELD_ALIASES: dict[str, tuple[str, ...]] = {
 _USER_FIELDS: tuple[str, ...] = ("accountId", "userId", "loginId")
 
 
-def simple_name(fqn: str | None) -> str:
-    """Простое имя класса в нижнем регистре без пакетов и вложенных классов."""
-    return (fqn or "").rsplit(".", 1)[-1].split("$")[-1].lower()
+def simple_name(fqn: str | None, lower: bool = True) -> str:
+    """Простое имя класса (по умолчанию в нижнем регистре) без пакетов и вложенных классов."""
+    return _canonical_simple_name(fqn, lower=lower)
 
 
 class EntitySchema:
