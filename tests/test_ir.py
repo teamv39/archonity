@@ -84,6 +84,22 @@ def test_seat_class_enum_resolution():
     )
     assert pool.get_enum_target(name_call) == SEAT_CLASS_GET_NAME_BY_CODE
 
+    custom_call = CallIR(
+        file="dummy",
+        line=1,
+        col=1,
+        callee="getCode",
+        receiver="",
+        kind="ENUM",
+        arg_count=0,
+        guard=(),
+        enum_constant=EnumConstantIR(
+            type_fqn="com.example.CustomStatus",
+            constant="ACTIVE",
+        ),
+    )
+    assert pool.get_enum_target(custom_call) == "method:ts-common:com.example.CustomStatus#getCode()"
+
 
 def test_evaluate_guard_unconditional():
     pool = MethodPoolIR.load()

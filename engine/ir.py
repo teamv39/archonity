@@ -277,7 +277,7 @@ class MethodPoolIR:
                     target = nid
                     break
 
-        # 2. Fallback для автономных прогонов без скелета
+        # 2. Fallback для автономных прогонов без скелета (тесты и изоляция)
         if target is None:
             if type_fqn == "edu.fudan.common.entity.OrderStatus":
                 if callee == "getCode":
@@ -289,6 +289,10 @@ class MethodPoolIR:
                     target = SEAT_CLASS_GET_CODE
                 elif callee == "getNameByCode":
                     target = SEAT_CLASS_GET_NAME_BY_CODE
+            elif callee == "getCode":
+                target = f"method:ts-common:{type_fqn}#getCode()"
+            elif callee == "getNameByCode":
+                target = f"method:ts-common:{type_fqn}#getNameByCode(int)"
 
         self._enum_target_cache[cache_key] = target
         return target
