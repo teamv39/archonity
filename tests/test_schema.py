@@ -49,3 +49,6 @@ class TestEntitySchema:
         assert "startStation" in aliases
         assert "from" in aliases
         assert schema.field_aliases("unknown") == ("unknown",)
+        # ID рейса из записи заказа — каталог UI (StepRequest.body_src); в режиме отката — алиасы по именам
+        assert schema.field_aliases("tripId") == ("tripId",)
+        assert schema.field_aliases("tripId", names=True) == ("tripId", "trainNumber")

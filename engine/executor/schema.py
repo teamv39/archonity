@@ -12,10 +12,16 @@ from typing import Any
 
 from engine.manifest import EntityKind, camel_to_snake, entity_kinds, simple_name as _canonical_simple_name
 
+# Поля бронирования, которых M1 не заполняет (маршрут и дата поиска): их значение есть в тексте сценария, но промпт
+# параметров M1 велит ставить null всему, что взято из прежних шагов. Уйдут, когда M1 заполнит их из текста
+# (docs/researches/m4_code_derived_conventions.md). tripId/oldTripId берутся из каталога UI (StepRequest.body_src).
 _FIELD_ALIASES: dict[str, tuple[str, ...]] = {
     "from": ("from", "startStation", "startPlace", "startStationName", "fromStation"),
     "to": ("to", "terminalStation", "endPlace", "terminalStationName", "toStation"),
     "date": ("date", "travelDate", "departureTime"),
+}
+# Режим отката --m4-conventions names: алиасы ID рейса, как до feature/102
+_NAMES_FIELD_ALIASES: dict[str, tuple[str, ...]] = {
     "tripId": ("tripId", "trainNumber"),
     "oldTripId": ("trainNumber",),
 }
@@ -42,6 +48,7 @@ class EntitySchema:
         self._id_fields: dict[str, tuple[str, ...]] = {k: ek.id_fields for k, ek in self.manifest.items()}
         self.user_fields: tuple[str, ...] = _USER_FIELDS
         self._field_aliases: dict[str, tuple[str, ...]] = dict(_FIELD_ALIASES)
+        self._names_aliases: dict[str, tuple[str, ...]] = {**_FIELD_ALIASES, **_NAMES_FIELD_ALIASES}
 
     @property
     def known_kinds(self) -> set[str]:
@@ -81,9 +88,9 @@ class EntitySchema:
     def is_kind(self, fqn: str | None, kind: str) -> bool:
         return self.kind_rank(fqn, kind) > 0
 
-    def field_aliases(self, name: str) -> tuple[str, ...]:
-        """Алиасы поля DTO для поиска в сущностях предыдущих шагов."""
-        return self._field_aliases.get(name, (name,))
+    def field_aliases(self, name: str, names: bool = False) -> tuple[str, ...]:
+        """Алиасы поля DTO для поиска в сущностях предыдущих шагов; `names` — режим отката (--m4-conventions names)."""
+        return (self._names_aliases if names else self._field_aliases).get(name, (name,))
 
 
 __all__ = ["EntitySchema", "simple_name"]

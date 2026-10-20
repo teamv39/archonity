@@ -22,6 +22,8 @@ class StepRequest:
     expected_outcome: str = "success"
     refs: dict[str, str] = field(default_factory=dict)
     ui_source: dict[str, Any] | None = None
+    # Поле тела -> поле записи прежнего шага, из которого UI его берёт (каталог UI, `UIRequest.body_src`)
+    body_src: dict[str, str] = field(default_factory=dict)
     grounding: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

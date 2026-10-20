@@ -20,6 +20,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllConfigs(org.springframework.http.HttpHeaders)"
@@ -50,6 +51,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -84,6 +86,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)"
@@ -118,6 +121,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)"
@@ -144,6 +148,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllContacts(org.springframework.http.HttpHeaders)"
@@ -174,6 +179,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteContacts(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -210,6 +216,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)"
@@ -248,6 +255,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)"
@@ -274,6 +282,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllPrices(org.springframework.http.HttpHeaders)"
@@ -304,6 +313,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -342,6 +352,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)"
@@ -379,6 +390,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)"
@@ -406,6 +418,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-route-service:adminroute.controller.AdminRouteController#getAllRoutes(org.springframework.http.HttpHeaders)"
@@ -441,6 +454,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)"
@@ -477,6 +491,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)"
@@ -507,6 +522,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-route-service:adminroute.controller.AdminRouteController#deleteRoute(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -533,6 +549,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllStations(org.springframework.http.HttpHeaders)"
@@ -563,6 +580,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -599,6 +617,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)"
@@ -634,6 +653,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)"
@@ -660,6 +680,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllTrains(org.springframework.http.HttpHeaders)"
@@ -690,6 +711,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -728,6 +750,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)"
@@ -765,6 +788,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)"
@@ -792,6 +816,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#getAllTravels(org.springframework.http.HttpHeaders)"
@@ -831,6 +856,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)"
@@ -870,6 +896,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#updateTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)"
@@ -900,6 +927,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#deleteTravel(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -926,6 +954,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -954,6 +983,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -982,6 +1012,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1011,6 +1042,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-user-service:adminuser.controller.AdminUserController#getAllUsers(org.springframework.http.HttpHeaders)"
@@ -1048,6 +1080,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)"
@@ -1086,6 +1119,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-user-service:adminuser.controller.AdminUserController#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)"
@@ -1116,6 +1150,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-user-service:adminuser.controller.AdminUserController#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)"
@@ -1149,6 +1184,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)"
@@ -1183,6 +1219,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1220,6 +1257,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1258,6 +1296,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1303,6 +1342,7 @@
    },
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "no ticket to collect",
     "Token is expired! please login first!"
@@ -1349,6 +1389,7 @@
    },
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "no ticket to collect",
     "Token is expired! please login first!"
@@ -1382,6 +1423,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "- you can enter station with your order id !",
     "Token is expired! please login first!"
@@ -1411,6 +1453,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1456,6 +1499,7 @@
    },
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "no ticket to enter statrion"
    ],
@@ -1501,6 +1545,7 @@
    },
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "no ticket to enter statrion"
    ],
@@ -1533,6 +1578,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "server send message:",
     "Token is expired! please login first!"
@@ -1569,6 +1615,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Not Login"
    ],
@@ -1614,6 +1661,7 @@
    },
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1659,6 +1707,7 @@
    },
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1687,6 +1736,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1721,6 +1771,10 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {
+    "orderId": "id",
+    "tripId": "trainNumber"
+   },
    "messages": [
     "Pay Fail. Reason Not Clear.Please check the order status before you try.",
     "Token is expired! please login first!"
@@ -1752,6 +1806,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1789,6 +1844,10 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {
+    "orderId": "id",
+    "oldTripId": "trainNumber"
+   },
    "messages": [
     "unKnow payDifference error!",
     "Token is expired! please login first!",
@@ -1829,6 +1888,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "unKnow payDifference error!"
    ],
@@ -1859,6 +1919,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1904,6 +1965,10 @@
    },
    "body_cond": [],
    "body_opt": [],
+   "body_src": {
+    "targetDate": "boughtDate",
+    "orderId": "id"
+   },
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1932,6 +1997,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -1968,6 +2034,10 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {
+    "startPlace": "from",
+    "endPlace": "to"
+   },
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -2004,6 +2074,10 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {
+    "startPlace": "from",
+    "endPlace": "to"
+   },
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -2040,6 +2114,10 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {
+    "startPlace": "from",
+    "endPlace": "to"
+   },
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -2076,6 +2154,10 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {
+    "startPlace": "from",
+    "endPlace": "to"
+   },
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -2106,6 +2188,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "<label><input class='booking_contacts_select' name='booking_contacts' type='rad…",
     "<input id='booking_new_contacts_name'>",
@@ -2143,6 +2226,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -2171,6 +2255,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -2350,6 +2435,7 @@
      ]
     }
    ],
+   "body_src": {},
    "messages": [
     "please go to order list to pay for it!",
     "Token is expired! please login first!"
@@ -2530,6 +2616,7 @@
      ]
     }
    ],
+   "body_src": {},
    "messages": [
     "please go to order list to pay for it!",
     "Token is expired! please login first!"
@@ -2567,6 +2654,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -2603,6 +2691,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
@@ -2637,6 +2726,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-travel2-service:travel2.controller.Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
@@ -2672,6 +2762,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
@@ -2708,6 +2799,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-travel2-service:travel2.controller.Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)"
@@ -2740,6 +2832,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)"
@@ -2791,6 +2884,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-order-service:adminorder.controller.AdminOrderController#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)"
@@ -2843,6 +2937,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-order-service:adminorder.controller.AdminOrderController#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)"
@@ -2878,6 +2973,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-admin-order-service:adminorder.controller.AdminOrderController#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
@@ -2909,6 +3005,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -2942,6 +3039,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -2975,6 +3073,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "Token is expired! please login first!"
    ],
@@ -3012,6 +3111,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "<select class='form-control booking_seat_class'>",
     "<option value='2'>1st -",
@@ -3055,6 +3155,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "<select class='form-control booking_seat_class'>",
     "<option value='2'>1st -",
@@ -3096,6 +3197,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [
     "<select class='form-control booking_seat_class'>",
     "<option value='2'>1st -",
@@ -3137,6 +3239,7 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
+   "body_src": {},
    "messages": [],
    "handlers": [
     "method:ts-rebook-service:rebook.controller.RebookController#payDifference(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)"

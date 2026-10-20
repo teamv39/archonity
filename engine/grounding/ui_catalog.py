@@ -68,6 +68,9 @@ class UIRequest:
     body_consts: dict[str, Any] = field(default_factory=dict)
     body_cond: list[dict[str, Any]] = field(default_factory=list)
     body_opt: list[dict[str, Any]] = field(default_factory=list)
+    # Поле тела -> поле элемента списка в шаблоне, из которого UI его берёт (`payMyOrder(item.trainNumber)` ->
+    # `this.tripId` -> `info.tripId`): {"tripId": "trainNumber"}. Только поля, чьё имя отличается от источника
+    body_src: dict[str, str] = field(default_factory=dict)
     messages: list[str] = field(default_factory=list)
     handlers: list[str] = field(default_factory=list)
     group: str = ""
@@ -337,6 +340,7 @@ class _FileParser:
         self.tree = ts.Parser(_JS).parse(src)
         self.root = self.tree.root_node
         self.calls_by_name: dict[str, list[ts.Node]] = collections.defaultdict(list)
+        self._state: dict[str, tuple[str, int]] | None = None
         for n in _walk(self.root):
             if n.type == "call_expression":
                 f = n.child_by_field_name("function")
@@ -492,6 +496,90 @@ class _FileParser:
 
     # --- контексты вызова
 
+    def state_params(self) -> dict[str, tuple[str, int]]:
+        """Состояние компонента из параметров его методов: `this.P = p` в методе `m(…, p, …)` -> {P: (m, индекс p)}.
+        Свойство, которое присваивают из разных мест, не берётся."""
+        if self._state is None:
+            found: dict[str, set[tuple[str, int]]] = collections.defaultdict(set)
+            for fn in _walk(self.root):
+                if fn.type not in FUNC_TYPES:
+                    continue
+                name, params = _func_name(fn), _params(fn)
+                if not name or not params:
+                    continue
+                for n in _walk(fn):
+                    if n.type != "assignment_expression":
+                        continue
+                    left, right = n.child_by_field_name("left"), n.child_by_field_name("right")
+                    if left is not None and left.type == "member_expression" \
+                            and _text(left.child_by_field_name("object")) == "this" \
+                            and right is not None and right.type == "identifier" and _text(right) in params \
+                            and self._param_owner(_text(right), n) == fn:
+                        found[_text(left.child_by_field_name("property"))].add((name, params.index(_text(right))))
+            self._state = {k: next(iter(v)) for k, v in found.items() if len(v) == 1}
+        return self._state
+
+    def _is_this(self, n: ts.Node | None) -> bool:
+        """`this` или переменная, которой присвоен `this` (`var that = this`)."""
+        if n is None:
+            return False
+        if n.type == "this":
+            return True
+        if n.type != "identifier":
+            return False
+        assigns, _ = self._scope_assignments(_text(n), n)
+        return bool(assigns) and all(v is not None and v.type == "this" for _, v in assigns)
+
+    def _source(self, v: ts.Node | None) -> tuple[str, int] | None:
+        """Значение поля тела — параметр метода UI, прямо или через состояние компонента: (метод, индекс)."""
+        if v is None:
+            return None
+        if v.type == "member_expression" and self._is_this(v.child_by_field_name("object")):
+            return self.state_params().get(_text(v.child_by_field_name("property")))
+        if v.type == "identifier":
+            owner = self._param_owner(_text(v), v)
+            name = _func_name(owner) if owner is not None else None
+            if name:
+                return name, _params(owner).index(_text(v))
+        return None
+
+    def body_sources(self, expr: ts.Node | None, ctx: _Ctx,
+                     seen: frozenset[str] = frozenset()) -> dict[str, list[Any]]:
+        """Поля тела, значение которых — параметр метода UI: {поле: [метод, индекс]}. Аргумент на месте вызова
+        метода в шаблоне страницы сопоставляет `build_catalog`."""
+        if expr is None:
+            return {}
+        if expr.type == "identifier" and _text(expr) in ctx.env:
+            return self.body_sources(ctx.env[_text(expr)], _Ctx({}, None, []), seen)
+        if expr.type == "call_expression" and _callee(expr) == "JSON.stringify":
+            args = expr.child_by_field_name("arguments")
+            return self.body_sources(args.named_children[0] if args and args.named_children else None, ctx, seen)
+        out: dict[str, list[Any]] = {}
+        if expr.type == "object":
+            for pr in expr.named_children:
+                src = self._source(pr.child_by_field_name("value")) if pr.type == "pair" else None
+                if src:
+                    out[_text(pr.child_by_field_name("key")).strip("'\"")] = list(src)
+            return out
+        if expr.type != "identifier":
+            return {}
+        name = _text(expr)
+        assigns, scope = self._scope_assignments(name, expr)
+        for _, v in assigns:
+            if v is not None and v.type == "call_expression" and _callee(v) == "JSON.stringify" and name not in seen:
+                return self.body_sources(v, ctx, seen | {name})
+            if v is not None and v.type == "object":
+                out.update(self.body_sources(v, ctx, seen))
+        if scope is not None:
+            for n in _walk(scope):
+                left = n.child_by_field_name("left") if n.type == "assignment_expression" else None
+                if left is None or left.type != "member_expression" or _text(left.child_by_field_name("object")) != name:
+                    continue
+                src = self._source(n.child_by_field_name("right"))
+                if src:
+                    out[_text(left.child_by_field_name("property"))] = list(src)
+        return out
+
     def contexts(self, call: ts.Node, used: Iterable[ts.Node]) -> list[_Ctx]:
         """Если URL/тело берутся из параметров функции-помощника — по контексту на каждое её место вызова."""
         owner = None
@@ -572,6 +660,7 @@ class _FileParser:
             "body_consts": consts,
             "body_cond": cond,
             "body_opt": opt,
+            "body_src": self.body_sources(data, ctx),
             "messages": list(dict.fromkeys(msgs)),
         }
 
@@ -627,12 +716,14 @@ class _HtmlScan(html.parser.HTMLParser):
         self.stack: list[tuple[str, dict[str, str], list[str]]] = []
         self.by_id: dict[str, str] = {}
         self.by_func: dict[str, list[str]] = collections.defaultdict(list)
+        self.call_args: dict[str, list[list[str]]] = collections.defaultdict(list)
         self.scripts: list[str] = []
         self.title = ""
         self._in_title = False
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         a = {k: v or "" for k, v in attrs}
+        self._args(a)
         if tag == "script" and a.get("src"):
             self.scripts.append(a["src"])
         if tag == "title":
@@ -657,6 +748,12 @@ class _HtmlScan(html.parser.HTMLParser):
             self.title += data
         if self.stack:
             self.stack[-1][2].append(data)
+
+    def _args(self, a: dict[str, str]) -> None:
+        """Аргументы вызовов в обработчиках клика: `payMyOrder(index, item.id)` -> call_args["payMyOrder"]."""
+        for k in self.CLICK:
+            for m in re.finditer(r"([A-Za-z_$][\w$]*)\s*\(([^()]*)\)", a.get(k) or ""):
+                self.call_args[m.group(1)].append([x.strip() for x in m.group(2).split(",")] if m.group(2).strip() else [])
 
     def _close(self, tag: str, a: dict[str, str], buf: list[str]) -> None:
         txt = _norm(re.sub(r"\{\{.*?\}\}", " ", " ".join(buf)), 80)
@@ -769,6 +866,20 @@ def find_ui_dir(targets_root: str | Path, ix: SkeletonIndex) -> str | None:
     return best[1] if best else None
 
 
+def _template_sources(raw: dict[str, list[Any]], call_args: dict[str, list[list[str]]]) -> dict[str, str]:
+    """{поле: [метод, индекс]} -> {поле: F}, если на всех местах вызова метода в шаблонах аргумент — `x.F` элемента
+    списка (`v-for="item in myOrders"`) и F не совпадает с именем поля."""
+    out: dict[str, str] = {}
+    for k, (method, i) in raw.items():
+        found = set()
+        for args in call_args.get(method, ()):
+            m = re.fullmatch(r"[A-Za-z_$][\w$]*\.([A-Za-z_$][\w$]*)", args[i]) if i < len(args) else None
+            found.add(m.group(1) if m else None)
+        if len(found) == 1 and None not in found and (f := next(iter(found))) != k:
+            out[k] = f
+    return out
+
+
 def build_catalog(
     targets_root: str | Path,
     ix: SkeletonIndex,
@@ -798,6 +909,7 @@ def build_catalog(
     script_pages: dict[str, list[str]] = collections.defaultdict(list)
     by_id: dict[str, str] = {}
     by_func: dict[str, list[str]] = collections.defaultdict(list)
+    call_args: dict[str, list[list[str]]] = collections.defaultdict(list)
     titles: dict[str, str] = {}
     js: list[Path] = []
     for p in ui_files(ui_root):
@@ -815,6 +927,8 @@ def build_catalog(
             by_id.setdefault(k, v)
         for k, v in sc.by_func.items():
             by_func[k] += v
+        for k, v in sc.call_args.items():
+            call_args[k] += v
         for s in sc.scripts:
             if re.match(r"^(https?:)?//", s):
                 continue
@@ -843,7 +957,8 @@ def build_catalog(
                     file=rel, line=rec["line"], via_line=rec["via_line"], function=rec["function"],
                     outer=rec["outer"], pages=sorted(set(script_pages.get(rel, []))), labels=labels,
                     verb=rec["verb"], url=url, guards=guards, body_fields=rec["body_fields"],
-                    body_consts=rec["body_consts"], body_cond=rec["body_cond"], body_opt=rec["body_opt"], messages=rec["messages"],
+                    body_consts=rec["body_consts"], body_cond=rec["body_cond"], body_opt=rec["body_opt"],
+                    body_src=_template_sources(rec["body_src"], call_args), messages=rec["messages"],
                     handlers=hs, group=base,
                 )
                 if hs:
