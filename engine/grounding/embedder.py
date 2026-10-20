@@ -92,6 +92,7 @@ class STEmbedder:
         self.cache = VectorCache(spec.name)
         self._model: Any = None
         self._revision: str | None = None
+        self.misses = 0  # векторы, которых не было в кеше и не было модели (итог M1, engine/grounding/report.py)
 
     def key(self, kind: str, text: str) -> str:
         raw = f"{self.spec.name}|{self.spec.fmt_version}|{kind}|{text}"
@@ -117,11 +118,13 @@ class STEmbedder:
         miss = [i for i, k in enumerate(keys) if k not in self.cache.vecs]
         if miss:
             if not self.allow_model:
+                self.misses += len(miss)
                 print(f"[embed] {self.name}: {len(miss)} промахов кеша, модель запрещена — dense выключен", file=sys.stderr)
                 return None
             try:
                 model = self._load()
             except Exception as e:  # noqa: BLE001 — нет torch/модели: работаем без dense
+                self.misses += len(miss)
                 print(f"[embed] {self.name}: модель недоступна ({e}) — dense выключен", file=sys.stderr)
                 return None
             vecs = model.encode([texts[i] for i in miss], batch_size=self.batch_size, normalize_embeddings=True,
