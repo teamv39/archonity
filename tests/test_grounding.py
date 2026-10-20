@@ -344,6 +344,17 @@ class TestProjectProfile:
         assert "only after POST /api/v1/rebookservice/rebook answers status 2" in card
         assert "follow-up" not in StepGrounder(ix, TARGETS, embedder=None)._candidate(rebook)
 
+    def test_answer_guards_from_ir(self, ix: SkeletonIndex, catalog) -> None:
+        from engine.grounding.grounder import ROOT
+
+        cat = HandlerCatalog(ix, TARGETS, catalog, ROOT / "data" / "ir")
+        rebook = next(h for h in cat.handlers if "RebookController#rebook(" in h)
+        assert cat.answer_guards(rebook)[2] == [
+            "!(priceOld.compareTo(priceNew) > 0) && !(priceOld.compareTo(priceNew) == 0)"]
+        assert HandlerCatalog(ix, TARGETS, catalog).answer_guards(rebook) == {}  # без IR — пусто
+        card = StepGrounder(ix, TARGETS, embedder=None, prompt="v8")._candidate(rebook)
+        assert "its code returns it when !(priceOld.compareTo(priceNew) > 0)" in card
+
     def test_service_calls_in_card(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
         rebook = next(h for h in handlers.handlers if "RebookController#rebook(" in h)
         diff = next(h for h in handlers.handlers if "RebookController#payDifference(" in h)

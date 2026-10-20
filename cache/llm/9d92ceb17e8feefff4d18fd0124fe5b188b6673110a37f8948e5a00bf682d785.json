@@ -1,0 +1,146 @@
+{
+ "key": "sha256:9d92ceb17e8feefff4d18fd0124fe5b188b6673110a37f8948e5a00bf682d785",
+ "model": "Qwen3.6-35B-A3B-UD-IQ4_XS",
+ "prompt_version": "profile-v1",
+ "kind": "profile",
+ "messages": [
+  {
+   "role": "system",
+   "content": "You describe a software project for a tool that maps steps of user scenarios to backend REST handlers.\nUse only the facts given below. Answer with JSON."
+  },
+  {
+   "role": "user",
+   "content": "Project README (beginning):\n# Train Ticket：A Benchmark Microservice System\n# <img src=\"./image/logo.png\">\nThe project is a train ticket booking system based on microservice architecture which contains 41 microservices. The programming languages and frameworks it used are as below.\n- Java - Spring Boot, Spring Cloud\n- Node.js - Express\n- Python - Django\n- Go - Webgo\n- DB - Mongo、MySQL\nYou can get more details at [Wiki Pages](https://github.com/FudanSELab/train-ticket/wiki).\n## Service Architecture Graph\n## Quick Start\nWe provide k8s deployment to quickly deploy our application:  [Using Kubernetes](#Using-Kubernetes).\n### Using Kubernetes\nHere is the steps to deploy the Train Ticket onto any existing Kubernetes cluster.\n#### Presequisite\n* An existing Kubernetes cluster\n* Helm supported, you can see https://helm.sh/docs/helm/helm_install/ for helm install\n* PVC supported, you can see https://openebs.io/docs/2.12.x/user-guides/installation for localPV support.\n#### 1. Clone the Repository\n#### 2. Deploy the application\n### For Quick Start\nNote: if you want specify namespace, set Namespace paramter:\n### Deploy Mysql Clusters For Each Services\n### With Moinitorig\n### With Distributed Tracing\n### Deploy All\n### Customise Deployment\nYou can freely combine parameters for custom deployment， for example, deploy with monitoring and tracing:\n### Reset Deployment\n#### 3. Run `kubectl get pods` to see pods are in a ready state\n#### 4. Visit the Train Ticket web page at [http://[Node-IP]:32677](http://[Node-IP]:32677)\n\nContext of the scenarios (from the benchmark authors):\n- initial_state: Fresh databases of every service filled by the services' own InitData at start-up, then one warm-up pass of a generic flow (it leaves a few orders, contacts and consignments of the pre-registered passenger); the exact state before every scenario is context/db-after-warmup.sql.gz: it is restored before each scenario, so scenarios do not see each other's effects.\n- account: Unless the scenario registers a new one, the passenger is the pre-registered user fdse_microservice / 111111 (internal account balance 10 000, one contact 'Contacts_One' in the contact book, no verification code at login).\n- date: All trips are searched and booked for 1 October 2026; the system clock is 15 September 2026.\n- choices: 'The first' trip, contact, store or dish is the first element in the order the system returns it; where a dish or store is not further specified, the first one is taken. These choices do not change the executed code: runs with the second trip, another contact or another dish gave the same methods, calls, remote calls and data accesses (only statements differed, by 1 line).\n- profile: Default Spring profile of every service; gateway on port 18888 routes /api/v1/<service>/** by service name; MySQL 8, RabbitMQ, Nacos; no external network.\n\nJava microservices (42): ts-admin-basic-info-service, ts-admin-order-service, ts-admin-route-service, ts-admin-travel-service, ts-admin-user-service, ts-assurance-service, ts-auth-service, ts-basic-service, ts-cancel-service, ts-common, ts-config-service, ts-consign-price-service, ts-consign-service, ts-contacts-service, ts-delivery-service, ts-execute-service, ts-food-delivery-service, ts-food-service, ts-gateway-service, ts-inside-payment-service, ts-notification-service, ts-order-other-service, ts-order-service, ts-payment-service, ts-preserve-other-service, ts-preserve-service, ts-price-service, ts-rebook-service, ts-route-plan-service, ts-route-service, ts-seat-service, ts-security-service, ts-station-food-service, ts-station-service, ts-train-food-service, ts-train-service, ts-travel-plan-service, ts-travel-service, ts-travel2-service, ts-user-service, ts-verification-code-service, ts-wait-order-service\n\nTwin services: pairs of microservices that serve the same REST API; their names differ by one token (the marker). Each side keeps its own part of the data. A UI action sends its request to one side or the other depending on a condition; an action that shows all of the data sends both requests (both sides listed under the same condition or without one), and such an option is not a part of the data itself.\n\nPair 1: ts-order-service / ts-order-other-service (marker 'other'; 16 handlers with the same path, e.g. POST /api/v1/orderservice/order/admin ~ POST /api/v1/orderOtherService/orderOther/admin; GET /api/v1/orderservice/order/{travelDate}/{trainNumber} ~ GET /api/v1/orderOtherService/orderOther/{travelDate}/{trainNumber})\nUI requests:\n- client_collect.js, client_enter_station.js, client_order_list.js, action queryMyOrderList sends:\n    POST /api/v1/orderOtherService/orderOther/refresh -> ts-order-other-service (both sides: all of the data)\n    POST /api/v1/orderservice/order/refresh -> ts-order-service (both sides: all of the data)\nUI code with the values these conditions compare:\n- none\n\nPair 2: ts-preserve-service / ts-preserve-other-service (marker 'other'; 2 handlers with the same path, e.g. GET /api/v1/preserveservice/welcome ~ GET /api/v1/preserveotherservice/welcome; POST /api/v1/preserveservice/preserve ~ POST /api/v1/preserveotherservice/preserveOther)\nUI requests:\n- client_ticket_book.js, action click:#ticket_select_contacts_confirm_btn sends:\n    POST /api/v1/preserveotherservice/preserveOther -> ts-preserve-other-service when selectContactsStatus == true && !(tripType == 'G' || tripType == 'D')\n    POST /api/v1/preserveservice/preserve -> ts-preserve-service when selectContactsStatus == true && tripType == 'G' || tripType == 'D'\nUI code with the values these conditions compare:\n- client_ticket_book.js:509: var tripType = orderTicketInfo.tripId.charAt(0);\n\nPair 3: ts-travel-service / ts-travel2-service (marker '2'; 12 handlers with the same path, e.g. GET /api/v1/travelservice/admin_trip ~ GET /api/v1/travel2service/admin_trip; POST /api/v1/travelservice/trips ~ POST /api/v1/travel2service/trips)\nUI requests:\n- client_order_list.js, action searchRouteList sends:\n    POST /api/v1/travel2service/trips/left -> ts-travel2-service when this.trainTypeSelected == 0 (both sides: all of the data)\n    POST /api/v1/travel2service/trips/left -> ts-travel2-service when this.trainTypeSelected == 2\n    POST /api/v1/travelservice/trips/left -> ts-travel-service when this.trainTypeSelected == 0 (both sides: all of the data)\n    POST /api/v1/travelservice/trips/left -> ts-travel-service when this.trainTypeSelected == 1\n- index.js, action searchTravel sends:\n    POST /api/v1/travel2service/trips/left -> ts-travel2-service when !(train_type == 0) && !(train_type == 1) && train_type == 2\n    POST /api/v1/travel2service/trips/left -> ts-travel2-service when train_type == 0 (both sides: all of the data)\n    POST /api/v1/travelservice/trips/left -> ts-travel-service when !(train_type == 0) && train_type == 1\n    POST /api/v1/travelservice/trips/left -> ts-travel-service when train_type == 0 (both sides: all of the data)\nUI code with the values these conditions compare:\n- client_order_list.js:20: {text: 'GaoTie DongChe', value: 1},\n- index.js:111: var train_type = this.selectedTrainType;\n- index.js:11: {text: 'GaoTie DongChe', value: 1},\n- client_order_list.js:21: {text: 'Other', value: 2}\n- client_order_list.js:26: {text: 'priceForEconomyClass', value: 2},\n- index.js:12: {text: 'Other', value: 2}\n\nRemote calls between twin services (from the code):\n- ts-preserve-other-service calls ts-order-other-service, ts-travel2-service\n- ts-preserve-service calls ts-order-service, ts-travel-service\n\nPairs 1, 2, 3 split the data the same way: in the calls above the base side of one pair calls the base side of another, and the variant side calls the variant side.\n\nAnswer:\n- analysis: first work out, from the UI conditions, the UI code and the remote calls, which property of the data splits each pair. Pairs that split the data the same way get the same split.\n- domain_summary: one or two sentences: what the system does, for whom, and its main business objects.\n- twins: for every pair, which part of the data each side serves and how to choose the side for a scenario step. Name that part of the data as the project names it (labels and codes shown in the UI code, values of the record's fields); do not name UI variables. When several pairs split the data the same way, describe them the same way. Keep each description under 25 words."
+  }
+ ],
+ "schema": {
+  "type": "object",
+  "properties": {
+   "analysis": {
+    "type": "string",
+    "maxLength": 1200
+   },
+   "domain_summary": {
+    "type": "string",
+    "maxLength": 400
+   },
+   "twins": {
+    "type": "object",
+    "properties": {
+     "pair_1": {
+      "type": "object",
+      "properties": {
+       "ts-order-service": {
+        "type": "string",
+        "maxLength": 300
+       },
+       "ts-order-other-service": {
+        "type": "string",
+        "maxLength": 300
+       },
+       "choose_by": {
+        "type": "string",
+        "maxLength": 300
+       }
+      },
+      "required": [
+       "ts-order-service",
+       "ts-order-other-service",
+       "choose_by"
+      ],
+      "additionalProperties": false
+     },
+     "pair_2": {
+      "type": "object",
+      "properties": {
+       "ts-preserve-service": {
+        "type": "string",
+        "maxLength": 300
+       },
+       "ts-preserve-other-service": {
+        "type": "string",
+        "maxLength": 300
+       },
+       "choose_by": {
+        "type": "string",
+        "maxLength": 300
+       }
+      },
+      "required": [
+       "ts-preserve-service",
+       "ts-preserve-other-service",
+       "choose_by"
+      ],
+      "additionalProperties": false
+     },
+     "pair_3": {
+      "type": "object",
+      "properties": {
+       "ts-travel-service": {
+        "type": "string",
+        "maxLength": 300
+       },
+       "ts-travel2-service": {
+        "type": "string",
+        "maxLength": 300
+       },
+       "choose_by": {
+        "type": "string",
+        "maxLength": 300
+       }
+      },
+      "required": [
+       "ts-travel-service",
+       "ts-travel2-service",
+       "choose_by"
+      ],
+      "additionalProperties": false
+     }
+    },
+    "required": [
+     "pair_1",
+     "pair_2",
+     "pair_3"
+    ],
+    "additionalProperties": false
+   }
+  },
+  "required": [
+   "analysis",
+   "domain_summary",
+   "twins"
+  ],
+  "additionalProperties": false
+ },
+ "response": {
+  "analysis": "The system splits data into 'base' and 'variant' sides across three twin pairs. Pair 1 (order) and Pair 2 (preserve) split based on trip type: 'G' or 'D' trains use the 'base' side (ts-order-service/ts-preserve-service), while others use the 'variant' side (ts-order-other-service/ts-preserve-other-service). Pair 3 (travel) splits based on train type selection: 'GaoTie DongChe' (value 1) uses the 'base' side (ts-travel-service), while 'Other' (value 2) or mixed selections use the 'variant' side (ts-travel2-service). Since Pair 1 and 2 share the same split logic (G/D vs Other) and Pair 3 shares the same split logic (GaoTie/DongChe vs Other), there are two distinct data split patterns.",
+  "domain_summary": "Train Ticket is a microservice-based train ticket booking system for passengers, managing orders, reservations, travel routes, and user accounts.",
+  "twins": {
+   "pair_1": {
+    "ts-order-service": "Base side: Handles orders for G or D train types.",
+    "ts-order-other-service": "Variant side: Handles orders for non-G/D train types.",
+    "choose_by": "Check trip type; G/D uses base, others use variant."
+   },
+   "pair_2": {
+    "ts-preserve-service": "Base side: Handles reservations for G or D train types.",
+    "ts-preserve-other-service": "Variant side: Handles reservations for non-G/D train types.",
+    "choose_by": "Check trip type; G/D uses base, others use variant."
+   },
+   "pair_3": {
+    "ts-travel-service": "Base side: Handles travel data for GaoTie/DongChe train types.",
+    "ts-travel2-service": "Variant side: Handles travel data for Other train types.",
+    "choose_by": "Check train type selection; GaoTie/DongChe uses base, others use variant."
+   }
+  }
+ },
+ "finish_reason": "stop",
+ "usage": {
+  "completion_tokens": 472,
+  "prompt_tokens": 2207,
+  "total_tokens": 2679,
+  "prompt_tokens_details": {
+   "cached_tokens": 36
+  }
+ },
+ "seconds": 259.59
+}

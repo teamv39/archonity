@@ -212,13 +212,15 @@ def _ui_line(r: UIRequest, siblings: list[UIRequest]) -> str:
 
 
 RESPONSE_OF = "in the response handler of "
+GUARD_MAX = 200
 # Проверка кода статуса в обработчике ответа UI: `result["status"] == 2`, `res.status === 2`
 STATUS_TEST = re.compile(r"""\w+(?:\[["']status["']\]|\.status)\s*===?\s*(-?\d+)""")
 
 
-def followup_notes(ui: list[tuple[UIRequest, list[UIRequest]]], answers: Any) -> list[str]:
+def followup_notes(ui: list[tuple[UIRequest, list[UIRequest]]], answers: Any, guards: Any = None) -> list[str]:
     """Режим v8: запрос, который UI шлёт из обработчика ответа другого запроса по коду статуса, — и что этот код
-    значит в исходнике первого запроса. `answers(verb, url)` → {код: сообщения} (`HandlerCatalog.answers`)."""
+    значит в исходнике первого запроса. `answers(verb, url)` → {код: сообщения} (`HandlerCatalog.answers`),
+    `guards(verb, url)` → {код: условия возврата} (`HandlerCatalog.answer_guards`, по IR)."""
     notes: list[str] = []
     for r, sib in ui:
         for x in [r] + sib:
@@ -226,12 +228,19 @@ def followup_notes(ui: list[tuple[UIRequest, list[UIRequest]]], answers: Any) ->
             if not first or " " not in first:
                 continue
             got = answers(*first.split(" ", 1))
+            conds = guards(*first.split(" ", 1)) if guards else {}
 
             def statuses(neg: bool) -> str:
                 codes = [int(m.group(1)) for g in x.guards if g.startswith("!(") == neg
                          for m in [STATUS_TEST.search(g)] if m]
-                return ", ".join(f"status {c} (" + "; ".join(f"'{m}'" for m in got[c][:3]) + ")"
-                                 for c in dict.fromkeys(codes) if got.get(c))
+                out = []
+                for c in dict.fromkeys(codes):
+                    if not got.get(c):
+                        continue
+                    when = " or ".join(conds.get(c, [])[:2]) if not neg else ""
+                    out.append(f"status {c} (" + "; ".join(f"'{m}'" for m in got[c][:3])
+                               + (f"; its code returns it when {when}" if when and len(when) <= GUARD_MAX else "") + ")")
+                return ", ".join(out)
 
             when, unless = statuses(False), statuses(True)
             if not when:

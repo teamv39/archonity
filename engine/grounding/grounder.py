@@ -110,7 +110,7 @@ class StepGrounder:
         v7 = prompt == "v7"
         self.ui_dir = find_ui_dir(self.root, ix)
         self.ui = build_catalog(self.root, ix, self.ui_dir)
-        self.cat = HandlerCatalog(ix, self.root, self.ui)
+        self.cat = HandlerCatalog(ix, self.root, self.ui, ROOT / "data" / "ir")
         emb = None
         if embedder:
             from engine.grounding.embedder import QUERY_TASK, QUERY_TASK_V7, make_embedder
@@ -182,7 +182,8 @@ class StepGrounder:
             return P.candidate_block(self.labels[h], info, self._ui_for(info), P.train_kind(info.module) if twin else None)
         ui = self._ui_for(info)
         return P.candidate_block(self.labels[h], info, ui, twin=P.twin_note(self.profile, info.module) if twin else None,
-                                 notes=P.followup_notes(ui, self._answers), calls=self.cat.service_calls(h))
+                                 notes=P.followup_notes(ui, self._answers, self._answer_guards),
+                                 calls=self.cat.service_calls(h))
 
     def _vote(self, msgs: list[dict[str, str]], schema: dict[str, Any],
               grounding: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
@@ -213,6 +214,14 @@ class StepGrounder:
         for h in match_handlers(verb, url, self.ix.handlers):
             for code, msgs in self.cat.answers(h).items():
                 out.setdefault(code, []).extend(m for m in msgs if m not in out[code])
+        return out
+
+    def _answer_guards(self, verb: str, url: str) -> dict[int, list[str]]:
+        """Условия возврата кодов ответа обработчиков запроса `verb url` по IR (для `followup_notes`)."""
+        out: dict[int, list[str]] = {}
+        for h in match_handlers(verb, url, self.ix.handlers):
+            for code, conds in self.cat.answer_guards(h).items():
+                out.setdefault(code, []).extend(c for c in conds if c not in out[code])
         return out
 
     def ground_step(self, sc: dict[str, Any], st: dict[str, Any], ranked: Ranked, history: list[str]) -> StepRequest:

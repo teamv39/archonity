@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import collections
+import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -61,12 +62,68 @@ def _param_source(anns: list[dict[str, Any]]) -> str:
     return "other"
 
 
+def ir_text(e: Any) -> str:
+    """Выражение IR (M2) как текст Java: `priceOld.compareTo(priceNew) > 0`."""
+    if not isinstance(e, dict):
+        return "?"
+    if "bin" in e:
+        return f"{ir_text(e.get('l'))} {e['bin']} {ir_text(e.get('r'))}"
+    if "un" in e:
+        inner = e.get("e")
+        t = ir_text(inner)
+        return f"{e['un']}({t})" if isinstance(inner, dict) and "bin" in inner else f"{e['un']}{t}"
+    if "callee" in e:
+        args = ", ".join(ir_text(a) for a in e.get("args") or [])
+        recv = e.get("recv")
+        return f"{ir_text(recv)}.{e['callee']}({args})" if recv else f"{e['callee']}({args})"
+    if "lit" in e:
+        v = e["lit"]
+        return "null" if v is None else (f'"{v}"' if isinstance(v, str) else str(v).lower() if isinstance(v, bool)
+                                         else str(v))
+    if "constant" in e:
+        return f"{str(e.get('enum') or '').rsplit('.', 1)[-1]}.{e['constant']}"
+    if "field" in e:
+        return f"{ir_text(e.get('of'))}.{e['field']}" if e.get("of") else e["field"]
+    if "name" in e:
+        return e["name"]
+    if "this" in e:
+        return "this"
+    if "new" in e:
+        return f"new {e['new']}(...)"
+    return "?"
+
+
+def _status_returns(stmts: list[dict[str, Any]], guard: tuple[str, ...]):
+    """(код, условия) для `return new X(<int>, "<str>", ...)` в теле IR; условия — стек `if` сверху вниз."""
+    for s in stmts:
+        if not isinstance(s, dict):
+            continue
+        if s.get("op") == "return":
+            args = (s.get("expr") or {}).get("args") or []
+            if (s.get("expr") or {}).get("new") and len(args) >= 2 and isinstance(args[0].get("lit"), int) \
+                    and not isinstance(args[0].get("lit"), bool) and isinstance(args[1].get("lit"), str):
+                yield args[0]["lit"], guard
+            continue
+        if s.get("op") == "if":
+            cond = ir_text(s.get("cond"))
+            yield from _status_returns(s.get("then") or [], guard + (cond,))
+            yield from _status_returns(s.get("else") or [], guard + (f"!({cond})",))
+            continue
+        for v in s.values():
+            if isinstance(v, list) and v and isinstance(v[0], dict) and "op" in v[0]:
+                yield from _status_returns(v, guard)
+
+
 class HandlerCatalog:
     """Все обработчики скелета с их описанием и UI-запросами."""
 
-    def __init__(self, ix: SkeletonIndex, targets_root: str | Path, ui: UICatalog) -> None:
+    def __init__(self, ix: SkeletonIndex, targets_root: str | Path, ui: UICatalog,
+                 ir_dir: str | Path | None = None) -> None:
+        """`ir_dir` — IR тел методов (`data/ir`, выход M2): по нему `answer_guards` видит условия возвратов."""
         self.ix = ix
         self.root = Path(targets_root)
+        self.ir_dir = Path(ir_dir) if ir_dir else None
+        self._ir: dict[str, dict[str, Any]] = {}
         self._lines: dict[str, list[str]] = {}
         self._answers: dict[str, dict[int, list[str]]] = {}
         N = ix.N
@@ -155,6 +212,29 @@ class HandlerCatalog:
                     msgs.append(msg)
         self._answers[nid] = out
         return out
+
+    def answer_guards(self, nid: str) -> dict[int, list[str]]:
+        """Условия, при которых обработчик возвращает ответ с кодом статуса: стек условий ветвлений IR над
+        `return new X(<код>, "<сообщение>", ...)` в методах `reach`, по коду. Без IR — пусто."""
+        out: dict[int, list[str]] = {}
+        for m in self.reach(nid):
+            body = self._ir_method(m)
+            for code, guard in _status_returns(body or [], ()):
+                text = " && ".join(guard) or "always"
+                if text not in out.setdefault(code, []):
+                    out[code].append(text)
+        return out
+
+    def _ir_method(self, nid: str) -> list[dict[str, Any]] | None:
+        module = self.ix.N.get(nid, {}).get("module")
+        if not module or self.ir_dir is None:
+            return None
+        if module not in self._ir:
+            try:
+                self._ir[module] = json.loads((self.ir_dir / f"{module}.json").read_text(encoding="utf-8"))["methods"]
+            except (OSError, ValueError, KeyError):
+                self._ir[module] = {}
+        return (self._ir[module].get(nid) or {}).get("body")
 
     def service_calls(self, nid: str, limit: int = SERVICE_CALLS) -> list[str]:
         """Имена методов модуля, которые выполняет обработчик (`reach`), без конструкторов, абстрактных методов и
