@@ -87,12 +87,14 @@ class ArchonityPipeline:
         m4_m3_refs: str = "off",
         module_roles: str = "skeleton",
         m4_state: str = "context",
-        ref_kinds: str = "v7",
+        ref_kinds: str | None = None,
     ) -> None:
+        # Виды refs (ADR-007) — как у промпта M1: M1 v8 (по умолчанию) даёт виды манифеста, v7 и legacy — прежние 12
+        if ref_kinds is None:
+            ref_kinds = "v8" if grounder == "m1" and (m1_options or {}).get("prompt", "v8") == "v8" else "v7"
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
 
-        # 1. Загрузка скелета, инициализация DB State (M0) и AST IR (M2)
         sk_dict = load_json(self.skeleton_path)
         self.index = SkeletonIndex(
             sk_dict,
@@ -103,10 +105,8 @@ class ArchonityPipeline:
             entity_ir_path=entity_ir_path,
         )
 
-        # 2. Логгер доказательств (Evidence Log)
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
 
-        # 3. Загрузка правил
         self.rules = RuntimeRules(
             rules_path,
             constructors=constructors,
@@ -133,7 +133,6 @@ class ArchonityPipeline:
             ref_kinds=ref_kinds,
         )
 
-        # 4. Инициализация резолвера шагов: legacy (resolver.py) или M1 (engine/grounding, ADR-005)
         self.grounder_mode = grounder
         self.grounder = None
         self.m1 = None
@@ -147,13 +146,9 @@ class ArchonityPipeline:
         else:
             raise ValueError(f"неизвестный grounder: {grounder}")
 
-        # 5. Инициализация графового строителя
         self.builder = GraphBuilder(self.index, self.rules)
-
-        # 6. Журнал решений по рёбрам (evidence.json v2): пишет сам builder
         self.ledger = DecisionLedger()
 
-        # 7. Исполнитель шага: legacy (обход скелета, builder) или ir (M4 по data/ir, ADR-005; нужен M1)
         self.executor_mode = executor
         self.m4 = None
         if executor == "ir":

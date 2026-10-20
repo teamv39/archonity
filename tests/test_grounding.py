@@ -103,6 +103,14 @@ class TestCatalog:
         assert o.guards[-1] == "!(tripType == 'G' || tripType == 'D')"
         assert "client_ticket_book.html" in " ".join(g.pages)
 
+    def test_fields_sent_only_under_condition(self, catalog) -> None:
+        g = [r for r in catalog.by_handler()[PRESERVE] if "client_ticket_book" in r.file][0]
+        opt = {o["field"]: o["guards"] for o in g.body_opt}
+        assert opt["consigneeWeight"] == opt["isWithin"] == ["$('#need-consign-or-not').is(\":checked\")"]
+        assert "foodPrice" in opt and "seatType" not in opt and "assurance" not in opt
+        # условие, под которым уходит весь запрос (проверка ввода в админке), поле не отделяет
+        assert not [r for r in catalog.requests if r.body_opt and "/admin" in r.url]
+
     def test_request_in_response_handler_is_marked(self, catalog) -> None:
         diff = [r for r in catalog.requests if r.url == "/api/v1/rebookservice/rebook/difference"
                 and r.file.endswith("client_order_list.js")][0]
@@ -178,6 +186,18 @@ class TestLLMCache:
         assert k != c.key("v2", msgs, {"type": "object"})
         assert k != LLMClient(model="m2", use_server=False, cache_dir=tmp_path).key("v1", msgs, {"type": "object"})
 
+    def test_sampling_in_key_only_when_given(self, tmp_path: Path) -> None:
+        import hashlib
+
+        c = LLMClient(model="m", use_server=False, cache_dir=tmp_path)
+        msgs = [{"role": "user", "content": "x"}]
+        raw = json.dumps({"model": "m", "prompt_version": "v1", "messages": msgs, "schema": {"type": "object"}},
+                         ensure_ascii=False, sort_keys=True)
+        # ключ жадного вызова — как до голосования (кеш m1-v7 и profile-v1 не сдвигается)
+        assert c.key("v1", msgs, {"type": "object"}) == "sha256:" + hashlib.sha256(raw.encode("utf-8")).hexdigest()
+        k1 = c.key("v1", msgs, {"type": "object"}, {"temperature": 0.7, "seed": 1})
+        assert k1 != c.key("v1", msgs, {"type": "object"}) != c.key("v1", msgs, {"type": "object"}, {"seed": 2})
+
     def test_cache_hit_without_server(self, tmp_path: Path) -> None:
         c = LLMClient(model="m", use_server=False, cache_dir=tmp_path)
         msgs = [{"role": "user", "content": "x"}]
@@ -234,3 +254,137 @@ class TestUnboundHandlers:
         assert got.params == {} and got.grounding["rebound"]["from"] == STATION_STORES
         # рабочий обработчик не трогаем
         assert g.rebind(StepRequest(scenario="S1", step=9, action="x", handler=ORDER_PRICE, http={})) is None
+
+
+class _FakeLLM:
+    """LLM-заглушка: отдаёт заданный ответ и запоминает запрос."""
+
+    def __init__(self, resp: dict) -> None:
+        self.resp = resp
+        self.calls: list[tuple[str, str]] = []
+
+    def complete_json(self, kind, prompt_version, messages, schema, max_tokens=600):
+        self.calls.append((kind, prompt_version))
+        return self.resp, "sha256:fake"
+
+
+# Слова домена Train Ticket, которых нет в шаблонах v8 (ADR-007, критерий 4)
+DOMAIN_WORDS = ("train", "trip", "gaotie", "dongche", "seat", "assurance", "consign", "passenger", "ts-ui-dashboard")
+
+
+class TestProjectProfile:
+    """ADR-007: промпт v8 без домена, профиль проекта, режим отката v7."""
+
+    def test_v8_templates_have_no_domain_words(self) -> None:
+        for t in (P.SYSTEM_V8, P.TWINS_V8, P.SELECT_TASK_V8, P.PARAMS_TASK_V8, P.KINDS_V8):
+            low = t.lower()
+            assert not [w for w in DOMAIN_WORDS if w in low]
+
+    def test_v7_mode_keeps_old_prompt(self, ix: SkeletonIndex) -> None:
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=None, prompt="v7")
+        assert g.version == P.PROMPT_VERSION == "m1-v7"
+        assert g.system_params.startswith("You map steps of a user scenario in the Train Ticket web application")
+
+    def test_v7_embedder_query_text_unchanged(self) -> None:
+        from engine.grounding.embedder import QUERY_TASK_V7, SPECS
+
+        # ключи векторов кеша v7 — от этого текста
+        assert SPECS["qwen3-4b"].query_fmt.format(q="Log in", task=QUERY_TASK_V7) == (
+            "Instruct: Given a user action in a train ticket booking web app, retrieve the REST endpoint handler that "
+            "implements it\nQuery: Log in")
+
+    def test_find_ui_dir(self, ix: SkeletonIndex) -> None:
+        from engine.grounding.ui_catalog import find_ui_dir
+
+        assert find_ui_dir(TARGETS, ix) == "ts-ui-dashboard"
+
+    def test_twin_pairs_split_the_same_way(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
+        from engine.grounding.profile import same_split, twin_pairs
+
+        pairs = twin_pairs(handlers, twin_groups(handlers))
+        assert [(p.base, p.variant, p.marker) for p in pairs] == [
+            ("ts-order-service", "ts-order-other-service", "other"),
+            ("ts-preserve-service", "ts-preserve-other-service", "other"),
+            ("ts-travel-service", "ts-travel2-service", "2"),
+        ]
+        # preserve -> order, travel и preserve-other -> order-other, travel2 (remote_call скелета)
+        assert same_split(ix, pairs) == [[1, 2, 3]]
+
+    def test_profile_input_has_ui_conditions(self, ix: SkeletonIndex, catalog, handlers: HandlerCatalog) -> None:
+        from engine.grounding.profile import profile_messages, twin_pairs
+
+        msgs = profile_messages(ix, TARGETS, handlers, catalog, twin_pairs(handlers, twin_groups(handlers)))
+        text = msgs[1]["content"]
+        assert "!(tripType == 'G' || tripType == 'D')" in text
+        assert "var tripType = orderTicketInfo.tripId.charAt(0);" in text
+        assert "{text: 'Other', value: 2}" in text and "{text: 'All', value: 0}" not in text
+        assert "(both sides: all of the data)" in text
+
+    def test_v8_prompt_from_profile(self, ix: SkeletonIndex) -> None:
+        resp = {"analysis": "x", "domain_summary": "A shop.", "twins": {
+            "pair_1": {"ts-order-service": "Base side: kind A orders", "ts-order-other-service": "kind B orders",
+                       "choose_by": "By kind."}}}
+        llm = _FakeLLM(resp)
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=llm, prompt="v8")
+        assert llm.calls == [("profile", "profile-v1")] and g.version == "m1-v8"
+        assert "The application: A shop." in g.system_select
+        assert "Some services come in twins" in g.system_select
+        # правило пары и что хранит сторона — только в карточке кандидата
+        assert "By kind." not in g.system_select and "kind A orders" not in g.system_select
+        assert "Train Ticket" not in g.system_params and "/api/v1/<service>/**" in g.system_params
+        assert P.twin_note(g.profile, "ts-order-other-service") == (
+            "twin of ts-order-service; this variant side: kind B orders; choose the side by: By kind.")
+        # у пары без правила профилировщика строки нет
+        assert P.twin_note(g.profile, "ts-travel2-service") is None
+
+    def test_followup_note_from_server_answers(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
+        rebook = next(h for h in handlers.handlers if "RebookController#rebook(" in h)
+        assert handlers.answers(rebook)[2] == ["Please pay the different money!"]
+        card = StepGrounder(ix, TARGETS, embedder=None, prompt="v8")._candidate(rebook)
+        assert "only after POST /api/v1/rebookservice/rebook answers status 2" in card
+        assert "follow-up" not in StepGrounder(ix, TARGETS, embedder=None, prompt="v7")._candidate(rebook)
+
+    def test_answer_guards_from_ir(self, ix: SkeletonIndex, catalog) -> None:
+        from engine.grounding.grounder import ROOT
+
+        cat = HandlerCatalog(ix, TARGETS, catalog, ROOT / "data" / "ir")
+        rebook = next(h for h in cat.handlers if "RebookController#rebook(" in h)
+        assert cat.answer_guards(rebook)[2] == [
+            "!(priceOld.compareTo(priceNew) > 0) && !(priceOld.compareTo(priceNew) == 0)"]
+        assert HandlerCatalog(ix, TARGETS, catalog).answer_guards(rebook) == {}  # без IR — пусто
+        card = StepGrounder(ix, TARGETS, embedder=None, prompt="v8")._candidate(rebook)
+        assert "its code returns it when !(priceOld.compareTo(priceNew) > 0)" in card
+
+    def test_service_calls_in_card(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
+        rebook = next(h for h in handlers.handlers if "RebookController#rebook(" in h)
+        diff = next(h for h in handlers.handlers if "RebookController#payDifference(" in h)
+        assert "drawBackMoney" in handlers.service_calls(rebook)
+        assert "payDifferentMoney" in handlers.service_calls(diff) and "drawBackMoney" not in handlers.service_calls(diff)
+        assert "its service code calls: checkTime, drawBackMoney" in StepGrounder(ix, TARGETS, embedder=None,
+                                                                                 prompt="v8")._candidate(rebook)
+
+    def test_v8_ref_kinds_from_manifest(self, ix: SkeletonIndex) -> None:
+        g = StepGrounder(ix, TARGETS, embedder=None, prompt="v8")
+        assert {"trainType", "trip", "consignRecord", "contacts", "priceConfig"} <= set(g.ref_kinds)
+        assert "train" not in g.ref_kinds and "consign" not in g.ref_kinds
+        # пример refs — два вида, на которые чаще всего ссылаются поля запросов
+        assert g.example_kinds == ("order", "trip")
+        assert "- consignRecord: ConsignRecord (ts-consign-service)" in g.system_select
+        assert "Record kinds" not in g.system_params
+        props = P.select_schema(list(g.by_label), 3, g.ref_kinds)["properties"]["refs"]["properties"]
+        assert set(props) == set(g.ref_kinds)
+        # v8: refs — массив пар {kind, ref}: порядок видов свободный (грамматика схемы держит порядок свойств объекта)
+        pairs = P.select_schema(list(g.by_label), 3, g.ref_kinds, ref_pairs=True)["properties"]["refs"]
+        assert pairs["type"] == "array" and pairs["items"]["properties"]["kind"]["enum"] == list(g.ref_kinds)
+        sel = {"refs": [{"kind": "trip", "ref": "first_of_step_2"}, {"kind": "contacts", "ref": "new_of_step_3"},
+                        {"kind": "trip", "ref": "new_of_step_1"}]}
+        assert P.refs_of(sel) == {"trip": "first_of_step_2", "contacts": "new_of_step_3"}
+        assert P.refs_of({"refs": {"trip": "first_of_step_2", "order": None}}) == {"trip": "first_of_step_2"}
+        # v7 — прежние виды
+        assert StepGrounder(ix, TARGETS, embedder=None, prompt="v7").ref_kinds == P.REF_ENTITIES
+
+    def test_bm25_without_domain_synonyms(self) -> None:
+        from engine.grounding.text import query_toks
+
+        assert "consign" in query_toks("luggage")
+        assert "consign" not in query_toks("luggage", None)

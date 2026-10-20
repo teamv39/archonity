@@ -239,8 +239,6 @@ class Interpreter:
             total = total.union(c)
         return total
 
-    # --- enum ---------------------------------------------------------------
-
     def enum_value(self, type_id: str, key: Any) -> Any:
         """Константа enum по имени или порядковому номеру (значение колонки БД)."""
         consts = self.types.enum_constants(type_id)
@@ -754,8 +752,6 @@ class Interpreter:
             self.assign(e["e"], "=", nv, fr)
             return nv if op.endswith("pre") else v
         return v
-
-    # --- new -----------------------------------------------------------------
 
     def eval_new(self, e: dict[str, Any], fr: Frame) -> Any:
         args = [self.eval(a, fr) for a in e.get("args") or []]

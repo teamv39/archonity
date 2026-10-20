@@ -22,7 +22,6 @@ class OrderStatus(IntEnum):
     REFUND = 5     # Refunded
     USED = 6       # Ticket validated at turnstile / boarded train
 
-    # Parity aliases
     CANCELLED = 4
     REFUNDS = 5
 
@@ -257,7 +256,6 @@ class ScenarioState:
         orders: list[dict[str, Any]] = []
 
         if db_state is not None:
-            # Check user table
             user_rows = db_state.get_table("user") if hasattr(db_state, "get_table") else []
             for u in user_rows:
                 users.append(dict(u))
@@ -529,9 +527,6 @@ class ScenarioState:
         return resolved
 
 
-    # -------------------------------------------------------------------------
-    # Query Helpers
-    # -------------------------------------------------------------------------
 
     def get_orders(
         self,
@@ -670,19 +665,15 @@ class ScenarioState:
                     p["consignId"] = r_csid
                     p["consign_id"] = r_csid
 
-        # 1. User Registration (S4)
         if (handler and "registerUser" in handler) or re.search(r"\bregister\b.*?(?:account|passenger|user)\b", t):
             return self._mutate_user_registration(step_index, action_name, p)
 
-        # 2. Login
         if (handler and "getToken" in handler) or re.search(r"\blog\s*in\b", t):
             return self._mutate_login(step_index, action_name, p)
 
-        # 3. Add Contact (S3, S4)
         if (handler and "createNewContacts" in handler) or re.search(r"\badd\b.*?\bcontact\b", t):
             return self._mutate_add_contact(step_index, action_name, p)
 
-        # 4. Admin Entity Creation (S6)
         if (handler and "addStation" in handler) or re.search(r"\badd\b.*?\bstation\b", t):
             return self._mutate_admin_station(step_index, action_name, p)
         if (handler and "addPrice" in handler) or re.search(r"\badd\b.*?\bprice\b", t):
@@ -694,45 +685,35 @@ class ScenarioState:
         if (handler and "addTravel" in handler) or re.search(r"\badd\b.*?\b(?:trip|travel)\b", t):
             return self._mutate_admin_travel(step_index, action_name, p)
 
-        # 5. Order Booking (S1–S7)
         if (handler and "preserve" in handler.lower()) or re.search(r"\b(?:book|reserve)\b.*?\b(?:seat|ticket|trip)\b", t):
             return self._mutate_booking(step_index, action_name, p, refs=r)
 
-        # 6. Order Payment (S1–S7)
         if (handler and "InsidePaymentController#pay" in handler) or re.search(r"\bpay\s+for\b.*?\border\b|\bpay\b", t):
             return self._mutate_payment(step_index, action_name, p, refs=r)
 
-        # 7. Collect Ticket (S1, S5, S7)
         if (handler and "collectTicket" in handler) or re.search(r"\bcollect\s+(?:the\s+)?ticket\b", t):
             return self._mutate_collect_ticket(step_index, action_name, p, refs=r)
 
-        # 8. Enter Station / Board (S1, S5)
         if (handler and "executeTicket" in handler) or re.search(r"\b(enter\s+the\s+station|board\s+the\s+train)\b", t):
             return self._mutate_enter_station(step_index, action_name, p, refs=r)
 
-        # 9. Cancel Order (S2, S4, S7)
         if (handler and "cancelTicket" in handler) or re.search(r"\b(?:cancel\s+(?:the\s+)?(?:paid\s+)?order|try\s+to\s+cancel)\b", t):
             return self._mutate_cancellation(step_index, action_name, p, refs=r)
 
-        # 10. Rebook Order (S2, S7)
         if (handler and "RebookController#rebook" in handler) or re.search(r"\b(?:rebook|try\s+to\s+rebook)\b", t):
             return self._mutate_rebook(step_index, action_name, p, refs=r)
 
-        # 11. Change Consignee (S7)
         if (handler and "updateConsign" in handler) or re.search(r"\bchange\b.*?\bconsignee\b", t):
             return self._mutate_update_consignee(step_index, action_name, p, refs=r)
 
-        # 12. Date Queries (S7)
         if re.search(r"\b(?:travel\s+date|purchase\s+date|bought\s+date)\b", t):
             self.has_date_filtering = True
             return StepMutationResult(step_index, action_name, "SUCCESS", ["flag_date_filtering_set"])
 
-        # 13. Advanced Search Flags (S5)
         if re.search(r"\b(?:cheapest|quickest|fewest-stops|transfer)\b", t):
             self.has_advanced_search = True
             return StepMutationResult(step_index, action_name, "SUCCESS", ["flag_advanced_search_set"])
 
-        # 14. Trip Search / Schedule Query (S0–S7)
         if (handler and any(h in handler for h in ("queryForTravel", "getTripAllDetailInformation", "queryAlready", "queryForStationId"))) or \
            re.search(r"\b(?:search|query|check\s+(?:the\s+)?train\s+schedule|look\s+up|find)\b.*?\b(?:train|trip|schedule|ticket|travel)\b", t):
             m_trip = re.search(r"\b([GDZK]\d+)\b", action_name)
@@ -760,7 +741,6 @@ class ScenarioState:
             self.record_step_entity(step_index, "trip", trip_data)
             return StepMutationResult(step_index, action_name, "SUCCESS", [f"trip_searched:{trip_id}"])
 
-        # 15. Store / Food Query
         if re.search(r"\b(?:food\s+store|store\s+in|food\s+menu)\b", t):
             m_station = re.search(r"\b(?:in|at)\s+([A-Za-z\s]+)", action_name)
             st_name = m_station.group(1).strip() if m_station else None
@@ -777,9 +757,6 @@ class ScenarioState:
 
         return StepMutationResult(step_index, action_name, "NOOP", [])
 
-    # -------------------------------------------------------------------------
-    # Internal Mutators
-    # -------------------------------------------------------------------------
 
     def _mutate_user_registration(self, step_index: int, action: str, payload: dict[str, Any]) -> StepMutationResult:
         username = payload.get("username", "MRK-reg-430")
@@ -955,7 +932,7 @@ class ScenarioState:
         price = float(order.get("price", 0.0))
 
         if self.balance < price:
-            # Fallback to External Payment Channel (e.g. S4)
+            # Внешний канал оплаты при нехватке средств на балансе
             self.has_external_payment = True
             if hasattr(self.db_state, "insert"):
                 self.db_state.insert("payment", {
@@ -1242,9 +1219,6 @@ class ScenarioState:
             [f"consignee_updated:{cs.get('id')}:{new_name}:{new_phone}:weight_unchanged_{cs.get('weight')}"],
         )
 
-    # -------------------------------------------------------------------------
-    # Public Mutation Primitives
-    # -------------------------------------------------------------------------
 
     def add_order(self, order: dict[str, Any], step_index: int | None = None) -> dict[str, Any]:
         """Adds an order to state."""

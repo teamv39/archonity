@@ -1,6 +1,6 @@
 """Модуль правил отсева мертвого кода и фильтрации связей.
 
-Основан на data/runtime_and_topology_rules.json и ADR-001/003/004.
+Основан на data/runtime_and_topology_rules.json и принятых ADR-005, ADR-006, ADR-007.
 Включает сценарио-специфичные профили фильтрации (ScenarioProfile).
 """
 from __future__ import annotations

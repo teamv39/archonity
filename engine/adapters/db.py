@@ -306,7 +306,7 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
     if not path.is_file():
         raise FileNotFoundError(f"Database dump file not found: {path}")
 
-    # Read with latin1 encoding to safely handle binary bytes (e.g. byte 0xd5)
+    # Кодировка latin1 сохраняет произвольные бинарные байты MySQL-дампа без ошибок декодирования
     with gzip.open(path, "rt", encoding="latin1") as f:
         text = f.read()
 
@@ -315,7 +315,6 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
     table_cols: dict[str, list[str]] = {}
     table_to_db: dict[str, str] = {}
 
-    # 1. Parse USE and CREATE TABLE statements
     i = 0
     num_lines = len(lines)
     while i < num_lines:
@@ -355,7 +354,6 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
 
         i += 1
 
-    # 2. Parse INSERT INTO ... VALUES statements
     insert_matches = re.finditer(
         r"INSERT\s+INTO\s+`?([a-zA-Z0-9_.]+)`?\s*(?:\(([^)]+)\))?\s*VALUES\s*(.*?);",
         text,
@@ -381,7 +379,6 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
             tables_data[tbl] = []
         tables_data[tbl].extend(row_dicts)
 
-    # 3. Build aliases
     table_aliases: dict[str, str] = {}
     for tbl, db in table_to_db.items():
         table_aliases[tbl] = tbl

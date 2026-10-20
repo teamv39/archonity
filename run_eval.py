@@ -186,10 +186,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--ref-kinds",
         choices=("v7", "v8"),
-        default="v7",
-        help="Виды сущностей в ссылках шагов (StepRequest.refs, ADR-007): v7 — 12 видов M1 до ADR-007 (кеш m1-v7, "
-             "по умолчанию), M4 переводит их в виды манифеста; v8 — виды манифеста engine/manifest.py "
-             "(@Entity/@Embeddable скелета: contacts, priceConfig, consignRecord, trainType)",
+        default=None,
+        help="Виды сущностей в ссылках шагов (StepRequest.refs, ADR-007): v7 — 12 видов M1 до ADR-007 (кеш m1-v7), "
+             "M4 переводит их в виды манифеста; v8 — виды манифеста engine/manifest.py (@Entity/@Embeddable скелета: "
+             "contacts, priceConfig, consignRecord, trainType). По умолчанию — как у --m1-prompt: M1 v8 даёт виды v8",
     )
     parser.add_argument(
         "--module-roles",
@@ -243,6 +243,14 @@ def parse_args() -> argparse.Namespace:
         help="M4: шаг ожидает успех, а по значениям M1 отказал — повтор с нормализованными, затем неизвестными "
              "строковыми параметрами (on по умолчанию)",
     )
+    parser.add_argument(
+        "--m1-prompt",
+        choices=("v7", "v8"),
+        default="v8",
+        help="Промпт M1 (ADR-007): v8 — общий шаблон, домен и правила близнецов из профиля проекта (ответ "
+             "LLM-профилировщика), виды refs из манифеста, кеш m1-v8 (по умолчанию с 21.10, рекорд); v7 — до ADR-007, "
+             "с доменом Train Ticket, кеш m1-v7 (флаг отката до сдачи 22.10, тот же рекорд)",
+    )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
@@ -255,7 +263,10 @@ def parse_args() -> argparse.Namespace:
              "cache — только кеш; off — без судьи (по умолчанию)",
     )
     parser.add_argument("--judge-budget", type=int, default=400, help="M4: вызовов сервера судьи на прогон")
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.ref_kinds is None:
+        args.ref_kinds = "v8" if args.m1_prompt == "v8" else "v7"
+    return args
 
 
 def resolve_scenario_paths(args_scenarios: list[str] | None) -> list[Path]:
@@ -363,6 +374,7 @@ def main() -> None:
             "embedder": None if args.no_embed else "qwen3-4b",
             "llm": None if args.no_llm else LLMClient(use_server=not args.no_server, refresh=args.no_cache),
             "module_roles": args.module_roles,
+            "prompt": args.m1_prompt,
         }
     print(f"Grounder:   {args.grounder}")
     if args.executor == "m4":
