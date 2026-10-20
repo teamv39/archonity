@@ -133,9 +133,23 @@ class SkeletonIndex:
                     for cp in cls_paths:
                         self.handlers.append((nid, verb, path_segs(cp + "/" + v)))
 
-        self.cs_method = {
-            nid: n["method"] for nid, n in self.N.items() if n.get("kind") == "call_site"
-        }
+        self.cs_method: dict[str, str] = {}
+        self.cs_nodes_by_method: dict[str, list[dict[str, Any]]] = collections.defaultdict(list)
+        self.type_nodes: dict[str, dict[str, Any]] = {}
+        self.methods_by_owner: dict[str, list[tuple[str, dict[str, Any]]]] = collections.defaultdict(list)
+        for nid, n in self.N.items():
+            k = n.get("kind")
+            if k == "call_site":
+                m = n.get("method")
+                if m:
+                    self.cs_method[nid] = m
+                    self.cs_nodes_by_method[m].append(n)
+            elif k == "type":
+                self.type_nodes[nid] = n
+            elif k == "method":
+                owner = n.get("owner")
+                if owner:
+                    self.methods_by_owner[owner].append((nid, n))
         self.pool_ir: MethodPoolIR = (
             pool_ir if pool_ir is not None else MethodPoolIR.load(ir_path=ir_path, safe=True)
         )

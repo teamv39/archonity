@@ -21,13 +21,17 @@
   --edge-transitive: #71717A;  /* Транзитивные связи (серый пунктир) */
   --alert-blast: #B91C1C;      /* Радиус поражения / критическая зависимость (красный) */
 
-  /* Типографика */
-  --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Типографика: единый шрифт Comic Sans по требованию пользователя */
+  --font-comic: "Comic Sans MS", "Comic Sans", "Comic Neue", cursive, sans-serif;
+  --font-sans: var(--font-comic);
+  --font-mono: var(--font-comic);
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+  font-family: var(--font-comic) !important;
 }
 
 html,
@@ -40,15 +44,15 @@ body,
   overflow: hidden;
   background-color: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: var(--font-sans);
+  font-family: var(--font-comic) !important;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* Глобальный запрет размытых теней и скруглений согласно Anti-Slop правилам */
-button, input, select, textarea {
-  font-family: inherit;
+button, input, select, textarea, code, pre, kbd, samp {
+  font-family: var(--font-comic) !important;
   border-radius: 0;
 }
 

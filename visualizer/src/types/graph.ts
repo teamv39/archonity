@@ -62,6 +62,9 @@ export interface EvidenceDetails {
   callChain?: string[];
   codeSnippet?: string;
   isReachable?: boolean;
+  rule?: string;
+  steps?: number[];
+  source?: string;
   modelName?: string;
   threshold?: number;
   rfcVerdict?: string;
@@ -158,6 +161,15 @@ export interface ScenarioStep {
   endpoint?: string | null;
   relationType: RelationType | string;
   action: string;
+  handler?: string;
+  params?: Record<string, any>;
+  expectedOutcome?: string;
+  reasoning?: string;
+  services?: string[];
+  tables?: string[];
+  rules?: string[];
+  activeNodes?: string[];
+  activeEdges?: string[];
   callerMethod?: string;
   callChain?: string[];
   codeSnippet?: string;
@@ -166,6 +178,7 @@ export interface ScenarioStep {
 export interface RuntimeScenario {
   id: string;
   name: string;
+  title?: string;
   description: string;
   steps: ScenarioStep[];
 }
@@ -180,5 +193,7 @@ export interface ScenarioPlaybackState {
   activeEdgeId: string;
   sourceNodeId: string;
   targetNodeId: string;
+  activeNodes?: string[];
+  activeEdges?: string[];
   isPlaying?: boolean;
 }
