@@ -28,6 +28,7 @@ DATA_RULE_FILES = (
     "llm_judge_dossiers_and_traps.json",
     "pool_ir.json",
     "runtime_and_topology_rules.json",
+    "ui_catalog.json",
 )
 
 

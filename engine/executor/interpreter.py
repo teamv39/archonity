@@ -212,11 +212,14 @@ class Interpreter:
             vals = [r[2].get(k, old) for r in live]
             if f == "#list":
                 items: list[Any] = []
+                seen_ids: set[int] = set()
                 exact = True
                 for its, ex in vals:
                     exact = exact and ex
                     for x in its:
-                        if all(x is not y for y in items):
+                        x_id = id(x)
+                        if x_id not in seen_ids:
+                            seen_ids.add(x_id)
                             items.append(x)
                 if any(len(v[0]) != len(items) for v in vals):
                     exact = False
@@ -843,6 +846,7 @@ class Interpreter:
         if not cs:
             return []
         out: list[str] = []
+        seen_targets: set[str] = set()
         disp = self.cs_dispatch.get(cs)
         for t in sorted(self.cs_calls.get(cs, ())):
             if disp:
@@ -861,7 +865,8 @@ class Interpreter:
                 if "Exception#<init>" in x:
                     self.sink.prune("calls", fr.method, x, "DEFAULT_RULE", "exception_ctor")
                     continue
-                if x not in out:
+                if x not in seen_targets:
+                    seen_targets.add(x)
                     out.append(x)
         # Тип получателя известен: оставляем реализацию его класса (R2)
         if len(out) > 1 and isinstance(recv, Obj) and recv.type:

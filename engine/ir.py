@@ -200,6 +200,7 @@ class MethodPoolIR:
         self.enum_calls_by_method: dict[str, list[CallIR]] = {}
         # Индекс веток по method_id: method_id -> dict[branch_id, BranchIR]
         self.branches_by_method: dict[str, dict[str, BranchIR]] = {}
+        self._enum_target_cache: dict[tuple[str, str], str | None] = {}
 
         self._build_indexes()
 
@@ -263,26 +264,34 @@ class MethodPoolIR:
             return None
         type_fqn = call.enum_constant.type_fqn
         callee = call.callee
+        cache_key = (type_fqn, callee)
+        if cache_key in self._enum_target_cache:
+            return self._enum_target_cache[cache_key]
 
+        target: str | None = None
         # 1. Динамический поиск по узлам скелета по FQN класса и имени метода
         if skeleton_nodes:
             pattern = f":{type_fqn}#{callee}("
             for nid, n in skeleton_nodes.items():
                 if n.get("kind") == "method" and pattern in nid:
-                    return nid
+                    target = nid
+                    break
 
         # 2. Fallback для автономных прогонов без скелета
-        if type_fqn == "edu.fudan.common.entity.OrderStatus":
-            if callee == "getCode":
-                return ORDER_STATUS_GET_CODE
-            if callee == "getNameByCode":
-                return ORDER_STATUS_GET_NAME_BY_CODE
-        elif type_fqn == "edu.fudan.common.entity.SeatClass":
-            if callee == "getCode":
-                return SEAT_CLASS_GET_CODE
-            if callee == "getNameByCode":
-                return SEAT_CLASS_GET_NAME_BY_CODE
-        return None
+        if target is None:
+            if type_fqn == "edu.fudan.common.entity.OrderStatus":
+                if callee == "getCode":
+                    target = ORDER_STATUS_GET_CODE
+                elif callee == "getNameByCode":
+                    target = ORDER_STATUS_GET_NAME_BY_CODE
+            elif type_fqn == "edu.fudan.common.entity.SeatClass":
+                if callee == "getCode":
+                    target = SEAT_CLASS_GET_CODE
+                elif callee == "getNameByCode":
+                    target = SEAT_CLASS_GET_NAME_BY_CODE
+
+        self._enum_target_cache[cache_key] = target
+        return target
 
     def evaluate_guard(
         self,

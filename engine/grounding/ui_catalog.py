@@ -732,9 +732,32 @@ class UICatalog:
         return {"requests": [r.to_dict() for r in self.requests], "unresolved": self.unresolved,
                 "pages_title": self.pages_title}
 
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> UICatalog:
+        reqs = [UIRequest(**r) for r in d.get("requests", [])]
+        return cls(requests=reqs, unresolved=d.get("unresolved", []), pages_title=d.get("pages_title", {}))
 
-def build_catalog(targets_root: str | Path, ix: SkeletonIndex) -> UICatalog:
+
+def build_catalog(
+    targets_root: str | Path,
+    ix: SkeletonIndex,
+    cache_path: str | Path | None = None,
+    force_rebuild: bool = False,
+) -> UICatalog:
     """Каталог всех UI-запросов проекта, сопоставленных с обработчиками скелета."""
+    resolved_cache = (
+        Path(cache_path)
+        if cache_path
+        else Path(__file__).resolve().parent.parent.parent / "data" / "ui_catalog.json"
+    )
+    if not force_rebuild and resolved_cache.is_file():
+        try:
+            with open(resolved_cache, "r", encoding="utf-8") as f:
+                d = json.load(f)
+            return UICatalog.from_dict(d)
+        except Exception:
+            pass
+
     root = Path(targets_root)
     ui_root = root / UI_DIR
     script_pages: dict[str, list[str]] = collections.defaultdict(list)
@@ -792,7 +815,14 @@ def build_catalog(targets_root: str | Path, ix: SkeletonIndex) -> UICatalog:
                     requests.append(r)
                 else:
                     unresolved.append({"id": r.id, "verb": r.verb, "url": url, "function": r.function})
-    return UICatalog(requests, unresolved, titles)
+    catalog = UICatalog(requests, unresolved, titles)
+    try:
+        resolved_cache.parent.mkdir(parents=True, exist_ok=True)
+        with open(resolved_cache, "w", encoding="utf-8") as f:
+            json.dump(catalog.to_dict(), f, ensure_ascii=False, indent=1)
+    except Exception:
+        pass
+    return catalog
 
 
 def main() -> None:

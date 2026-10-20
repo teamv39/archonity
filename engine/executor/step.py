@@ -323,8 +323,14 @@ class StepExecutor:
                     continue
                 ptypes = {p.get("name"): p.get("type") for p in body.get("params") or ()}
                 for call in _call_exprs(body.get("body")):
-                    at = re.search(r"@(\d+):(\d+)$", call["call"])
-                    rc = self.it.repo_calls.get((m, int(at.group(1)), int(at.group(2)))) if at else None
+                    c_str = call.get("call") or ""
+                    rc = None
+                    if "@" in c_str:
+                        pos = c_str.rsplit("@", 1)[1]
+                        if ":" in pos:
+                            line_s, col_s = pos.split(":", 1)
+                            if line_s.isdigit() and col_s.isdigit():
+                                rc = self.it.repo_calls.get((m, int(line_s), int(col_s)))
                     if rc is None or rc.operation != "READ" or not any(line > rc.line for line in saves):
                         continue
                     for a in call.get("args") or ():

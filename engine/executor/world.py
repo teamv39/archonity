@@ -87,6 +87,8 @@ class TypeIndex:
         self.module_roles = module_roles
         self.targets_root = targets_root
         self._enum_consts: dict[str, list[tuple[str, list[Any]]]] = {}
+        self._all_fields_cache: dict[str, list[dict[str, Any]]] = {}
+        self._method_of_cache: dict[tuple[str, str, int | None], str | None] = {}
 
     def _prefs(self, module: str | None) -> list[str | None]:
         """Порядок модулей при неоднозначном имени типа: модуль вызывающего, затем его зависимости
@@ -122,6 +124,10 @@ class TypeIndex:
         return cands[0]
 
     def all_fields(self, type_id: str | None) -> list[dict[str, Any]]:
+        if not type_id:
+            return []
+        if type_id in self._all_fields_cache:
+            return self._all_fields_cache[type_id]
         out: list[dict[str, Any]] = []
         seen = set()
         t = type_id
@@ -129,6 +135,7 @@ class TypeIndex:
             seen.add(t)
             out = [f for f in self.fields.get(t, []) if "static" not in (f.get("modifiers") or [])] + out
             t = self.super_of.get(t)
+        self._all_fields_cache[type_id] = out
         return out
 
     def is_enum(self, type_id: str | None) -> bool:
@@ -139,8 +146,14 @@ class TypeIndex:
 
     def method_of(self, type_id: str | None, name: str, arity: int | None = None) -> str | None:
         """Метод типа (или суперкласса) по имени и числу параметров."""
+        if not type_id:
+            return None
+        key = (type_id, name, arity)
+        if key in self._method_of_cache:
+            return self._method_of_cache[key]
         seen = set()
         t = type_id
+        res: str | None = None
         while t and t not in seen:
             seen.add(t)
             for mid in self.methods.get(t, ()):
@@ -148,9 +161,13 @@ class TypeIndex:
                 if n.get("name") != name:
                     continue
                 if arity is None or len(n.get("params_as_written") or []) == arity:
-                    return mid
+                    res = mid
+                    break
+            if res is not None:
+                break
             t = self.super_of.get(t)
-        return None
+        self._method_of_cache[key] = res
+        return res
 
     def enum_constants(self, type_id: str) -> list[tuple[str, list[Any]]]:
         """Константы enum по порядку объявления с литералами аргументов (из исходника по строке поля)."""
