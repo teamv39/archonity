@@ -27,6 +27,7 @@ if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
 from engine import attention  # только стандартная библиотека: рамка Р2 работает, даже если конвейер не импортируется
+from engine.artifacts import ArtifactMismatch  # тоже только стандартная библиотека
 
 if TYPE_CHECKING:
     from engine.pipeline import ArchonityPipeline
@@ -48,6 +49,13 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=ROOT_DIR / "hackaton" / "tt-challenge" / "targets" / "trainticket",
         help="Корень исходников проекта (targets/trainticket)",
+    )
+    parser.add_argument(
+        "--artifacts-dir",
+        type=Path,
+        default=ROOT_DIR / "data",
+        help="Артефакты проекта: ir/ (IR тел методов), entity_ir.json (archparse), ui_catalog.json (кеш каталога UI, "
+             "создаётся сам). Для другого проекта — отдельная папка: data/ не трогается",
     )
     parser.add_argument(
         "--scenarios",
@@ -242,6 +250,7 @@ def build_pipeline(args: argparse.Namespace, m1_options: dict) -> ArchonityPipel
     return ArchonityPipeline(
         skeleton_path=args.skeleton,
         targets_root=args.targets,
+        artifacts_dir=args.artifacts_dir,
         constructors=args.ctors,
         collection_tables_on_read=args.collection_tables,
         element_callbacks=args.element_callbacks,
@@ -349,6 +358,7 @@ def main() -> None:
     print(f"Archonity Pipeline Runner")
     print(f"Скелет:     {args.skeleton}")
     print(f"Исходники:  {args.targets}")
+    print(f"Артефакты:  {args.artifacts_dir}")
     print(f"Сценариев:  {len(scenarios)} ({', '.join(s.stem for s in scenarios)})")
     print(f"Выход:      {args.out}")
     print("-" * 60)
@@ -375,15 +385,18 @@ def main() -> None:
         }
         pipeline = build_pipeline(args, m1_options)
     except Exception as e:  # noqa: BLE001
-        traceback.print_exc()
         failures.append(attention.failure(None, None, "сборка конвейера", e))
-        print("Повтор сборки в аварийном режиме: M1 без LLM и эмбеддера", file=sys.stderr)
-        m1_options = {**m1_options, "llm": None, "embedder": None, "allow_embed_model": False}
-        try:
-            pipeline = build_pipeline(args, m1_options)
-        except Exception as e2:  # noqa: BLE001
+        # Чужие артефакты (IR, entity_ir): LLM и эмбеддер ни при чём, повтор не поможет; текст с командой пересборки
+        # — в рамке, трассы не нужно
+        if not isinstance(e, ArtifactMismatch):
             traceback.print_exc()
-            failures.append(attention.failure(None, None, "сборка конвейера без LLM", e2))
+            print("Повтор сборки в аварийном режиме: M1 без LLM и эмбеддера", file=sys.stderr)
+            m1_options = {**m1_options, "llm": None, "embedder": None, "allow_embed_model": False}
+            try:
+                pipeline = build_pipeline(args, m1_options)
+            except Exception as e2:  # noqa: BLE001
+                traceback.print_exc()
+                failures.append(attention.failure(None, None, "сборка конвейера без LLM", e2))
 
     if pipeline is not None:
         print("Генерация графов для сценариев...")

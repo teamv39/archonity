@@ -30,6 +30,14 @@ $env:PYTHONUTF8=1; python run_eval.py -o <папка>/submission.json
 
 Конвейер один: M1 (заземление шагов) → M4 (исполнение по IR) → правило Spring Security → M5 (проекция). Legacy-обход скелета, режимы отката и судья M4 удалены 21.10 (PR #110). Умолчания флагов — конфигурация рекорда (`--m4-unresolved-calls emit`, `--ctors caller_only`, `--jackson-ctor on`, `--lombok-tostring on`, `--unbound-handlers rebind`, `--embed-model on`). Без ключей выдача совпадает с рекордом 1.0 байт в байт (sha256 в [eval/records/](./eval/records/README.md)). LLM и эмбеддинги берутся из `cache/`: сервер не нужен. На промахе кеша `run_eval.py` сам поднимает `llama-server` и грузит эмбеддер из `models/` ([docs/run_on_a100.md](./docs/run_on_a100.md)).
 
+Финальный запуск у организаторов (Linux, A100 40 ГБ) — одна команда, она докачивает модели по `models/manifest.json` и сверяет sha256:
+
+```bash
+scripts/run_final.sh <файлы сценариев>   # без аргументов — S0–S7
+```
+
+Архив посылки — `python pack_submission.py` после прогона в `output/`: в корне `submission.json` и `RUN.md` с командами, в `code/` код, кеши, зависимости и манифест моделей.
+
 Промпт M1 — без слов домена: домен и правила близнецов из профиля проекта, виды ссылок из манифеста сущностей ([ADR-007](./docs/adr/adr-007_project_profile.md)). Правка промпта или карточек M1 меняет ключи кеша `m1-v8`: пересборка — на GPU (`scripts/start_llm.ps1`), после неё сверять выдачу с рекордом. Шаг S2.14 держится на ничьей голосов (ADR-007, «Хрупко»). В коде нет литералов Train Ticket, кроме умолчаний путей входа к пакету задачи: это проверяет `tests/test_no_project_literals.py`.
 
 Лучшая посылка платформы — в [eval/records/](./eval/records/README.md). Рекорд может быть ручной правкой `submission.json`, тогда выдача кода от него отличается (roadmap, «Где мы»). Любую правку до посылки сравнивать с рекордом ребро в ребро: `scripts/compare_submissions.py`. Результаты посылок — таблица в roadmap.

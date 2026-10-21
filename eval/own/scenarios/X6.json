@@ -1,0 +1,57 @@
+{
+ "project": "trainticket",
+ "id": "X6",
+ "title": "An administrator maintains trips, routes and configurations: a valid and a refused trip change, a refused new trip, deleting a trip and a route, adding, changing and deleting a configuration",
+ "description": "An administrator logs in to the admin console with the administrator's username and password and opens the list of all trips. They change the departure time of the trip G9998 to 10:00, keeping its route and stations. They try to change the departure time of the trip G1234 the same way, and the system refuses because the trip's stations do not match its route. They try to add a new trip G9102 of the unknown train type GaoTieTen from shanghai to suzhou, and the system refuses because the train type does not exist. They delete the trip G1237. They open the list of routes and delete the route from shanghai to suzhou. They open the list of configurations, add a new configuration MaxTicketsPerOrder with the value 5, change the value of the configuration DirectTicketAllocationProportion to 0.6 and delete the configuration MaxTicketsPerOrder.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in to the admin console with the administrator's username and password"
+  },
+  {
+   "n": 2,
+   "action": "Open the list of all trips"
+  },
+  {
+   "n": 3,
+   "action": "Change the departure time of the trip G9998 to 10:00, keeping its route and stations"
+  },
+  {
+   "n": 4,
+   "action": "Try to change the departure time of the trip G1234 the same way (the system refuses: the trip's stations do not match its route)"
+  },
+  {
+   "n": 5,
+   "action": "Try to add a new trip G9102 of the unknown train type GaoTieTen from shanghai to suzhou (the system refuses: the train type does not exist)"
+  },
+  {
+   "n": 6,
+   "action": "Delete the trip G1237"
+  },
+  {
+   "n": 7,
+   "action": "Open the list of routes"
+  },
+  {
+   "n": 8,
+   "action": "Delete the route from shanghai to suzhou"
+  },
+  {
+   "n": 9,
+   "action": "Open the list of configurations"
+  },
+  {
+   "n": 10,
+   "action": "Add a new configuration MaxTicketsPerOrder with the value 5"
+  },
+  {
+   "n": 11,
+   "action": "Change the value of the configuration DirectTicketAllocationProportion to 0.6"
+  },
+  {
+   "n": 12,
+   "action": "Delete the configuration MaxTicketsPerOrder"
+  }
+ ]
+}

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 public class Main {
@@ -34,13 +35,50 @@ public class Main {
         }
         if (repoRootStr == null || skeletonStr == null) {
             System.err.println("Usage: --targets-dir <корень исходников> --skeleton <скелет .json.gz> "
-                    + "[--mode bodies|entities] [-o <выход>]");
+                    + "[--mode all|bodies|entities] [-o <выход>]");
             System.exit(2);
         }
 
         Path targetsDir = Paths.get(repoRootStr);
         Path skeletonPath = Paths.get(skeletonStr);
         SkeletonGraph skeleton = SkeletonGraph.load(skeletonPath);
+
+        if ("all".equalsIgnoreCase(mode)) {
+            Path entityOut = resolveOutputFile(outputPathStr, "entity_ir.json");
+            Path irOutDir = resolveOutputFile(outputPathStr, "ir");
+
+            System.out.println("archparse: Single-pass full rebuild (entities + bodies)");
+            System.out.println("Targets directory: " + targetsDir.toAbsolutePath());
+            System.out.println("Skeleton:          " + skeletonPath.toAbsolutePath());
+
+            long t0 = System.currentTimeMillis();
+            List<com.v39a.parser.SourceLoader.SourceFile> sources = com.v39a.parser.SourceLoader.parseAll(targetsDir);
+            long tParsed = System.currentTimeMillis();
+            System.out.printf("Parsed %d Java files in %d ms%n", sources.size(), (tParsed - t0));
+
+            // 1. Entities
+            EntityReportIR report = new EntityScanner(targetsDir, skeleton, sources).scan();
+            if (entityOut.getParent() != null) {
+                Files.createDirectories(entityOut.getParent());
+            }
+            new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT).writeValue(entityOut.toFile(), report);
+            System.out.printf("Entities done in %d ms: %d entities, %d repo calls, %d ctors -> %s%n",
+                    (System.currentTimeMillis() - tParsed), report.entities.size(), report.repositoryCalls.size(),
+                    report.constructors.size(), entityOut.toAbsolutePath());
+
+            // 2. Bodies
+            long tBodies = System.currentTimeMillis();
+            MethodIrWriter.Result r = MethodIrWriter.build(targetsDir, skeleton, sources);
+            Files.createDirectories(irOutDir);
+            ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+            for (Map.Entry<String, com.fasterxml.jackson.databind.node.ObjectNode> e : r.modules.entrySet()) {
+                mapper.writeValue(irOutDir.resolve(e.getKey() + ".json").toFile(), e.getValue());
+            }
+            System.out.printf("Bodies done in %d ms: %d methods in %d modules, %d call sites -> %s%n",
+                    (System.currentTimeMillis() - tBodies), r.methods, r.modules.size(), r.callSites, irOutDir.toAbsolutePath());
+            System.out.printf("Total archparse execution time: %d ms%n", (System.currentTimeMillis() - t0));
+            return;
+        }
 
         if ("entities".equalsIgnoreCase(mode)) {
             Path outputFile = resolveOutputFile(outputPathStr, "entity_ir.json");
@@ -81,7 +119,7 @@ public class Main {
             return;
         }
 
-        System.err.println("Unknown mode: " + mode + ". Available modes: 'bodies' (default), 'entities'.");
+        System.err.println("Unknown mode: " + mode + ". Available modes: 'all' (entities + bodies in single pass), 'bodies' (default), 'entities'.");
         System.exit(1);
     }
 

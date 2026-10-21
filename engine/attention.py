@@ -70,7 +70,7 @@ def lines(failures: list[dict[str, Any]], report: dict[str, Any] | None, out: Pa
     details = [out.parent / FILE_NAME] + ([out.parent / "m1_report.json"] if report is not None else [])
     body += [f"Пожалуйста, свяжитесь с командой Archonity: {CONTACTS}",
              f"Подробности: {', '.join(map(str, details))}"]
-    return [RULE] + [f"!! {x}" for x in body] + [RULE]
+    return [RULE] + [f"!! {ln}" for x in body for ln in x.splitlines()] + [RULE]
 
 
 def write(failures: list[dict[str, Any]], report: dict[str, Any] | None, out: Path, *,
