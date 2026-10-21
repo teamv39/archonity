@@ -98,11 +98,11 @@
 
 | Где | Что | Влияет на выдачу |
 |---|---|---|
-| `engine/adapters/db.py`, `load_db_dump` | `known_skeleton_mappings`: 33 таблицы Train Ticket вписаны вручную | нет: без словаря выдача = рекорд байт в байт (зонд 21.10), можно удалить |
-| `engine/adapters/submission.py` | `ts-gateway-service` в каноническом графе | нет, только `canonical_graph.json` |
+| `engine/adapters/db.py`, `load_db_dump` | `known_skeleton_mappings`: 33 таблицы Train Ticket вписаны вручную | удалено 21.10 (#108), заменено динамическим сопоставлением схем, выдача = рекорд байт в байт |
+| `engine/adapters/submission.py`, `engine/evidence.py` | `ts-gateway-service` в каноническом графе и evidence | обобщено 21.10 (#108) на динамическое извлечение имени шлюза из топологии, выдача = рекорд |
 | `engine/executor/step.py`, `_state_lines` | таблицы `orders`, `orders_other` | нет, только судья (выключен) |
-| `engine/executor/world.py`, `_prefs` | `ts-common` | нет, только `--module-roles names` |
-| `engine/entities.py` | `STATE_TRACKED_TABLES`, `TrainType` | нет, только путь M3 |
+| `engine/executor/world.py`, `_prefs` | `ts-common` | нет, только `--module-roles names` (по умолчанию `skeleton`) |
+| `engine/entities.py` | `STATE_TRACKED_TABLES`, `TrainType` | нет, только путь M3 (M4 использует `resolve_passenger_context`) |
 
 Готово, когда: выдача = рекорд байт в байт, `handler_sweep` без изменений.
 

@@ -179,20 +179,21 @@ class SubmissionAdapter:
         # 4. Маршруты шлюза из evidence_logger
         if self.evidence_logger:
             for edge_id, ev in self.evidence_logger.evidence.items():
-                if ev.get("source") == "ts-gateway-service":
+                src = ev.get("source", "")
+                if "gateway" in src.lower():
                     tgt = ev.get("target")
                     if tgt in nodes_map and edge_id not in seen_edges:
-                        if "ts-gateway-service" not in nodes_map:
-                            nodes_map["ts-gateway-service"] = {
-                                "id": "ts-gateway-service",
-                                "name": "ts-gateway-service",
+                        if src not in nodes_map:
+                            nodes_map[src] = {
+                                "id": src,
+                                "name": src,
                                 "type": "SERVICE",
                                 "endpoints": [],
                             }
                         seen_edges.add(edge_id)
                         edge_data = {
                             "id": edge_id,
-                            "source": "ts-gateway-service",
+                            "source": src,
                             "target": tgt,
                             "relation_type": "REST_HTTP",
                             "source_type": "CONFIG",

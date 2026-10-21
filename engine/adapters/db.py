@@ -387,46 +387,11 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
         table_aliases[f"{svc_name}.{tbl}"] = tbl
         table_aliases[f"res:table:{svc_name}.{tbl}"] = tbl
 
-    # All known 33 skeleton mappings for fast O(1) lookup
-    known_skeleton_mappings = {
-        "res:table:ts-order-service.orders": "orders",
-        "res:table:ts-order-other-service.orders_other": "orders_other",
-        "res:table:ts-consign-mysql.consign_record": "consign_record",
-        "res:table:ts-food-service.food_order": "food_order",
-        "res:table:ts-food-delivery-service.food_delivery_order": "food_delivery_order",
-        "res:table:ts-food-delivery-service.food_delivery_order_food_list": "food_delivery_order_food_list",
-        "res:table:ts-travel-service.trip": "trip",
-        "res:table:ts-travel2-service.trip2": "trip2",
-        "res:table:ts-user-service.user": "user",
-        "res:table:ts-auth-service.auth_user": "auth_user",
-        "res:table:ts-auth-service.user_roles": "user_roles",
-        "res:table:ts-contacts-service.contacts": "contacts",
-        "res:table:ts-station-service.station": "station",
-        "res:table:ts-train-service.train_type": "train_type",
-        "res:table:ts-inside-payment-service.inside_money": "inside_money",
-        "res:table:ts-inside-payment-service.inside_payment": "inside_payment",
-        "res:table:ts-payment-service.payment": "payment",
-        "res:table:ts-payment-service.money": "money",
-        "res:table:ts-price-service.price_config": "price_config",
-        "res:table:ts-route-service.route": "route",
-        "res:table:ts-route-service.route_distances": "route_distances",
-        "res:table:ts-route-service.route_stations": "route_stations",
-        "res:table:ts-security-service.security_config": "security_config",
-        "res:table:ts-config-service.config": "config",
-        "res:table:ts-assurance-service.assurance": "assurance",
-        "res:table:ts-consign-price-service.consign_price": "consign_price",
-        "res:table:ts-delivery-service.delivery": "delivery",
-        "res:table:ts-notification-service.notify_info": "notify_info",
-        "res:table:ts-station-food-service.station_food_list": "station_food_list",
-        "res:table:ts-station-food-service.station_food_store": "station_food_store",
-        "res:table:ts-train-food-service.train_food": "train_food",
-        "res:table:ts-train-food-service.train_food_list": "train_food_list",
-        "res:table:ts-wait-order-service.wait_list_order": "wait_list_order",
-    }
-    for alias, canonical in known_skeleton_mappings.items():
-        table_aliases[alias] = canonical
-        bare_service_alias = alias.replace("res:table:", "")
-        table_aliases[bare_service_alias] = canonical
+    # Dynamic alias mapping derived from schema without hardcoded project tables
+    for tbl, db in table_to_db.items():
+        base_svc = db.replace("_", "-")
+        table_aliases[f"{base_svc}.{tbl}"] = tbl
+        table_aliases[f"res:table:{base_svc}.{tbl}"] = tbl
 
     return DatabaseState(
         tables=tables_data,
