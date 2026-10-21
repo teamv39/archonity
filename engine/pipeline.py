@@ -67,6 +67,8 @@ class PipelineConfig:
     method_ir_dir: str | Path | None = None
     rules: RuntimeRules = dataclasses.field(default_factory=RuntimeRules)
     m1_options: dict[str, Any] | None = None
+    # False — M4 в Python не нужен (`--engine rust`, ADR-008): исполнение делает `archonity-exec`
+    build_m4: bool = True
 
 
 class ArchonityPipeline:
@@ -107,7 +109,7 @@ class ArchonityPipeline:
 
         self.m1 = StepGrounder(self.index, self.targets_root, **(cfg.m1_options or {}))
         ir_dir = Path(cfg.method_ir_dir) if cfg.method_ir_dir else ROOT / "data" / "ir"
-        self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root)
+        self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root) if cfg.build_m4 else None
 
     def run_scenario(
         self, scenario_dict: dict[str, Any],
@@ -158,6 +160,29 @@ class ArchonityPipeline:
         all_methods |= r19
 
         return all_methods, all_calls, all_remote, all_data
+
+    def ground_all(self, scenario_paths: list[str | Path]) -> dict[str, list[dict[str, Any]]]:
+        """Режим `--engine rust` (ADR-008): только M1. Шаги каждого сценария до R20 (`StepRequest.to_dict`) —
+        вход `archonity-exec`; исполнение, правила и запись выдачи делает он. Шаг со сбоем M1 пропускается (Р2),
+        сценарий со сбоем даёт пустой список шагов, а значит пустой блок в ответе."""
+        raw: dict[str, list[dict[str, Any]]] = {}
+        for sp in sorted(scenario_paths, key=lambda p: str(p)):
+            sid = Path(sp).stem
+            try:
+                s_dict = load_json(sp)
+                sid = s_dict["id"]
+                session = self.m1.begin(s_dict)
+                raw[sid] = []
+                for st in s_dict.get("steps") or []:
+                    try:
+                        raw[sid].append(session.ground(st).to_dict())
+                    except Exception as e:  # noqa: BLE001 — Р2: шаг без заземления не даёт рёбер, остальные идут дальше
+                        self._fail(sid, st.get("n"), "M1", e)
+            except Exception as e:  # noqa: BLE001 — Р2: пустой блок сценария
+                self._fail(sid, None, "сценарий", e)
+                raw.setdefault(sid, [])
+        self.step_requests = {sid: list(reqs) for sid, reqs in raw.items()}
+        return raw
 
     def run_all(
         self,

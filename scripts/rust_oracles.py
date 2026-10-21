@@ -5,6 +5,7 @@
 
     python scripts/rust_oracles.py steps  <папка>  [сценарии...]   # шаги до R20 и сырые рёбра с журналом по шагам
     python scripts/rust_oracles.py slices <папка>                  # срезы загрузчиков: скелет, дамп БД, entity_ir
+    python scripts/rust_oracles.py sweep  <папка>                  # по каждому обработчику каталога как по сценарию из одного шага
     ARCHONITY_TRACE=<папка>/trace.tsv python scripts/rust_oracles.py steps <папка>   # плюс трасса вызовов
 
 Файлы в `<папка>`:
@@ -12,6 +13,8 @@
 - `raw_steps.json` — по сценарию: пассажир, по шагу: запрос после R20, рёбра `StepExecutor.run_step` и записи журнала
   решений этого шага (до правила Spring Security и проекции M5);
 - `trace.tsv` — при `ARCHONITY_TRACE`: строки `глубина<TAB>ID метода` и отметки `# scenario S0`, `# step 3`;
+- `sweep_steps.json` — формат `raw_steps.json`: сценарий `H<k>` на каждый обработчик каталога M1 (шаг без параметров);
+  сверка Rust-исполнителя на обработчиках, которых нет в S1–S7 (`replay_steps`, `scripts/rust_compare.py`);
 - `slices.json` — индекс скелета, таблицы дампа, факты сущностей (сортированно, для сравнения с Rust).
 
 По умолчанию сценарии — S0–S7 пакета организаторов. Модели и сервер не нужны: LLM и эмбеддинги из `cache/`.
@@ -98,6 +101,39 @@ def steps(out: Path, scenarios: list[Path]) -> None:
     print(f"шагов {n} в {len(raw_steps)} сценариях: {out}")
 
 
+def sweep(out: Path) -> None:
+    """M4 по каждому обработчику каталога как по одношаговому сценарию без параметров (как `handler_sweep.py`)."""
+    from engine.grounding.request import StepRequest
+    from engine.pipeline import resolve_passenger_context
+
+    p = _build()
+    result: dict[str, Any] = {}
+    failed = 0
+    for k, (nid, h) in enumerate(p.m1.cat.handlers.items()):
+        sid = f"H{k}"
+        verb = h.routes[0][0] if h.routes else "GET"
+        req = StepRequest(scenario=sid, step=1, action="", handler=nid,
+                          http={"method": verb, "path": h.routes[0][1] if h.routes else ""})
+        ctx = resolve_passenger_context(p.index, scenario_id=sid)
+        p.ledger.begin_scenario(sid)
+        p.ledger.begin_step(1)
+        p.m4.begin_scenario(sid)
+        try:
+            m, c, r, d = p.m4.run_step(req, ctx, ledger=p.ledger)
+        except Exception:  # noqa: BLE001 — сбой Python: сверять нечего
+            failed += 1
+            continue
+        journal = {key: [x.to_dict() for x in decisions if x.step == 1]
+                   for key, decisions in sorted(p.ledger._scenarios[sid].items())}
+        result[sid] = {"passenger": dataclasses.asdict(ctx), "steps": [{
+            "step": 1, "request": req.to_dict(), "methods": sorted(m), "calls": sorted(map(list, c)),
+            "remote": sorted(map(list, r)), "data": sorted(map(list, d)),
+            "journal": {k2: v for k2, v in journal.items() if v},
+        }]}
+    _dump(result, out / "sweep_steps.json")
+    print(f"обработчиков {len(result)}, сбоев Python {failed}: {out / 'sweep_steps.json'}")
+
+
 def _sorted_sets(d: dict[str, Any]) -> dict[str, list]:
     return {k: sorted(v) for k, v in sorted(d.items())}
 
@@ -156,13 +192,15 @@ def _m4_slices(ix) -> dict[str, Any]:
 
 
 def main(argv: list[str]) -> None:
-    if len(argv) < 3 or argv[1] not in ("steps", "slices"):
+    if len(argv) < 3 or argv[1] not in ("steps", "slices", "sweep"):
         raise SystemExit(__doc__)
     out = Path(argv[2])
     if argv[1] == "steps":
         if os.environ.get("ARCHONITY_TRACE"):
             Path(os.environ["ARCHONITY_TRACE"]).unlink(missing_ok=True)
         steps(out, [Path(x) for x in argv[3:]])
+    elif argv[1] == "sweep":
+        sweep(out)
     else:
         slices(out)
 
