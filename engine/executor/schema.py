@@ -12,16 +12,14 @@ from typing import Any
 
 from engine.manifest import EntityKind, camel_to_snake, entity_kinds, simple_name as _canonical_simple_name
 
-# Поля бронирования, которых M1 не заполняет (маршрут и дата поиска): их значение есть в тексте сценария, но промпт
-# параметров M1 велит ставить null всему, что взято из прежних шагов. Уйдут, когда M1 заполнит их из текста
-# (docs/researches/m4_code_derived_conventions.md). tripId/oldTripId берутся из каталога UI (StepRequest.body_src).
-_FIELD_ALIASES: dict[str, tuple[str, ...]] = {
+# Режим отката --m4-conventions names, как до feature/102 и feature/108: маршрут и дата бронирования — из полей
+# найденной записи по именам Train Ticket, ID рейса — из trainNumber. По умолчанию (code) таблицы нет: маршрут и дату
+# M1 берёт из текста шага и сценария, ID рейса — каталог UI (StepRequest.body_src),
+# docs/researches/m4_code_derived_conventions.md.
+_NAMES_FIELD_ALIASES: dict[str, tuple[str, ...]] = {
     "from": ("from", "startStation", "startPlace", "startStationName", "fromStation"),
     "to": ("to", "terminalStation", "endPlace", "terminalStationName", "toStation"),
     "date": ("date", "travelDate", "departureTime"),
-}
-# Режим отката --m4-conventions names: алиасы ID рейса, как до feature/102
-_NAMES_FIELD_ALIASES: dict[str, tuple[str, ...]] = {
     "tripId": ("tripId", "trainNumber"),
     "oldTripId": ("trainNumber",),
 }
@@ -47,8 +45,7 @@ class EntitySchema:
             k: tuple(dict.fromkeys(simple_name(t) for t in ek.types)) for k, ek in self.manifest.items()}
         self._id_fields: dict[str, tuple[str, ...]] = {k: ek.id_fields for k, ek in self.manifest.items()}
         self.user_fields: tuple[str, ...] = _USER_FIELDS
-        self._field_aliases: dict[str, tuple[str, ...]] = dict(_FIELD_ALIASES)
-        self._names_aliases: dict[str, tuple[str, ...]] = {**_FIELD_ALIASES, **_NAMES_FIELD_ALIASES}
+        self._names_aliases: dict[str, tuple[str, ...]] = dict(_NAMES_FIELD_ALIASES)
 
     @property
     def known_kinds(self) -> set[str]:
@@ -89,8 +86,9 @@ class EntitySchema:
         return self.kind_rank(fqn, kind) > 0
 
     def field_aliases(self, name: str, names: bool = False) -> tuple[str, ...]:
-        """Алиасы поля DTO для поиска в сущностях предыдущих шагов; `names` — режим отката (--m4-conventions names)."""
-        return (self._names_aliases if names else self._field_aliases).get(name, (name,))
+        """Алиасы поля DTO для поиска в сущностях предыдущих шагов: по умолчанию — само имя поля, `names` — таблица
+        режима отката (--m4-conventions names)."""
+        return self._names_aliases.get(name, (name,)) if names else (name,)
 
 
 __all__ = ["EntitySchema", "simple_name"]
