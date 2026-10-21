@@ -17,6 +17,7 @@ from typing import Any
 
 import pytest
 
+from engine import attention
 from engine.adapters.skeleton import SkeletonIndex
 from engine.artifacts import DEFAULT_ARTIFACTS_DIR, STALE_SHARE_LIMIT, ArtifactMismatch, check_artifacts
 from engine.entities import EntityFacts
@@ -290,16 +291,28 @@ class TestPipelineStart:
              "--no-llm", "--no-embed", "--no-eval", "-o", str(tmp_path / "out" / "submission.json"), *extra],
             capture_output=True, text=True, encoding="utf-8", cwd=ROOT, env={**os.environ, "PYTHONUTF8": "1"})
 
-    def test_run_eval_prints_the_error_and_exits(self, tmp_path: Path) -> None:
+    def _assert_frame_with_error(self, res: subprocess.CompletedProcess, out: Path) -> str:
+        """Р2: выдача строится всегда (пустые блоки), код 0, ошибка с командой пересборки — в рамке последними
+        строками и в ATTENTION.txt; без трассы и без повторной сборки в аварийном режиме."""
+        assert res.returncode == 0, res.stderr[-2000:]
+        scenarios = json.loads(out.read_text(encoding="utf-8"))["scenarios"]
+        assert scenarios and all(block == {"edges": []} for block in scenarios.values())
+        text = (out.parent / attention.FILE_NAME).read_text(encoding="utf-8")
+        assert "ArtifactMismatch: Артефакты не соответствуют скелету" in text and "--mode bodies" in text
+        for stream in (res.stdout, res.stderr):
+            tail = stream.rstrip("\n").splitlines()
+            assert tail[-1] == attention.RULE and "--mode bodies" in "\n".join(tail[-14:])
+        assert "Traceback" not in res.stderr and res.stderr.count("Артефакты не соответствуют скелету") == 1
+        return text
+
+    def test_run_eval_gives_empty_answer_and_frame(self, tmp_path: Path) -> None:
         res = self._run_eval(tmp_path)
-        assert res.returncode == 1
-        assert "Ошибка: Артефакты не соответствуют скелету" in res.stderr and "--mode bodies" in res.stderr
-        assert "--artifacts-dir artifacts/toyshop" in res.stderr, "по умолчанию подсказывает отдельную папку"
-        assert "Traceback" not in res.stderr
-        assert not (tmp_path / "out" / "submission.json").exists()
+        text = self._assert_frame_with_error(res, tmp_path / "out" / "submission.json")
+        assert "--artifacts-dir artifacts/toyshop" in text, "по умолчанию подсказывает отдельную папку"
 
     def test_run_eval_artifacts_dir_without_artifacts(self, tmp_path: Path) -> None:
         res = self._run_eval(tmp_path, "--artifacts-dir", str(tmp_path / "empty"))
-        assert res.returncode == 1 and "Артефакты:  " + str(tmp_path / "empty") in res.stdout
-        assert "нет ни одного" in res.stderr and "не загружен" in res.stderr
-        assert "--mode bodies" in res.stderr and "--mode entities" in res.stderr and "--artifacts-dir" not in res.stderr
+        text = self._assert_frame_with_error(res, tmp_path / "out" / "submission.json")
+        assert "Артефакты:  " + str(tmp_path / "empty") in res.stdout
+        assert "нет ни одного" in text and "не загружен" in text and "--mode entities" in text
+        assert "--artifacts-dir" not in text
