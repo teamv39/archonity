@@ -440,7 +440,7 @@ def main() -> None:
         llm = (m1_options or {}).get("llm")
         emb = getattr(getattr(pipeline.m1, "retriever", None), "embedder", None)
         m1_report = make_m1_report(pipeline.step_requests, llm.stats if llm is not None else None,
-                                   getattr(emb, "misses", 0))
+                                   getattr(emb, "misses", 0), llm.requested if llm is not None else ())
         with open(args.out.parent / "m1_report.json", "w", encoding="utf-8") as f:
             json.dump(m1_report, f, ensure_ascii=False, indent=1)
         print(format_m1_report(m1_report))

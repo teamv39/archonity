@@ -19,8 +19,9 @@ STUDY = "docs/researches/gpu_dependence_and_cpu_fallback_study.md"
 
 
 def m1_report(step_requests: dict[str, list[dict[str, Any]]], llm_stats: Any = None,
-              embed_misses: int = 0) -> dict[str, Any]:
-    """Сводка M1: шаги по источнику выбора, ответы LLM (кеш, сервер, без ответа, ошибки), промахи векторов, режим."""
+              embed_misses: int = 0, llm_keys: Any = ()) -> dict[str, Any]:
+    """Сводка M1: шаги по источнику выбора, ответы LLM (кеш, сервер, без ответа, ошибки), промахи векторов, режим;
+    `llm_keys` — ключи всех запросов к LLM за прогон (по ним `scripts/verify_llm_cache.py` сверяет кеш)."""
     steps = [r for reqs in step_requests.values() for r in reqs]
     by_llm = sum((r.get("grounding") or {}).get("source") == "LLM" for r in steps)
     llm = {
@@ -36,7 +37,8 @@ def m1_report(step_requests: dict[str, list[dict[str, Any]]], llm_stats: Any = N
     else:
         mode = "partial"
     return {"mode": mode, "steps": len(steps), "steps_by_llm": by_llm, "steps_by_retrieval": len(steps) - by_llm,
-            "llm": llm, "embedding_misses": embed_misses, "llm_enabled": llm_stats is not None}
+            "llm": llm, "embedding_misses": embed_misses, "llm_enabled": llm_stats is not None,
+            "llm_keys": sorted(set(llm_keys))}
 
 
 def cache_only(report: dict[str, Any]) -> bool:

@@ -92,6 +92,10 @@ def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
 
         # 5. Исходный код решения
         _add_file_to_zip(z, ROOT / "run_eval.py", "code/run_eval.py", normalize_lf=True)
+        # Проверка кеша LLM без GPU (README, «Проверка без кеша»)
+        _add_dir_to_zip(z, "code/scripts")
+        _add_file_to_zip(z, ROOT / "scripts" / "verify_llm_cache.py", "code/scripts/verify_llm_cache.py",
+                         normalize_lf=True)
         pyproj = ROOT / "pyproject.toml"
         if pyproj.is_file():
             _add_file_to_zip(z, pyproj, "code/pyproject.toml", normalize_lf=True)
