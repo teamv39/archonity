@@ -1,0 +1,49 @@
+{
+ "project": "trainticket",
+ "id": "X5",
+ "title": "An administrator manages users and orders: adding a user, a refused duplicate, changing and deleting the user; adding an order, changing its status and deleting it",
+ "description": "An administrator logs in to the admin console with the administrator's username and password and opens the list of all users. They add a new user (username, password, gender, ID document, e-mail), then try to add a user with the already taken username fdse_microservice, and the system refuses. They change the e-mail of the new user and then delete the new user. They open the list of all orders in the system, add a new order for the passenger fdse_microservice and the contact Contacts_One on the high-speed train D1345 from shanghai to suzhou on 1 October 2026 with all fields of the order form filled in, change the status of the new order to 'Paid' and finally delete the new order.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in to the admin console with the administrator's username and password"
+  },
+  {
+   "n": 2,
+   "action": "Open the list of all users"
+  },
+  {
+   "n": 3,
+   "action": "Add a new user (username, password, gender, ID document, e-mail)"
+  },
+  {
+   "n": 4,
+   "action": "Try to add a user with the already taken username fdse_microservice (the system refuses: the user already exists)"
+  },
+  {
+   "n": 5,
+   "action": "Change the e-mail of the new user"
+  },
+  {
+   "n": 6,
+   "action": "Delete the new user"
+  },
+  {
+   "n": 7,
+   "action": "Open the list of all orders in the system"
+  },
+  {
+   "n": 8,
+   "action": "Add a new order for the passenger fdse_microservice and the contact Contacts_One on the high-speed train D1345 from shanghai to suzhou on 1 October 2026 (all fields of the order form are filled in)"
+  },
+  {
+   "n": 9,
+   "action": "Change the status of the new order to 'Paid'"
+  },
+  {
+   "n": 10,
+   "action": "Delete the new order"
+  }
+ ]
+}
