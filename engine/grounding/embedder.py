@@ -25,9 +25,8 @@ import numpy as np
 ROOT = Path(__file__).resolve().parent.parent.parent
 CACHE_DIR = ROOT / "cache" / "emb"
 MODELS_DIR = ROOT / "models"
-# Инструкция запроса Qwen3-Embedding: общая (M1 v8) и прежняя, про Train Ticket (M1 v7, векторы кеша v7), ADR-007
+# Инструкция запроса Qwen3-Embedding, без слов домена (ADR-007); входит в ключ вектора запроса
 QUERY_TASK = "Given a user action in a web application, retrieve the REST endpoint handler that implements it"
-QUERY_TASK_V7 = "Given a user action in a train ticket booking web app, retrieve the REST endpoint handler that implements it"
 
 
 @dataclass(frozen=True)
