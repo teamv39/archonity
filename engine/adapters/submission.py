@@ -61,11 +61,11 @@ class SubmissionAdapter:
         self.scenarios[scenario_id] = edges
 
         if self.evidence_logger:
-            for s, t in remote:
+            for s, t in sorted(remote):
                 self.evidence_logger.record_remote_call(s, t, scenario_id=scenario_id)
-            for s, t in data:
+            for s, t in sorted(data):
                 self.evidence_logger.record_data_access(s, t, scenario_id=scenario_id)
-            for m in methods:
+            for m in sorted(methods):
                 if m.startswith("method:"):
                     svc = m.split(":")[1]
                     self.evidence_logger.record_gateway_route(svc)
