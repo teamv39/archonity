@@ -9,6 +9,7 @@ from typing import Any
 
 from engine.adapters.skeleton import SkeletonIndex, default_db_dump, load_json
 from engine.adapters.submission import SubmissionAdapter
+from engine.artifacts import check_artifacts
 from engine.decisions import DecisionLedger
 from engine.evidence import EvidenceLogger
 from engine.executor.step import StepExecutor
@@ -98,12 +99,14 @@ class ArchonityPipeline:
             db_state=cfg.db_state,
             entity_ir_path=cfg.entity_ir_path,
         )
+        # IR и entity_ir.json построены по одному проекту: чужие факты не берём молча (ArtifactMismatch)
+        ir_dir = Path(cfg.method_ir_dir) if cfg.method_ir_dir else ROOT / "data" / "ir"
+        check_artifacts(self.index, ir_dir, self.skeleton_path, self.targets_root)
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
         self.ledger = DecisionLedger()
         self.step_requests: dict[str, list[dict[str, Any]]] = {}
 
-        self.m1 = StepGrounder(self.index, self.targets_root, **(cfg.m1_options or {}))
-        ir_dir = Path(cfg.method_ir_dir) if cfg.method_ir_dir else ROOT / "data" / "ir"
+        self.m1 = StepGrounder(self.index, self.targets_root, ir_dir=ir_dir, **(cfg.m1_options or {}))
         self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root)
 
     def run_scenario(

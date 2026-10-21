@@ -24,6 +24,7 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
+from engine.artifacts import ArtifactMismatch
 from engine.pipeline import ArchonityPipeline
 
 
@@ -260,20 +261,24 @@ def main() -> None:
         "index": args.m1_index == "on",
         "reasoning": args.select_reasoning == "on",
     }
-    pipeline = ArchonityPipeline(
-        skeleton_path=args.skeleton,
-        targets_root=args.targets,
-        constructors=args.ctors,
-        collection_tables_on_read=args.collection_tables,
-        element_callbacks=args.element_callbacks,
-        rabbitmq_delivery=args.rabbitmq_delivery,
-        jackson_ctor=args.jackson_ctor,
-        lombok_tostring=args.lombok_tostring,
-        unbound_handlers=args.unbound_handlers,
-        m1_options=m1_options,
-        unresolved_receiver_calls=args.m4_unresolved_calls,
-        m4_success_retry=args.m4_success_retry,
-    )
+    try:
+        pipeline = ArchonityPipeline(
+            skeleton_path=args.skeleton,
+            targets_root=args.targets,
+            constructors=args.ctors,
+            collection_tables_on_read=args.collection_tables,
+            element_callbacks=args.element_callbacks,
+            rabbitmq_delivery=args.rabbitmq_delivery,
+            jackson_ctor=args.jackson_ctor,
+            lombok_tostring=args.lombok_tostring,
+            unbound_handlers=args.unbound_handlers,
+            m1_options=m1_options,
+            unresolved_receiver_calls=args.m4_unresolved_calls,
+            m4_success_retry=args.m4_success_retry,
+        )
+    except ArtifactMismatch as e:
+        print(f"Ошибка: {e}", file=sys.stderr)
+        sys.exit(1)
 
     print("Генерация графов для сценариев...")
     adapter = pipeline.run_all(scenarios, output_path=args.out)

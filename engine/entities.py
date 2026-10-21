@@ -83,16 +83,23 @@ class EntityFacts:
         self.calls_by_method: dict[str, list[RepositoryCall]] = {}
         # Конструкторы, в теле которых есть вызов проектного метода (ребро calls скелета или enum-вызов IR)
         self.ctors_with_project_calls: frozenset[str] = frozenset()
+        # Откуда загружено и что не сошлось со скелетом: сверку делает `engine/artifacts.py` при старте конвейера
+        self.source: Path | None = None
+        self.load_error: str | None = None
+        self.unmatched_calls = 0
 
     @classmethod
     def load(cls, path: str | Path | None = None) -> EntityFacts:
         p = Path(path) if path else DEFAULT_ENTITY_IR_PATH
         try:
             with open(p, encoding="utf-8") as f:
-                return cls(json.load(f))
+                facts = cls(json.load(f))
         except (OSError, ValueError) as e:
             LOGGER.warning("Не удалось загрузить entity_ir.json, правило загрузки сущностей выключено: %s", e)
-            return cls()
+            facts = cls()
+            facts.load_error = str(e)
+        facts.source = p
+        return facts
 
     def bind(self, nodes: dict[str, dict[str, Any]], edges: list[dict[str, Any]]) -> None:
         """Привязка к скелету: call_site по (file, line, col), таблицы data_access, ID конструкторов."""
@@ -170,6 +177,7 @@ class EntityFacts:
                 ),
             )
             self.calls_by_method.setdefault(method, []).append(call)
+        self.unmatched_calls = unmatched
         if unmatched:
             LOGGER.warning("entity_ir.json: %d вызовов репозиториев без call_site в скелете", unmatched)
 

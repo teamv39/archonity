@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import collections
+import hashlib
 import html.parser
 import json
 import logging
@@ -880,6 +881,28 @@ def _template_sources(raw: dict[str, list[Any]], call_args: dict[str, list[list[
     return out
 
 
+def catalog_fingerprint(root: Path, ix: SkeletonIndex, ui_dir: str) -> dict[str, Any]:
+    """Отпечаток входов каталога: проект и коммит скелета, его обработчики и файлы UI (путь и содержимое без
+    различий CRLF/LF). Путь к `targets` не входит: кеш лежит в репозитории и должен совпадать на любой машине."""
+    ui = hashlib.sha256()
+    for p in ui_files(root / ui_dir):
+        ui.update(p.relative_to(root).as_posix().encode("utf-8") + b"\0")
+        ui.update(p.read_bytes().replace(b"\r\n", b"\n") + b"\0")
+    handlers = hashlib.sha256(json.dumps(ix.handlers, ensure_ascii=False).encode("utf-8"))
+    return {"project": ix.project, "commit": ix.sk.get("commit"), "ui_dir": ui_dir,
+            "handlers": handlers.hexdigest()[:16], "ui_files": ui.hexdigest()[:16]}
+
+
+def _read_cache(path: Path) -> dict[str, Any] | None:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else None
+    except (OSError, ValueError) as e:
+        logger.debug("Не удалось прочитать кеш UI-каталога %s: %s", path, e)
+        return None
+
+
 def build_catalog(
     targets_root: str | Path,
     ix: SkeletonIndex,
@@ -887,24 +910,37 @@ def build_catalog(
     cache_path: str | Path | None = None,
     force_rebuild: bool = False,
 ) -> UICatalog:
-    """Каталог всех UI-запросов проекта, сопоставленных с обработчиками скелета; `ui_dir` — по `find_ui_dir`."""
+    """Каталог всех UI-запросов проекта, сопоставленных с обработчиками скелета; `ui_dir` — по `find_ui_dir`.
+
+    Кеш привязан к проекту отпечатком (`catalog_fingerprint`): не совпал — каталог пересобирается. Кеш другого
+    проекта при этом не затирается (в репозитории лежит кеш Train Ticket-подобного пакета задачи, его пакует
+    `pack_submission.py`): пересобранный каталог живёт только в этом прогоне, если не `force_rebuild`."""
     resolved_cache = (
         Path(cache_path)
         if cache_path
         else Path(__file__).resolve().parent.parent.parent / "data" / "ui_catalog.json"
     )
-    if not force_rebuild and resolved_cache.is_file():
-        try:
-            with open(resolved_cache, "r", encoding="utf-8") as f:
-                d = json.load(f)
-            return UICatalog.from_dict(d)
-        except Exception as e:
-            logger.debug("Не удалось загрузить кэш UI-каталога из %s: %s", resolved_cache, e)
-
     root = Path(targets_root)
     ui_dir = ui_dir or find_ui_dir(root, ix)
     if ui_dir is None:
         return UICatalog([], [], {})
+    fingerprint = catalog_fingerprint(root, ix, ui_dir)
+    cached = _read_cache(resolved_cache) if resolved_cache.is_file() else None
+    keep_cache = False
+    if cached is not None and not force_rebuild:
+        if cached.get("fingerprint") == fingerprint:
+            try:
+                return UICatalog.from_dict(cached)
+            except Exception as e:  # noqa: BLE001 — битый кеш не должен ронять конвейер: пересобираем
+                logger.debug("Не удалось загрузить кеш UI-каталога из %s: %s", resolved_cache, e)
+        else:
+            owner = (cached.get("fingerprint") or {}).get("project")
+            keep_cache = owner is not None and owner != ix.project
+            logger.log(logging.WARNING if keep_cache else logging.INFO,
+                       "Кеш UI-каталога %s не подходит (проект %s, коммит %s): каталог пересобран%s",
+                       resolved_cache, owner or "?", (cached.get("fingerprint") or {}).get("commit") or "?",
+                       ", чужой кеш не перезаписан (другой путь — build_catalog(cache_path=...))" if keep_cache else "")
+
     ui_root = root / ui_dir
     script_pages: dict[str, list[str]] = collections.defaultdict(list)
     by_id: dict[str, str] = {}
@@ -966,12 +1002,13 @@ def build_catalog(
                 else:
                     unresolved.append({"id": r.id, "verb": r.verb, "url": url, "function": r.function})
     catalog = UICatalog(requests, unresolved, titles)
-    try:
-        resolved_cache.parent.mkdir(parents=True, exist_ok=True)
-        with open(resolved_cache, "w", encoding="utf-8") as f:
-            json.dump(catalog.to_dict(), f, ensure_ascii=False, indent=1)
-    except Exception as e:
-        logger.debug("Не удалось сохранить кэш UI-каталога в %s: %s", resolved_cache, e)
+    if not keep_cache:
+        try:
+            resolved_cache.parent.mkdir(parents=True, exist_ok=True)
+            with open(resolved_cache, "w", encoding="utf-8") as f:
+                json.dump({"fingerprint": fingerprint, **catalog.to_dict()}, f, ensure_ascii=False, indent=1)
+        except Exception as e:
+            logger.debug("Не удалось сохранить кэш UI-каталога в %s: %s", resolved_cache, e)
     return catalog
 
 
