@@ -39,6 +39,12 @@ def test_pack_submission_creates_valid_archive():
                   "code/facts/configs_topology.json", "code/data/entity_ir.json", "code/scripts/fetch_models.py",
                   "code/archparse/src/main/java/com/v39a/Main.java"):
             assert f in names, f"Нет {f} в архиве"
+        # 2b. Исходники Rust-движка (надбавка ×1.10 за исходный код), без rust/target
+        for f in ("code/rust/Cargo.toml", "code/rust/Cargo.lock", "code/rust/README.md"):
+            assert f in names, f"Нет {f} в архиве"
+        assert any(n.startswith("code/rust/crates/archonity-exec/") and n.endswith(".rs") for n in names)
+        assert any(n.startswith("code/rust/crates/archonity-m4/") and n.endswith(".rs") for n in names)
+        assert not any(n.startswith("code/rust/target") for n in names)
         assert any(n.startswith("code/data/ir/") and n.endswith(".json") for n in names)
         assert any(n.startswith("code/cache/llm/") and n.endswith(".json") for n in names)
         assert "code/cache/emb/qwen3-4b/vectors.npz" in names
