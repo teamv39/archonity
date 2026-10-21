@@ -34,6 +34,7 @@ class EvidenceLogger:
         self.evidence: dict[str, dict[str, Any]] = {}
         self._gateway_routes: dict[str, Any] = {}
         self._gateway_config_source = "ts-gateway-service/src/main/resources/application.yml"
+        self._gateway_service = "ts-gateway-service"
         self._file_cache: dict[str, list[str]] = {}
         self._load_configs_topology()
 
@@ -45,6 +46,8 @@ class EvidenceLogger:
                     scg = data.get("gateway_routes", {}).get("spring_cloud_gateway", {})
                     if src := scg.get("config_source"):
                         self._gateway_config_source = src
+                        if "/" in src:
+                            self._gateway_service = src.split("/")[0]
                     routes = scg.get("routes", [])
                     for r in routes:
                         if sid := r.get("id"):
@@ -161,11 +164,12 @@ class EvidenceLogger:
 
     def record_gateway_route(self, target_service: str) -> str:
         """Регистрация маршрута шлюза Spring Cloud Gateway (CONFIG)."""
-        # Исключаем маршруты к библиотекам (ts-common) и циклические к самому шлюзу
-        if target_service not in self._gateway_routes or target_service == "ts-gateway-service":
+        gw = self._gateway_service
+        # Исключаем маршруты к библиотекам и циклические к самому шлюзу
+        if target_service not in self._gateway_routes or target_service == gw:
             return ""
 
-        edge_id = f"ts-gateway-service->{target_service}:REST_HTTP"
+        edge_id = f"{gw}->{target_service}:REST_HTTP"
         if edge_id in self.evidence:
             return edge_id
 
@@ -175,7 +179,7 @@ class EvidenceLogger:
 
         self.evidence[edge_id] = {
             "edge_id": edge_id,
-            "source": "ts-gateway-service",
+            "source": gw,
             "target": target_service,
             "relation_type": "REST_HTTP",
             "source_type": "CONFIG",
@@ -185,7 +189,7 @@ class EvidenceLogger:
                 "line_number": 20,
                 "caller": "org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator",
                 "matched_endpoint": pred_str,
-                "call_chain": ["ts-gateway-service", target_service],
+                "call_chain": [gw, target_service],
                 "code_snippet": f"- id: {target_service}\n  predicates:\n    - {pred_str}",
                 "config_key": f"spring.cloud.gateway.routes[{target_service}]",
                 "is_reachable": True,
