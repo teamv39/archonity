@@ -10,6 +10,7 @@ from typing import Any
 from engine import attention
 from engine.adapters.skeleton import SkeletonIndex, default_db_dump, load_json
 from engine.adapters.submission import SubmissionAdapter
+from engine.artifacts import DEFAULT_ARTIFACTS_DIR, check_artifacts
 from engine.decisions import DecisionLedger
 from engine.evidence import EvidenceLogger
 from engine.executor.step import StepExecutor
@@ -19,7 +20,6 @@ from engine.projection import project_constructors
 from engine.rules import RuntimeRules
 from engine.spring_security import apply_spring_security
 
-ROOT = Path(__file__).resolve().parent.parent
 LOGGER = logging.getLogger(__name__)
 
 
@@ -60,9 +60,13 @@ def _principal_id(index: SkeletonIndex, user_name: str) -> str | None:
 
 @dataclasses.dataclass
 class PipelineConfig:
-    """Конфигурация конвейера: входные артефакты, режимы правил M4/M5 и опции M1."""
+    """Конфигурация конвейера: входные артефакты, режимы правил M4/M5 и опции M1.
+
+    `artifacts_dir` — папка артефактов проекта (`ir/`, `entity_ir.json`, `ui_catalog.json`), по умолчанию `data/`;
+    `entity_ir_path` и `method_ir_dir` переопределяют отдельные пути."""
     db_dump_path: str | Path | None = None
     db_state: Any = None
+    artifacts_dir: str | Path | None = None
     entity_ir_path: str | Path | None = None
     method_ir_dir: str | Path | None = None
     rules: RuntimeRules = dataclasses.field(default_factory=RuntimeRules)
@@ -95,20 +99,24 @@ class ArchonityPipeline:
 
         self.skeleton_path = Path(skeleton_path)
         self.targets_root = Path(targets_root)
+        artifacts = Path(cfg.artifacts_dir) if cfg.artifacts_dir else DEFAULT_ARTIFACTS_DIR
+        ir_dir = Path(cfg.method_ir_dir) if cfg.method_ir_dir else artifacts / "ir"
         self.index = SkeletonIndex(
             load_json(self.skeleton_path),
             db_dump_path=cfg.db_dump_path or (default_db_dump(self.skeleton_path) if cfg.db_state is None else None),
             db_state=cfg.db_state,
-            entity_ir_path=cfg.entity_ir_path,
+            entity_ir_path=cfg.entity_ir_path or artifacts / "entity_ir.json",
         )
+        # IR и entity_ir.json построены по одному проекту: чужие факты не берём молча (ArtifactMismatch)
+        check_artifacts(self.index, ir_dir, self.skeleton_path, self.targets_root, artifacts)
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
         self.ledger = DecisionLedger()
         self.step_requests: dict[str, list[dict[str, Any]]] = {}
         # Р2: исключение на шаге или в сценарии не роняет прогон, а пишется сюда (engine/attention.py)
         self.failures: list[dict[str, Any]] = []
 
-        self.m1 = StepGrounder(self.index, self.targets_root, **(cfg.m1_options or {}))
-        ir_dir = Path(cfg.method_ir_dir) if cfg.method_ir_dir else ROOT / "data" / "ir"
+        self.m1 = StepGrounder(self.index, self.targets_root, ir_dir=ir_dir, ui_cache=artifacts / "ui_catalog.json",
+                               **(cfg.m1_options or {}))
         self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root) if cfg.build_m4 else None
 
     def run_scenario(
@@ -195,7 +203,9 @@ class ArchonityPipeline:
             evidence_logger=self.evidence_logger,
         )
 
-        for sp in sorted(scenario_paths, key=lambda p: str(p)):
+        paths = sorted(scenario_paths, key=lambda p: str(p))
+        self._prepare_m1(paths)
+        for sp in paths:
             sid = Path(sp).stem
             try:
                 s_dict = load_json(sp)
@@ -215,6 +225,22 @@ class ArchonityPipeline:
 
         adapter.save(output_path)
         return adapter
+
+    def _prepare_m1(self, paths: list[str | Path]) -> None:
+        """Векторы шагов всех сценариев до первого вызова LLM: эмбеддер и `llama server` не бывают в памяти вместе.
+
+        Нечитаемый сценарий пропускается, его сбой запишет цикл `run_all`. Сбой модели эмбеддера сюда не доходит:
+        он отключает dense (Р2), прогон идёт на одном BM25."""
+        scenarios = []
+        for sp in paths:
+            try:
+                scenarios.append(load_json(sp))
+            except Exception:  # noqa: BLE001
+                continue
+        try:
+            self.m1.prepare(scenarios)
+        except Exception as e:  # noqa: BLE001 — Р2: шаги заземлятся без заготовленных векторов
+            self._fail(None, None, "векторы шагов M1", e)
 
     def _fail(self, sid: str | None, step: Any, stage: str, exc: Exception) -> None:
         f = attention.failure(sid, step, stage, exc)

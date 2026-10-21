@@ -98,19 +98,23 @@ class ScenarioSession:
 class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
-                 top_k: int = TOP_K, votes: int = SELECT_VOTES, index: bool = True, reasoning: bool = True) -> None:
+                 top_k: int = TOP_K, votes: int = SELECT_VOTES, index: bool = True, reasoning: bool = True,
+                 ir_dir: str | Path | None = None, ui_cache: str | Path | None = None) -> None:
         """Промпт ADR-007: общий шаблон, домен и правила близнецов из профиля проекта, виды refs из манифеста.
 
         Режим CPU (docs/researches/gpu_dependence_and_cpu_fallback_study.md, раздел 7.5): `votes` — выборок
         голосования сверх жадного ответа (0 — только жадный); `index=False` — без индекса обработчиков в системном
         промпте выбора, выбор только из кандидатов (контекст ~3 тыс. токенов вместо ~10); `reasoning=False` — ответ
-        выбора без рассуждения. Умолчания — промпт и ключи кеша рекорда."""
+        выбора без рассуждения. Умолчания — промпт и ключи кеша рекорда.
+
+        `ir_dir` — IR тел методов проекта (по нему `answer_guards` видит условия возвратов), `ui_cache` — кеш каталога
+        UI; по умолчанию `data/ir` и `data/ui_catalog.json`."""
         self.ix = ix
         self.root = Path(targets_root)
         self.version = P.PROMPT_VERSION
         self.ui_dir = find_ui_dir(self.root, ix)
-        self.ui = build_catalog(self.root, ix, self.ui_dir)
-        self.cat = HandlerCatalog(ix, self.root, self.ui, ROOT / "data" / "ir")
+        self.ui = build_catalog(self.root, ix, self.ui_dir, cache_path=ui_cache)
+        self.cat = HandlerCatalog(ix, self.root, self.ui, Path(ir_dir) if ir_dir else ROOT / "data" / "ir")
         emb = None
         if embedder:
             from engine.grounding.embedder import QUERY_TASK, make_embedder
@@ -152,9 +156,22 @@ class StepGrounder:
         return dataclasses.replace(req, handler=handler, http={"method": verb, "path": path}, params={},
                                    ui_source=None, body_src={}, grounding=dict(req.grounding, rebound=why))
 
+    @staticmethod
+    def _queries(sc: dict[str, Any]) -> list[str]:
+        return [s.get("action") or "" for s in sc.get("steps") or []]
+
+    def prepare(self, scenarios: list[dict[str, Any]]) -> None:
+        """Векторы шагов всех сценариев прогона одной пачкой, до первого ответа LLM по ним.
+
+        Эмбеддер грузится один раз и сразу выгружается (`STEmbedder.release`), `llama server` потом поднимается
+        без него в памяти: на 16 ГБ эмбеддер рядом с сервером не помещается, на A100 это лишние 8 ГБ. `begin` берёт
+        векторы из кеша эмбеддера; тексты и ключи те же, что и без `prepare`. Сбой модели не бросает исключение:
+        эмбеддер отключает dense, поиск идёт по одному BM25."""
+        self.retriever.warm([q for sc in scenarios for q in self._queries(sc)])
+
     def begin(self, sc: dict[str, Any]) -> ScenarioSession:
         steps = sc.get("steps") or []
-        ranked = self.retriever.search([s.get("action") or "" for s in steps])
+        ranked = self.retriever.search(self._queries(sc))
         return ScenarioSession(self, sc, {s["n"]: r for s, r in zip(steps, ranked)})
 
     def ground_scenario(self, sc: dict[str, Any]) -> list[StepRequest]:
@@ -367,8 +384,9 @@ def main() -> None:
                      allow_embed_model=a.embed_model, llm=llm, top_k=a.top_k)
     a.out.mkdir(parents=True, exist_ok=True)
     results: dict[str, list[StepRequest]] = {}
-    for p in paths:
-        sc = load_json(p)
+    scenarios = [load_json(p) for p in paths]
+    g.prepare(scenarios)
+    for sc in scenarios:
         reqs = g.ground_scenario(sc)
         results[sc["id"]] = reqs
         (a.out / f"{sc['id']}.json").write_text(

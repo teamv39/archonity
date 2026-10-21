@@ -62,13 +62,15 @@ if (($#)); then
     ARGS+=(--scenarios "$@")
 fi
 echo "== 3/4 прогон: $PY run_eval.py ${ARGS[*]}"
+# Выдача, отчёт M1 и рамка прошлого прогона в той же папке не должны выдать себя за этот, если run_eval.py упадёт
+rm -f "$OUT" "$(dirname "$OUT")/m1_report.json" "$(dirname "$OUT")/ATTENTION.txt"
 "$PY" run_eval.py "${ARGS[@]}"
 RC=$?
 
 echo "== 4/4 итог"
 if [[ ! -f "$OUT" ]]; then
     echo "!! выдача $OUT не создана (код $RC). Свяжитесь с командой Archonity." >&2
-    exit "$RC"
+    exit $((RC ? RC : 1))
 fi
 sha256sum "$OUT"
 "$PY" - "$(dirname "$OUT")/m1_report.json" <<'EOF'

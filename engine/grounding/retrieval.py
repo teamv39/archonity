@@ -122,6 +122,12 @@ class Retriever:
         ranked = [h for _, h in self.bm25.rank(expand_query(query_toks(query)))]
         return ranked + [h for h in self.ids if h not in set(ranked)]
 
+    def warm(self, queries: list[str]) -> None:
+        """Векторы запросов одной пачкой, с повторами один раз: `search` потом берёт их из кеша эмбеддера, модель
+        второй раз не нужна. Без dense (нет эмбеддера, векторов обработчиков) ничего не делает."""
+        if self.embedder is not None and self.doc_vecs is not None and queries:
+            self.embedder.embed_queries(list(dict.fromkeys(queries)))
+
     def rank_dense(self, queries: list[str]) -> list[list[str]]:
         if self.embedder is None or self.doc_vecs is None:
             return [[] for _ in queries]
