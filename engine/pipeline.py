@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import dataclasses
+import logging
 from pathlib import Path
 from typing import Any
 
-from engine.adapters.skeleton import SkeletonIndex, load_json
+from engine.adapters.skeleton import SkeletonIndex, default_db_dump, load_json
 from engine.adapters.submission import SubmissionAdapter
 from engine.decisions import DecisionLedger
 from engine.evidence import EvidenceLogger
@@ -17,34 +18,24 @@ from engine.rules import RuntimeRules
 from engine.spring_security import apply_spring_security
 
 ROOT = Path(__file__).resolve().parent.parent
+LOGGER = logging.getLogger(__name__)
 
 
 @dataclasses.dataclass
 class ScenarioContext:
-    """Пассажир сценария для M4: имя и ID учётной записи."""
+    """Пассажир сценария для M4: имя из контекста задачи. ID учётной записи M4 берёт из ответа шага входа, как UI
+    (`StepExecutor._logged_in_user`)."""
     user_name: str | None = None
-    account_id: str | None = None
     scenario_id: str = "S?"
 
 
-def resolve_passenger_context(
-    context: dict[str, Any] | None,
-    db_state: Any = None,
-    scenario_id: str = "S?",
-) -> ScenarioContext:
-    """Извлекает имя и идентификатор пассажира из README/контекста и таблицы пользователей дампа."""
-    context = context or {}
-    user_name = context.get("user_name", "fdse_microservice")
-    account_id = "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f"
-    if db_state is not None:
-        user_rows = db_state.get_table("user") if hasattr(db_state, "get_table") else []
-        for u in user_rows:
-            if u.get("user_name") == user_name:
-                account_id = u.get("user_id", account_id)
-        if user_rows and account_id == "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f" and not any(u.get("user_id") == account_id for u in user_rows):
-            account_id = user_rows[0].get("user_id", account_id)
-            user_name = user_rows[0].get("user_name", user_name)
-    return ScenarioContext(user_name=user_name, account_id=account_id, scenario_id=scenario_id)
+def resolve_passenger_context(context: dict[str, Any] | None, scenario_id: str = "S?") -> ScenarioContext:
+    """Пассажир из контекста задачи («pre-registered user <имя>»). Нет его — предупреждение: имя при входе неизвестно,
+    если сценарий не регистрирует своего."""
+    user_name = (context or {}).get("user_name")
+    if not user_name:
+        LOGGER.warning("контекст задачи не называет пассажира (pre-registered user): имя при входе неизвестно")
+    return ScenarioContext(user_name=user_name, scenario_id=scenario_id)
 
 
 @dataclasses.dataclass
@@ -84,7 +75,7 @@ class ArchonityPipeline:
         self.targets_root = Path(targets_root)
         self.index = SkeletonIndex(
             load_json(self.skeleton_path),
-            db_dump_path=cfg.db_dump_path,
+            db_dump_path=cfg.db_dump_path or (default_db_dump(self.skeleton_path) if cfg.db_state is None else None),
             db_state=cfg.db_state,
             entity_ir_path=cfg.entity_ir_path,
         )
@@ -102,7 +93,7 @@ class ArchonityPipeline:
         """Сценарий шаг за шагом: заземление M1, исполнение M4, правило Spring Security, проекция M5."""
         sid = scenario_dict.get("id", "S?")
         self.ledger.begin_scenario(sid)
-        passenger = resolve_passenger_context(self.index.context, db_state=self.index.db_state, scenario_id=sid)
+        passenger = resolve_passenger_context(self.index.context, scenario_id=sid)
 
         all_methods: set[str] = set()
         all_calls: set[tuple[str, str]] = set()

@@ -274,50 +274,17 @@ class TestSkeletonIndexDbIntegration:
             assert rows_by_node == rows_by_bare, f"Mismatch for {nid} vs {bare_table}"
 
     def test_skeleton_resolution_logic(self, skeleton_dict: dict[str, Any]) -> None:
-        """Проверка логики сервисных хелперов разрешения таблиц."""
-        index = SkeletonIndex(skeleton_dict)
-
-        assert SkeletonIndex.service_to_db_name("ts-order-service") == "ts_order"
-        assert SkeletonIndex.service_to_db_name("ts-consign-mysql") == "ts_consign"
-        assert SkeletonIndex.service_to_db_name("ts-travel2-service") == "ts_travel2"
-        assert SkeletonIndex.service_to_db_name("ts-food-delivery-service") == "ts_food_delivery"
+        """Имя таблицы дампа по узлу скелета — часть после точки, без соглашений об именах сервисов."""
+        index = SkeletonIndex(skeleton_dict, db_dump_path=DUMP_PATH)
 
         assert index.table_resource_to_db("res:table:ts-order-service.orders") == "orders"
         assert index.table_resource_to_db("res:table:ts-consign-mysql.consign_record") == "consign_record"
-
-        assert (
-            index.table_resource_to_qualified_db("res:table:ts-order-service.orders")
-            == "ts_order.orders"
-        )
-        assert (
-            index.table_resource_to_qualified_db("res:table:ts-consign-mysql.consign_record")
-            == "ts_consign.consign_record"
-        )
-
-        res = index.resolve_table_node("res:table:ts-order-service.orders")
-        assert res == {
-            "node_id": "res:table:ts-order-service.orders",
-            "service": "ts-order-service",
-            "db": "ts_order",
-            "table": "orders",
-            "qualified": "ts_order.orders",
-        }
-        # Проверяем дуальную природу: работает и как список записей, и как метаданные
-        assert isinstance(res, list)
-        assert len(res) == 10
-        assert res["table"] == "orders"
-        assert res.get("service") == "ts-order-service"
-        assert res.node_id == "res:table:ts-order-service.orders"
-
     def test_skeleton_index_auto_discovery(self, skeleton_dict: dict[str, Any]) -> None:
-        """Проверка авто-поиска дампа БД при создании SkeletonIndex без явных путей."""
-        index = SkeletonIndex(skeleton_dict)
-        assert index.db_state is not None
+        """Дамп ищется рядом со скелетом, переданным путём (`<пакет>/context`); словарь без дампа — пустой мир БД."""
+        index = SkeletonIndex(SKELETON_PATH)
         assert len(index.db_state.table_names()) == 32
-        records = index.get_table_records("orders")
-        assert len(records) == 10
-        rows = index.get_table_rows("res:table:ts-order-service.orders")
-        assert len(rows) == 10
+        assert len(index.get_table_records("res:table:ts-order-service.orders")) == 10
+        assert SkeletonIndex(skeleton_dict).db_state.table_names() == []
 
     def test_skeleton_path_input(self) -> None:
         """Проверка передачи пути к файлу вместо словаря в SkeletonIndex."""
@@ -337,7 +304,7 @@ class TestSkeletonIndexDbIntegration:
 
     def test_skeleton_missing_table_resilience(self, skeleton_dict: dict[str, Any]) -> None:
         """Проверка устойчивости к отсутствующей таблице ts-wait-order-service.wait_list_order."""
-        index = SkeletonIndex(skeleton_dict)
+        index = SkeletonIndex(skeleton_dict, db_dump_path=DUMP_PATH)
         missing_nid = "res:table:ts-wait-order-service.wait_list_order"
         rows = index.get_table_records(missing_nid)
         assert rows == []

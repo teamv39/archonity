@@ -159,7 +159,7 @@ class StepExecutor:
             m = _REF.match(v or "")
             if m and self.step_params.get(int(m.group(2))):
                 ents.setdefault(f"#params{m.group(2)}", Obj(None, dict(self.step_params[int(m.group(2))]), open=True))
-        user = self.current_user or getattr(state, "account_id", None)
+        user = self.current_user
         out: list[Any] = []
         for p in self.it.params.get(handler, []):
             anns = {a.get("name"): a.get("args", "") for a in p.get("annotations") or []}

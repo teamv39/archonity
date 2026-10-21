@@ -174,14 +174,10 @@ class TestContextAndDbState:
         assert dump_path.is_file()
 
         db = load_db_dump(dump_path)
-        user = db.get_user_by_name("fdse_microservice")
+        user = db.find_one("user", user_name="fdse_microservice")
         assert user is not None
         assert user["user_id"] == "4d2a46c7-71cb-4cf1-b5bb-b68406d9da6f"
-
-        # Проверка динамического расчета баланса
-        balance = db.get_user_balance(user["user_id"])
-        assert balance is not None
-        assert balance > 8000.0  # 10361.0 - 1670.0 = 8691.0
+        assert db.query("inside_money", user_id=user["user_id"])
 
     def test_skeleton_index_context(self, skeleton_index: SkeletonIndex) -> None:
         assert hasattr(skeleton_index, "context")

@@ -10,6 +10,7 @@ if str(ROOT) not in sys.path:
 
 SKELETON_PATH = ROOT / "hackaton" / "tt-challenge" / "skeleton" / "trainticket.json.gz"
 TARGETS_ROOT = ROOT / "hackaton" / "tt-challenge" / "targets" / "trainticket"
+DB_DUMP = ROOT / "hackaton" / "tt-challenge" / "context" / "db-after-warmup.sql.gz"
 
 
 @pytest.fixture(scope="session")
@@ -23,7 +24,7 @@ def shared_skeleton_dict() -> dict[str, Any]:
 def shared_skeleton_index(shared_skeleton_dict: dict[str, Any]):
     from engine.adapters.skeleton import SkeletonIndex
 
-    return SkeletonIndex(shared_skeleton_dict)
+    return SkeletonIndex(shared_skeleton_dict, db_dump_path=DB_DUMP)
 
 
 @pytest.fixture(scope="session")
