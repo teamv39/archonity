@@ -4,12 +4,17 @@
 #   scripts/run_final.sh                                   # S0–S7 из hackaton/tt-challenge/scenarios
 #   scripts/run_final.sh /path/S8.json /path/S9.json       # свои сценарии
 #   OUT=out/submission.json scripts/run_final.sh ...       # куда писать выдачу (по умолчанию output/submission.json)
+#   ARTIFACTS_DIR=artifacts/proj scripts/run_final.sh ...  # папка артефактов проекта (ir/, entity_ir.json), по умолчанию data/
+#   PARSE_SOURCES=0 scripts/run_final.sh ...               # не пересобирать IR и entity_ir.json из исходников (взять готовые)
 #
 # 1. Модели: fetch_models.py докачивает в models/ недостающее и сверяет sha256 с models/manifest.json. llama.cpp —
 #    релизная сборка манифеста, если не задан ARCHONITY_LLAMA_SERVER и llama-server нет в PATH.
 # 2. Движок (ADR-008): ENGINE=rust (по умолчанию) — cargo build --release --locked в rust/, при отсутствии cargo
 #    ставится stable через rustup в ~/.cargo; ENGINE=python — весь конвейер в Python, сборка не нужна. Сбой сборки
 #    Rust не переключает на Python: run_eval.py пишет пустую выдачу с рамкой ATTENTION (Р2).
+#    При ENGINE=rust run_eval.py получает --parse-sources: IR тел методов (ir/) и entity_ir.json строит
+#    archonity-parse (Rust, ADR-009) по исходникам и скелету в папку артефактов — каждый раз, около секунды, байт в байт
+#    как закоммиченные в data/. Java-archparse в финальном запуске не участвует.
 # 3. run_eval.py: ответы из кеша; на промахе клиент сам поднимает llama-server и гасит его при выходе.
 # 4. Итог: sha256 выдачи, режим M1 (m1_report.json рядом с выдачей) и последней — рамка ATTENTION.txt, если она есть.
 # Сбой моделей прогон не останавливает: выдача строится всегда (roadmap, Р2), но с заметным предупреждением.
@@ -58,6 +63,12 @@ if [[ "$ENGINE" == rust ]]; then
 fi
 
 ARGS=(-o "$OUT" --engine "$ENGINE")
+if [[ "$ENGINE" == rust && "${PARSE_SOURCES:-1}" != 0 ]]; then
+    ARGS+=(--parse-sources)
+fi
+if [[ -n "${ARTIFACTS_DIR:-}" ]]; then
+    ARGS+=(--artifacts-dir "$ARTIFACTS_DIR")
+fi
 if (($#)); then
     ARGS+=(--scenarios "$@")
 fi

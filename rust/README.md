@@ -15,8 +15,20 @@ python run_eval.py --engine rust -o output/submission.json
 | `archonity-io` | скелет, дамп БД, `entity_ir.json`, мир БД, журнал решений, `submission.json`, `evidence.json` |
 | `archonity-m4` | интерпретатор IR, библиотека JDK/Spring, шаг сценария (`StepExecutor`) |
 | `archonity-exec` | бинарник `archonity-exec`: сценарии, R20, Spring Security, R19, M5 |
+| `archonity-parse` | бинарник `archonity-parse`: разбор исходников (tree-sitter-java) в `data/ir/<module>.json` и `data/entity_ir.json`; перенос `archparse` ([ADR-009](../docs/adr/adr-009_archparse_rust.md)) |
 
-Зависимости идут в одну сторону: `model` <- `io` <- `m4` <- `exec`.
+Зависимости идут в одну сторону: `model` <- `io` <- `m4` <- `exec`. `archonity-parse` автономен (читает скелет сам) и пишет файлы, которые читает `archonity-io`.
+
+## Разбор исходников (archonity-parse)
+
+```
+target/release/archonity-parse --mode all --targets-dir <targets> --skeleton <skeleton.json.gz> -o <папка артефактов>
+# --mode bodies: -o папка IR; --mode entities: -o файл; по умолчанию bodies, data/ir
+python run_eval.py --engine rust --parse-sources     # то же перед прогоном; scripts/run_final.sh включает по умолчанию
+pytest tests/test_rust_parse.py                       # байт в байт с data/ir и data/entity_ir.json
+```
+
+Формат записи — Jackson `INDENT_OUTPUT`, как у Java-версии (не Python `json.dump`): `"k" : v`, массивы в строку, `Double.toString`. Оракул — закоммиченные `data/ir/*.json` и `data/entity_ir.json`, построенные Java-`archparse`. На 21.10: 42 файла IR и `entity_ir.json` совпадают побайтно, покрытие скелета полное (1196 методов, 8961 call_site).
 
 ## Проверка против Python
 

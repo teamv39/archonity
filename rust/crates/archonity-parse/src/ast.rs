@@ -661,3 +661,54 @@ pub fn ancestor<'a>(n: Node<'a>, pred: impl Fn(&str) -> bool) -> Option<Node<'a>
     }
     None
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn doc(src: &str) -> Doc {
+        let mut p = new_parser();
+        Doc::parse(&mut p, "m/src/main/java/A.java".into(), "m".into(), src.as_bytes().to_vec()).unwrap()
+    }
+
+    fn first_expr(d: &Doc) -> Node<'_> {
+        let init = descendants(d.root()).into_iter().find(|n| n.kind() == "variable_declarator").unwrap();
+        field(init, "value").unwrap()
+    }
+
+    #[test]
+    fn unescapes() {
+        assert_eq!(unescape(r"a\n\t\\A\101"), "a\n\t\\AA");
+    }
+
+    #[test]
+    fn integers() {
+        assert_eq!(parse_integer("0xFFFFFFFF"), Some((-1, false)));
+        assert_eq!(parse_integer("1_000L"), Some((1000, true)));
+        assert_eq!(parse_integer("010"), Some((8, false)));
+    }
+
+    #[test]
+    fn imports_and_package() {
+        let d = doc("package a.b;\nimport static x.Y.*;\nimport c.D;\nclass T {}");
+        assert_eq!(d.pkg, "a.b");
+        assert_eq!(d.imports.len(), 2);
+        assert!(d.imports[0].is_static && d.imports[0].asterisk && d.imports[0].name == "x.Y");
+        assert_eq!(d.imports[1].name, "c.D");
+    }
+
+    #[test]
+    fn pretty_print_like_javaparser() {
+        let d = doc("class T { void f() { Object o = a.b(x+1, (y)).c(new Foo<>(1), p ? q : r, !z, i++); } }");
+        assert_eq!(expr_str(&d, first_expr(&d)), "a.b(x + 1, (y)).c(new Foo<>(1), p ? q : r, !z, i++)");
+    }
+
+    #[test]
+    fn type_strings() {
+        let d = doc("class T { Map<String, List<? extends A>> m; int[][] a; }");
+        let fds: Vec<Node> = descendants(d.root()).into_iter().filter(|n| n.kind() == "field_declaration").collect();
+        assert_eq!(type_str(&d, field(fds[0], "type").unwrap()), "Map<String,List<? extends A>>");
+        assert_eq!(type_pretty(&d, field(fds[0], "type").unwrap()), "Map<String, List<? extends A>>");
+        assert_eq!(type_str(&d, field(fds[1], "type").unwrap()), "int[][]");
+    }
+}

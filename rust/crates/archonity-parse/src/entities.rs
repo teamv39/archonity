@@ -872,3 +872,23 @@ pub fn scan(sk: &Skeleton, docs: &[Doc], enum_docs: &[Doc]) -> Report {
     root.insert("constructors".into(), Json::Array(ctors.iter().map(|(_, j)| j.clone()).collect()));
     Report { entities: ent.len(), repository_calls: calls.len(), constructors: ctors.len(), json: Json::Object(root) }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn physical_names() {
+        assert_eq!(spring_physical_name("StationFoodStore"), "station_food_store");
+        assert_eq!(spring_physical_name("User_roles"), "user_roles");
+        assert_eq!(spring_physical_name("ID"), "id");
+        assert_eq!(spring_physical_name("Money"), "money");
+    }
+
+    #[test]
+    fn base_names() {
+        assert_eq!(base_name("java.util.List<String>"), "List");
+        assert_eq!(base_name(" Map.Entry<K,V> "), "Entry");
+        assert_eq!(simple_name("a.b.Outer$Inner"), "Inner");
+    }
+}

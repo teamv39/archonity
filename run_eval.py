@@ -140,6 +140,19 @@ def parse_args() -> argparse.Namespace:
         help="Бинарник archonity-exec (сборка: cd rust && cargo build --release --locked)",
     )
     parser.add_argument(
+        "--parse-sources",
+        action="store_true",
+        help="Перед прогоном пересобрать артефакты проекта (ir/, entity_ir.json) бинарником archonity-parse из "
+             "исходников и скелета в --artifacts-dir (ADR-009). По умолчанию выключено: берутся готовые файлы "
+             "из data/. Без отката на Java: нет бинарника или он упал — сбой в рамке Р2",
+    )
+    parser.add_argument(
+        "--parse-bin",
+        type=Path,
+        default=ROOT_DIR / "rust" / "target" / "release" / "archonity-parse",
+        help="Бинарник archonity-parse (сборка: cd rust && cargo build --release --locked)",
+    )
+    parser.add_argument(
         "--no-eval",
         action="store_true",
         help="Пропустить автоматический вызов evaluate_golden.py",
@@ -336,6 +349,17 @@ def run_rust(args: argparse.Namespace, pipeline: ArchonityPipeline, scenarios: l
     return json.loads(failures_path.read_text(encoding="utf-8")) if failures_path.is_file() else []
 
 
+def run_parse(args: argparse.Namespace) -> None:
+    """`--parse-sources` (ADR-009): IR тел методов и `entity_ir.json` строит Rust-разбор исходников, не Java."""
+    if not args.parse_bin.is_file():
+        raise FileNotFoundError(f"нет бинарника {args.parse_bin}: cd rust && cargo build --release --locked")
+    cmd = [str(args.parse_bin), "--mode", "all", "--targets-dir", str(args.targets), "--skeleton", str(args.skeleton),
+           "-o", str(args.artifacts_dir)]
+    res = subprocess.run(cmd)
+    if res.returncode != 0:
+        raise RuntimeError(f"archonity-parse завершился с кодом {res.returncode}")
+
+
 def write_artifacts(args: argparse.Namespace, pipeline: ArchonityPipeline, adapter) -> None:
     """Отчёты рядом с выдачей и синхронизация visualizer/. Выдачу не трогают: она уже записана."""
     print_m4_stats(pipeline.m4.stats())
@@ -425,6 +449,13 @@ def main() -> None:
     m1_options: dict = {}
     pipeline = adapter = None
     rust_done = False
+    if args.parse_sources:
+        print("Разбор исходников: archonity-parse...")
+        try:
+            run_parse(args)
+        except Exception as e:  # noqa: BLE001
+            traceback.print_exc()
+            failures.append(attention.failure(None, None, "разбор исходников (archonity-parse)", e))
     try:
         from engine.grounding.llm import LLMClient
 

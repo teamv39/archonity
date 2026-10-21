@@ -1,13 +1,14 @@
-"""Привязка артефактов к проекту: IR тел методов (`data/ir`) и `entity_ir.json` строит archparse по одному проекту,
+"""Привязка артефактов к проекту: IR тел методов (`data/ir`) и `entity_ir.json` строит разбор исходников
+(`archonity-parse`, Rust, ADR-009; Java-`archparse` — эталон) по одному проекту,
 а читаются они при любом `--skeleton`/`--targets`. Здесь их сверяют со скелетом при старте конвейера: на другом
 проекте прогон не должен молча взять чужие факты (аудит универсальности, раздел 12).
 
 Признаки чужих артефактов:
-- IR: доля ID методов, которых нет в `nodes` скелета (archparse берёт ID из скелета дословно, свой IR даёт 0%);
+- IR: доля ID методов, которых нет в `nodes` скелета (разбор берёт ID из скелета дословно, свой IR даёт 0%);
 - entity_ir: вызовы репозиториев без call_site в скелете (`EntityFacts.bind`), сущности без типа в скелете, файл
   не загрузился.
 
-Доля от `STALE_SHARE_LIMIT` и выше — ошибка с командой пересборки archparse, меньшая — предупреждение
+Доля от `STALE_SHARE_LIMIT` и выше — ошибка с командой пересборки разбора, меньшая — предупреждение
 (скелет и артефакты разных коммитов одного проекта). Кеш каталога UI проверяется отдельно: он пересобирается
 сам, чистым Python (`engine/grounding/ui_catalog.py`, `catalog_fingerprint`).
 """
@@ -15,7 +16,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import re
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 LOGGER = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parent.parent
-ARCHPARSE_DIR = ROOT / "archparse"
+PARSE_BIN = "rust/target/release/archonity-parse"
 # Артефакты проекта по умолчанию: ir/, entity_ir.json, ui_catalog.json; другой проект — `--artifacts-dir`
 DEFAULT_ARTIFACTS_DIR = ROOT / "data"
 STALE_SHARE_LIMIT = 0.05
@@ -53,11 +53,11 @@ def _share(part: int, whole: int) -> float:
 
 
 def _arg(path: Path) -> str:
-    """Путь для `--args` gradle: от `archparse/`, без пробелов в абсолютном пути (environment_guide, раздел 2)."""
+    """Путь для команды пересборки: от корня репозитория, если он внутри, иначе абсолютный."""
     p = Path(path).resolve()
     try:
-        return Path(os.path.relpath(p, ARCHPARSE_DIR)).as_posix()
-    except ValueError:  # другой диск Windows
+        return p.relative_to(ROOT).as_posix()
+    except ValueError:
         return p.as_posix()
 
 
@@ -130,11 +130,12 @@ def check_artifacts(index: SkeletonIndex, ir_dir: Path, skeleton_path: Path, tar
         modes = [("bodies", out / "ir"), ("entities", out / "entity_ir.json")]
         hint = (f"\nАртефакты другого проекта держите в отдельной папке, не в {DEFAULT_ARTIFACTS_DIR.name}/: "
                 f"после пересборки запускайте run_eval.py --artifacts-dir {out.relative_to(ROOT).as_posix()}. "
-                f"Тот же проект, новый коммит: те же команды с -o ../{DEFAULT_ARTIFACTS_DIR.name}/ir и "
-                f"-o ../{DEFAULT_ARTIFACTS_DIR.name}/entity_ir.json.")
-    cmds = "\n".join(f'  gradlew -q run "--args=--mode {m} {base} -o {_arg(o)}"' for m, o in modes)
+                f"Тот же проект, новый коммит: те же команды с -o {DEFAULT_ARTIFACTS_DIR.name}/ir и "
+                f"-o {DEFAULT_ARTIFACTS_DIR.name}/entity_ir.json.")
+    cmds = "\n".join(f"  {PARSE_BIN} --mode {m} {base} -o {_arg(o)}" for m, o in modes)
     raise ArtifactMismatch(
         f"Артефакты не соответствуют скелету {skeleton_path} (проект {index.project or '?'}, коммит "
         f"{str(index.sk.get('commit') or '?')[:12]}):\n  - " + "\n  - ".join(problems)
-        + "\nВероятно, они построены по другому проекту или коммиту. Пересоберите archparse (JDK 17+, из папки "
-        "archparse/; Windows: gradlew.bat, docs/environment_guide.md, раздел 2):\n" + cmds + hint)
+        + "\nВероятно, они построены по другому проекту или коммиту. Пересоберите их разбором исходников на Rust (из "
+        "корня репозитория; сборка: (cd rust && cargo build --release --locked); docs/environment_guide.md, раздел 2; "
+        "Java-archparse остаётся эталоном):\n" + cmds + hint)

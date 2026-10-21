@@ -55,3 +55,17 @@ def test_guard_catches_literals(tmp_path: Path) -> None:
     p.write_text('"""Пример: ts-order-service."""\nNAME = "ts-common"  # ts-common в комментарии\n', encoding="utf-8")
     hits = [v for _, v in _python_literals(p) if MARKERS.search(v)]
     assert hits == ["ts-common"]
+
+
+def _rust_literals(path: Path) -> list[str]:
+    s = path.read_text(encoding="utf-8")
+    s = re.sub(r"/\*.*?\*/", "", s, flags=re.S)
+    s = re.sub(r"//[^\n]*", "", s)
+    return re.findall(r'"(?:[^"\\\n]|\\.)*"', s)
+
+
+def test_archonity_parse_has_no_project_literals() -> None:
+    files = sorted(ROOT.joinpath("rust", "crates", "archonity-parse", "src").rglob("*.rs"))
+    assert files
+    bad = [f"{p.relative_to(ROOT)}: {v[:80]}" for p in files for v in _rust_literals(p) if MARKERS.search(v)]
+    assert not bad, "литералы Train Ticket в archonity-parse:\n" + "\n".join(bad)
