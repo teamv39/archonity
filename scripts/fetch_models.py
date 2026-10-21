@@ -57,7 +57,7 @@ def check(path: Path, spec: dict[str, Any]) -> str | None:
     return None
 
 
-def place(src: Path, dst: Path, spec: dict[str, Any]) -> str | None:
+def place(src: Path, dst: Path, spec: dict[str, Any], name: str) -> str | None:
     """Проверить источник и поставить его в `dst`: жёсткая ссылка, если тот же диск, иначе копия с повторной проверкой."""
     err = check(src, spec)
     if err:
@@ -76,7 +76,7 @@ def place(src: Path, dst: Path, spec: dict[str, Any]) -> str | None:
             part.unlink(missing_ok=True)
             return f"копия {src}: {err}"
     os.replace(part, dst)
-    print(f"  {dst.name}: sha256 верен, {how} из {src}")
+    print(f"  {name}: sha256 верен, {how} из {src}")
     return None
 
 
@@ -106,7 +106,7 @@ def fetch_entry(key: str, entry: dict[str, Any], models_dir: Path, src: Path | N
             errors.append(f"{dst}: {check(dst, spec)}")
             continue
         if src is not None:
-            err = place(src if src.is_file() else src / name, dst, spec)
+            err = place(src if src.is_file() else src / name, dst, spec, name)
         else:
             err = download(entry, name, root, spec)
         if err:

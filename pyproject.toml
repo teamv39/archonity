@@ -3,24 +3,21 @@ name = "archonity"
 version = "0.1.0"
 description = "Archonity: static microservice dependency graph reconstruction for TechArena 2026"
 requires-python = ">=3.11"
-# Версии — как в окружении, где построены кеши и рекорд (21.10); requirements*.txt — экспорт uv.lock
-dependencies = [
-    "networkx==3.6.1",
-    "numpy==2.4.4",
-    "tree-sitter==0.26.0",
-    "tree-sitter-javascript==0.25.0",
-]
-
-[project.optional-dependencies]
-# Эмбеддер M1 на промахе кеша векторов (новые сценарии) и scripts/fetch_models.py; прогон из кеша cache/emb/ их не требует.
+# Версии — как в окружении, где построены кеши и рекорд (21.10); requirements.txt — экспорт uv.lock.
+# Эмбеддер (sentence-transformers, torch) обязателен для финального запуска (roadmap, П1): на новых сценариях он считает
+# векторы шагов. Прогон из кеша cache/emb/ грузит его лениво и без него обходится.
 # torch — сборка CUDA 12.8 с download.pytorch.org (A100 и RTX 50 / SM120), не CUDA 13 с PyPI: та требует драйвер 580+.
 # EmbeddingGemma 2 в sentence-transformers 6.1 требует torchvision даже в текстовом режиме.
-embed = [
+dependencies = [
     "huggingface-hub==1.33.0",
+    "networkx==3.6.1",
+    "numpy==2.4.4",
     "sentence-transformers==6.1.0",
     "torch==2.11.0",
     "torchvision==0.26.0",
     "transformers==5.20.1",
+    "tree-sitter==0.26.0",
+    "tree-sitter-javascript==0.25.0",
 ]
 
 [tool.uv]

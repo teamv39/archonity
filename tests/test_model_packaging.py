@@ -65,6 +65,17 @@ class TestManifest:
                              cwd=ROOT, capture_output=True, text=True).stdout.split()
         assert out == ["models/x.gguf", "models/llama.cpp/a"]
 
+    def test_linux_scripts_executable_in_git(self) -> None:
+        if shutil.which("git") is None:
+            pytest.skip("нет git")
+        out = subprocess.run(["git", "ls-files", "-s", "scripts/run_final.sh", "scripts/start_llm.sh"],
+                             cwd=ROOT, capture_output=True, text=True).stdout.splitlines()
+        if len(out) < 2:
+            pytest.skip("скрипты ещё не в индексе")
+        assert all(line.startswith("100755 ") for line in out)
+        final = (ROOT / "scripts" / "run_final.sh").read_text(encoding="utf-8")
+        assert "scripts/fetch_models.py" in final and "run_eval.py" in final
+
 
 class FakeProc:
     def __init__(self, cmd: list[str], rc_after: int | None = None) -> None:
