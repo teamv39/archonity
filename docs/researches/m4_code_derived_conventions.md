@@ -40,6 +40,17 @@ client_order_list.js:   payMyOrder(num, orderId, tripId, price) { this.tripId = 
 
 Каталог находит `tripId ← trainNumber` (оплата), `oldTripId ← trainNumber` (перебронирование), `targetDate ← boughtDate` (багаж), `startPlace ← from` (поиск со страницы заказов). В промпт M1 поле не идёт: каталог без него совпадает с прежним `data/ui_catalog.json`, кеш LLM цел. Контроль: без `body_src` итог 0.901.
 
-## Что осталось
+## Маршрут и дата бронирования из текста (21.10, ветка `feature/108-params-route-from-text`)
 
-`from`, `to`, `date` в бронировании (`_FIELD_ALIASES` в `schema.py`). В UI это многозвенная цепочка: аргумент шаблона → параметр URL → разбор URL по позиции → DOM → тело. Общий путь — M1 заполняет их из текста («from Shanghai to Suzhou on 1 October 2026»). Сейчас ему мешает фраза `PARAMS_TASK_V8` «Use null for … anything taken from results of earlier steps»: маршрут бронирования модель считает результатом поиска (в S1.6 она это правило нарушила и поля заполнила). Контрфакт: значения из текста в бронированиях (`"Shanghai"` или `"shanghai"`) и алиасы `from`/`to`/`date` выключены — sha256 рекорда. Правка промпта меняет только 70 вызовов `params`, выбор обработчиков и S2.14 не трогает, но нужна пересборка кеша на GPU.
+Было: `from`, `to`, `date` в бронировании брались по таблице `_FIELD_ALIASES` (`schema.py`) из полей найденного рейса с именами Train Ticket (`startStation`, `startPlace`, `travelDate` …). В UI это многозвенная цепочка: аргумент шаблона → параметр URL → разбор URL по позиции → DOM → тело. Общий путь — M1 заполняет поля из текста («from Shanghai to Suzhou on 1 October 2026»). Мешала фраза `PARAMS_TASK_V8` «Use null for … anything taken from results of earlier steps»: маршрут бронирования модель считала результатом поиска (только в S1.6 она это правило нарушила и поля заполнила).
+
+Сделано: конец `PARAMS_TASK_V8` — «Use null for identifiers, for values known only from results of earlier steps, and for everything the text does not determine. Places and dates are not identifiers: when the request acts on a record that an earlier step searched for or opened by places and a date the text names, fill those places and that date from the text.» По умолчанию (`--m4-conventions code`) таблицы алиасов нет, поле ищется в записях прежних шагов только под своим именем и по каталогу UI (`body_src`). Таблица осталась у режима отката `names`.
+
+Пересборка: `history_line` в промпте выбора параметров не содержит, поэтому промахнулись только 68 вызовов `params`. Выбор обработчиков, голоса и S2.14 взяты из кеша. Сервер на GPU 16 ГБ, обычный прогон (не `--no-cache`), около 2 минут. `PROMPT_VERSION` не менялась: она входит в ключ и сбросила бы весь кеш `m1-v8`.
+
+| Итерация | Что модель заполнила | Выдача без алиасов |
+|---|---|---|
+| 1: «A place or a date that the text names is filled from the text, even when the request also uses a record found at an earlier step» | маршрут и дату в 6 бронированиях из 8; кроме того `stationsName` в S6.6 сократился до `Suzhou`, `tripId` в S6.9 | S6 +5 рёбер: S6.11 («on the new trip») без маршрута, оплата уходит во внешний `PaymentController` |
+| 2 (принята) | маршрут и дату во всех 8 бронированиях (S1.6, S2.6, S2.11, S3.7, S3.8, S4.7, S5.8, S6.11) | sha256 `94463c41…5a08`, рекорд |
+
+Побочные изменения итерации 2, выдачу они не меняют: `stationName = "Suzhou"` у еды со станции (S2.6, S2.11, S3.7) — это станция из описания; `isWithin = false` при багаже в S7.4 — так шлёт UI (`isWithin=False when need-consign checked`); дата в перебронировании S7.10. Режим `names` с новыми ответами — тот же sha256. `scripts/verify_llm_cache.py`: нарушений 0, прогон запросил 687 ответов, все в кеше; 136 устаревших записей `params` (исходные и итерации 1) удалены.

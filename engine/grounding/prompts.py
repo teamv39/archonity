@@ -2,8 +2,9 @@
 
 Порядок частей под кеш префикса llama.cpp: системный промпт (постоянный; у выбора — с индексом всех обработчиков) → сценарий →
 история выбранных запросов (растёт) → текущий шаг и кандидаты или поля запроса.
-Любая правка текста промпта или схемы — новая `PROMPT_VERSION` (иначе кеш вернёт старые ответы для старого текста,
-а новые — пересчитает; версия нужна, чтобы это было явно).
+Текст сообщений и схема входят в ключ кеша (`LLMClient.key`): правка промпта — промах только у тех вызовов, чей текст
+изменился. `PROMPT_VERSION` тоже входит в ключ и задаёт режим промпта; её смена сбрасывает весь кеш режима, включая
+голосование выбора, поэтому правка одного шаблона (например, `PARAMS_TASK_V8`) версию не меняет.
 """
 from __future__ import annotations
 
@@ -102,7 +103,7 @@ Chosen request: {verb} {path} -> {signature}
 Request fields (Java type):
 {fields}
 {ui_hints}
-Fill only the fields whose value follows from the step text or the scenario description: the options and extras the step chooses, amounts and quantities, query filters and date ranges, names, numbers and dates of new entities. Do not make up values that the text does not give, such as user names, passwords or codes: they are null. When the step does not take an option ('without ...', 'no ...', or the same choice as an earlier step that did not take it), the fields that the web UI sends only for that option keep their default, and coded fields get the enum code for none. Fields that an edit does not change are null. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."""
+Fill only the fields whose value follows from the step text or the scenario description: the options and extras the step chooses, amounts and quantities, query filters and date ranges, names, numbers and dates of new entities. Do not make up values that the text does not give, such as user names, passwords or codes: they are null. When the step does not take an option ('without ...', 'no ...', or the same choice as an earlier step that did not take it), the fields that the web UI sends only for that option keep their default, and coded fields get the enum code for none. Fields that an edit does not change are null. Use enum codes from the reference for coded fields. Use null for identifiers, for values known only from results of earlier steps, and for everything the text does not determine. Places and dates are not identifiers: when the request acts on a record that an earlier step searched for or opened by places and a date the text names, fill those places and that date from the text."""
 
 
 def enum_reference(enums: dict[str, list[str]]) -> str:
