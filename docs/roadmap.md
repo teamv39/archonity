@@ -104,12 +104,13 @@
 
 - Отдельная папка `rust/` ([README](../rust/README.md)); Python правим только оракулами (`scripts/rust_oracles.py`, трасса `ARCHONITY_TRACE`). Порядок:
   1. M4, R20, Spring Security, R19 и M5 по готовому IR (`data/ir/`) и `step_requests_raw.json` (шаги M1 до R20);
-  2. разбор Java в IR на Rust (`tree-sitter-java`) вместо `archparse`, если хватит времени и если ответ на вопрос 2 этого требует.
+  2. разбор Java в IR на Rust (`tree-sitter-java`) вместо `archparse` ([ADR-009](adr/adr-009_archparse_rust.md)); решение Дениса 21.10: делаем полный анализ кода на Rust.
 - Оракул:
   - рёбра Rust на S0–S7 = рекорд ребро в ребро (`compare_submissions.py`);
   - ответ по каждому из 262 обработчиков = ответ Python (`handler_sweep`).
 - Состояние на 21.10: M4, R20, Spring Security, R19, M5 и запись выдачи портированы (`archonity-exec`, PR #122). `submission.json` из `run_eval.py --engine rust` = рекорд по sha256 (`94463c41…`), `decisions.json`, `evidence.json`, `m4_unknowns.json`, `step_requests.json` совпадают с Python байт в байт; на 262 обработчиках, S0–S7 и X1–X8 расхождений 0 (`tests/test_rust_engine.py`, `scripts/rust_compare.py`). `scripts/run_final.sh` собирает Rust (`cargo build --release --locked`) и гонит `--engine rust`; `ENGINE=python` — запасной вариант.
-- Остаётся до контрольной точки: прогон на машине с A100 без кеша, сверка на закрытых сценариях Миши, ответ организаторов в `testing_system.md`, шаг 2 (разбор Java на Rust) — только если ответ на вопрос 2 этого требует.
+- Разбор исходников на Rust (`archonity-parse`, ветка `feature/126-archparse-rust`): `data/ir/*.json` (42 файла) и `data/entity_ir.json` воспроизводятся байт в байт; `run_eval.py --engine rust --parse-sources` на артефактах, построенных Rust, даёт sha256 рекорда `94463c41…`. `scripts/run_final.sh` пересобирает артефакты Rust-разбором при каждом запуске (`PARSE_SOURCES=0` отключает). Java-`archparse` остаётся эталоном и оракулом.
+- Остаётся до контрольной точки: прогон на машине с A100 без кеша, сверка на закрытых сценариях Миши, ответ организаторов в `testing_system.md`.
 - Контрольная точка — 22.10, середина дня (время назначает Паша). Если рекорд не воспроизводится, сдаём Python (`ENGINE=python`) и Rust не упоминаем.
 
 ### Что не делаем до сдачи
