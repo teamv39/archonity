@@ -1,12 +1,18 @@
 //! Состояние БД (`engine/adapters/db.py`): таблицы дампа `db-after-warmup.sql.gz`, `fork` на сценарий.
+//!
+//! Дамп читается как latin1: байт = символ, поэтому любые байты MySQL не ломают разбор. Значения ячеек —
+//! `null`, целое, дробное или строка (как `None`/`int`/`float`/`str` в Python).
 
+use std::io::Read;
 use std::path::Path;
 
-use anyhow::Result;
+use anyhow::{Context, Result};
+use flate2::read::GzDecoder;
 use indexmap::IndexMap;
+use regex::Regex;
 use serde_json::Value as Json;
 
-/// Строка таблицы: колонка -> ячейка (`null`, число, строка).
+/// Строка таблицы: колонка -> ячейка. Порядок колонок как в `CREATE TABLE`.
 pub type Row = IndexMap<String, Json>;
 
 #[derive(Clone, Debug, Default)]
@@ -17,41 +23,372 @@ pub struct DatabaseState {
 }
 
 impl DatabaseState {
-    pub fn normalize_table_name(&self, _table_name: &str) -> String {
-        todo!("P1")
+    /// Имя таблицы после первой точки: `orders`, `<db>.orders`, `res:table:<service>.orders`.
+    pub fn normalize_table_name(&self, table_name: &str) -> String {
+        if table_name.is_empty() {
+            return String::new();
+        }
+        if let Some(a) = self.table_aliases.get(table_name) {
+            return a.clone();
+        }
+        let t = table_name.strip_prefix("res:table:").unwrap_or(table_name);
+        match t.split_once('.') {
+            Some((_, rest)) => rest.to_string(),
+            None => t.to_string(),
+        }
     }
 
-    pub fn get_table(&self, _table_name: &str) -> &[Row] {
-        todo!("P1")
+    pub fn get_table(&self, table_name: &str) -> &[Row] {
+        let c = self.normalize_table_name(table_name);
+        self.tables.get(&c).map(Vec::as_slice).unwrap_or(&[])
     }
 
-    pub fn get_columns(&self, _table_name: &str) -> Vec<String> {
-        todo!("P1")
+    pub fn has_table(&self, table_name: &str) -> bool {
+        self.tables.contains_key(&self.normalize_table_name(table_name))
+    }
+
+    pub fn get_columns(&self, table_name: &str) -> Vec<String> {
+        let c = self.normalize_table_name(table_name);
+        self.table_columns.get(&c).cloned().unwrap_or_default()
     }
 
     pub fn table_names(&self) -> Vec<String> {
-        todo!("P1")
+        let mut v: Vec<String> = self.tables.keys().cloned().collect();
+        v.sort();
+        v
     }
 
-    pub fn insert(&mut self, _table_name: &str, _row: Row) {
-        todo!("P1")
+    pub fn insert(&mut self, table_name: &str, row: Row) {
+        let c = self.normalize_table_name(table_name);
+        self.tables.entry(c).or_default().push(row);
     }
 
-    pub fn update(&mut self, _table_name: &str, _updates: &Row, _filters: &Row) -> usize {
-        todo!("P1")
+    /// Изменяемая таблица (для `update`/`delete` мира).
+    pub fn table_mut(&mut self, table_name: &str) -> Option<&mut Vec<Row>> {
+        let c = self.normalize_table_name(table_name);
+        self.tables.get_mut(&c)
     }
 
     /// Независимая копия: мир сценария и откат шага.
     pub fn fork(&self) -> DatabaseState {
-        todo!("P1")
+        self.clone()
     }
 }
 
-pub fn load_db_dump(_gz_path: &Path) -> Result<DatabaseState> {
-    todo!("P1")
+/// Сравнение ячеек `val != expected and str(val) != str(expected)` из `query`: равны по значению или по `str()`.
+pub fn cell_matches(val: &Json, expected: &Json) -> bool {
+    val == expected || py_str(val) == py_str(expected)
 }
 
-/// Поле `context` скелета: пассажир, даты, баланс (`parse_context`).
-pub fn parse_context(_text: &str) -> IndexMap<String, Json> {
-    todo!("P1")
+fn py_str(v: &Json) -> String {
+    match v {
+        Json::Null => "None".to_string(),
+        Json::String(s) => s.clone(),
+        Json::Bool(b) => if *b { "True" } else { "False" }.to_string(),
+        Json::Number(n) => match n.as_i64() {
+            Some(i) => i.to_string(),
+            None => crate::json_py::float_repr(n.as_f64().unwrap_or(f64::NAN)),
+        },
+        other => other.to_string(),
+    }
+}
+
+fn is_ws(c: u8) -> bool {
+    matches!(c, b' ' | b'\t' | b'\r' | b'\n')
+}
+
+/// Разбор `VALUES (...), (...)` одним проходом (`_parse_sql_values`). Вход и выход — latin1-символы.
+fn parse_sql_values(s: &str) -> Vec<Vec<Json>> {
+    let b: Vec<char> = s.chars().collect();
+    let n = b.len();
+    let mut rows = Vec::new();
+    let mut i = 0;
+    let ws = |c: char| matches!(c, ' ' | '\t' | '\r' | '\n');
+    while i < n {
+        while i < n && b[i] != '(' {
+            i += 1;
+        }
+        if i >= n {
+            break;
+        }
+        i += 1;
+        let mut row: Vec<Json> = Vec::new();
+        while i < n {
+            while i < n && ws(b[i]) {
+                i += 1;
+            }
+            if i >= n {
+                break;
+            }
+            let ch = b[i];
+            if ch == ')' {
+                i += 1;
+                rows.push(row);
+                break;
+            } else if ch == ',' {
+                i += 1;
+                continue;
+            } else if ch == '\'' {
+                i += 1;
+                let mut chars = String::new();
+                while i < n {
+                    let c = b[i];
+                    if c == '\\' {
+                        i += 1;
+                        if i < n {
+                            chars.push(match b[i] {
+                                '0' => '\0',
+                                'b' => '\x08',
+                                'n' => '\n',
+                                'r' => '\r',
+                                't' => '\t',
+                                'Z' => '\x1a',
+                                e => e,
+                            });
+                            i += 1;
+                        }
+                    } else if c == '\'' {
+                        if i + 1 < n && b[i + 1] == '\'' {
+                            chars.push('\'');
+                            i += 2;
+                        } else {
+                            i += 1;
+                            break;
+                        }
+                    } else {
+                        chars.push(c);
+                        i += 1;
+                    }
+                }
+                row.push(Json::String(chars));
+            } else if starts_with(&b, i, "_binary '") {
+                i += 9;
+                let mut chars = String::new();
+                while i < n {
+                    let c = b[i];
+                    if c == '\\' {
+                        i += 1;
+                        if i < n {
+                            chars.push(b[i]);
+                            i += 1;
+                        }
+                    } else if c == '\'' {
+                        i += 1;
+                        break;
+                    } else {
+                        chars.push(c);
+                        i += 1;
+                    }
+                }
+                row.push(Json::String(chars));
+            } else if starts_with(&b, i, "NULL") {
+                row.push(Json::Null);
+                i += 4;
+            } else {
+                let start = i;
+                while i < n && b[i] != ',' && b[i] != ')' {
+                    i += 1;
+                }
+                let token: String = b[start..i].iter().collect::<String>().trim().to_string();
+                row.push(number_or_str(&token));
+            }
+            while i < n && ws(b[i]) {
+                i += 1;
+            }
+            if i < n && b[i] == ',' {
+                i += 1;
+            }
+        }
+    }
+    rows
+}
+
+fn starts_with(b: &[char], i: usize, pat: &str) -> bool {
+    let mut j = i;
+    for c in pat.chars() {
+        if j >= b.len() || b[j] != c {
+            return false;
+        }
+        j += 1;
+    }
+    true
+}
+
+fn number_or_str(token: &str) -> Json {
+    if token.contains('.') {
+        if let Ok(f) = token.parse::<f64>() {
+            if let Some(n) = serde_json::Number::from_f64(f) {
+                return Json::Number(n);
+            }
+        }
+        Json::String(token.to_string())
+    } else if let Ok(i) = token.parse::<i64>() {
+        Json::from(i)
+    } else {
+        Json::String(token.to_string())
+    }
+}
+
+/// Строки как `str.splitlines()` Python: разделители `\n`, `\r`, `\r\n`, `\v`, `\f`, `\x1c`-`\x1e`, `\x85`.
+fn splitlines(text: &str) -> Vec<&str> {
+    let mut out = Vec::new();
+    let mut start = 0;
+    let bytes: Vec<(usize, char)> = text.char_indices().collect();
+    let mut k = 0;
+    while k < bytes.len() {
+        let (pos, c) = bytes[k];
+        if matches!(c, '\n' | '\r' | '\x0b' | '\x0c' | '\x1c' | '\x1d' | '\x1e' | '\u{85}' | '\u{2028}' | '\u{2029}') {
+            out.push(&text[start..pos]);
+            let mut next = pos + c.len_utf8();
+            if c == '\r' && k + 1 < bytes.len() && bytes[k + 1].1 == '\n' {
+                k += 1;
+                next += 1;
+            }
+            start = next;
+        }
+        k += 1;
+    }
+    if start < text.len() {
+        out.push(&text[start..]);
+    }
+    out
+}
+
+fn latin1(bytes: &[u8]) -> String {
+    bytes.iter().map(|&b| b as char).collect()
+}
+
+/// `context/db-after-warmup.sql.gz` -> таблицы.
+pub fn load_db_dump(gz_path: &Path) -> Result<DatabaseState> {
+    let raw = std::fs::read(gz_path).with_context(|| format!("Database dump file not found: {}", gz_path.display()))?;
+    let mut bytes = Vec::new();
+    GzDecoder::new(&raw[..]).read_to_end(&mut bytes).context("gzip")?;
+    let text = latin1(&bytes);
+
+    let lines = splitlines(&text);
+    let use_re = Regex::new(r"(?i)^USE\s+`?([^;`]+)`?;").unwrap();
+    let create_re = Regex::new(r"(?i)^CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`?([a-zA-Z0-9_.]+)`?").unwrap();
+    let mut current_db = "default".to_string();
+    let mut table_cols: IndexMap<String, Vec<String>> = IndexMap::new();
+    let mut table_to_db: IndexMap<String, String> = IndexMap::new();
+
+    let mut i = 0;
+    while i < lines.len() {
+        let line = lines[i].trim();
+        if line.is_empty() {
+            i += 1;
+            continue;
+        }
+        if line.to_uppercase().starts_with("USE ") {
+            if let Some(m) = use_re.captures(line) {
+                current_db = m[1].to_string();
+            }
+            i += 1;
+            continue;
+        }
+        if line.to_uppercase().starts_with("CREATE TABLE") {
+            let name = create_re.captures(line).map(|m| m[1].to_string()).unwrap_or_else(|| "unknown".to_string());
+            let mut cols = Vec::new();
+            i += 1;
+            while i < lines.len() {
+                let l = lines[i].trim();
+                if l.starts_with(')') && (l.to_uppercase().contains("ENGINE") || l.contains(';')) {
+                    i += 1;
+                    break;
+                }
+                if l.starts_with('`') {
+                    if let Some(col) = l.split('`').nth(1) {
+                        cols.push(col.to_string());
+                    }
+                }
+                i += 1;
+            }
+            table_cols.insert(name.clone(), cols);
+            table_to_db.insert(name, current_db.clone());
+            continue;
+        }
+        i += 1;
+    }
+
+    let insert_re =
+        Regex::new(r"(?is)INSERT\s+INTO\s+`?([a-zA-Z0-9_.]+)`?\s*(?:\(([^)]+)\))?\s*VALUES\s*(.*?);").unwrap();
+    let mut tables: IndexMap<String, Vec<Row>> = table_cols.keys().map(|t| (t.clone(), Vec::new())).collect();
+    for m in insert_re.captures_iter(&text) {
+        let tbl = m[1].to_string();
+        let val_clause = &m[3];
+        let cols = table_cols.get(&tbl).cloned().unwrap_or_default();
+        let rows = parse_sql_values(val_clause);
+        let dest = tables.entry(tbl).or_default();
+        for vals in rows {
+            let mut row = Row::new();
+            if !cols.is_empty() {
+                for (c, v) in cols.iter().zip(vals) {
+                    row.insert(c.clone(), v);
+                }
+            } else {
+                for (idx, v) in vals.into_iter().enumerate() {
+                    row.insert(format!("col_{idx}"), v);
+                }
+            }
+            dest.push(row);
+        }
+    }
+
+    let mut aliases = IndexMap::new();
+    for (tbl, db) in &table_to_db {
+        aliases.insert(tbl.clone(), tbl.clone());
+        aliases.insert(format!("{db}.{tbl}"), tbl.clone());
+    }
+    let _ = is_ws;
+    Ok(DatabaseState { tables, table_aliases: aliases, table_columns: table_cols })
+}
+
+/// Поле `context` скелета (или `context/README.md`): пассажир, даты, баланс (`parse_context`).
+pub fn parse_context(text: &str) -> IndexMap<String, Json> {
+    let mut info = IndexMap::new();
+    let month = |name: &str| -> Option<&'static str> {
+        Some(match name {
+            "january" => "01",
+            "february" => "02",
+            "march" => "03",
+            "april" => "04",
+            "may" => "05",
+            "june" => "06",
+            "july" => "07",
+            "august" => "08",
+            "september" => "09",
+            "october" => "10",
+            "november" => "11",
+            "december" => "12",
+            _ => return None,
+        })
+    };
+    for (key, lead) in [("travel_date", "booked for"), ("system_date", "system clock is")] {
+        let re_text = Regex::new(&format!(r"(?i){lead}\s+([0-9]{{1,2}})\s+([A-Za-z]+)\s+([0-9]{{4}})")).unwrap();
+        if let Some(m) = re_text.captures(text) {
+            let day: i64 = m[1].parse().unwrap_or(0);
+            if let Some(mo) = month(&m[2].to_lowercase()) {
+                info.insert(key.to_string(), Json::String(format!("{}-{}-{:02}", &m[3], mo, day)));
+            }
+        } else {
+            let re_iso = Regex::new(&format!(r"(?i){lead}\s+([0-9]{{4}}-[0-9]{{2}}-[0-9]{{2}})")).unwrap();
+            if let Some(m) = re_iso.captures(text) {
+                info.insert(key.to_string(), Json::String(m[1].to_string()));
+            }
+        }
+    }
+    let user = Regex::new(r"(?i)pre-registered user\s+([a-zA-Z0-9_-]+)").unwrap();
+    if let Some(m) = user.captures(text) {
+        info.insert("user_name".to_string(), Json::String(m[1].to_string()));
+    }
+    let bal = Regex::new(r"(?i)(?:account balance|balance)\s+([0-9]+(?:[\s,][0-9]{3})*(?:\.[0-9]+)?)").unwrap();
+    if let Some(m) = bal.captures(text) {
+        let t = m[1].replace([' ', ','], "");
+        if let Ok(f) = t.parse::<f64>() {
+            if let Some(n) = serde_json::Number::from_f64(f) {
+                info.insert("balance".to_string(), Json::Number(n));
+            }
+        }
+    }
+    info
 }

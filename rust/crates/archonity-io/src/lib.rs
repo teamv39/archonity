@@ -9,6 +9,7 @@ pub mod decisions;
 pub mod entities;
 pub mod evidence;
 pub mod json_py;
+pub mod jx;
 pub mod skeleton;
 pub mod submission;
 pub mod world;
