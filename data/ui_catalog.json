@@ -1,4 +1,11 @@
 {
+ "fingerprint": {
+  "project": "trainticket",
+  "commit": "313886e99befb94be6cd45f085c98e0019f59829",
+  "ui_dir": "ts-ui-dashboard",
+  "handlers": "5f88540bcfaf4161",
+  "ui_files": "395c61e9b96d5411"
+ },
  "requests": [
   {
    "id": "ts-ui-dashboard/static/assets/js/admin_config.js:13<38",
