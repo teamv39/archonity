@@ -1,7 +1,7 @@
 """Журнал решений по рёбрам сценария (evidence.json v2, ADR-005).
 
-Единственный источник ответа на вопрос «почему это ребро есть или его нет»: записи делает сам
-GraphBuilder в момент решения, поэтому журнал не может разойтись с submission.json.
+Единственный источник ответа на вопрос «почему это ребро есть или его нет»: записи делают сами M4, правило
+Spring Security и проекция M5 в момент решения, поэтому журнал не может разойтись с submission.json.
 
 Ключ ребра — "relation|source|target", relation из submission: executes, calls, remote, data.
 Каждое решение — включение (include), отсев (prune) или удаление уже включённого ребра (discard).
@@ -10,18 +10,16 @@ GraphBuilder в момент решения, поэтому журнал не м
 """
 from __future__ import annotations
 
-import sys
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
 # Источник решения (ADR-005, evidence.json v2) плюс IR_CALL: ребро построено из вызова в IR, которого нет в скелете (R7)
 SOURCE_TYPES = frozenset({
     "SKELETON",        # связь из скелета без условий: включена достижимостью или отсеяна структурно
-    "IR_BRANCH",       # решено условием ветки из IR (branch_rules.json или R15-R17)
+    "IR_BRANCH",       # решено условием ветки из IR (R15-R17)
     "IR_CALL",         # ребро добавлено по вызову из IR (enum-вызовы R7)
-    "STATE",           # решено состоянием сценария (заказы, фильтры)
-    "DEFAULT_RULE",    # эвристика rules.py или правило по умолчанию движка
+    "STATE",           # решено миром БД сценария
+    "DEFAULT_RULE",    # правило по умолчанию движка (R19, проекция R7)
     "FRAMEWORK_RULE",  # правило фреймворка (Spring Security, конструкторы сущностей)
     "LLM_JUDGE",
 })
@@ -30,39 +28,9 @@ INCLUDE = "include"
 PRUNE = "prune"
 DISCARD = "discard"
 
-_RULES_MODULE = "engine.rules"
-
 
 def edge_key(relation: str, source: str, target: str) -> str:
     return f"{relation}|{source}|{target}"
-
-
-def rules_return_line(fn: Callable[..., bool], *args: Any, **kwargs: Any) -> str:
-    """Повторяет вызов правила rules.py и возвращает строку, где оно вернуло True ("rules.py:<line>").
-
-    Правила rules.py возвращают только bool. Чтобы журнал называл конкретное правило, вызов
-    повторяется под трассировкой: первая строка `return` со значением True внутри rules.py
-    (самая вложенная) и есть сработавшее правило. Вызывается только для отсеянных рёбер.
-    """
-    hit: list[int] = []
-
-    def local(frame: Any, event: str, arg: Any) -> Any:
-        if event == "return" and arg is True and not hit:
-            hit.append(frame.f_lineno)
-        return local
-
-    def tracer(frame: Any, event: str, arg: Any) -> Any:
-        if event == "call" and frame.f_globals.get("__name__") == _RULES_MODULE:
-            return local
-        return None
-
-    prev = sys.gettrace()
-    sys.settrace(tracer)
-    try:
-        fn(*args, **kwargs)
-    finally:
-        sys.settrace(prev)
-    return f"rules.py:{hit[0]}" if hit else "rules.py"
 
 
 @dataclass

@@ -28,9 +28,12 @@ def shared_skeleton_index(shared_skeleton_dict: dict[str, Any]):
 
 @pytest.fixture(scope="session")
 def shared_pipeline():
+    """Конвейер рекорда: M1 с ответами LLM и векторами только из cache/, M4 (как `run_eval.py --require-cache`)."""
+    from engine.grounding.llm import LLMClient
     from engine.pipeline import ArchonityPipeline
 
     return ArchonityPipeline(
         skeleton_path=SKELETON_PATH,
         targets_root=TARGETS_ROOT,
+        m1_options={"llm": LLMClient(use_server=False)},
     )

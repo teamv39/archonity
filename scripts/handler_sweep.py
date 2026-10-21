@@ -16,18 +16,13 @@ sys.path.insert(0, str(ROOT))
 
 from engine.grounding.llm import LLMClient  # noqa: E402
 from engine.grounding.request import StepRequest  # noqa: E402
-from engine.ir import ensure_pool_ir  # noqa: E402
 from engine.pipeline import ArchonityPipeline, resolve_passenger_context  # noqa: E402
 
 TT = ROOT / "hackaton" / "tt-challenge"
 p = ArchonityPipeline(
     skeleton_path=TT / "skeleton" / "trainticket.json.gz",
     targets_root=TT / "targets" / "trainticket",
-    rules_path=ROOT / "data" / "runtime_and_topology_rules.json",
-    ir_path=ensure_pool_ir(reparse=False, project_root=ROOT),
-    grounder="m1",
     m1_options={"embedder": "qwen3-4b", "llm": LLMClient(use_server=False), "prompt": "v8"},
-    executor="ir",
 )
 used = set()
 for f in (ROOT / "eval" / "m1_steps.json",):

@@ -10,7 +10,6 @@ from typing import Any
 
 from engine.adapters.db import DatabaseState, TableNodeResolution, load_db_dump, parse_context_readme
 from engine.entities import EntityFacts
-from engine.ir import MethodPoolIR
 
 
 def load_json(path: str | Path) -> dict[str, Any]:
@@ -24,20 +23,6 @@ def load_json(path: str | Path) -> dict[str, Any]:
 
 def path_segs(p: str) -> list[str]:
     return [s for s in re.split(r"[/]+", p.split("?")[0]) if s]
-
-
-def match_path(req: list[str], tpl: list[str]) -> bool:
-    """Сегменты запроса против шаблона Spring: {x} — один сегмент, ** — хвост."""
-    if not tpl:
-        return not req
-    t = tpl[0]
-    if t == "**":
-        return True
-    if not req:
-        return False
-    if t.startswith("{") or t == "*" or t == req[0]:
-        return match_path(req[1:], tpl[1:])
-    return False
 
 
 def ann_paths(anns: list[dict[str, Any]] | None) -> list[tuple[str | None, list[str]]]:
@@ -70,8 +55,6 @@ class SkeletonIndex:
         db_dump_path: str | Path | None = None,
         db_path: str | Path | None = None,
         db_state: DatabaseState | None = None,
-        pool_ir: MethodPoolIR | None = None,
-        ir_path: str | Path | None = None,
         entity_facts: EntityFacts | None = None,
         entity_ir_path: str | Path | None = None,
     ) -> None:
@@ -133,7 +116,7 @@ class SkeletonIndex:
                     for cp in cls_paths:
                         self.handlers.append((nid, verb, path_segs(cp + "/" + v)))
 
-        self.cs_method: dict[str, str] = {}
+        cs_method: dict[str, str] = {}
         self.cs_nodes_by_method: dict[str, list[dict[str, Any]]] = collections.defaultdict(list)
         self.type_nodes: dict[str, dict[str, Any]] = {}
         self.methods_by_owner: dict[str, list[tuple[str, dict[str, Any]]]] = collections.defaultdict(list)
@@ -142,7 +125,7 @@ class SkeletonIndex:
             if k == "call_site":
                 m = n.get("method")
                 if m:
-                    self.cs_method[nid] = m
+                    cs_method[nid] = m
                     self.cs_nodes_by_method[m].append(n)
             elif k == "type":
                 self.type_nodes[nid] = n
@@ -150,62 +133,26 @@ class SkeletonIndex:
                 owner = n.get("owner")
                 if owner:
                     self.methods_by_owner[owner].append((nid, n))
-        self.pool_ir: MethodPoolIR = (
-            pool_ir if pool_ir is not None else MethodPoolIR.load(ir_path=ir_path, safe=True)
-        )
-        # Факты archparse о сущностях (R7): IR конструкторов без аргументов идут в общий индекс IR
+        # Факты archparse о сущностях (R7, R10)
         self.entities: EntityFacts = (
             entity_facts if entity_facts is not None else EntityFacts.load(entity_ir_path)
         )
-        self.pool_ir.add_methods(self.entities.constructors)
-        self.edge_guards: dict[tuple[str, str, str], list[tuple[str, ...]]] = collections.defaultdict(list)
 
         self.calls: dict[str, set[str]] = collections.defaultdict(set)
         self.over: dict[str, set[str]] = collections.defaultdict(set)
         self.wiring: dict[str, dict[str, set[str]]] = collections.defaultdict(
             lambda: collections.defaultdict(set)
         )
-        self.call_dispatch: dict[str, dict[str, set[str]]] = collections.defaultdict(
-            lambda: collections.defaultdict(set)
-        )
-
-        cs_calls = collections.defaultdict(set)
-        cs_dispatch = collections.defaultdict(set)
-
         for e in skeleton_dict.get("edges", []):
             etype = e["type"]
             src = e["source"]
             tgt = e["target"]
             if etype == "calls":
-                caller = self.cs_method.get(src, src)
-                self.calls[caller].add(tgt)
-                cs_calls[src].add(tgt)
+                self.calls[cs_method.get(src, src)].add(tgt)
             elif etype == "overrides":
                 self.over[tgt].add(src)
             elif etype in ("remote_call", "message_delivery", "runtime_dispatch", "data_access"):
-                caller = self.cs_method.get(src, src)
-                self.wiring[etype][caller].add(tgt)
-                if etype == "runtime_dispatch":
-                    cs_dispatch[src].add(tgt)
-
-            # Сопоставление call_site скелета с AST CallIR для извлечения guard
-            if etype in ("calls", "remote_call", "message_delivery", "runtime_dispatch", "data_access"):
-                node = self.N.get(src)
-                if node and node.get("kind") == "call_site":
-                    caller_m = node.get("method")
-                    if caller_m and self.pool_ir.has_method(caller_m):
-                        line = node.get("line")
-                        col = node.get("col")
-                        c_ir = self.pool_ir.calls_by_mid_line_col.get((caller_m, line, col))
-                        if c_ir is not None:
-                            self.edge_guards[(caller_m, etype, tgt)].append(c_ir.guard)
-
-        # Построение точного соответствия (caller, interface_call) -> runtime_dispatch (правило R2)
-        for cs, dispatches in cs_dispatch.items():
-            caller = self.cs_method.get(cs)
-            if caller and cs in cs_calls:
-                for c in cs_calls[cs]:
-                    self.call_dispatch[caller][c].update(dispatches)
+                self.wiring[etype][cs_method.get(src, src)].add(tgt)
 
         self.entities.bind(self.N, skeleton_dict.get("edges", []))
 
@@ -218,10 +165,6 @@ class SkeletonIndex:
             if n.get("kind") == "module"
         }
         self.size = collections.Counter(u for us in self.units.values() for u in us)
-        self.stmts: dict[str, list[str]] = collections.defaultdict(list)
-        for e in skeleton_dict.get("edges", []):
-            if e["type"] == "contains" and e["target"].startswith("stmt:"):
-                self.stmts[e["source"]].append(e["target"])
 
     def unit_of(self, m: str) -> str:
         mod = self.module.get(m, "")
@@ -237,26 +180,6 @@ class SkeletonIndex:
                     out.add(o)
                     st.append(o)
         return out
-
-    def handlers_for(self, method: str | None, path: str, host: str | None = None) -> set[str]:
-        segs = path_segs(path)
-        out = set()
-        for nid, verb, tpl in self.handlers:
-            if host and host not in (self.N[nid].get("module") or ""):
-                continue
-            if (verb is None or method is None or verb == method) and match_path(segs, tpl):
-                out.add(nid)
-        return out
-
-    def handler_docs(self) -> dict[str, list[str]]:
-        docs: dict[str, list[str]] = {}
-        for nid, _, tpl in self.handlers:
-            docs.setdefault(nid, []).extend(
-                toks(" ".join(tpl)) * 3
-                + toks(self.N[nid].get("name", "")) * 2
-                + toks(self.N[nid].get("module", ""))
-            )
-        return docs
 
     @staticmethod
     def _find_default_db_dump() -> Path | None:

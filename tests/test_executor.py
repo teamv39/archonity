@@ -126,18 +126,8 @@ class TestWorld:
 
 
 @pytest.fixture(scope="module")
-def m4_pipeline():
-    from engine.grounding.llm import LLMClient
-    from engine.pipeline import ArchonityPipeline
-
-    return ArchonityPipeline(
-        skeleton_path=SKELETON_PATH,
-        targets_root=TARGETS_ROOT,
-        ir_path=ROOT / "data" / "pool_ir.json",
-        grounder="m1",
-        m1_options={"embedder": "qwen3-4b", "llm": LLMClient(use_server=False)},
-        executor="ir",
-    )
+def m4_pipeline(shared_pipeline):
+    return shared_pipeline
 
 
 class TestExecutorE2E:

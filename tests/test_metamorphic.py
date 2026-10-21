@@ -19,15 +19,11 @@ from typing import Any
 import pytest
 
 from engine.adapters.skeleton import load_json
-from engine.pipeline import ArchonityPipeline
-from engine.state import ScenarioState
-from engine.rules import ScenarioProfile
+from engine.pipeline import ArchonityPipeline, resolve_passenger_context
 
 ROOT = Path(__file__).resolve().parent.parent
 SKELETON_PATH = ROOT / "hackaton" / "tt-challenge" / "skeleton" / "trainticket.json.gz"
 TARGETS_ROOT = ROOT / "hackaton" / "tt-challenge" / "targets" / "trainticket"
-RULES_PATH = ROOT / "data" / "runtime_and_topology_rules.json"
-IR_PATH = ROOT / "data" / "pool_ir.json"
 
 
 @pytest.fixture(scope="module")
@@ -36,17 +32,11 @@ def ir_pipeline() -> ArchonityPipeline:
     return ArchonityPipeline(
         skeleton_path=SKELETON_PATH,
         targets_root=TARGETS_ROOT,
-        rules_path=RULES_PATH,
-        ir_path=IR_PATH,
-        grounder="m1",
-        executor="ir",
         unresolved_receiver_calls="emit",
         constructors="caller_only",
         jackson_ctor="on",
         lombok_tostring="on",
         unbound_handlers="rebind",
-        spring_security="semantic",
-        m4_m3_refs="off",
         module_roles="skeleton",
     )
 
@@ -139,10 +129,7 @@ class TestMetamorphicRelations:
         step_reqs = [session.ground(st) for st in s1_dict["steps"][:4]]
         step_menu = step_reqs[3]  # шаг 4: View the food menu
 
-        profile = ScenarioProfile.from_scenario(s1_dict)
-        state1 = ScenarioState.create_initial(scenario_profile=profile)
-        for r in step_reqs[:3]:
-            state1.apply_step(r, scenario_dict=s1_dict)
+        state1 = resolve_passenger_context(ir_pipeline.index.context, ir_pipeline.index.db_state)
 
         ir_pipeline.m4.begin_scenario("S1_IDEMP")
         m1, c1, r1, d1 = ir_pipeline.m4.run_step(step_menu, state1, scenario=s1_dict)

@@ -235,20 +235,26 @@ class TestArchitectureRefactoring:
 
     def test_pipeline_config_initialization(self) -> None:
         from engine.pipeline import PipelineConfig
+        from engine.rules import RuntimeRules
 
-        cfg = PipelineConfig(constructors="all", executor="ir", grounder="m1")
-        assert cfg.constructors == "all"
-        assert cfg.executor == "ir"
-        assert cfg.grounder == "m1"
+        cfg = PipelineConfig(rules=RuntimeRules(constructors="all"))
+        assert cfg.rules.constructors == "all"
+        assert cfg.rules.unbound_handlers == "rebind"
         assert cfg.m4_judge == "off"
+        with pytest.raises(ValueError):
+            RuntimeRules(constructors="maybe")
 
     def test_pipeline_config_integration(self) -> None:
         from engine.pipeline import ArchonityPipeline, PipelineConfig
+        from engine.rules import RuntimeRules
 
-        cfg = PipelineConfig(constructors="caller_only", executor="legacy", grounder="legacy")
+        # Неизвестный параметр — ошибка, а не молчаливый пропуск
+        with pytest.raises(TypeError):
+            ArchonityPipeline(SKELETON_PATH, TARGETS_ROOT, executor="legacy")
+        cfg = PipelineConfig(rules=RuntimeRules(constructors="caller_only"))
         p = ArchonityPipeline(SKELETON_PATH, TARGETS_ROOT, config=cfg, constructors="all")
-        assert p.config.constructors == "all"
-        assert p.config.executor == "legacy"
+        assert p.rules.constructors == "all"
+        assert p.m4.it.rules is p.rules
 
     def test_canonical_utilities_manifest(self) -> None:
         from engine.manifest import camel_to_snake, simple_name

@@ -22,12 +22,7 @@ ZIP_OUT = OUTPUT_DIR / "submission.zip"
 
 # Канонический список файлов правил и IR из data/
 DATA_RULE_FILES = (
-    "branch_rules.json",
-    "demo_graph.json",
     "entity_ir.json",
-    "llm_judge_dossiers_and_traps.json",
-    "pool_ir.json",
-    "runtime_and_topology_rules.json",
     "ui_catalog.json",
 )
 
@@ -86,7 +81,6 @@ def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
         _add_dir_to_zip(z, "code/engine")
         _add_dir_to_zip(z, "code/engine/adapters")
         _add_dir_to_zip(z, "code/engine/executor")
-        _add_dir_to_zip(z, "code/engine/graph")
         _add_dir_to_zip(z, "code/engine/grounding")
         _add_dir_to_zip(z, "code/data")
 
@@ -119,7 +113,7 @@ def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
             for fp in sorted((data_dir / "ir").glob("*.json")):
                 _add_file_to_zip(z, fp, f"code/data/ir/{fp.name}", normalize_lf=True)
 
-        # Кеши M1 (ответы LLM и векторы эмбеддера): прогон --grounder m1 без GPU (ADR-005, «Кеш LLM»)
+        # Кеши M1 (ответы LLM и векторы эмбеддера): прогон без GPU (ADR-005, «Кеш LLM»)
         _add_dir_to_zip(z, "code/cache")
         _add_dir_to_zip(z, "code/cache/emb")
         for cache_dir in (ROOT / "cache" / "llm", ROOT / "cache" / "emb" / "qwen3-4b"):

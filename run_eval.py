@@ -63,12 +63,6 @@ def parse_args() -> argparse.Namespace:
         help="Путь для сохранения итогового submission.json",
     )
     parser.add_argument(
-        "--rules",
-        type=Path,
-        default=ROOT_DIR / "data" / "runtime_and_topology_rules.json",
-        help="Путь к файлу правил отсева мертвого кода",
-    )
-    parser.add_argument(
         "--ctors",
         choices=("all", "caller_only", "off"),
         default="caller_only",
@@ -97,49 +91,6 @@ def parse_args() -> argparse.Namespace:
         help="Асинхронная доставка RabbitMQ (правило R13): on — учитывать межсервисное ребро к потребителю (по умолчанию), off — абляция (исключить потребителя)",
     )
     parser.add_argument(
-        "--station-food-collection",
-        choices=("store_browse_only", "store_only", "step4_store_only", "all", "off"),
-        default="store_browse_only",
-        help="Таблица коллекции блюд station_food_list: store_browse_only — при просмотре каталога магазинов только магазины (по умолчанию), all — учитывать везде, off — исключить везде",
-    )
-    parser.add_argument(
-        "--probe-orders-data",
-        choices=("on", "off"),
-        default="on",
-        help="(только legacy-исполнитель: --executor legacy) Зондирующий SELECT в S2 (шаги 9 и 10 к ts-order-service.orders): on — учитывать (по умолчанию), off — абляция (исключить)",
-    )
-    parser.add_argument(
-        "--enum-member-calls",
-        choices=("on", "off"),
-        default="on",
-        help="(только legacy-исполнитель: --executor legacy) Вызовы методов перечисления AssuranceType (Гипотеза 3.1): on — учитывать вызовы геттеров перечисления в getAllAssuranceTypes (по умолчанию), off — абляция (исключить на шаге 15 в S3)",
-    )
-    parser.add_argument(
-        "--trip-food-query",
-        choices=("cascade", "direct_train_food"),
-        default="cascade",
-        help="(только legacy-исполнитель: --executor legacy) Режим запроса еды поездки в getAllFood (Гипотеза 1.1 / 4.1): cascade — опрашивать станционную еду (по умолчанию), direct_train_food — абляция (только поездное меню в S1/S4)",
-    )
-    parser.add_argument(
-        "--route-distances-collection",
-        choices=("pruned", "included"),
-        default="pruned",
-        help="(только legacy-исполнитель: --executor legacy) Таблица коллекции route_distances (Гипотеза 5.1): pruned — отсекать при getRouteByStartAndEnd (по умолчанию), included — абляция (включать в S5)",
-    )
-    parser.add_argument(
-        "--preserve-notification-lookup",
-        choices=("on", "off", "other_only"),
-        default="on",
-        help="(только legacy-исполнитель: --executor legacy) Мертвый код формирования уведомлений в Preserve (Гипотеза 2.5): on — вызывать getAccount и SeatClass#getNameByCode перед закомментированным sendEmail (по умолчанию), other_only — отсекать в PreserveOtherServiceImpl (S2), off — отсекать во всех Preserve",
-    )
-    parser.add_argument(
-        "--security-check-scope",
-        choices=("all", "target_train_only"),
-        default="all",
-        help="(только legacy-исполнитель: --executor legacy) Изоляция проверки безопасности (Гипотеза 3.4): all — опрашивать оба сервиса заказов (по умолчанию), "
-             "target_train_only — опрашивать только сервис заказов целевого типа поезда (абляция)",
-    )
-    parser.add_argument(
         "--jackson-ctor",
         choices=("on", "off"),
         default="on",
@@ -162,28 +113,6 @@ def parse_args() -> argparse.Namespace:
              "входом (по умолчанию, посылка 27: 1.00000), keep — как выбрал M1",
     )
     parser.add_argument(
-        "--spring-security",
-        choices=("semantic", "names"),
-        default="semantic",
-        help="Spring Security при входе: semantic (по умолчанию) — вход по вызову AuthenticationManager.authenticate, "
-             "пользователь — implements UserDetails, таблица — data_access loadUserByUsername без коллекций, фильтр — "
-             "подкласс OncePerRequestFilter; names — по именам методов и таблиц, как до feature/84",
-    )
-    parser.add_argument(
-        "--m4-state",
-        choices=("context", "m3"),
-        default="context",
-        help="Модель состояния для M4: context — тонкий контекст пассажира из README/дампа (по умолчанию, универсально), "
-             "m3 — модель состояния M3 с предопределёнными классами Train Ticket (до feature/86)",
-    )
-    parser.add_argument(
-        "--m4-m3-refs",
-        choices=("off", "on"),
-        default="off",
-        help="M4: ссылки шагов, которых нет в мире M4, разрешать моделью состояния M3 (on, как до feature/84) или нет "
-             "(off, по умолчанию)",
-    )
-    parser.add_argument(
         "--ref-kinds",
         choices=("v7", "v8"),
         default=None,
@@ -199,35 +128,9 @@ def parse_args() -> argparse.Namespace:
              "имена которых отличаются одним токеном; names — 'ts-common' и 'other' или цифры в пути, как до feature/84",
     )
     parser.add_argument(
-        "--route-stations-usage",
-        choices=("pruned", "preserve", "all"),
-        default="pruned",
-        help="(только legacy-исполнитель: --executor legacy) Использование таблицы коллекции route_stations (Гипотеза 3.13): pruned — отсекать в getRouteById (по умолчанию), "
-             "preserve — включать при бронировании билетов (явный вызов route.getStations()), all — включать везде",
-    )
-    parser.add_argument(
-        "--reparse",
-        action="store_true",
-        help="Принудительный перезапуск archparse gradle перед прогоном",
-    )
-    parser.add_argument(
         "--no-eval",
         action="store_true",
         help="Пропустить автоматический вызов evaluate_golden.py",
-    )
-    parser.add_argument(
-        "--grounder",
-        choices=("legacy", "m1"),
-        default="m1",
-        help="Заземление шагов: m1 (engine/grounding, ADR-005; ответы LLM из cache/, без сервера — только кеш) "
-             "или legacy (engine/resolver.py)",
-    )
-    parser.add_argument(
-        "--executor",
-        choices=("legacy", "ir", "m4"),
-        default="ir",
-        help="Исполнитель шага: ir (синоним m4, по умолчанию) — M4 по IR тел методов data/ir "
-             "(ADR-005, трёхзначная логика, мир БД сценария); legacy — обход скелета с правилами",
     )
     parser.add_argument(
         "--m4-unresolved-calls",
@@ -369,11 +272,6 @@ def print_evaluation_summary(eval_res: dict) -> None:
 def main() -> None:
     args = parse_args()
 
-    if args.executor == "m4" and args.grounder != "m1":
-        print("Ошибка: --executor m4 требует --grounder m1 (нужны params и expected_outcome из StepRequest)",
-              file=sys.stderr)
-        sys.exit(2)
-
     scenarios = resolve_scenario_paths(args.scenarios)
     if not scenarios:
         print("Ошибка: не найдено ни одного файла сценариев!", file=sys.stderr)
@@ -384,65 +282,35 @@ def main() -> None:
     print(f"Исходники:  {args.targets}")
     print(f"Сценариев:  {len(scenarios)} ({', '.join(s.stem for s in scenarios)})")
     print(f"Выход:      {args.out}")
-    print(f"Правила:    {args.rules}")
     print("-" * 60)
 
-    # 0. Подготовка AST IR тел методов (archparse)
-    from engine.ir import ensure_pool_ir
+    from engine.grounding.llm import LLMClient
 
-    pool_ir_path = ensure_pool_ir(reparse=args.reparse, project_root=ROOT_DIR)
-    print(f"AST IR:     {pool_ir_path}")
-
-    # Запуск пайплайна
-    m1_options = None
-    if args.grounder == "m1":
-        from engine.grounding.llm import LLMClient
-
-        m1_options = {
-            "embedder": None if args.no_embed else "qwen3-4b",
-            "llm": None if args.no_llm else LLMClient(use_server=not (args.no_server or args.require_cache),
-                                                      refresh=args.no_cache and not args.require_cache,
-                                                      timeout=args.llm_timeout,
-                                                      **({"cache_dir": args.llm_cache} if args.llm_cache else {})),
-            "module_roles": args.module_roles,
-            "prompt": args.m1_prompt,
-            "votes": args.select_votes,
-            "top_k": args.m1_top_k,
-            "index": args.m1_index == "on",
-            "reasoning": args.select_reasoning == "on",
-        }
-    print(f"Grounder:   {args.grounder}")
-    if args.executor == "m4":
-        args.executor = "ir"
-    print(f"Executor:   {args.executor}")
+    m1_options = {
+        "embedder": None if args.no_embed else "qwen3-4b",
+        "llm": None if args.no_llm else LLMClient(use_server=not (args.no_server or args.require_cache),
+                                                  refresh=args.no_cache and not args.require_cache,
+                                                  timeout=args.llm_timeout,
+                                                  **({"cache_dir": args.llm_cache} if args.llm_cache else {})),
+        "prompt": args.m1_prompt,
+        "votes": args.select_votes,
+        "top_k": args.m1_top_k,
+        "index": args.m1_index == "on",
+        "reasoning": args.select_reasoning == "on",
+    }
     pipeline = ArchonityPipeline(
         skeleton_path=args.skeleton,
         targets_root=args.targets,
-        rules_path=args.rules,
-        ir_path=pool_ir_path,
         constructors=args.ctors,
         collection_tables_on_read=args.collection_tables,
         element_callbacks=args.element_callbacks,
         rabbitmq_delivery=args.rabbitmq_delivery,
-        station_food_collection=args.station_food_collection,
-        probe_orders_data=args.probe_orders_data,
-        enum_member_calls=args.enum_member_calls,
-        trip_food_query=args.trip_food_query,
-        route_distances_collection=args.route_distances_collection,
-        route_stations_usage=args.route_stations_usage,
-        preserve_notification_lookup=args.preserve_notification_lookup,
-        security_check_scope=args.security_check_scope,
         jackson_ctor=args.jackson_ctor,
         lombok_tostring=args.lombok_tostring,
         unbound_handlers=args.unbound_handlers,
-        spring_security=args.spring_security,
-        m4_m3_refs=args.m4_m3_refs,
-        m4_state=args.m4_state,
         ref_kinds=args.ref_kinds,
         module_roles=args.module_roles,
-        grounder=args.grounder,
         m1_options=m1_options,
-        executor=args.executor,
         unresolved_receiver_calls=args.m4_unresolved_calls,
         m4_success_retry=args.m4_success_retry,
         m4_conventions=args.m4_conventions,
@@ -453,19 +321,16 @@ def main() -> None:
     print("Генерация графов для сценариев...")
     adapter = pipeline.run_all(scenarios, output_path=args.out)
     print(f"Сабмишн успешно сохранен в: {args.out}")
-    m1_report = None
-    if args.grounder == "m1":
-        from engine.grounding.report import format_m1_report, m1_report as make_m1_report
+    from engine.grounding.report import format_m1_report, m1_report as make_m1_report
 
-        llm = (m1_options or {}).get("llm")
-        emb = getattr(getattr(pipeline.m1, "retriever", None), "embedder", None)
-        m1_report = make_m1_report(pipeline.step_requests, llm.stats if llm is not None else None,
-                                   getattr(emb, "misses", 0), llm.requested if llm is not None else ())
-        with open(args.out.parent / "m1_report.json", "w", encoding="utf-8") as f:
-            json.dump(m1_report, f, ensure_ascii=False, indent=1)
-        print(format_m1_report(m1_report))
-    if pipeline.m4 is not None:
-        print_m4_stats(pipeline.m4.stats())
+    llm = m1_options["llm"]
+    emb = pipeline.m1.retriever.embedder
+    m1_report = make_m1_report(pipeline.step_requests, llm.stats if llm is not None else None,
+                               getattr(emb, "misses", 0), llm.requested if llm is not None else ())
+    with open(args.out.parent / "m1_report.json", "w", encoding="utf-8") as f:
+        json.dump(m1_report, f, ensure_ascii=False, indent=1)
+    print(format_m1_report(m1_report))
+    print_m4_stats(pipeline.m4.stats())
 
     canonical_out = args.out.parent / "canonical_graph.json"
     adapter.save_canonical_graph(canonical_out)
@@ -475,17 +340,15 @@ def main() -> None:
     adapter.save_evidence_log(evidence_out)
     print(f"Evidence Log сохранен в: {evidence_out}")
 
-    if args.grounder == "m1":
-        steps_out = args.out.parent / "step_requests.json"
-        with open(steps_out, "w", encoding="utf-8") as f:
-            json.dump(pipeline.step_requests, f, ensure_ascii=False, indent=1)
-        print(f"StepRequest (M1) сохранены в: {steps_out}")
+    steps_out = args.out.parent / "step_requests.json"
+    with open(steps_out, "w", encoding="utf-8") as f:
+        json.dump(pipeline.step_requests, f, ensure_ascii=False, indent=1)
+    print(f"StepRequest (M1) сохранены в: {steps_out}")
 
-    if pipeline.m4 is not None:
-        unknowns_out = args.out.parent / "m4_unknowns.json"
-        with open(unknowns_out, "w", encoding="utf-8") as f:
-            json.dump(pipeline.m4.unknowns, f, ensure_ascii=False, indent=1)
-        print(f"Условия UNKNOWN исполнителя M4 сохранены в: {unknowns_out}")
+    unknowns_out = args.out.parent / "m4_unknowns.json"
+    with open(unknowns_out, "w", encoding="utf-8") as f:
+        json.dump(pipeline.m4.unknowns, f, ensure_ascii=False, indent=1)
+    print(f"Условия UNKNOWN исполнителя M4 сохранены в: {unknowns_out}")
 
     decisions_out = args.out.parent / "decisions.json"
     with open(decisions_out, "w", encoding="utf-8") as f:
@@ -532,7 +395,7 @@ def main() -> None:
     if args.require_cache:
         from engine.grounding.report import cache_only
 
-        if m1_report is None or not cache_only(m1_report):
+        if not cache_only(m1_report):
             print("--require-cache: выдача построена не целиком из кеша LLM (m1_report.json) — код выхода 2",
                   file=sys.stderr)
             sys.exit(2)

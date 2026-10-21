@@ -30,7 +30,6 @@ def test_pack_submission_creates_valid_archive():
         assert "code/engine/" in names
         assert "code/engine/executor/" in names
         assert "code/engine/adapters/" in names
-        assert "code/engine/graph/" in names
         assert "code/engine/grounding/" in names
         assert "code/data/" in names
         assert "code/run_eval.py" in names
