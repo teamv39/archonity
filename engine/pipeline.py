@@ -13,6 +13,7 @@ from engine.decisions import DecisionLedger
 from engine.evidence import EvidenceLogger
 from engine.executor.step import StepExecutor
 from engine.grounding.grounder import StepGrounder
+from engine.manifest import camel_to_snake
 from engine.projection import project_constructors
 from engine.rules import RuntimeRules
 from engine.spring_security import apply_spring_security
@@ -23,19 +24,37 @@ LOGGER = logging.getLogger(__name__)
 
 @dataclasses.dataclass
 class ScenarioContext:
-    """Пассажир сценария для M4: имя из контекста задачи. ID учётной записи M4 берёт из ответа шага входа, как UI
-    (`StepExecutor._logged_in_user`)."""
+    """Пассажир сценария для M4 до шага входа: имя и ID учётной записи. После входа M4 берёт ID из ответа шага
+    входа, как UI (`StepExecutor._logged_in_user`)."""
     user_name: str | None = None
+    account_id: str | None = None
     scenario_id: str = "S?"
 
 
-def resolve_passenger_context(context: dict[str, Any] | None, scenario_id: str = "S?") -> ScenarioContext:
-    """Пассажир из контекста задачи («pre-registered user <имя>»). Нет его — предупреждение: имя при входе неизвестно,
-    если сценарий не регистрирует своего."""
-    user_name = (context or {}).get("user_name")
+def resolve_passenger_context(index: SkeletonIndex, scenario_id: str = "S?") -> ScenarioContext:
+    """Пассажир из контекста задачи («pre-registered user <имя>»); ID — поле `@Id` сущности Spring Security
+    (`implements UserDetails`) в строке её таблицы дампа, где есть это имя. Нет пассажира в контексте —
+    предупреждение: имя при входе неизвестно, если сценарий не регистрирует своего."""
+    user_name = index.context.get("user_name")
     if not user_name:
         LOGGER.warning("контекст задачи не называет пассажира (pre-registered user): имя при входе неизвестно")
-    return ScenarioContext(user_name=user_name, scenario_id=scenario_id)
+        return ScenarioContext(scenario_id=scenario_id)
+    return ScenarioContext(user_name=user_name, account_id=_principal_id(index, user_name), scenario_id=scenario_id)
+
+
+def _principal_id(index: SkeletonIndex, user_name: str) -> str | None:
+    """ID пользователя `user_name` по таблице сущности `UserDetails` (та же сущность, что у правила Spring Security)."""
+    for _, n in sorted(index.type_nodes.items()):
+        if "UserDetails" not in (n.get("implements_raw") or []):
+            continue
+        ent = index.entities.entities.get(n.get("fqn", ""))
+        if ent is None or not ent.table or not ent.id_field:
+            continue
+        col = camel_to_snake(ent.id_field)
+        for row in index.db_state.get_table(ent.table):
+            if user_name in row.values() and row.get(col) is not None:
+                return row[col]
+    return None
 
 
 @dataclasses.dataclass
@@ -93,7 +112,7 @@ class ArchonityPipeline:
         """Сценарий шаг за шагом: заземление M1, исполнение M4, правило Spring Security, проекция M5."""
         sid = scenario_dict.get("id", "S?")
         self.ledger.begin_scenario(sid)
-        passenger = resolve_passenger_context(self.index.context, scenario_id=sid)
+        passenger = resolve_passenger_context(self.index, scenario_id=sid)
 
         all_methods: set[str] = set()
         all_calls: set[tuple[str, str]] = set()

@@ -128,7 +128,7 @@ class TestMetamorphicRelations:
         step_reqs = [session.ground(st) for st in s1_dict["steps"][:4]]
         step_menu = step_reqs[3]  # шаг 4: View the food menu
 
-        state1 = resolve_passenger_context(ir_pipeline.index.context, ir_pipeline.index.db_state)
+        state1 = resolve_passenger_context(ir_pipeline.index)
 
         ir_pipeline.m4.begin_scenario("S1_IDEMP")
         m1, c1, r1, d1 = ir_pipeline.m4.run_step(step_menu, state1)

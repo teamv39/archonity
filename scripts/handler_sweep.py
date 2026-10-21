@@ -35,8 +35,7 @@ for nid, h in cat.items():
     verb = h.routes[0][0] if h.routes else "GET"
     req = StepRequest(scenario="SX", step=1, action="", handler=nid,
                       http={"method": verb, "path": h.routes[0][1] if h.routes else ""})
-    ctx = resolve_passenger_context(getattr(p.index, "context", None), db_state=getattr(p.index, "db_state", None),
-                                    scenario_id="SX")
+    ctx = resolve_passenger_context(p.index, scenario_id="SX")
     p.ledger.begin_scenario("SX")
     p.ledger.begin_step(1)
     p.m4.begin_scenario("SX")
