@@ -78,6 +78,7 @@ class LLMClient:
         self.cache_dir = cache_dir
         self.timeout = timeout
         self.stats = LLMStats()
+        self.requested: list[str] = []  # ключи всех запросов прогона, по порядку (scripts/verify_llm_cache.py)
         self._server_ok: bool | None = None
 
     def key(self, prompt_version: str, messages: list[dict[str, str]], schema: dict[str, Any],
@@ -113,6 +114,7 @@ class LLMClient:
         """→ (ответ по схеме или None, ключ кеша). `max_tokens` в ключ не входит: обрыв ответа виден по схеме.
         `sampling` — параметры выборки (temperature, top_p, top_k, seed) вместо жадного вывода; входят в ключ."""
         key = self.key(prompt_version, messages, schema, sampling)
+        self.requested.append(key)
         path = self._path(key)
         if not self.refresh and path.is_file():
             self.stats.hits += 1
