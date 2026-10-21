@@ -3,6 +3,7 @@ package com.v39a;
 import com.v39a.model.EntityReportIR;
 import com.v39a.model.MethodIR;
 import com.v39a.parser.EntityScanner;
+import com.v39a.skeleton.SkeletonGraph;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +27,7 @@ public class EntityScannerTest {
             }
         }
         assertNotNull(targets, "targets/trainticket must exist");
-        report = new EntityScanner(targets).scan();
+        report = new EntityScanner(targets, SkeletonGraph.load(targets.resolve("../../skeleton/trainticket.json.gz"))).scan();
     }
 
     private static EntityReportIR.Entity entity(String type) {

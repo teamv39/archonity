@@ -42,7 +42,7 @@ public class MethodIrWriter {
 
     public static Result build(Path targetsDir, SkeletonGraph skeleton) throws IOException {
         List<Source> sources = parseAll(targetsDir);
-        ProjectIndex project = new ProjectIndex();
+        ProjectIndex project = new ProjectIndex(skeleton::dependencies);
         for (Source s : sources) {
             project.add(s.cu(), s.module());
         }

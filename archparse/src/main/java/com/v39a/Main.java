@@ -17,26 +17,36 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         String repoRootStr = null;
+        String skeletonStr = null;
         String outputPathStr = null;
         String mode = "bodies"; // bodies: IR тел всех методов скелета; entities: сущности и вызовы репозиториев
 
         for (int i = 0; i < args.length; i++) {
             if ("--targets-dir".equals(args[i]) || "--repo-root".equals(args[i])) {
                 if (i + 1 < args.length) repoRootStr = args[++i];
+            } else if ("--skeleton".equals(args[i])) {
+                if (i + 1 < args.length) skeletonStr = args[++i];
             } else if ("--output".equals(args[i]) || "-o".equals(args[i])) {
                 if (i + 1 < args.length) outputPathStr = args[++i];
             } else if ("--mode".equals(args[i])) {
                 if (i + 1 < args.length) mode = args[++i];
             }
         }
+        if (repoRootStr == null || skeletonStr == null) {
+            System.err.println("Usage: --targets-dir <корень исходников> --skeleton <скелет .json.gz> "
+                    + "[--mode bodies|entities] [-o <выход>]");
+            System.exit(2);
+        }
 
-        Path targetsDir = resolveTargetsDir(repoRootStr);
+        Path targetsDir = Paths.get(repoRootStr);
+        Path skeletonPath = Paths.get(skeletonStr);
+        SkeletonGraph skeleton = SkeletonGraph.load(skeletonPath);
 
         if ("entities".equalsIgnoreCase(mode)) {
             Path outputFile = resolveOutputFile(outputPathStr, "entity_ir.json");
             System.out.println("archparse: Scanning entities and repository calls");
             System.out.println("Targets directory: " + targetsDir.toAbsolutePath());
-            EntityReportIR report = new EntityScanner(targetsDir).scan();
+            EntityReportIR report = new EntityScanner(targetsDir, skeleton).scan();
             if (outputFile.getParent() != null) {
                 Files.createDirectories(outputFile.getParent());
             }
@@ -49,11 +59,10 @@ public class Main {
 
         if ("bodies".equalsIgnoreCase(mode)) {
             Path outDir = outputPathStr != null ? Paths.get(outputPathStr) : resolveOutputFile(null, "ir");
-            Path skeletonGz = targetsDir.resolve("../../skeleton/trainticket.json.gz").normalize();
             System.out.println("archparse: IR of all method bodies (README 3.6)");
             System.out.println("Targets directory: " + targetsDir.toAbsolutePath());
-            System.out.println("Skeleton: " + skeletonGz.toAbsolutePath());
-            MethodIrWriter.Result r = MethodIrWriter.build(targetsDir, SkeletonGraph.load(skeletonGz));
+            System.out.println("Skeleton: " + skeletonPath.toAbsolutePath());
+            MethodIrWriter.Result r = MethodIrWriter.build(targetsDir, skeleton);
             Files.createDirectories(outDir);
             ObjectMapper mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
             for (Map.Entry<String, com.fasterxml.jackson.databind.node.ObjectNode> e : r.modules.entrySet()) {
@@ -74,29 +83,6 @@ public class Main {
 
         System.err.println("Unknown mode: " + mode + ". Available modes: 'bodies' (default), 'entities'.");
         System.exit(1);
-    }
-
-    public static Path resolveTargetsDir(String explicit) {
-        if (explicit != null) {
-            return Paths.get(explicit);
-        }
-
-        // Кандидаты для поиска targets/trainticket
-        String[] candidates = {
-                "hackaton/tt-challenge/targets/trainticket",
-                "../hackaton/tt-challenge/targets/trainticket",
-                "data/train-ticket",
-                "../data/train-ticket"
-        };
-
-        for (String cand : candidates) {
-            Path p = Paths.get(cand);
-            if (Files.exists(p)) {
-                return p;
-            }
-        }
-
-        return Paths.get("hackaton/tt-challenge/targets/trainticket");
     }
 
     private static Path resolveOutputFile(String explicit, String defaultName) {

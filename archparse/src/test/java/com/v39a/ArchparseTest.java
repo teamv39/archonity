@@ -104,6 +104,12 @@ public class ArchparseTest {
 
     @Test
     public void testEnumResolverDynamic() {
+        Path targets = Path.of("../hackaton/tt-challenge/targets/trainticket");
+        if (!Files.isDirectory(targets)) {
+            targets = Path.of("hackaton/tt-challenge/targets/trainticket");
+        }
+        assertTrue(Files.isDirectory(targets), "targets/trainticket must exist");
+        EnumResolver.scanEnums(targets, java.util.Set.of("ts-common"));
         CompilationUnit cu = StaticJavaParser.parse(
                 "package edu.fudan.common.entity;\n" +
                 "public class DummyOrder {\n" +

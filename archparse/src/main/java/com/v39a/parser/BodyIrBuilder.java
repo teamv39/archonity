@@ -547,7 +547,7 @@ public class BodyIrBuilder {
         return o;
     }
 
-    /** FQN типа проекта, если выражение — имя типа (`OrderStatus`, `edu.fudan.common.entity.OrderStatus`). */
+    /** FQN типа проекта, если выражение — имя типа (`OrderStatus` или полное `com.example.OrderStatus`). */
     private String typeOf(Expression scope) {
         if (scope instanceof NameExpr n) {
             String id = n.getNameAsString();
