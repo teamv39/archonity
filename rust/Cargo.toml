@@ -5,6 +5,7 @@ members = [
     "crates/archonity-io",
     "crates/archonity-m4",
     "crates/archonity-exec",
+    "crates/archonity-parse",
 ]
 
 [workspace.package]
