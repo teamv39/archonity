@@ -34,10 +34,24 @@
 python -m engine.grounding.grounder eval/own/scenarios/*.json --eval eval/own/steps.json --embed-model
 ```
 
-Ответов LLM для этих сценариев в `cache/` нет: нужен сервер LLM (`scripts/run_final.sh` или `scripts/start_llm.*`). С `--no-llm` и без эмбеддера (только BM25, 21.10): top-1 20/41, верный обработчик среди кандидатов 36/41. Это нижняя граница поиска, а не точность M1.
+Ответы LLM (271) и векторы шагов X1–X4 лежат в `cache/` с 21.10: проверка M1 и прогон всего пайплайна идут без GPU и сервера LLM.
 
-Прогон всего пайплайна:
+Замер 21.10: RTX 5070 Ti 16 ГБ, сервер с `-ncmoe 7 -dev Vulkan1` (раздел «Видеокарта 16 ГБ» в [run_on_a100.md](../../docs/run_on_a100.md)), в кеше на тот момент ответов X1–X4 не было.
+
+| M1 | top-1 | верный среди кандидатов |
+|---|---|---|
+| только BM25 (`--no-llm --no-embed`) | 20/41 | 36/41 |
+| BM25 и векторы (`--no-llm`) | 24/41 | 41/41 |
+| целиком: BM25, векторы, LLM | 39/41 | 41/41 |
+
+- Ошибки M1: X1.4 и X1.11 — `OrderController#createNewOrder` вместо `PreserveController#preserve`. Параметры 7/13: шесть промахов — параметры брони (`seatType`, `assurance`, `foodType`) этих двух шагов, они ушли вместе с обработчиком.
+- LLM: 271 ответ за 638 с, сервер поднялся за 17 с (файл модели уже был в кеше ОС).
+- Пик видеопамяти: сервер LLM — 15 418 МиБ (часть экспертов MoE в RAM, `-ncmoe 7`), эмбеддер на CUDA отдельным прогоном — 8 124 МиБ. На 16 ГБ вместе они не помещаются, эмбеддер шёл на CPU: векторы CPU и CUDA совпали с косинусом 0.9998–0.9999, в кеше — векторы CUDA.
+
+Прогон всего пайплайна (`--no-eval`: эталона X1–X4 у платформы нет):
 
 ```bash
-python run_eval.py --scenarios "eval/own/scenarios/*.json" -o output/own/submission.json
+python run_eval.py --scenarios "eval/own/scenarios/*.json" --no-eval -o output/own/submission.json
 ```
+
+Из кеша: режим M1 `full`, 272 ответа LLM (271 и профиль проекта), промахов векторов 0. `--require-cache` проходит без GPU. Выдача — sha256 `561bc45c60a5ecae208dc4be5d2e3383ad0b74c55194ba7a5adfd705f7c95312`, та же, что у прогона с сервером LLM.
