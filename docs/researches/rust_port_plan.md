@@ -62,7 +62,7 @@ flowchart LR
 | `engine/adapters/`: `skeleton`, `db` (разбор дампа MySQL), `submission` | 1072 |
 | `engine/entities.py`, `manifest.py`, `projection.py` | 516 |
 | `engine/decisions.py`, `evidence.py` | 378 |
-| `engine/pipeline.py` (путь M4), `apply_spring_security` из `graph/builder.py`, `binding.py` | около 500 |
+| `engine/pipeline.py`, `engine/spring_security.py` (с 21.10, было в `graph/builder.py`), `binding.py` | около 500 |
 | Итого | около 6.4 тыс. |
 
 Доменные литералы Train Ticket, найденные 21.10 в коде, который работает при умолчаниях, в Rust не переносим. Их список — в roadmap, раздел П2.
