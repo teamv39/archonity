@@ -1,29 +1,40 @@
 # rust/
 
-Перенос engine на Rust ([ADR-008](../docs/adr/adr-008_rust_engine_boundary.md), раздел работы — [rust_port_split.md](../docs/researches/rust_port_split.md)). Python остаётся рабочим движком, пока Rust не прошёл контрольную точку.
+Перенос engine на Rust ([ADR-008](../docs/adr/adr-008_rust_engine_boundary.md)). Python-движок остаётся отдельным запасным вариантом (`run_eval.py --engine python`), переключения на него при сбое Rust нет.
 
 ```
 cd rust && cargo build --release --locked
-target/release/archonity-exec --help
+python run_eval.py --engine rust -o output/submission.json
 ```
 
-| crate | Что | Владелец |
-|---|---|---|
-| `archonity-model` | значения M4, `StepRequest`, рёбра шага, флаги правил | Денис |
-| `archonity-io` | скелет, дамп БД, `entity_ir.json`, мир БД, журнал решений, запись выдачи | Паша |
-| `archonity-m4` | интерпретатор, библиотека, шаг сценария | Денис |
-| `archonity-exec` | бинарник: сценарии, R20, Spring Security, R19, M5 | Паша |
+Граница: M1 (поиск, эмбеддер, LLM, кеш) остаётся на Python и пишет `step_requests_raw.json`. Всё дальше делает `archonity-exec`: R20, M4, правило Spring Security, R19, M5, запись `submission.json`, `evidence.json`, `decisions.json`, `step_requests.json`, `m4_unknowns.json`. Сбои шагов и сценариев (Р2) бинарник пишет в `exec_failures.json`, рамку и `ATTENTION.txt` собирает `run_eval.py`.
 
-Зависимости идут в одну сторону: `model` <- `io` <- `m4` <- `exec`. Чужие файлы не правим, новую зависимость добавляем только в `Cargo.toml` своего crate.
+| crate | Что |
+|---|---|
+| `archonity-model` | значения M4 (`Value`), `StepRequest`, рёбра шага, флаги правил, форматирование чисел как в Python |
+| `archonity-io` | скелет, дамп БД, `entity_ir.json`, мир БД, журнал решений, `submission.json`, `evidence.json` |
+| `archonity-m4` | интерпретатор IR, библиотека JDK/Spring, шаг сценария (`StepExecutor`) |
+| `archonity-exec` | бинарник `archonity-exec`: сценарии, R20, Spring Security, R19, M5 |
 
-Этап 0: все публичные сигнатуры с `todo!("<этап>")`, метка — кто и когда пишет тело (`P1`–`P3` у Паши, `D1`–`D3` у Дениса, `этап 1` — `archonity-model`). Конструкторы `World`, `TypeIndex` и других структур `io` определяет владелец: здесь дана форма, которую читает M4.
+Зависимости идут в одну сторону: `model` <- `io` <- `m4` <- `exec`.
 
-## Оракулы Python
+## Проверка против Python
+
+Результат Rust равен Python байт в байт: `submission.json` (рекорд `94463c41…`), `decisions.json`, `evidence.json`, `m4_unknowns.json`, `step_requests.json`. Проверки:
 
 ```
-python scripts/rust_oracles.py steps  <папка>     # step_requests_raw.json, raw_steps.json (+ trace при ARCHONITY_TRACE=<файл>)
-python scripts/rust_oracles.py slices <папка>     # slices.json: скелет, дамп БД, entity_ir
-python scripts/handler_sweep.py . <файл>          # ответ по каждому обработчику
+pytest tests/test_rust_engine.py                                   # оба движка на S0–S7, сравнение файлов
+python scripts/rust_oracles.py steps  <папка> [сценарии...]        # step_requests_raw.json, raw_steps.json (+ trace при ARCHONITY_TRACE)
+python scripts/rust_oracles.py sweep  <папка>                      # sweep_steps.json: 262 обработчика как одношаговые сценарии
+python scripts/rust_oracles.py slices <папка>                      # slices.json: скелет, дамп БД, entity_ir
+target/release/replay_steps <скелет> <entity_ir> <ir> <исходники> <raw_steps.json> <выход>
+python scripts/rust_compare.py <raw_steps.json> <выход>            # рёбра и журнал решений по шагам
 ```
 
-`submission.json` из оракула совпадает с рекордом (`94463c41…`). Форматы файлов описаны в шапке `scripts/rust_oracles.py`.
+`replay_steps` гонит `StepExecutor` по шагам оракула (после R20), `rust_compare.py` показывает расхождения по рёбрам и записям журнала. На 21.10: S0–S7, X1–X8 и 262 обработчика — расхождений 0.
+
+## Известные приближения
+
+- Идентичность примитивов (`ident`) в журнале плеч сравнивает значения, а не адреса, как Python.
+- `timestamp()` у naive datetime считается как UTC.
+- `canonical_graph.json` и `visualizer/` при `--engine rust` не обновляются (открытый вопрос ADR-008).

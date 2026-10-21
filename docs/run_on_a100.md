@@ -9,15 +9,17 @@ uv sync --locked && source .venv/bin/activate      # или: pip install -r requ
 scripts/run_final.sh <файлы сценариев>              # без аргументов — S0–S7
 ```
 
-`scripts/run_final.sh` делает три шага:
+`scripts/run_final.sh` делает четыре шага:
 
 1. `scripts/fetch_models.py` докачивает в `models/` недостающие файлы и сверяет sha256 каждого с манифестом. Уже лежащие файлы не перекачиваются. `llama.cpp` качается, если не задан `ARCHONITY_LLAMA_SERVER` и `llama-server` нет в `PATH`.
-2. `run_eval.py --scenarios <файлы> -o output/submission.json`. Ответы берутся из кеша. На первом промахе клиент сам поднимает `llama-server`, ждёт `/health` и гасит сервер при выходе.
-3. Итог: sha256 выдачи, режим M1 из `m1_report.json` и последней — рамка из `ATTENTION.txt`, если он есть.
+2. Сборка Rust-движка ([ADR-008](adr/adr-008_rust_engine_boundary.md)): `cd rust && cargo build --release --locked`, зависимости с crates.io. Нет `cargo` — скрипт ставит stable через `rustup` в `~/.cargo`. `ENGINE=python` пропускает сборку и гонит весь конвейер на Python.
+3. `run_eval.py --engine rust --scenarios <файлы> -o output/submission.json`. M1 (заземление шагов) на Python, ответы LLM из кеша. На первом промахе клиент сам поднимает `llama-server`, ждёт `/health` и гасит сервер при выходе. Дальше M4, правило Spring Security, R19, M5 и запись `submission.json`, `evidence.json`, `decisions.json` делает бинарник `archonity-exec`.
+4. Итог: sha256 выдачи, режим M1 из `m1_report.json` и последней — рамка из `ATTENTION.txt`, если он есть.
 
 Выдача строится всегда, код выхода 0 (roadmap, Р2):
 
 - исключение на шаге — шаг без рёбер, остальные шаги идут дальше; исключение в сценарии — пустой блок `{"edges": []}`;
+- Rust не собрался или бинарник упал — переключения на Python нет: `submission.json` с пустыми блоками всех сценариев и рамка `ATTENTION.txt`;
 - конвейер не собрался — повтор без LLM и эмбеддера, не собрался и так — `submission.json` с пустыми блоками всех сценариев;
 - LLM не ответила — шаг берёт первый кандидат поиска (режим M1 `partial` или `emergency`).
 
@@ -30,6 +32,7 @@ scripts/run_final.sh <файлы сценариев>              # без ар�
 - Linux x86_64, NVIDIA A100 40 ГБ, драйвер 570+ (CUDA 12.8).
 - Python 3.11+ (кеши и рекорд построены на 3.13) или [`uv`](https://docs.astral.sh/uv/): он сам поставит нужный Python.
 - Около 27 ГБ на диске под `models/` и доступ к Hugging Face и GitHub на время `fetch_models.py`.
+- Rust stable (cargo): ставится скриптом через `rustup`, нужен доступ к crates.io, static.rust-lang.org и sh.rustup.rs. Сборка около минуты.
 - Прогону S0–S7 из кеша видеокарта и модели не нужны.
 
 ## Версии

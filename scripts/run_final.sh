@@ -7,8 +7,11 @@
 #
 # 1. Модели: fetch_models.py докачивает в models/ недостающее и сверяет sha256 с models/manifest.json. llama.cpp —
 #    релизная сборка манифеста, если не задан ARCHONITY_LLAMA_SERVER и llama-server нет в PATH.
-# 2. run_eval.py: ответы из кеша; на промахе клиент сам поднимает llama-server и гасит его при выходе.
-# 3. Итог: sha256 выдачи, режим M1 (m1_report.json рядом с выдачей) и последней — рамка ATTENTION.txt, если она есть.
+# 2. Движок (ADR-008): ENGINE=rust (по умолчанию) — cargo build --release --locked в rust/, при отсутствии cargo
+#    ставится stable через rustup в ~/.cargo; ENGINE=python — весь конвейер в Python, сборка не нужна. Сбой сборки
+#    Rust не переключает на Python: run_eval.py пишет пустую выдачу с рамкой ATTENTION (Р2).
+# 3. run_eval.py: ответы из кеша; на промахе клиент сам поднимает llama-server и гасит его при выходе.
+# 4. Итог: sha256 выдачи, режим M1 (m1_report.json рядом с выдачей) и последней — рамка ATTENTION.txt, если она есть.
 # Сбой моделей прогон не останавливает: выдача строится всегда (roadmap, Р2), но с заметным предупреждением.
 set -uo pipefail
 
@@ -28,20 +31,41 @@ FETCH=()
 if [[ -z "${ARCHONITY_LLAMA_SERVER:-}" ]] && ! command -v llama-server >/dev/null 2>&1; then
     FETCH+=(--llama-cpp)
 fi
-echo "== 1/3 модели: $PY scripts/fetch_models.py ${FETCH[*]-}"
+echo "== 1/4 модели: $PY scripts/fetch_models.py ${FETCH[*]-}"
 if ! "$PY" scripts/fetch_models.py ${FETCH[@]+"${FETCH[@]}"}; then
     echo "!! ВНИМАНИЕ: модели не прошли проверку — новые сценарии пойдут без LLM, качество ниже. Свяжитесь с командой Archonity." >&2
 fi
 
-ARGS=(-o "$OUT")
+ENGINE="${ENGINE:-rust}"
+if [[ "$ENGINE" == rust ]]; then
+    echo "== 2/4 сборка Rust: cargo build --release --locked"
+    if ! command -v cargo >/dev/null 2>&1 && [[ -x "$HOME/.cargo/bin/cargo" ]]; then
+        export PATH="$HOME/.cargo/bin:$PATH"
+    fi
+    if ! command -v cargo >/dev/null 2>&1; then
+        echo "cargo не найден: ставлю stable через rustup"
+        if command -v curl >/dev/null 2>&1; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable \
+                || echo "!! rustup не установился" >&2
+        else
+            echo "!! нет curl для rustup" >&2
+        fi
+        export PATH="$HOME/.cargo/bin:$PATH"
+    fi
+    if ! (cd rust && cargo build --release --locked); then
+        echo "!! ВНИМАНИЕ: Rust не собрался — выдача будет пустой с рамкой ATTENTION. Свяжитесь с командой Archonity." >&2
+    fi
+fi
+
+ARGS=(-o "$OUT" --engine "$ENGINE")
 if (($#)); then
     ARGS+=(--scenarios "$@")
 fi
-echo "== 2/3 прогон: $PY run_eval.py ${ARGS[*]}"
+echo "== 3/4 прогон: $PY run_eval.py ${ARGS[*]}"
 "$PY" run_eval.py "${ARGS[@]}"
 RC=$?
 
-echo "== 3/3 итог"
+echo "== 4/4 итог"
 if [[ ! -f "$OUT" ]]; then
     echo "!! выдача $OUT не создана (код $RC). Свяжитесь с командой Archonity." >&2
     exit "$RC"
