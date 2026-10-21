@@ -43,7 +43,7 @@
 - Методы enum, включая вызов через константу (`OrderStatus.PAID.getCode()`) — S0.
 - Spring Security: в каждом сценарии те же 8 рёбер `executes`, что в S0 (`User#getPassword`, `isEnabled`, `JWTFilter#doFilterInternal`…).
 - R7, видимость конструкторов ([ADR-006](adr/adr-006_constructor_visibility.md)): конструктор в ответе, только если из него исполнился вызов проекта, рёбер `calls` в конструктор нет. Подтверждено S0, платформой 17.10 (0.8842) и замерами 9 и 10.
-- Посылками: R10 (+0.015), R13 RabbitMQ (абляция −0.009), `Order#equals` из `list.contains` (+0.0012), `station_food_list` на шаге 4, R2 `emit`, `rebook` на S2.14. Статусы остальных гипотез пула — таблица в [next_day_hypotheses_and_todo.md](researches/next_day_hypotheses_and_todo.md).
+- Посылками: R10 (+0.015), R13 RabbitMQ (абляция −0.009), `Order#equals` из `list.contains` (+0.0012), `station_food_list` на шаге 4, R2 `emit`, `rebook` на S2.14. Статусы остальных гипотез пула — таблица в `next_day_hypotheses_and_todo.md` (удалён, в истории git).
 - Неочевидное: тексты сценариев «from the internal balance» опровергают правило «поля вне тела UI-запроса — null» (UI оплаты не шлёт `userId`).
 
 Единственный крупный класс, по которому S0 молчал, — конструкторы DTO и сущностей через `new` (275 рёбер). Мы считали, что REFERENCE их прямо включает. **Это было неверно:** почти весь разрыв 0.064 сидел именно здесь ([разбор](researches/constructor_project_calls_rule.md)). Правило, которое держится только на прочтении текста организаторов, а не на эталоне или посылке, — гипотеза, её проверяют посылкой первой.

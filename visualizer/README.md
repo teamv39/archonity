@@ -4,7 +4,7 @@
 
 Интерактивный Single Page Application (SPA) визуализатор архитектурного графа микросервисов для проекта **Archonity** (бенчмарк Train Ticket, 40+ сервисов).
 
-Разработан в соответствии с [ADR-002](../docs/adr/adr-002_react_flow_visualizer.md) и [Дорожной картой](../docs/frontend_roadmap.md).
+Разработан в соответствии с [ADR-002](../docs/adr/adr-002_react_flow_visualizer.md) и `Дорожной картой` (удалён, в истории git).
 
 ---
 
