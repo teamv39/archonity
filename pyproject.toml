@@ -2,23 +2,35 @@
 name = "archonity"
 version = "0.1.0"
 description = "Archonity: static microservice dependency graph reconstruction for TechArena 2026"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
+# Версии — как в окружении, где построены кеши и рекорд (21.10); requirements*.txt — экспорт uv.lock
 dependencies = [
-    "networkx>=3.0",
-    "numpy>=2.0",
-    "tree-sitter>=0.23",
-    "tree-sitter-javascript>=0.23",
+    "networkx==3.6.1",
+    "numpy==2.4.4",
+    "tree-sitter==0.26.0",
+    "tree-sitter-javascript==0.25.0",
 ]
 
 [project.optional-dependencies]
-# Только для пересчёта векторов M1 (бейкофф эмбеддингов); прогон из кеша cache/emb/ их не требует.
-# torch под RTX 50 (SM120) — сборка CUDA 12.8: pip install torch --index-url https://download.pytorch.org/whl/cu128
+# Эмбеддер M1 на промахе кеша векторов (новые сценарии) и scripts/fetch_models.py; прогон из кеша cache/emb/ их не требует.
+# torch — сборка CUDA 12.8 с download.pytorch.org (A100 и RTX 50 / SM120), не CUDA 13 с PyPI: та требует драйвер 580+.
 # EmbeddingGemma 2 в sentence-transformers 6.1 требует torchvision даже в текстовом режиме.
 embed = [
-    "sentence-transformers>=6.1",
-    "torch>=2.7",
-    "torchvision>=0.22",
+    "huggingface-hub==1.33.0",
+    "sentence-transformers==6.1.0",
+    "torch==2.11.0",
+    "torchvision==0.26.0",
+    "transformers==5.20.1",
 ]
 
 [tool.uv]
 package = false
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
