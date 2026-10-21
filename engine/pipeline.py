@@ -178,7 +178,9 @@ class ArchonityPipeline:
             evidence_logger=self.evidence_logger,
         )
 
-        for sp in sorted(scenario_paths, key=lambda p: str(p)):
+        paths = sorted(scenario_paths, key=lambda p: str(p))
+        self._prepare_m1(paths)
+        for sp in paths:
             sid = Path(sp).stem
             try:
                 s_dict = load_json(sp)
@@ -198,6 +200,22 @@ class ArchonityPipeline:
 
         adapter.save(output_path)
         return adapter
+
+    def _prepare_m1(self, paths: list[str | Path]) -> None:
+        """Векторы шагов всех сценариев до первого вызова LLM: эмбеддер и `llama server` не бывают в памяти вместе.
+
+        Нечитаемый сценарий пропускается, его сбой запишет цикл `run_all`. Сбой модели эмбеддера сюда не доходит:
+        он отключает dense (Р2), прогон идёт на одном BM25."""
+        scenarios = []
+        for sp in paths:
+            try:
+                scenarios.append(load_json(sp))
+            except Exception:  # noqa: BLE001
+                continue
+        try:
+            self.m1.prepare(scenarios)
+        except Exception as e:  # noqa: BLE001 — Р2: шаги заземлятся без заготовленных векторов
+            self._fail(None, None, "векторы шагов M1", e)
 
     def _fail(self, sid: str | None, step: Any, stage: str, exc: Exception) -> None:
         f = attention.failure(sid, step, stage, exc)
