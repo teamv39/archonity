@@ -3,7 +3,9 @@
 
 mod ast;
 mod body;
+mod entities;
 mod enumres;
+mod expect;
 mod index;
 mod jsonw;
 mod lit;
@@ -88,6 +90,20 @@ fn main() -> Result<()> {
                 println!("  {tag}: {m}");
             }
         }
+    }
+    if cli.mode == Mode::Entities || cli.mode == Mode::All {
+        let out = match (cli.mode, &cli.output) {
+            (Mode::All, Some(o)) => o.join("entity_ir.json"),
+            (_, Some(o)) => o.clone(),
+            (_, None) => PathBuf::from("data/entity_ir.json"),
+        };
+        let enum_docs = source::parse_enum_files(&cli.targets_dir, &files);
+        let r = entities::scan(&sk, &docs, &enum_docs);
+        if let Some(parent) = out.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::write(&out, jsonw::to_string(&r.json))?;
+        println!("Finished! {} entities, {} repository calls, {} constructors saved to {}", r.entities, r.repository_calls, r.constructors, out.display());
     }
     Ok(())
 }
