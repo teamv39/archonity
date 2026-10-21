@@ -69,12 +69,14 @@ class LLMStats:
 
 class LLMClient:
     def __init__(self, url: str | None = None, model: str | None = None, use_server: bool = True,
-                 refresh: bool = False, cache_dir: Path = CACHE_DIR) -> None:
+                 refresh: bool = False, cache_dir: Path = CACHE_DIR, timeout: float = TIMEOUT_S) -> None:
+        """`timeout` — на один вызов сервера, с; на CPU вызов выбора идёт минуты (исследование GPU, раздел 7.5)."""
         self.url = check_local_url((url or os.environ.get("ARCHONITY_LLM_URL") or DEFAULT_URL).rstrip("/"))
         self.model = model or os.environ.get("ARCHONITY_LLM_MODEL") or DEFAULT_MODEL
         self.use_server = use_server
         self.refresh = refresh
         self.cache_dir = cache_dir
+        self.timeout = timeout
         self.stats = LLMStats()
         self.requested: list[str] = []  # ключи всех запросов прогона, по порядку (scripts/verify_llm_cache.py)
         self._server_ok: bool | None = None
@@ -134,7 +136,7 @@ class LLMClient:
         try:
             req = urllib.request.Request(f"{self.url}/v1/chat/completions", data=json.dumps(body).encode("utf-8"),
                                          headers={"Content-Type": "application/json"})
-            with urllib.request.urlopen(req, timeout=TIMEOUT_S) as r:
+            with urllib.request.urlopen(req, timeout=self.timeout) as r:
                 out = json.loads(r.read().decode("utf-8"))
             content = out["choices"][0]["message"]["content"]
             resp = json.loads(content)

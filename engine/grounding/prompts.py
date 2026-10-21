@@ -82,7 +82,12 @@ SELECT_TASK_V8 = """Current step {n}: {action}
 Candidate handlers (closest search matches):
 {candidates}
 
-Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses, as kind and reference pairs in any order (e.g. {{"kind": "{ex1}", "ref": "first_of_step_2"}} for the first {ex1} found at step 2, {{"kind": "{ex2}", "ref": "new_of_step_6"}} for the {ex2} created at step 6). The kind of a pair is the kind of what the referenced step found or created, not of what this request makes. A record that the request reads or changes comes from the step that found or created that record itself, not from the step of a record it belongs to. Leave refs empty when the request uses nothing from earlier steps."""
+Answer with JSON: {reasoning}the label of the chosen handler ({choice}), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses, as kind and reference pairs in any order (e.g. {{"kind": "{ex1}", "ref": "first_of_step_2"}} for the first {ex1} found at step 2, {{"kind": "{ex2}", "ref": "new_of_step_6"}} for the {ex2} created at step 6). The kind of a pair is the kind of what the referenced step found or created, not of what this request makes. A record that the request reads or changes comes from the step that found or created that record itself, not from the step of a record it belongs to. Leave refs empty when the request uses nothing from earlier steps."""
+# Заполнители SELECT_TASK_V8: по умолчанию — прежний текст (ключи кеша m1-v8 те же); режим CPU (исследование GPU,
+# раздел 7.5) убирает индекс обработчиков из системного промпта и, по флагу, рассуждение из ответа
+REASONING_ASK = "a short reasoning (one or two sentences), "
+CHOICE_INDEX = "a candidate, or a handler from the index when no candidate fits"
+CHOICE_CANDIDATES = "one of the candidates"
 # Виды refs v8 — из манифеста сущностей (ADR-007, решение 2); пример — два вида, на которые чаще всего ссылаются поля
 # запросов обработчиков (`example_kinds`)
 
@@ -288,8 +293,9 @@ def train_kind(module: str) -> str:
 
 
 def select_schema(labels: list[str], step: int, kinds: Iterable[str] = REF_ENTITIES,
-                  ref_pairs: bool = False) -> dict[str, Any]:
-    """`kinds` — виды refs: v7 — `REF_ENTITIES`, v8 — виды манифеста сущностей.
+                  ref_pairs: bool = False, reasoning: bool = True) -> dict[str, Any]:
+    """`kinds` — виды refs: v7 — `REF_ENTITIES`, v8 — виды манифеста сущностей. `reasoning=False` — ответ без
+    рассуждения (режим CPU: ответ вдвое короче).
 
     `ref_pairs` (v8): refs — массив пар {kind, ref}, а не объект с ключом на вид. Грамматика JSON-схемы llama.cpp
     пишет необязательные свойства объекта только в порядке схемы: после ключа `trip` ключ `contacts` уже не написать,
@@ -304,7 +310,7 @@ def select_schema(labels: list[str], step: int, kinds: Iterable[str] = REF_ENTIT
     else:
         ref_props = {e: {"type": "string", "enum": ref_values} for e in kinds} if ref_values else {}
         refs = {"type": "object", "properties": ref_props, "additionalProperties": False}
-    return {
+    schema = {
         "type": "object",
         "properties": {
             "reasoning": {"type": "string", "maxLength": 400},
@@ -315,6 +321,10 @@ def select_schema(labels: list[str], step: int, kinds: Iterable[str] = REF_ENTIT
         "required": ["reasoning", "handler", "expected_outcome", "refs"],
         "additionalProperties": False,
     }
+    if not reasoning:
+        del schema["properties"]["reasoning"]
+        schema["required"].remove("reasoning")
+    return schema
 
 
 def refs_of(sel: dict[str, Any]) -> dict[str, str]:
