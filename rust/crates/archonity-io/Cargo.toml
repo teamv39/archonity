@@ -1,0 +1,17 @@
+[package]
+name = "archonity-io"
+description = "Загрузка скелета, дампа БД, entity_ir.json; мир БД; журнал решений; запись submission.json, evidence.json, decisions.json"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+archonity-model.workspace = true
+anyhow.workspace = true
+fancy-regex.workspace = true
+flate2.workspace = true
+indexmap.workspace = true
+regex.workspace = true
+serde.workspace = true
+serde_json.workspace = true

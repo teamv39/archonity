@@ -1,0 +1,37 @@
+{
+ "project": "trainticket",
+ "id": "X4",
+ "title": "A failed login, a refused registration with a taken username, then a new passenger with an empty account",
+ "description": "A passenger tries to log in as fdse_microservice with a wrong password and the system refuses. They try to register a new passenger account with the already taken username fdse_microservice and the system refuses again. They register a new passenger account (username, password, gender, ID document, e-mail) and log in with the new username and password. They open the contact book, which is empty, refresh the list of orders for high-speed (GaoTie/DongChe) trains, where there are none yet, and look up the luggage consignments registered on the account, where there are none either.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in as fdse_microservice with a wrong password (the system refuses)"
+  },
+  {
+   "n": 2,
+   "action": "Try to register a new passenger account with the already taken username fdse_microservice (the system refuses: the user already exists)"
+  },
+  {
+   "n": 3,
+   "action": "Register a new passenger account (username, password, gender, ID document, e-mail)"
+  },
+  {
+   "n": 4,
+   "action": "Log in with the new username and password"
+  },
+  {
+   "n": 5,
+   "action": "Open the contact book (it is empty)"
+  },
+  {
+   "n": 6,
+   "action": "Refresh the list of orders for high-speed (GaoTie/DongChe) trains (there are none yet)"
+  },
+  {
+   "n": 7,
+   "action": "Look up the luggage consignments registered on the account (there are none)"
+  }
+ ]
+}

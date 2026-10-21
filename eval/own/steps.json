@@ -1,0 +1,872 @@
+{
+ "source": "ручная разметка 21.10.2026 по ts-ui-dashboard, контроллерам, сервисам и context/db-after-warmup.sql.gz; status: ok — подтверждено UI, no_ui — запроса нет в активном UI, обработчик по коду сервиса, disputed — спорно; outcome: success | refused | other (см. branch); branch — ветка исполнения с файлом и строками; params — ключевые поля по тексту шага",
+ "scenarios": {
+  "X1": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 4,
+    "action": "Book one second-class seat on the first trip found for this contact, without food, assurance or consignment",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "SeatClass: FIRSTCLASS=2, SECONDCLASS=3 (ts-common SeatClass.java)",
+    "outcome": "success",
+    "params": {
+     "seatType": 3,
+     "assurance": 0,
+     "foodType": 0
+    }
+   },
+   {
+    "n": 5,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (соглашение eval/m1_steps.json)",
+    "outcome": "success"
+   },
+   {
+    "n": 6,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "баланс 10 000 (context/README.md), ветка внутренней оплаты",
+    "outcome": "success"
+   },
+   {
+    "n": 7,
+    "action": "Rebook the paid ticket to a first-class seat on the same trip (the new seat is more expensive: the system asks to pay the difference)",
+    "handler": "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "первый класс = distance*first_class_price_rate (во всех price_config = 1), второй = distance*basic_price_rate (0.2–0.7), BasicServiceImpl.java:106-109; дамп price_config",
+    "outcome": "other",
+    "branch": "заказ PAID проходит проверки статуса и времени; priceNew > priceOld, возврат status 2 'Please pay the different money!', заказ не меняется (RebookServiceImpl.java:52-67, 121-141)",
+    "params": {
+     "seatType": 2
+    }
+   },
+   {
+    "n": 8,
+    "action": "Pay the price difference for the rebooking",
+    "handler": "method:ts-rebook-service:rebook.controller.RebookController#payDifference(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#payDifference(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI после status 2 шлёт POST /api/v1/rebookservice/rebook/difference (client_order_list.js:226-236). InsidePaymentController#payDifference — внутренний вызов rebook, не шаг. В InsidePaymentServiceImpl.payDifference результат BigDecimal.add выброшен (строки 278, 285): сумма 0, ветка внешней оплаты не берётся",
+    "outcome": "success",
+    "branch": "payDifference -> inside-payment /difference -> updateOrder: тот же тип поезда (G), PUT в ts-order-service, статус заказа CHANGE=3 (RebookServiceImpl.java:146-236)"
+   },
+   {
+    "n": 9,
+    "action": "Ask how much would be refunded if the rebooked order were cancelled (the system refuses to calculate it)",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "refused",
+    "branch": "статус CHANGE=3 — не NOTPAID и не PAID: 'Order Status Cancel Not Permitted, Refound error' (CancelServiceImpl.java:160-174)"
+   },
+   {
+    "n": 10,
+    "action": "Cancel the rebooked order (the refund goes back to the internal balance)",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "branch": "CHANGE разрешён для отмены (CancelServiceImpl.java:52-53): cancelFromOrder, calculateRefund(order), drawback, getAccount"
+   },
+   {
+    "n": 11,
+    "action": "Book another second-class seat on the same trip for the same contact, without food, assurance or consignment",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "params": {
+     "seatType": 3,
+     "assurance": 0,
+     "foodType": 0
+    }
+   },
+   {
+    "n": 12,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (соглашение eval/m1_steps.json)",
+    "outcome": "success"
+   },
+   {
+    "n": 13,
+    "action": "Ask how much would be refunded if the new unpaid order were cancelled (nothing has been paid yet)",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "branch": "NOTPAID: ранний возврат 'Success. Refoud 0' без calculateRefund(order) (CancelServiceImpl.java:162-166)"
+   },
+   {
+    "n": 14,
+    "action": "Cancel the unpaid order",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "branch": "NOTPAID разрешён (CancelServiceImpl.java:52); calculateRefund(order) возвращает '0.00' сразу (строки 200-203)"
+   },
+   {
+    "n": 15,
+    "action": "Refresh the list of orders filtered by the 'Cancel' status",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (соглашение eval/m1_steps.json); OrderStatus.CANCEL=4",
+    "outcome": "success",
+    "params": {
+     "enableStateQuery": true,
+     "state": 4
+    }
+   }
+  ],
+  "X2": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Open the contact book",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Add a new contact (a companion with an ID card) to the contact book",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S3 шаг 6",
+    "outcome": "success",
+    "branch": "дубликата нет: save (ContactsServiceImpl.java:61-72)"
+   },
+   {
+    "n": 4,
+    "action": "Try to add the same companion with the same ID card once more (the system refuses: the contact already exists)",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "refused",
+    "branch": "нативный SQL по account_id, document_number, document_type находит контакт шага 3: 'Contacts already exists' (ContactsServiceImpl.java:63-67, ContactsRepository.findByAccountIdAndDocumentTypeAndDocumentType)"
+   },
+   {
+    "n": 5,
+    "action": "Change the phone number of the new contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#modifyContacts(contacts.entity.Contacts,?HttpHeaders)",
+    "alt": [
+     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "no_ui",
+    "note": "в активном UI пассажира правки контакта нет; PUT /api/v1/contactservice/contacts, роль USER разрешена (SecurityConfig: /api/v1/contactservice/** ADMIN, USER). AdminBasicInfoController#modifyContacts пассажиру закрыт: /api/v1/adminbasicservice/** hasRole(ADMIN), открыты только GET-списки (ts-admin-basic-info-service SecurityConfig.java:72-77). Старый static/js/contacts.js шлёт /contacts/modifyContacts — путь прежнего API, в шлюзе его нет",
+    "outcome": "success",
+    "branch": "findContactsById находит контакт, save (ContactsServiceImpl.java:89-105)"
+   },
+   {
+    "n": 6,
+    "action": "Open the contact book",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 7,
+    "action": "Delete the new contact from the contact book",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#deleteContacts(java.lang.String,?HttpHeaders)",
+    "alt": [
+     "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteContacts(java.lang.String,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "no_ui",
+    "note": "в активном UI пассажира удаления контакта нет; DELETE /api/v1/contactservice/contacts/{id}. AdminBasicInfoController#deleteContacts пассажиру закрыт (hasRole ADMIN, SecurityConfig.java:77)",
+    "outcome": "success",
+    "branch": "deleteById, затем findById пусто: 'Delete success' (ContactsServiceImpl.java:76-86)"
+   },
+   {
+    "n": 8,
+    "action": "Open the contact book",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   }
+  ],
+  "X3": [
+   {
+    "n": 1,
+    "action": "Log in to the admin console with the administrator's username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S6 шаг 1",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Open the list of stations",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllStations(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Add a new station Ning Bo with a stay time of 5 minutes",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5; дальше прокси в StationController#create, это remote, не шаг",
+    "outcome": "success",
+    "params": {
+     "stayTime": 5
+    }
+   },
+   {
+    "n": 4,
+    "action": "Try to add the existing station suzhou once more (the system refuses: a station with this name already exists)",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "имя ровно как в дампе (station: 'suzhou'); 'Su Zhou' не совпало бы и создало бы станцию",
+    "outcome": "refused",
+    "branch": "findByName('suzhou') находит станцию: 'Already exists' (StationServiceImpl.java:31-37)"
+   },
+   {
+    "n": 5,
+    "action": "Change the stay time of the new station Ning Bo to 10 minutes",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5",
+    "outcome": "success",
+    "branch": "findById находит станцию шага 3: 'Update success' (StationServiceImpl.java:51-63)",
+    "params": {
+     "stayTime": 10
+    }
+   },
+   {
+    "n": 6,
+    "action": "Delete the station Ning Bo",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteStation(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5",
+    "outcome": "success",
+    "branch": "findById находит, delete: 'Delete success' (StationServiceImpl.java:67-75)"
+   },
+   {
+    "n": 7,
+    "action": "Open the list of train types",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllTrains(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5",
+    "outcome": "success"
+   },
+   {
+    "n": 8,
+    "action": "Change the average speed of the train type GaoTieOne to 280",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5",
+    "outcome": "success",
+    "branch": "findById находит GaoTieOne (дамп train_type), save (TrainServiceImpl.java:75-87)",
+    "params": {
+     "averageSpeed": 280
+    }
+   },
+   {
+    "n": 9,
+    "action": "Open the list of price configurations",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllPrices(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5",
+    "outcome": "success"
+   },
+   {
+    "n": 10,
+    "action": "Change the basic rate of the price configuration for the train type KuaiSu to 0.25",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyPrice(adminbasic.entity.PriceInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5",
+    "outcome": "success",
+    "branch": "findById находит конфигурацию (дамп price_config: KuaiSu одна), save (PriceServiceImpl.java:139-153)",
+    "params": {
+     "basicPriceRate": 0.25
+    }
+   },
+   {
+    "n": 11,
+    "action": "Delete the price configuration for the train type TeKuai",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deletePrice(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5",
+    "outcome": "success",
+    "branch": "findById находит (TeKuai одна), delete (PriceServiceImpl.java:126-135)"
+   }
+  ],
+  "X4": [
+   {
+    "n": 1,
+    "action": "Log in as fdse_microservice with a wrong password (the system refuses)",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "refused",
+    "branch": "без кода проверки; authenticationManager.authenticate бросает AuthenticationException: 'Incorrect username or password.' (TokenServiceImpl.getToken)"
+   },
+   {
+    "n": 2,
+    "action": "Try to register a new passenger account with the already taken username fdse_microservice (the system refuses: the user already exists)",
+    "handler": "method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "как S4 шаг 1",
+    "outcome": "refused",
+    "branch": "findByUserName находит пользователя (дамп ts_user.user): 'USER HAS ALREADY EXISTS', без createDefaultAuthUser (UserServiceImpl.saveUser)"
+   },
+   {
+    "n": 3,
+    "action": "Register a new passenger account (username, password, gender, ID document, e-mail)",
+    "handler": "method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "как S4 шаг 1",
+    "outcome": "success",
+    "branch": "имени нет: createDefaultAuthUser в ts-auth-service, save (UserServiceImpl.saveUser)"
+   },
+   {
+    "n": 4,
+    "action": "Log in with the new username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S4 шаг 2",
+    "outcome": "success"
+   },
+   {
+    "n": 5,
+    "action": "Open the contact book (it is empty)",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "branch": "findByAccountId пусто, status 1 с пустым списком (ContactsServiceImpl.java:42-46)"
+   },
+   {
+    "n": 6,
+    "action": "Refresh the list of orders for high-speed (GaoTie/DongChe) trains (there are none yet)",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "формулировка S0 шага 3: тип поезда назван, сервис однозначен",
+    "outcome": "success"
+   },
+   {
+    "n": 7,
+    "action": "Look up the luggage consignments registered on the account (there are none)",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#findByAccountId(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S0 шаг 6",
+    "outcome": "success",
+    "branch": "findByAccountId пусто: status 0 'No Content according to accountId' (ConsignServiceImpl.java:119-126)"
+   }
+  ],
+  "X5": [
+   {
+    "n": 1,
+    "action": "Log in to the admin console with the administrator's username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S6 шаг 1",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Open the list of all users",
+    "handler": "method:ts-admin-user-service:adminuser.controller.AdminUserController#getAllUsers(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Add a new user (username, password, gender, ID document, e-mail)",
+    "handler": "method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-user-service:user.controller.UserController#registerUser(user.dto.UserDto,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг; UserController#registerUser — пассажирская регистрация (S4 шаг 1), здесь консоль администратора",
+    "outcome": "success",
+    "branch": "admin-user -> POST /userservice/users/register; имени нет: createDefaultAuthUser, save (UserServiceImpl.saveUser)"
+   },
+   {
+    "n": 4,
+    "action": "Try to add a user with the already taken username fdse_microservice (the system refuses: the user already exists)",
+    "handler": "method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "refused",
+    "branch": "register: findByUserName находит (дамп ts_user.user) — 'USER HAS ALREADY EXISTS'; admin-user отвечает 'Add user error' (AdminUserServiceImpl.addUser)"
+   },
+   {
+    "n": 5,
+    "action": "Change the e-mail of the new user",
+    "handler": "method:ts-admin-user-service:adminuser.controller.AdminUserController#updateUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success",
+    "branch": "PUT /userservice/users: findByUserId находит, deleteByUserId + save (UserServiceImpl.updateUser)"
+   },
+   {
+    "n": 6,
+    "action": "Delete the new user",
+    "handler": "method:ts-admin-user-service:adminuser.controller.AdminUserController#deleteUser(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success",
+    "branch": "DELETE /userservice/users/{id}: пользователь есть — deleteUserAuth в ts-auth-service, deleteByUserId (UserServiceImpl.deleteUser)"
+   },
+   {
+    "n": 7,
+    "action": "Open the list of all orders in the system",
+    "handler": "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S6 шаг 14",
+    "outcome": "success"
+   },
+   {
+    "n": 8,
+    "action": "Add a new order for the passenger fdse_microservice and the contact Contacts_One on the high-speed train D1345 from shanghai to suzhou on 1 October 2026 (all fields of the order form are filled in)",
+    "handler": "method:ts-admin-order-service:adminorder.controller.AdminOrderController#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "форма шлёт все поля, в том числе boughtDate (old_index.js:103-116); без boughtDate Order.equals упал бы на getBoughtDate().equals (NPE). Прогрев организаторов так же добавил заказ MRK-aorder (D1345)",
+    "outcome": "success",
+    "branch": "D -> ts-order-service POST /order/admin (hasRole ADMIN, заголовки переданы); findByAccountId + contains(order) -> Order.equals по полям, совпадения нет: save (OrderServiceImpl.addNewOrder)"
+   },
+   {
+    "n": 9,
+    "action": "Change the status of the new order to 'Paid'",
+    "handler": "method:ts-admin-order-service:adminorder.controller.AdminOrderController#updateOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг; OrderStatus.PAID=1",
+    "outcome": "success",
+    "branch": "D -> ts-order-service PUT /order/admin: findById находит, все поля перезаписаны (OrderServiceImpl.updateOrder)",
+    "params": {
+     "status": 1
+    }
+   },
+   {
+    "n": 10,
+    "action": "Delete the new order",
+    "handler": "method:ts-admin-order-service:adminorder.controller.AdminOrderController#deleteOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success",
+    "branch": "D -> ts-order-service DELETE /order/{id} без токена: путь не совпадает с точным шаблоном /order и попадает под order/** permitAll (SecurityConfig.java:75-80); findById находит, deleteById"
+   }
+  ],
+  "X6": [
+   {
+    "n": 1,
+    "action": "Log in to the admin console with the administrator's username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S6 шаг 1",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Open the list of all trips",
+    "handler": "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#getAllTravels(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг; страница ещё грузит справочники (getTrainTypes, getRouteList, getStationList) — это не шаг",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Change the departure time of the trip G9998 to 10:00, keeping its route and stations",
+    "handler": "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#updateTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-travel-service:travel.controller.TravelController#updateTrip(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "форма шлёт собственные routeId, startStationName, terminalStationName рейса (admin_travel.js:133-160); дамп trip: G9998 route 0b23bd3e, shanghai -> taiyuan",
+    "outcome": "success",
+    "branch": "checkTravelInfo: станции shanghai, taiyuan есть; GaoTieOne есть; маршрут 0b23bd3e = shanghai, nanjing, shijiazhuang, taiyuan — start раньше end; PUT /travelservice/trips: findByTripId находит, save (AdminTravelServiceImpl.java:187-230, TravelServiceImpl.update)"
+   },
+   {
+    "n": 4,
+    "action": "Try to change the departure time of the trip G1234 the same way (the system refuses: the trip's stations do not match its route)",
+    "handler": "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#updateTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "дамп trip: G1234 route 92708982, shanghai -> taiyuan; route_stations 92708982",
+    "outcome": "refused",
+    "branch": "checkTravelInfo: маршрут 92708982 = nanjing, zhenjiang, wuxi, suzhou, shanghai — terminal taiyuan не на маршруте: 'Station not correct in Route', до ts-travel-service не доходит"
+   },
+   {
+    "n": 5,
+    "action": "Try to add a new trip G9102 of the unknown train type GaoTieTen from shanghai to suzhou (the system refuses: the train type does not exist)",
+    "handler": "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "refused",
+    "branch": "checkTravelInfo: станции есть; train-service byName -> status 0, data null -> JsonUtils.conveterObject(null) = null: 'Train type doesn't exist'"
+   },
+   {
+    "n": 6,
+    "action": "Delete the trip G1237",
+    "handler": "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#deleteTravel(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success",
+    "branch": "G -> DELETE /travelservice/trips/G1237 (hasRole ADMIN, заголовки переданы): findByTripId находит, deleteByTripId (TravelServiceImpl.delete)"
+   },
+   {
+    "n": 7,
+    "action": "Open the list of routes",
+    "handler": "method:ts-admin-route-service:adminroute.controller.AdminRouteController#getAllRoutes(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success"
+   },
+   {
+    "n": 8,
+    "action": "Delete the route from shanghai to suzhou",
+    "handler": "method:ts-admin-route-service:adminroute.controller.AdminRouteController#deleteRoute(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-route-service:route.controller.RouteController#deleteRoute(java.lang.String,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "дамп route (колонки id, end_station, start_station): start shanghai, end suzhou — только f3d4d4ef; 084837bb — обратный, suzhou -> shanghai",
+    "outcome": "success",
+    "branch": "DELETE /routeservice/routes/{id} без токена: первое правило routeservice/** permitAll; removeRouteById, findById пусто: 'Delete Success'"
+   },
+   {
+    "n": 9,
+    "action": "Open the list of configurations",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllConfigs(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success"
+   },
+   {
+    "n": 10,
+    "action": "Add a new configuration MaxTicketsPerOrder with the value 5",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-config-service:config.controller.ConfigController#createConfig(config.entity.Config,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success",
+    "branch": "findByName пусто (дамп config: только DirectTicketAllocationProportion), save (ConfigServiceImpl.create)"
+   },
+   {
+    "n": 11,
+    "action": "Change the value of the configuration DirectTicketAllocationProportion to 0.6",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyConfig(edu.fudan.common.entity.Config,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-config-service:config.controller.ConfigController#updateConfig(config.entity.Config,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success",
+    "branch": "findByName находит, save (ConfigServiceImpl.update)"
+   },
+   {
+    "n": 12,
+    "action": "Delete the configuration MaxTicketsPerOrder",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-config-service:config.controller.ConfigController#deleteConfig(java.lang.String,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success",
+    "branch": "findByName находит конфиг шага 10, deleteByName (ConfigServiceImpl.delete)"
+   }
+  ],
+  "X7": [
+   {
+    "n": 1,
+    "action": "Log in to the admin console with the administrator's username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S6 шаг 1",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Open the list of all contacts in the system",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllContacts(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Add a new contact for the passenger fdse_microservice (a name, an ID card and a phone number)",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг; близнец X2 шага 3: там пассажир, ContactsController#createNewContacts",
+    "outcome": "success",
+    "branch": "admin-basic -> POST /contactservice/contacts/admin -> createContacts: дубликата нет, save (ContactsServiceImpl.java:49-58)"
+   },
+   {
+    "n": 4,
+    "action": "Try to add the same contact once more (the system refuses: the contact already exists)",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "refused",
+    "branch": "createContacts: нативный SQL по account_id, document_number, document_type находит контакт шага 3: 'Already Exists'"
+   },
+   {
+    "n": 5,
+    "action": "Change the phone number of the new contact",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг; близнец X2 шага 5",
+    "outcome": "success",
+    "branch": "admin-basic -> PUT /contactservice/contacts -> modify: findContactsById находит, save"
+   },
+   {
+    "n": 6,
+    "action": "Delete the new contact",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteContacts(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг; близнец X2 шага 7",
+    "outcome": "success",
+    "branch": "admin-basic -> DELETE /contactservice/contacts/{id} -> delete: 'Delete success'"
+   },
+   {
+    "n": 7,
+    "action": "Open the list of all contacts in the system",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllContacts(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   }
+  ],
+  "X8": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 4,
+    "action": "Book one first-class seat on the first trip found for this contact, without food, assurance or consignment",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S7 шаг 4 без багажа",
+    "outcome": "success",
+    "params": {
+     "seatType": 2,
+     "assurance": 0,
+     "foodType": 0
+    }
+   },
+   {
+    "n": 5,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа",
+    "outcome": "success"
+   },
+   {
+    "n": 6,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 7,
+    "action": "Look up the luggage consignment of the order (there is none yet)",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "UI consignOrder сначала шлёт этот GET (client_order_list.js:317-319, 395-426)",
+    "outcome": "success",
+    "branch": "findByOrderId пусто: status 0 'No Content according to order id' (ConsignServiceImpl.queryByOrderId)"
+   },
+   {
+    "n": 8,
+    "action": "Add a luggage consignment of 5 kg to the order for a consignee",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#updateConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт PUT, не POST (client_order_list.js:364-367); ConsignController#insertConsign (POST) в UI не вызывается",
+    "outcome": "success",
+    "branch": "PUT /consigns с пустым id: findById('') пусто -> insertConsignRecord: цена из ts-consign-price-service (isWithin=false), save (ConsignServiceImpl.updateConsignRecord)"
+   },
+   {
+    "n": 9,
+    "action": "Look up the luggage consignment of the order",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "branch": "findByOrderId находит запись шага 8"
+   },
+   {
+    "n": 10,
+    "action": "Change the weight of the consignment to 8 kg",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#updateConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "как S7 шаг 12, но вес меняется: ветка пересчёта, в S7 — без него",
+    "outcome": "success",
+    "branch": "findById находит; вес 5 != 8 — пересчёт цены через ts-consign-price-service, save"
+   },
+   {
+    "n": 11,
+    "action": "Look up the luggage consignments registered for the consignee's name",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#findByConsignee(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI запроса нет; GET /api/v1/consignservice/consigns/{consignee}",
+    "outcome": "success",
+    "branch": "findByConsignee находит запись шага 8 (ConsignServiceImpl.queryByConsignee)"
+   },
+   {
+    "n": 12,
+    "action": "Check what a 5 kg consignment outside the region costs",
+    "handler": "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "как S3 шаг 14, но вне региона",
+    "outcome": "success",
+    "branch": "initial_weight 1 (дамп consign_price): 5 > 1, вне региона — initialPrice + extra * beyondPrice (ConsignPriceServiceImpl.getPriceByWeightAndRegion)"
+   },
+   {
+    "n": 13,
+    "action": "Look up the assurance (insurance) record of the order (there is none)",
+    "handler": "method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "как S1 шаг 14, но страховки нет",
+    "outcome": "success",
+    "branch": "findByOrderId пусто: status 0 'No Content by this orderId' (AssuranceServiceImpl.findAssuranceByOrderId)"
+   }
+  ]
+ }
+}

@@ -19,11 +19,8 @@ EVAL_SCRIPT = ROOT / "hackaton" / "tt-challenge" / "platform" / "evaluate_golden
 
 
 @pytest.fixture(scope="module")
-def pipeline() -> ArchonityPipeline:
-    return ArchonityPipeline(
-        skeleton_path=SKELETON_PATH,
-        targets_root=TARGETS_ROOT,
-    )
+def pipeline(shared_pipeline: ArchonityPipeline) -> ArchonityPipeline:
+    return shared_pipeline
 
 
 class TestPipelineE2E:
@@ -231,4 +228,50 @@ class TestPipelineE2E:
         assert not any("ts-consign" in t for t in remote_s2_targets), "S2 unexpectedly called ts-consign-service"
         assert not any("ts-assurance" in t for t in remote_s2_targets), "S2 unexpectedly called ts-assurance-service"
         assert any("ts-food" in t or "food" in t for t in remote_s2_targets), "S2 should call food services"
+
+
+class TestArchitectureRefactoring:
+    """Тесты архитектурного рефакторинга Главы 3 (DRY утилит, PipelineConfig, кэширование параметров)."""
+
+    def test_pipeline_config_initialization(self) -> None:
+        from engine.pipeline import PipelineConfig
+        from engine.rules import RuntimeRules
+
+        cfg = PipelineConfig(rules=RuntimeRules(constructors="all"))
+        assert cfg.rules.constructors == "all"
+        assert cfg.rules.unbound_handlers == "rebind"
+        with pytest.raises(ValueError):
+            RuntimeRules(constructors="maybe")
+
+    def test_pipeline_config_integration(self) -> None:
+        from engine.pipeline import ArchonityPipeline, PipelineConfig
+        from engine.rules import RuntimeRules
+
+        # Неизвестный параметр — ошибка, а не молчаливый пропуск
+        with pytest.raises(TypeError):
+            ArchonityPipeline(SKELETON_PATH, TARGETS_ROOT, executor="legacy")
+        cfg = PipelineConfig(rules=RuntimeRules(constructors="caller_only"))
+        p = ArchonityPipeline(SKELETON_PATH, TARGETS_ROOT, config=cfg, constructors="all")
+        assert p.rules.constructors == "all"
+        assert p.m4.it.rules is p.rules
+
+    def test_canonical_utilities_manifest(self) -> None:
+        from engine.manifest import camel_to_snake, simple_name
+
+        assert simple_name("edu.fudan.common.entity.TrainType") == "TrainType"
+        assert simple_name("edu.fudan.common.entity.TrainType", lower=True) == "traintype"
+        assert simple_name("edu.fudan.Outer$Inner") == "Inner"
+
+        assert camel_to_snake("TrainType") == "train_type"
+        assert camel_to_snake("ts-ui-dashboard") == "ts-ui-dashboard"
+        assert camel_to_snake("RoutePlanResult") == "route_plan_result"
+
+    def test_param_cache_on_skeleton_index(self, pipeline: ArchonityPipeline) -> None:
+        from engine.grounding.binding import _params
+
+        p1 = _params(pipeline.index)
+        assert hasattr(pipeline.index, "_param_cache")
+        assert getattr(pipeline.index, "_param_cache") is p1
+        p2 = _params(pipeline.index)
+        assert p1 is p2
 

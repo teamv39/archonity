@@ -74,15 +74,13 @@ runs/
 *.keras
 *.safetensors
 checkpoints/
-models/
+# Модели и llama.cpp качает scripts/fetch_models.py; в репозитории только манифест версий
+/models/*
+!/models/manifest.json
 
 /data/*
-!/data/demo_graph.json
-!/data/llm_judge_dossiers_and_traps.json
-!/data/runtime_and_topology_rules.json
-!/data/branch_rules.json
-!/data/pool_ir.json
 !/data/entity_ir.json
+!/data/ui_catalog.json
 !/data/ir/
 datasets/
 raw_data/

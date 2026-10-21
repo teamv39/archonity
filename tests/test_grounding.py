@@ -103,6 +103,14 @@ class TestCatalog:
         assert o.guards[-1] == "!(tripType == 'G' || tripType == 'D')"
         assert "client_ticket_book.html" in " ".join(g.pages)
 
+    def test_fields_sent_only_under_condition(self, catalog) -> None:
+        g = [r for r in catalog.by_handler()[PRESERVE] if "client_ticket_book" in r.file][0]
+        opt = {o["field"]: o["guards"] for o in g.body_opt}
+        assert opt["consigneeWeight"] == opt["isWithin"] == ["$('#need-consign-or-not').is(\":checked\")"]
+        assert "foodPrice" in opt and "seatType" not in opt and "assurance" not in opt
+        # условие, под которым уходит весь запрос (проверка ввода в админке), поле не отделяет
+        assert not [r for r in catalog.requests if r.body_opt and "/admin" in r.url]
+
     def test_request_in_response_handler_is_marked(self, catalog) -> None:
         diff = [r for r in catalog.requests if r.url == "/api/v1/rebookservice/rebook/difference"
                 and r.file.endswith("client_order_list.js")][0]
@@ -154,14 +162,15 @@ class TestPrompts:
         assert len(lines) == len(handlers.handlers) == len(set(labels.values()))
         cancel = next(ln for ln in lines if ln.startswith(labels[CANCEL] + ":"))
         assert cancel.endswith("-> CancelController#cancelTicket (ui)")
-        assert P.select_schema(list(labels.values()), 1)["properties"]["handler"]["enum"][0] == "H1"
+        assert P.select_schema(list(labels.values()), 1, ("order",))["properties"]["handler"]["enum"][0] == "H1"
 
     def test_select_schema_refs(self) -> None:
-        s1 = P.select_schema(["C1", "C2"], 1)
-        assert s1["properties"]["refs"]["properties"] == {}
-        s3 = P.select_schema(["C1"], 3)
-        assert "new_of_step_2" in s3["properties"]["refs"]["properties"]["order"]["enum"]
-        assert "first_of_step_3" not in s3["properties"]["refs"]["properties"]["order"]["enum"]
+        s1 = P.select_schema(["C1", "C2"], 1, ("order", "trip"))
+        assert s1["properties"]["refs"] == {"type": "array", "maxItems": 0}
+        s3 = P.select_schema(["C1"], 3, ("order", "trip"))
+        item = s3["properties"]["refs"]["items"]["properties"]
+        assert item["kind"]["enum"] == ["order", "trip"]
+        assert "new_of_step_2" in item["ref"]["enum"] and "first_of_step_3" not in item["ref"]["enum"]
 
     def test_enum_codes_from_source(self, ix: SkeletonIndex) -> None:
         enums = enum_codes(ix, TARGETS)
@@ -177,6 +186,18 @@ class TestLLMCache:
         assert k.startswith("sha256:")
         assert k != c.key("v2", msgs, {"type": "object"})
         assert k != LLMClient(model="m2", use_server=False, cache_dir=tmp_path).key("v1", msgs, {"type": "object"})
+
+    def test_sampling_in_key_only_when_given(self, tmp_path: Path) -> None:
+        import hashlib
+
+        c = LLMClient(model="m", use_server=False, cache_dir=tmp_path)
+        msgs = [{"role": "user", "content": "x"}]
+        raw = json.dumps({"model": "m", "prompt_version": "v1", "messages": msgs, "schema": {"type": "object"}},
+                         ensure_ascii=False, sort_keys=True)
+        # ключ жадного вызова — без выборки (кеш profile-v1 не сдвигается)
+        assert c.key("v1", msgs, {"type": "object"}) == "sha256:" + hashlib.sha256(raw.encode("utf-8")).hexdigest()
+        k1 = c.key("v1", msgs, {"type": "object"}, {"temperature": 0.7, "seed": 1})
+        assert k1 != c.key("v1", msgs, {"type": "object"}) != c.key("v1", msgs, {"type": "object"}, {"seed": 2})
 
     def test_cache_hit_without_server(self, tmp_path: Path) -> None:
         c = LLMClient(model="m", use_server=False, cache_dir=tmp_path)
@@ -199,3 +220,201 @@ class TestGrounderFallback:
         assert reqs[0].handler.endswith("UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)")
         assert reqs[8].expected_outcome == "refused"  # «the system refuses»
         assert reqs[0].expected_outcome == "success"
+
+
+STATION_STORES = "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)"
+STATION_BY_NAMES = "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresByStationNames(java.util.List)"
+ORDER_PRICE = "method:ts-order-service:order.controller.OrderController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)"
+
+
+class TestUnboundHandlers:
+    """R20: обработчик, который Spring вызвать не может (`@PathVariable` не совпадает с шаблоном пути)."""
+
+    def test_only_station_stores_handler_is_unbound(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
+        from engine.grounding.binding import unbound_path_variables
+
+        bad = {h.id: unbound_path_variables(ix, h) for h in handlers.handlers.values()}
+        bad = {k: v for k, v in bad.items() if v}
+        assert bad == {STATION_STORES: ["stationName"]}
+
+    def test_stem_matches_list_parameter(self) -> None:
+        from engine.grounding.binding import _stem
+
+        assert _stem("stationNameList") == _stem("stationNames") == _stem("stationName") == "stationname"
+        assert _stem("stationFoodStoreId") != "stationname"
+
+    def test_rebind_to_working_handler_of_same_controller(self, ix: SkeletonIndex) -> None:
+        from engine.grounding.request import StepRequest
+
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=None)
+        req = StepRequest(scenario="S2", step=4, action="Browse the food stores at Suzhou station",
+                          handler=STATION_STORES, http={}, params={"stationId": "suzhou"}, grounding={"source": "LLM"})
+        got = g.rebind(req)
+        assert got is not None and got.handler == STATION_BY_NAMES
+        assert got.http == {"method": "POST", "path": "/api/v1/stationfoodservice/stationfoodstores"}
+        assert got.params == {} and got.grounding["rebound"]["from"] == STATION_STORES
+        # рабочий обработчик не трогаем
+        assert g.rebind(StepRequest(scenario="S1", step=9, action="x", handler=ORDER_PRICE, http={})) is None
+
+
+class _FakeLLM:
+    """LLM-заглушка: отдаёт заданный ответ и запоминает запрос."""
+
+    def __init__(self, resp: dict) -> None:
+        self.resp = resp
+        self.calls: list[tuple[str, str]] = []
+
+    def complete_json(self, kind, prompt_version, messages, schema, max_tokens=600):
+        self.calls.append((kind, prompt_version))
+        return self.resp, "sha256:fake"
+
+
+# Слова домена Train Ticket, которых нет в шаблонах v8 (ADR-007, критерий 4)
+DOMAIN_WORDS = ("train", "trip", "gaotie", "dongche", "seat", "assurance", "consign", "passenger", "ts-ui-dashboard")
+
+
+class TestProjectProfile:
+    """ADR-007: промпт v8 без домена, профиль проекта."""
+
+    def test_v8_templates_have_no_domain_words(self) -> None:
+        for t in (P.SYSTEM_V8, P.TWINS_V8, P.SELECT_TASK_V8, P.PARAMS_TASK_V8, P.KINDS_V8):
+            low = t.lower()
+            assert not [w for w in DOMAIN_WORDS if w in low]
+
+    def test_find_ui_dir(self, ix: SkeletonIndex) -> None:
+        from engine.grounding.ui_catalog import find_ui_dir
+
+        assert find_ui_dir(TARGETS, ix) == "ts-ui-dashboard"
+
+    def test_twin_pairs_split_the_same_way(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
+        from engine.grounding.profile import same_split, twin_pairs
+
+        pairs = twin_pairs(handlers, twin_groups(handlers))
+        assert [(p.base, p.variant, p.marker) for p in pairs] == [
+            ("ts-order-service", "ts-order-other-service", "other"),
+            ("ts-preserve-service", "ts-preserve-other-service", "other"),
+            ("ts-travel-service", "ts-travel2-service", "2"),
+        ]
+        # preserve -> order, travel и preserve-other -> order-other, travel2 (remote_call скелета)
+        assert same_split(ix, pairs) == [[1, 2, 3]]
+
+    def test_profile_input_has_ui_conditions(self, ix: SkeletonIndex, catalog, handlers: HandlerCatalog) -> None:
+        from engine.grounding.profile import profile_messages, twin_pairs
+
+        msgs = profile_messages(ix, TARGETS, handlers, catalog, twin_pairs(handlers, twin_groups(handlers)))
+        text = msgs[1]["content"]
+        assert "!(tripType == 'G' || tripType == 'D')" in text
+        assert "var tripType = orderTicketInfo.tripId.charAt(0);" in text
+        assert "{text: 'Other', value: 2}" in text and "{text: 'All', value: 0}" not in text
+        assert "(both sides: all of the data)" in text
+
+    def test_v8_prompt_from_profile(self, ix: SkeletonIndex) -> None:
+        resp = {"analysis": "x", "domain_summary": "A shop.", "twins": {
+            "pair_1": {"ts-order-service": "Base side: kind A orders", "ts-order-other-service": "kind B orders",
+                       "choose_by": "By kind."}}}
+        llm = _FakeLLM(resp)
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=llm)
+        assert llm.calls == [("profile", "profile-v1")] and g.version == "m1-v8"
+        assert "The application: A shop." in g.system_select
+        assert "Some services come in twins" in g.system_select
+        # правило пары и что хранит сторона — только в карточке кандидата
+        assert "By kind." not in g.system_select and "kind A orders" not in g.system_select
+        assert "Train Ticket" not in g.system_params and "/api/v1/<service>/**" in g.system_params
+        assert P.twin_note(g.profile, "ts-order-other-service") == (
+            "twin of ts-order-service; this variant side: kind B orders; choose the side by: By kind.")
+        # у пары без правила профилировщика строки нет
+        assert P.twin_note(g.profile, "ts-travel2-service") is None
+
+    def test_followup_note_from_server_answers(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
+        rebook = next(h for h in handlers.handlers if "RebookController#rebook(" in h)
+        assert handlers.answers(rebook)[2] == ["Please pay the different money!"]
+        card = StepGrounder(ix, TARGETS, embedder=None)._candidate(rebook)
+        assert "only after POST /api/v1/rebookservice/rebook answers status 2" in card
+
+    def test_answer_guards_from_ir(self, ix: SkeletonIndex, catalog) -> None:
+        from engine.grounding.grounder import ROOT
+
+        cat = HandlerCatalog(ix, TARGETS, catalog, ROOT / "data" / "ir")
+        rebook = next(h for h in cat.handlers if "RebookController#rebook(" in h)
+        assert cat.answer_guards(rebook)[2] == [
+            "!(priceOld.compareTo(priceNew) > 0) && !(priceOld.compareTo(priceNew) == 0)"]
+        assert HandlerCatalog(ix, TARGETS, catalog).answer_guards(rebook) == {}  # без IR — пусто
+        card = StepGrounder(ix, TARGETS, embedder=None)._candidate(rebook)
+        assert "its code returns it when !(priceOld.compareTo(priceNew) > 0)" in card
+
+    def test_service_calls_in_card(self, ix: SkeletonIndex, handlers: HandlerCatalog) -> None:
+        rebook = next(h for h in handlers.handlers if "RebookController#rebook(" in h)
+        diff = next(h for h in handlers.handlers if "RebookController#payDifference(" in h)
+        assert "drawBackMoney" in handlers.service_calls(rebook)
+        assert "payDifferentMoney" in handlers.service_calls(diff) and "drawBackMoney" not in handlers.service_calls(diff)
+        assert "its service code calls: checkTime, drawBackMoney" in StepGrounder(ix, TARGETS, embedder=None)._candidate(rebook)
+
+    def test_v8_ref_kinds_from_manifest(self, ix: SkeletonIndex) -> None:
+        g = StepGrounder(ix, TARGETS, embedder=None)
+        assert {"trainType", "trip", "consignRecord", "contacts", "priceConfig"} <= set(g.ref_kinds)
+        assert "train" not in g.ref_kinds and "consign" not in g.ref_kinds
+        # пример refs — два вида, на которые чаще всего ссылаются поля запросов
+        assert g.example_kinds == ("order", "trip")
+        assert "- consignRecord: ConsignRecord (ts-consign-service)" in g.system_select
+        assert "Record kinds" not in g.system_params
+        # refs — массив пар {kind, ref}: порядок видов свободный (грамматика схемы держит порядок свойств объекта)
+        pairs = P.select_schema(list(g.by_label), 3, g.ref_kinds)["properties"]["refs"]
+        assert pairs["type"] == "array" and pairs["items"]["properties"]["kind"]["enum"] == list(g.ref_kinds)
+        sel = {"refs": [{"kind": "trip", "ref": "first_of_step_2"}, {"kind": "contacts", "ref": "new_of_step_3"},
+                        {"kind": "trip", "ref": "new_of_step_1"}]}
+        assert P.refs_of(sel) == {"trip": "first_of_step_2", "contacts": "new_of_step_3"}
+        assert P.refs_of({"refs": [{"kind": "trip", "ref": None}]}) == {}
+
+    def test_bm25_without_domain_synonyms(self) -> None:
+        from engine.grounding.text import query_toks
+
+        assert query_toks("luggage") == ["luggage"]
+        assert query_toks("book without food") == ["book"]
+
+
+class _RecordingLLM:
+    """LLM-заглушка для режима CPU: выбирает первый обработчик из схемы и запоминает сообщения, схему и выборку."""
+
+    def __init__(self) -> None:
+        self.calls: list[dict] = []
+
+    def complete_json(self, kind, prompt_version, messages, schema, max_tokens=600, sampling=None):
+        self.calls.append({"kind": kind, "messages": messages, "schema": schema, "sampling": sampling})
+        if kind == "select":
+            return {"handler": schema["properties"]["handler"]["enum"][0], "expected_outcome": "success",
+                    "refs": []}, "sha256:fake"
+        return None, "sha256:fake"
+
+
+class TestCpuMode:
+    """Режим CPU (исследование GPU, раздел 7.5): без голосов, без индекса, без рассуждения; умолчания — рекорд."""
+
+    def test_compact_select_prompt(self, ix: SkeletonIndex) -> None:
+        llm = _RecordingLLM()
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=llm, votes=0, index=False, reasoning=False,
+                         top_k=5)
+        sc = load_json(TT / "scenarios" / "S0.json")
+        reqs = g.ground_scenario(sc)
+        sel = [c for c in llm.calls if c["kind"] == "select"]
+        assert len(sel) == len(reqs) and all(c["sampling"] is None for c in sel)  # без выборок голосования
+        assert "Handler index" not in g.system_select
+        for c, r in zip(sel, reqs):
+            enum = c["schema"]["properties"]["handler"]["enum"]
+            assert enum == [g.labels[h] for h in r.grounding["candidates"]]  # выбор только из кандидатов
+            assert "reasoning" not in c["schema"]["properties"]
+            task = c["messages"][1]["content"]
+            assert "(one of the candidates)" in task and "a short reasoning" not in task
+
+    def test_defaults_keep_record_prompt(self, ix: SkeletonIndex) -> None:
+        llm = _RecordingLLM()
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=llm)
+        g.ground_scenario({"id": "S0", "steps": [load_json(TT / "scenarios" / "S0.json")["steps"][0]]})
+        sel = [c for c in llm.calls if c["kind"] == "select"]
+        assert len(sel) == 6 and "Handler index" in g.system_select
+        assert ("Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler "
+                "(a candidate, or a handler from the index when no candidate fits), whether") in sel[0]["messages"][1]["content"]
+        assert len(sel[0]["schema"]["properties"]["handler"]["enum"]) == len(g.labels)
+
+    def test_client_timeout(self, tmp_path: Path) -> None:
+        assert LLMClient(use_server=False, cache_dir=tmp_path).timeout == 300
+        assert LLMClient(use_server=False, cache_dir=tmp_path, timeout=900).timeout == 900

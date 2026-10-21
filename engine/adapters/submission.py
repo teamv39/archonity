@@ -13,7 +13,7 @@ class SubmissionAdapter:
 
     def __init__(
         self,
-        project: str = "trainticket",
+        project: str = "",
         evidence_logger: EvidenceLogger | None = None,
     ) -> None:
         self.project = project
@@ -30,7 +30,6 @@ class SubmissionAdapter:
     ) -> None:
         edges: list[dict[str, str]] = []
 
-        # 1. executes: scenario:S<N> -> method:...
         for m in sorted(methods):
             edges.append({
                 "source": f"scenario:{scenario_id}",
@@ -38,7 +37,6 @@ class SubmissionAdapter:
                 "target": m,
             })
 
-        # 2. calls: method -> method
         for s, t in sorted(calls):
             edges.append({
                 "source": s,
@@ -46,7 +44,6 @@ class SubmissionAdapter:
                 "target": t,
             })
 
-        # 3. remote: method -> method (другого сервиса)
         for s, t in sorted(remote):
             edges.append({
                 "source": s,
@@ -54,7 +51,6 @@ class SubmissionAdapter:
                 "target": t,
             })
 
-        # 4. data: method -> res:table:...
         for s, t in sorted(data):
             edges.append({
                 "source": s,
@@ -64,13 +60,12 @@ class SubmissionAdapter:
 
         self.scenarios[scenario_id] = edges
 
-        # Регистрация в EvidenceLogger
         if self.evidence_logger:
-            for s, t in remote:
+            for s, t in sorted(remote):
                 self.evidence_logger.record_remote_call(s, t, scenario_id=scenario_id)
-            for s, t in data:
+            for s, t in sorted(data):
                 self.evidence_logger.record_data_access(s, t, scenario_id=scenario_id)
-            for m in methods:
+            for m in sorted(methods):
                 if m.startswith("method:"):
                     svc = m.split(":")[1]
                     self.evidence_logger.record_gateway_route(svc)
@@ -84,7 +79,7 @@ class SubmissionAdapter:
         }
 
     def to_canonical_graph(self) -> dict[str, Any]:
-        """Преобразование предсказанных связей в канонический формат графа для visualizer/ (ADR-001 / ADR-002)."""
+        """Преобразование предсказанных связей в канонический формат графа для visualizer/ (ADR-002 / ADR-005)."""
         nodes_map: dict[str, dict[str, Any]] = {}
         edges_list: list[dict[str, Any]] = []
         seen_edges: set[str] = set()
@@ -182,22 +177,23 @@ class SubmissionAdapter:
                             edges_list.append(edge_data)
 
         # 4. Маршруты шлюза из evidence_logger
-        if self.evidence_logger:
+        gateway = self.evidence_logger.gateway if self.evidence_logger else None
+        if gateway:
             for edge_id, ev in self.evidence_logger.evidence.items():
-                if ev.get("source") == "ts-gateway-service":
+                if ev.get("source") == gateway:
                     tgt = ev.get("target")
                     if tgt in nodes_map and edge_id not in seen_edges:
-                        if "ts-gateway-service" not in nodes_map:
-                            nodes_map["ts-gateway-service"] = {
-                                "id": "ts-gateway-service",
-                                "name": "ts-gateway-service",
+                        if gateway not in nodes_map:
+                            nodes_map[gateway] = {
+                                "id": gateway,
+                                "name": gateway,
                                 "type": "SERVICE",
                                 "endpoints": [],
                             }
                         seen_edges.add(edge_id)
                         edge_data = {
                             "id": edge_id,
-                            "source": "ts-gateway-service",
+                            "source": gateway,
                             "target": tgt,
                             "relation_type": "REST_HTTP",
                             "source_type": "CONFIG",

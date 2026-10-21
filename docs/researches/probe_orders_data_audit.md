@@ -1,5 +1,7 @@
 # Аудит гипотезы 3: Зондирующий SELECT в S2 (Шаги 9 и 10)
 
+> **Архив, 17.10.** Посылка 4: абляция зондирующего SELECT к `orders` в S2 опровергнута (0.91807). Повторять не нужно.
+
 ## Контекст и суть гипотезы
 
 В сценарии S2 (оформление и отмена билета на обычный поезд) на шагах 9 («Ask how much would be refunded if the order were cancelled») и 10 («Cancel the order») вызывается сервис отмены `ts-cancel-service` (`CancelController#calculate` и `CancelController#cancelTicket`).

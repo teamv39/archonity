@@ -1,4 +1,4 @@
-"""In-memory DB dump loader and query interface for Train Ticket static analysis."""
+"""In-memory DB state loaded from a MySQL dump, and the scenario context of the task package."""
 from __future__ import annotations
 
 import gzip
@@ -149,36 +149,6 @@ class TableCollection(dict):
         return super().__contains__(key)
 
 
-class TableNodeResolution(list):
-    """Dual representation of a resolved table node.
-
-    Behaves both as a list of rows (for iteration and record inspection)
-    and as a dictionary of metadata (for node_id, service, db, table, qualified attributes).
-    """
-
-    def __init__(self, rows: list[dict[str, Any]], metadata: dict[str, str]) -> None:
-        super().__init__(rows)
-        self._metadata = metadata
-        self.node_id = metadata.get("node_id", "")
-        self.service = metadata.get("service", "")
-        self.db = metadata.get("db", "")
-        self.table = metadata.get("table", "")
-        self.qualified = metadata.get("qualified", "")
-
-    def __getitem__(self, item: Any) -> Any:
-        if isinstance(item, str):
-            return self._metadata[item]
-        return super().__getitem__(item)
-
-    def get(self, key: str, default: Any = None) -> Any:
-        return self._metadata.get(key, default)
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, dict):
-            return self._metadata == other
-        return super().__eq__(other)
-
-
 class DatabaseState:
     """In-memory representation of database tables loaded from warmup dump."""
 
@@ -196,11 +166,11 @@ class DatabaseState:
     def normalize_table_name(self, table_name: str) -> str:
         """Normalizes table identifier variants to bare canonical name.
 
-        Variants supported:
+        Variants supported (the table name is the part after the first dot):
           - 'orders'
-          - 'ts_order.orders'
-          - 'ts-order-service.orders'
-          - 'res:table:ts-order-service.orders'
+          - '<db>.orders'
+          - '<service>.orders'
+          - 'res:table:<service>.orders' (skeleton table node)
         """
         if not table_name:
             return ""
@@ -268,15 +238,15 @@ class DatabaseState:
         return len(matching_rows)
 
     def fork(self) -> DatabaseState:
-        """Creates an isolated deep copy in < 0.1 ms for scenario isolation."""
+        """Creates an isolated copy in < 20 µs for scenario isolation."""
         cloned_tables = {
-            tbl: [dict(row) for row in rows]
+            tbl: [row.copy() for row in rows]
             for tbl, rows in self._canonical_tables.items()
         }
         return DatabaseState(
             tables=cloned_tables,
-            table_aliases=dict(self._table_aliases),
-            table_columns=dict(self._table_columns),
+            table_aliases=self._table_aliases,
+            table_columns=self._table_columns,
         )
 
 
@@ -286,7 +256,7 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
     if not path.is_file():
         raise FileNotFoundError(f"Database dump file not found: {path}")
 
-    # Read with latin1 encoding to safely handle binary bytes (e.g. byte 0xd5)
+    # Кодировка latin1 сохраняет произвольные бинарные байты MySQL-дампа без ошибок декодирования
     with gzip.open(path, "rt", encoding="latin1") as f:
         text = f.read()
 
@@ -295,7 +265,6 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
     table_cols: dict[str, list[str]] = {}
     table_to_db: dict[str, str] = {}
 
-    # 1. Parse USE and CREATE TABLE statements
     i = 0
     num_lines = len(lines)
     while i < num_lines:
@@ -335,7 +304,6 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
 
         i += 1
 
-    # 2. Parse INSERT INTO ... VALUES statements
     insert_matches = re.finditer(
         r"INSERT\s+INTO\s+`?([a-zA-Z0-9_.]+)`?\s*(?:\(([^)]+)\))?\s*VALUES\s*(.*?);",
         text,
@@ -361,58 +329,74 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
             tables_data[tbl] = []
         tables_data[tbl].extend(row_dicts)
 
-    # 3. Build aliases
+    # Узел таблицы скелета `res:table:<service>.<table>` и `<db>.<table>` сводятся к имени таблицы
+    # (`DatabaseState.normalize_table_name`), отдельных псевдонимов не нужно
     table_aliases: dict[str, str] = {}
     for tbl, db in table_to_db.items():
         table_aliases[tbl] = tbl
         table_aliases[f"{db}.{tbl}"] = tbl
-        svc_name = db.replace("_", "-") + "-service"
-        table_aliases[f"{svc_name}.{tbl}"] = tbl
-        table_aliases[f"res:table:{svc_name}.{tbl}"] = tbl
-
-    # All known 33 skeleton mappings for fast O(1) lookup
-    known_skeleton_mappings = {
-        "res:table:ts-order-service.orders": "orders",
-        "res:table:ts-order-other-service.orders_other": "orders_other",
-        "res:table:ts-consign-mysql.consign_record": "consign_record",
-        "res:table:ts-food-service.food_order": "food_order",
-        "res:table:ts-food-delivery-service.food_delivery_order": "food_delivery_order",
-        "res:table:ts-food-delivery-service.food_delivery_order_food_list": "food_delivery_order_food_list",
-        "res:table:ts-travel-service.trip": "trip",
-        "res:table:ts-travel2-service.trip2": "trip2",
-        "res:table:ts-user-service.user": "user",
-        "res:table:ts-auth-service.auth_user": "auth_user",
-        "res:table:ts-auth-service.user_roles": "user_roles",
-        "res:table:ts-contacts-service.contacts": "contacts",
-        "res:table:ts-station-service.station": "station",
-        "res:table:ts-train-service.train_type": "train_type",
-        "res:table:ts-inside-payment-service.inside_money": "inside_money",
-        "res:table:ts-inside-payment-service.inside_payment": "inside_payment",
-        "res:table:ts-payment-service.payment": "payment",
-        "res:table:ts-payment-service.money": "money",
-        "res:table:ts-price-service.price_config": "price_config",
-        "res:table:ts-route-service.route": "route",
-        "res:table:ts-route-service.route_distances": "route_distances",
-        "res:table:ts-route-service.route_stations": "route_stations",
-        "res:table:ts-security-service.security_config": "security_config",
-        "res:table:ts-config-service.config": "config",
-        "res:table:ts-assurance-service.assurance": "assurance",
-        "res:table:ts-consign-price-service.consign_price": "consign_price",
-        "res:table:ts-delivery-service.delivery": "delivery",
-        "res:table:ts-notification-service.notify_info": "notify_info",
-        "res:table:ts-station-food-service.station_food_list": "station_food_list",
-        "res:table:ts-station-food-service.station_food_store": "station_food_store",
-        "res:table:ts-train-food-service.train_food": "train_food",
-        "res:table:ts-train-food-service.train_food_list": "train_food_list",
-        "res:table:ts-wait-order-service.wait_list_order": "wait_list_order",
-    }
-    for alias, canonical in known_skeleton_mappings.items():
-        table_aliases[alias] = canonical
-        bare_service_alias = alias.replace("res:table:", "")
-        table_aliases[bare_service_alias] = canonical
 
     return DatabaseState(
         tables=tables_data,
         table_aliases=table_aliases,
         table_columns=table_cols,
     )
+
+
+def parse_context_readme(readme_path: str | Path) -> dict[str, Any]:
+    """Scenario context from the task package's context/README.md (see `parse_context`)."""
+    path = Path(readme_path)
+    if not path.is_file():
+        return {}
+    return parse_context(path.read_text(encoding="utf-8", errors="replace"))
+
+
+def parse_context(text: str) -> dict[str, Any]:
+    """Extracts the scenario context: the `context` field of the skeleton or context/README.md of the task package.
+
+    Parses:
+      - travel_date ('booked for 1 October 2026' or '... 2026-10-01')
+      - system_date ('system clock is 15 September 2026')
+      - user_name ('pre-registered user <name>')
+      - balance ('account balance 10 000')
+    """
+    info: dict[str, Any] = {}
+
+    months = {
+        "january": "01", "february": "02", "march": "03", "april": "04",
+        "may": "05", "june": "06", "july": "07", "august": "08",
+        "september": "09", "october": "10", "november": "11", "december": "12",
+    }
+
+    # Travel date (e.g. "booked for 1 October 2026")
+    m_travel = re.search(r"booked for\s+([0-9]{1,2})\s+([A-Za-z]+)\s+([0-9]{4})", text, re.IGNORECASE)
+    if m_travel:
+        day, month_name, year = m_travel.group(1), m_travel.group(2).lower(), m_travel.group(3)
+        month = months.get(month_name)
+        if month:
+            info["travel_date"] = f"{year}-{month}-{int(day):02d}"
+    elif m_iso := re.search(r"booked for\s+([0-9]{4}-[0-9]{2}-[0-9]{2})", text, re.IGNORECASE):
+        info["travel_date"] = m_iso.group(1)
+
+    # System clock date (e.g. "system clock is 15 September 2026")
+    m_sys = re.search(r"system clock is\s+([0-9]{1,2})\s+([A-Za-z]+)\s+([0-9]{4})", text, re.IGNORECASE)
+    if m_sys:
+        day, month_name, year = m_sys.group(1), m_sys.group(2).lower(), m_sys.group(3)
+        month = months.get(month_name)
+        if month:
+            info["system_date"] = f"{year}-{month}-{int(day):02d}"
+    elif m_iso := re.search(r"system clock is\s+([0-9]{4}-[0-9]{2}-[0-9]{2})", text, re.IGNORECASE):
+        info["system_date"] = m_iso.group(1)
+
+    # Pre-registered account
+    m_user = re.search(r"pre-registered user\s+([a-zA-Z0-9_-]+)", text, re.IGNORECASE)
+    if m_user:
+        info["user_name"] = m_user.group(1)
+
+    # Balance (e.g. "internal account balance 10 000")
+    m_bal = re.search(r"(?:account balance|balance)\s+([0-9]+(?:[\s,][0-9]{3})*(?:\.[0-9]+)?)", text, re.IGNORECASE)
+    if m_bal:
+        info["balance"] = float(m_bal.group(1).replace(" ", "").replace(",", ""))
+
+    return info
+

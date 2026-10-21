@@ -11,10 +11,12 @@ LLM видит подробные карточки кандидатов и ин�
 from __future__ import annotations
 
 import argparse
+import collections
 import glob
 import json
 import re
 import sys
+import dataclasses
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -22,15 +24,23 @@ from typing import Any
 from engine.adapters.skeleton import SkeletonIndex, load_json
 from engine.grounding import prompts as P
 from engine.grounding.docs import HandlerCatalog, HandlerInfo
+from engine.grounding.binding import rebind
 from engine.grounding.llm import LLMClient
+from engine.grounding.profile import ProjectProfile, build_profile
 from engine.grounding.request import StepRequest
 from engine.grounding.retrieval import Ranked, Retriever
-from engine.grounding.ui_catalog import UIRequest, build_catalog
+from engine.grounding.ui_catalog import UIRequest, build_catalog, find_ui_dir, match_handlers
+from engine.manifest import entity_kinds
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TT = ROOT / "hackaton" / "tt-challenge"
 DEFAULT_EMBEDDER = "qwen3-4b"
 TOP_K = 10
+# Выбор обработчика голосованием — жадный ответ и SELECT_VOTES выборок с параметрами модели по умолчанию
+# для режима без thinking и seed 1..SELECT_VOTES (заданы заранее, под результат не подбираются); побеждает
+# обработчик большинства (`StepGrounder._vote`). При temperature 0 правка текста промпта переставляла пограничные шаги.
+SELECT_VOTES = 5
+SAMPLING = {"temperature": 0.7, "top_p": 0.8, "top_k": 20}
 REFUSED = re.compile(r"\b(refuse[sd]?|rejects?|rejected|denie[sd]|fails?)\b", re.I)
 ENUM_CONST = re.compile(r"^\s*([A-Z][A-Z0-9_]*)\s*(?:\(([^)]*)\))?\s*[,;]", re.M)
 
@@ -61,6 +71,12 @@ def enum_codes(ix: SkeletonIndex, targets_root: Path) -> dict[str, list[str]]:
     return out
 
 
+def _majority(xs: list[str]) -> str:
+    """Самое частое значение; при равенстве — встреченное раньше."""
+    c = collections.Counter(xs)
+    return max(c, key=lambda x: (c[x], -xs.index(x)))
+
+
 @dataclass
 class ScenarioSession:
     """Заземление одного сценария шаг за шагом: история выбранных запросов идёт в промпт следующих шагов."""
@@ -82,27 +98,80 @@ class ScenarioSession:
 class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
-                 top_k: int = TOP_K) -> None:
+                 top_k: int = TOP_K, votes: int = SELECT_VOTES, index: bool = True, reasoning: bool = True,
+                 ir_dir: str | Path | None = None, ui_cache: str | Path | None = None) -> None:
+        """Промпт ADR-007: общий шаблон, домен и правила близнецов из профиля проекта, виды refs из манифеста.
+
+        Режим CPU (docs/researches/gpu_dependence_and_cpu_fallback_study.md, раздел 7.5): `votes` — выборок
+        голосования сверх жадного ответа (0 — только жадный); `index=False` — без индекса обработчиков в системном
+        промпте выбора, выбор только из кандидатов (контекст ~3 тыс. токенов вместо ~10); `reasoning=False` — ответ
+        выбора без рассуждения. Умолчания — промпт и ключи кеша рекорда.
+
+        `ir_dir` — IR тел методов проекта (по нему `answer_guards` видит условия возвратов), `ui_cache` — кеш каталога
+        UI; по умолчанию `data/ir` и `data/ui_catalog.json`."""
+        self.ix = ix
         self.root = Path(targets_root)
-        self.ui = build_catalog(self.root, ix)
-        self.cat = HandlerCatalog(ix, self.root, self.ui)
+        self.version = P.PROMPT_VERSION
+        self.ui_dir = find_ui_dir(self.root, ix)
+        self.ui = build_catalog(self.root, ix, self.ui_dir, cache_path=ui_cache)
+        self.cat = HandlerCatalog(ix, self.root, self.ui, Path(ir_dir) if ir_dir else ROOT / "data" / "ir")
         emb = None
         if embedder:
-            from engine.grounding.embedder import make_embedder
+            from engine.grounding.embedder import QUERY_TASK, make_embedder
 
-            emb = make_embedder(embedder, allow_model=allow_embed_model)
+            emb = make_embedder(embedder, allow_model=allow_embed_model, task=QUERY_TASK)
         self.retriever = Retriever(self.cat, render, emb)
         self.llm = llm
         self.top_k = top_k
+        self.votes = votes
+        self.index = index
+        self.reasoning = reasoning
         self.labels = P.handler_labels(self.cat.handlers)
         self.by_label = {lb: h for h, lb in self.labels.items()}
         enums = enum_codes(ix, self.root)
-        self.system_select = P.system_prompt(enums, P.handler_index(self.cat.handlers, self.labels))
-        self.system_params = P.system_prompt(enums)
+        index = P.handler_index(self.cat.handlers, self.labels) if self.index else None
+        # Виды refs — из манифеста сущностей (ADR-007, решение 2)
+        kinds = entity_kinds(ix)
+        self.ref_kinds: tuple[str, ...] = tuple(kinds)
+        self.example_kinds: tuple[str, str] = P.example_kinds(kinds, self.cat.handlers)
+        modules = {n.get("fqn"): n.get("module", "") for n in ix.N.values() if n.get("kind") == "type"}
+        self.profile: ProjectProfile | None = build_profile(ix, self.root, self.cat, self.ui, self.retriever.twins, llm)
+        env = (ix.sk.get("context") or {}).get("profile")
+        admin = any("admin" in h.module.split("-") for h in self.cat.handlers.values())
+        self.system_select = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin, index,
+                                                P.ref_kinds_block(kinds, modules))
+        self.system_params = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin)
+
+    def rebind(self, req: StepRequest) -> StepRequest | None:
+        """R20: M1 выбрал обработчик, который Spring вызвать не может (`@PathVariable` не совпадает с шаблоном
+        пути). Шаг идёт через рабочий обработчик того же контроллера с тем же входом (`engine/grounding/binding.py`).
+
+        Замена — после заземления: выбор M1 и история в промпте следующих шагов не меняются, кеш LLM цел.
+        Параметры не переносятся: тело нового обработчика другое (имя станции → список имён)."""
+        got = rebind(self.ix, self.cat, req.handler)
+        if got is None:
+            return None
+        handler, why = got
+        verb, path = self.cat.handlers[handler].routes[0]
+        return dataclasses.replace(req, handler=handler, http={"method": verb, "path": path}, params={},
+                                   ui_source=None, body_src={}, grounding=dict(req.grounding, rebound=why))
+
+    @staticmethod
+    def _queries(sc: dict[str, Any]) -> list[str]:
+        return [s.get("action") or "" for s in sc.get("steps") or []]
+
+    def prepare(self, scenarios: list[dict[str, Any]]) -> None:
+        """Векторы шагов всех сценариев прогона одной пачкой, до первого ответа LLM по ним.
+
+        Эмбеддер грузится один раз и сразу выгружается (`STEmbedder.release`), `llama server` потом поднимается
+        без него в памяти: на 16 ГБ эмбеддер рядом с сервером не помещается, на A100 это лишние 8 ГБ. `begin` берёт
+        векторы из кеша эмбеддера; тексты и ключи те же, что и без `prepare`. Сбой модели не бросает исключение:
+        эмбеддер отключает dense, поиск идёт по одному BM25."""
+        self.retriever.warm([q for sc in scenarios for q in self._queries(sc)])
 
     def begin(self, sc: dict[str, Any]) -> ScenarioSession:
         steps = sc.get("steps") or []
-        ranked = self.retriever.search([s.get("action") or "" for s in steps])
+        ranked = self.retriever.search(self._queries(sc))
         return ScenarioSession(self, sc, {s["n"]: r for s, r in zip(steps, ranked)})
 
     def ground_scenario(self, sc: dict[str, Any]) -> list[StepRequest]:
@@ -118,27 +187,78 @@ class StepGrounder:
         reqs = sorted(h.ui, key=lambda r: ("/static/js/" in r.file, not r.pages, r.id))
         return [(r, self.ui.siblings(r)) for r in reqs]
 
+    def _candidate(self, h: str) -> str:
+        """Карточка кандидата; у близнеца — какие данные он обслуживает (по профилю проекта)."""
+        info = self.cat.handlers[h]
+        twin = h in self.retriever.twins
+        ui = self._ui_for(info)
+        return P.candidate_block(self.labels[h], info, ui, twin=P.twin_note(self.profile, info.module) if twin else None,
+                                 notes=P.followup_notes(ui, self._answers, self._answer_guards),
+                                 calls=self.cat.service_calls(h))
+
+    def _vote(self, msgs: list[dict[str, str]], schema: dict[str, Any],
+              grounding: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
+        """Выбор голосованием: жадный ответ и `self.votes` выборок, обработчик большинства (при равенстве —
+        жадного ответа). Ответ целиком (refs, исход) — жадный, если его обработчик победил; иначе самый частый
+        среди выборок победителя. Выборки проверяют решение, детали — от жадного вывода: при temperature 0.7 refs
+        шумят (trip -> train для «первого рейса шага 2»)."""
+        got = [self.llm.complete_json("select", self.version, msgs, schema)]
+        got += [self.llm.complete_json("select", self.version, msgs, schema, sampling={**SAMPLING, "seed": i + 1})
+                for i in range(self.votes)]
+        valid = [(sel, key) for sel, key in got if sel is not None and sel.get("handler") in self.by_label]
+        grounding["cache_keys"]["select_votes"] = [key for _, key in got]
+        if not valid:
+            return None, got[0][1]
+        grounding["votes"] = dict(collections.Counter(sel["handler"] for sel, _ in valid))
+        best = _majority([sel["handler"] for sel, _ in valid])
+        greedy = got[0][0]
+        if greedy is not None and greedy.get("handler") == best:
+            return got[0]
+        mine = [(sel, key) for sel, key in valid if sel["handler"] == best]
+        answers = [json.dumps({"refs": P.refs_of(sel),
+                               "outcome": sel.get("expected_outcome")}, sort_keys=True) for sel, _ in mine]
+        return mine[answers.index(_majority(answers))]
+
+    def _answers(self, verb: str, url: str) -> dict[int, list[str]]:
+        """Коды ответа обработчиков запроса `verb url` из их исходника (для `followup_notes`)."""
+        out: dict[int, list[str]] = {}
+        for h in match_handlers(verb, url, self.ix.handlers):
+            for code, msgs in self.cat.answers(h).items():
+                out.setdefault(code, []).extend(m for m in msgs if m not in out[code])
+        return out
+
+    def _answer_guards(self, verb: str, url: str) -> dict[int, list[str]]:
+        """Условия возврата кодов ответа обработчиков запроса `verb url` по IR (для `followup_notes`)."""
+        out: dict[int, list[str]] = {}
+        for h in match_handlers(verb, url, self.ix.handlers):
+            for code, conds in self.cat.answer_guards(h).items():
+                out.setdefault(code, []).extend(c for c in conds if c not in out[code])
+        return out
+
     def ground_step(self, sc: dict[str, Any], st: dict[str, Any], ranked: Ranked, history: list[str]) -> StepRequest:
         n, action = st["n"], st.get("action") or ""
         cands = ranked.candidates(self.top_k, self.retriever.twins)
         prefix = P.scenario_block(sc) + "\n" + P.history_block(history) + "\n"
         grounding: dict[str, Any] = {"candidates": cands, "cache_keys": {}}
+        if self.profile is not None and self.profile.key:
+            grounding["cache_keys"]["profile"] = self.profile.key
 
         sel = None
         if self.llm is not None:
-            blocks = "\n".join(
-                P.candidate_block(self.labels[h], self.cat.handlers[h], self._ui_for(self.cat.handlers[h]),
-                                  P.train_kind(self.cat.handlers[h].module) if h in self.retriever.twins else None)
-                for h in cands)
-            msgs = [{"role": "system", "content": self.system_select},
-                    {"role": "user", "content": prefix + P.SELECT_TASK.format(n=n, action=action, candidates=blocks)}]
-            sel, key = self.llm.complete_json("select", P.PROMPT_VERSION, msgs,
-                                              P.select_schema(list(self.by_label), n))
+            blocks = "\n".join(self._candidate(h) for h in cands)
+            ex1, ex2 = self.example_kinds
+            task = P.SELECT_TASK_V8.format(n=n, action=action, candidates=blocks, ex1=ex1, ex2=ex2,
+                                           reasoning=P.REASONING_ASK if self.reasoning else "",
+                                           choice=P.CHOICE_INDEX if self.index else P.CHOICE_CANDIDATES)
+            msgs = [{"role": "system", "content": self.system_select}, {"role": "user", "content": prefix + task}]
+            labels = list(self.by_label) if self.index else [self.labels[h] for h in cands]
+            schema = P.select_schema(labels, n, self.ref_kinds, reasoning=self.reasoning)
+            sel, key = self._vote(msgs, schema, grounding)
             grounding["cache_keys"]["select"] = key
         if sel is not None and sel.get("handler") in self.by_label:
             handler = self.by_label[sel["handler"]]
             outcome = sel.get("expected_outcome") or "success"
-            refs = {k: v for k, v in (sel.get("refs") or {}).items() if v}
+            refs = P.refs_of(sel)
             grounding.update(source="LLM", reasoning=sel.get("reasoning", ""), from_index=handler not in cands)
         else:
             handler = cands[0]
@@ -161,9 +281,9 @@ class StepGrounder:
                 if k in names:
                     params[k], sources[k] = v, "UI"
         if self.llm is not None and grounding["source"] == "LLM" and P.needs_params(h):
-            msgs = [{"role": "system", "content": self.system_params},
-                    {"role": "user", "content": prefix + P.params_task(n, action, verb, path, h, fields, ui_req)}]
-            got, key = self.llm.complete_json("params", P.PROMPT_VERSION, msgs, P.params_schema(fields))
+            task = P.params_task(n, action, verb, path, h, fields, ui_req)
+            msgs = [{"role": "system", "content": self.system_params}, {"role": "user", "content": prefix + task}]
+            got, key = self.llm.complete_json("params", self.version, msgs, P.params_schema(fields))
             grounding["cache_keys"]["params"] = key
             for k, v in (got or {}).items():
                 if v is not None and k in names:
@@ -175,6 +295,7 @@ class StepGrounder:
             scenario=sc.get("id", "S?"), step=n, action=action, handler=handler,
             http={"method": verb, "path": path}, params=params, expected_outcome=outcome, refs=refs,
             ui_source={"file": ui_req.file, "line": ui_req.line} if ui_req is not None else None,
+            body_src=dict(ui_req.body_src) if ui_req is not None else {},
             grounding=grounding,
         )
 
@@ -263,8 +384,9 @@ def main() -> None:
                      allow_embed_model=a.embed_model, llm=llm, top_k=a.top_k)
     a.out.mkdir(parents=True, exist_ok=True)
     results: dict[str, list[StepRequest]] = {}
-    for p in paths:
-        sc = load_json(p)
+    scenarios = [load_json(p) for p in paths]
+    g.prepare(scenarios)
+    for sc in scenarios:
         reqs = g.ground_scenario(sc)
         results[sc["id"]] = reqs
         (a.out / f"{sc['id']}.json").write_text(

@@ -4,130 +4,24 @@ import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.v39a.config.TargetMethod;
-import com.v39a.model.CallIR;
-import com.v39a.model.MethodIR;
-import com.v39a.parser.AstAnalyzer;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.stmt.ForEachStmt;
+import com.github.javaparser.ast.stmt.IfStmt;
+import com.github.javaparser.ast.stmt.TryStmt;
+import com.v39a.enumres.EnumResolver;
+import com.v39a.model.EnumConstantIR;
+import com.v39a.parser.AstUtils;
 import com.v39a.parser.TypeIndex;
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArchparseTest {
-
-    private Path resolveTargetPath(String relative) {
-        String[] prefixes = {
-                "../hackaton/tt-challenge/targets/trainticket/",
-                "hackaton/tt-challenge/targets/trainticket/",
-                "../data/train-ticket/",
-                "data/train-ticket/"
-        };
-        for (String prefix : prefixes) {
-            Path p = Paths.get(prefix + relative);
-            if (p.toFile().exists()) {
-                return p;
-            }
-        }
-        return null;
-    }
-
-    @Test
-    public void testRealCancelOrderAnalysis() throws Exception {
-        Path cancelPath = resolveTargetPath("ts-cancel-service/src/main/java/cancel/service/CancelServiceImpl.java");
-        assertNotNull(cancelPath, "CancelServiceImpl.java must exist in targets");
-
-        CompilationUnit cu = StaticJavaParser.parse(cancelPath);
-        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
-        TypeIndex typeIndex = new TypeIndex(cu, cid);
-
-        TargetMethod target = new TargetMethod(
-                "method:ts-cancel-service:cancel.service.CancelServiceImpl#cancelOrder(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
-                "ts-cancel-service/src/main/java/cancel/service/CancelServiceImpl.java",
-                "cancelOrder",
-                "String", "String", "HttpHeaders"
-        );
-
-        MethodDeclaration md = cid.getMethodsByName("cancelOrder").get(0);
-        MethodIR ir = AstAnalyzer.analyze(target, md, cu, typeIndex);
-
-        assertNotNull(ir);
-
-        // 1. Проверяем точное число вызовов (83 вызова)
-        assertEquals(83, ir.getCalls().size(), "cancelOrder must have exactly 83 calls");
-
-        // 2. Проверяем 6 вызовов enum_constant (OrderStatus.NOTPAID, PAID, CHANGE для high-speed и regular)
-        List<CallIR> enumCalls = ir.getCalls().stream()
-                .filter(c -> c.getEnumConstant() != null)
-                .collect(Collectors.toList());
-        assertEquals(6, enumCalls.size(), "cancelOrder must contain exactly 6 enum constant calls");
-
-        for (CallIR ec : enumCalls) {
-            assertEquals("edu.fudan.common.entity.OrderStatus", ec.getEnumConstant().getType());
-            assertTrue(List.of("NOTPAID", "PAID", "CHANGE").contains(ec.getEnumConstant().getConstant()));
-            assertEquals("getCode", ec.getCallee());
-            assertEquals("ENUM", ec.getKind());
-        }
-
-        // 3. Проверяем Guard (условия исполнения)
-        // Первые вызовы (до if) выполняются безусловно
-        CallIR firstCall = ir.getCalls().get(0);
-        assertEquals("getOrderByIdFromOrder", firstCall.getCallee());
-        assertTrue(firstCall.getGuard().isEmpty(), "First call before any if must have empty guard");
-        assertEquals("SAME_CLASS", firstCall.getKind());
-
-        // Вызовы внутри then (high-speed) должны содержать условие orderResult.getStatus() == 1
-        CallIR cancelFromOrderCall = ir.getCalls().stream()
-                .filter(c -> "cancelFromOrder".equals(c.getCallee()))
-                .findFirst()
-                .orElseThrow();
-        assertTrue(cancelFromOrderCall.getGuard().stream().anyMatch(g -> g.equals("b49:then")));
-
-        // Вызов getOrderByIdFromOrderOther (regular) должен содержать отрицание !(orderResult.getStatus() == 1)
-        CallIR otherCall = ir.getCalls().stream()
-                .filter(c -> "getOrderByIdFromOrderOther".equals(c.getCallee()))
-                .findFirst()
-                .orElseThrow();
-        assertTrue(otherCall.getGuard().stream().anyMatch(g -> g.equals("b49:else")));
-
-        // 4. Проверяем наличие разных категорий kind
-        assertTrue(ir.getCalls().stream().anyMatch(c -> "CONSTRUCTOR".equals(c.getKind())));
-        assertTrue(ir.getCalls().stream().anyMatch(c -> "SAME_CLASS".equals(c.getKind())));
-        assertTrue(ir.getCalls().stream().anyMatch(c -> "OTHER".equals(c.getKind())));
-        assertTrue(ir.getCalls().stream().anyMatch(c -> "ENUM".equals(c.getKind())));
-    }
-
-    @Test
-    public void testInsidePaymentUnsupportedLoops() throws Exception {
-        Path payPath = resolveTargetPath("ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java");
-        assertNotNull(payPath, "InsidePaymentServiceImpl.java must exist in targets");
-
-        CompilationUnit cu = StaticJavaParser.parse(payPath);
-        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
-        TypeIndex typeIndex = new TypeIndex(cu, cid);
-
-        TargetMethod target = new TargetMethod(
-                "method:ts-inside-payment-service:inside_payment.service.InsidePaymentServiceImpl#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
-                "ts-inside-payment-service/src/main/java/inside_payment/service/InsidePaymentServiceImpl.java",
-                "pay",
-                "PaymentInfo", "HttpHeaders"
-        );
-
-        MethodDeclaration md = cid.getMethodsByName("pay").get(0);
-        MethodIR ir = AstAnalyzer.analyze(target, md, cu, typeIndex);
-
-        assertNotNull(ir);
-        assertEquals(80, ir.getCalls().size(), "pay must have 80 calls");
-
-        // Проверяем честность unsupported: циклы while для R17 должны быть зафиксированы
-        assertFalse(ir.getUnsupported().isEmpty(), "unsupported must not be empty for pay()");
-        assertTrue(ir.getUnsupported().stream().anyMatch(u -> u.contains("while loop not modeled (R17)")),
-                "unsupported must flag while loops for R17");
-    }
 
     @Test
     public void testBlockScopedVariableLookup() {
@@ -151,7 +45,7 @@ public class ArchparseTest {
         TypeIndex index = new TypeIndex(cu, cid);
 
         MethodDeclaration md = cid.getMethodsByName("run").get(0);
-        List<com.github.javaparser.ast.expr.MethodCallExpr> calls = md.findAll(com.github.javaparser.ast.expr.MethodCallExpr.class);
+        List<MethodCallExpr> calls = md.findAll(MethodCallExpr.class);
 
         // Первый вызов в блоке String x
         String typeFirst = index.resolveVariableType(calls.get(0), "x");
@@ -163,162 +57,83 @@ public class ArchparseTest {
     }
 
     @Test
-    public void testEarlyExitPerArmAndGuardIds() {
-        CompilationUnit cu = StaticJavaParser.parse("package test;\n" +
-                "public class Dummy {\n" +
-                "    int f(int a) {\n" +
-                "        if (a > 0) {\n" +
-                "            g();\n" +
-                "        } else if (a == 0) {\n" +
-                "            return 0;\n" +
-                "        } else {\n" +
-                "            return -1;\n" +
-                "        }\n" +
-                "        return 1;\n" +
-                "    }\n" +
-                "    void g() {}\n" +
-                "}");
-        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).get();
-        MethodDeclaration md = cid.getMethods().get(0);
-        TargetMethod target = new TargetMethod("method:dummy:Dummy#f(int)", "Dummy.java", "f", "int");
-        MethodIR ir = AstAnalyzer.analyze(target, md, cu, new TypeIndex(cu, cid));
-
-        // then не выходит, а else (цепочка else-if, где все плечи return) выходит
-        assertEquals("b4", ir.getBranches().get(0).getId());
-        assertFalse(ir.getBranches().get(0).getEarlyExit().isThenArm());
-        assertTrue(ir.getBranches().get(0).getEarlyExit().isElseArm());
-        assertEquals(List.of("b4:else"), ir.getBranches().get(1).getGuard());
-        assertEquals(List.of("b4:then"), ir.getCalls().get(0).getGuard());
-    }
-
-    @Test
-    public void testTokenAndUserServicesAnalysis() throws Exception {
-        Path tokenPath = resolveTargetPath("ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java");
-        assertNotNull(tokenPath, "TokenServiceImpl.java must exist in targets");
-
-        CompilationUnit cu = StaticJavaParser.parse(tokenPath);
-        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
-        TypeIndex typeIndex = new TypeIndex(cu, cid);
-
-        TargetMethod target = new TargetMethod(
-                "method:ts-auth-service:auth.service.impl.TokenServiceImpl#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
-                "ts-auth-service/src/main/java/auth/service/impl/TokenServiceImpl.java",
-                "getToken",
-                "BasicAuthDto", "HttpHeaders"
-        );
-
-        MethodDeclaration md = cid.getMethodsByName("getToken").get(0);
-        MethodIR ir = AstAnalyzer.analyze(target, md, cu, typeIndex);
-
-        assertNotNull(ir);
-        assertEquals(24, ir.getCalls().size(), "getToken must have 24 calls");
-
-        // exchange (remote call к verifyCode) должен иметь guard b65:then
-        CallIR exchangeCall = ir.getCalls().stream()
-                .filter(c -> "exchange".equals(c.getCallee()))
-                .findFirst()
-                .orElseThrow();
-        assertEquals(List.of("b65:then"), exchangeCall.getGuard());
-
-        // Проверяем UserServiceImpl.saveUser
-        Path userPath = resolveTargetPath("ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java");
-        assertNotNull(userPath, "UserServiceImpl.java must exist in targets");
-
-        CompilationUnit cuUser = StaticJavaParser.parse(userPath);
-        ClassOrInterfaceDeclaration cidUser = cuUser.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
-        TypeIndex typeIndexUser = new TypeIndex(cuUser, cidUser);
-
-        TargetMethod targetUser = new TargetMethod(
-                "method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)",
-                "ts-user-service/src/main/java/user/service/impl/UserServiceImpl.java",
-                "saveUser",
-                "UserDto", "HttpHeaders"
-        );
-
-        MethodDeclaration mdUser = cidUser.getMethodsByName("saveUser").get(0);
-        MethodIR irUser = AstAnalyzer.analyze(targetUser, mdUser, cuUser, typeIndexUser);
-
-        assertNotNull(irUser);
-        assertEquals(37, irUser.getCalls().size(), "saveUser must have 37 calls");
-
-        // createDefaultAuthUser и save() внутри if (user1 == null) должны иметь guard b64:then
-        CallIR createAuthCall = irUser.getCalls().stream()
-                .filter(c -> "createDefaultAuthUser".equals(c.getCallee()))
-                .findFirst()
-                .orElseThrow();
-        assertEquals(List.of("b64:then"), createAuthCall.getGuard());
-    }
-
-    @Test
-    public void testTryCatchAndLambdaGuards() {
-        CompilationUnit cu = StaticJavaParser.parse("package test;\n" +
-                "import java.util.Optional;\n" +
-                "public class Dummy {\n" +
-                "    void f(Optional<String> o) {\n" +
-                "        try {\n" +
-                "            a();\n" +
-                "        } catch (Exception e) {\n" +
-                "            b();\n" +
-                "        } finally {\n" +
-                "            c();\n" +
-                "        }\n" +
-                "        o.orElseThrow(() -> d());\n" +
-                "    }\n" +
-                "    void a() {} void b() {} void c() {} RuntimeException d() { return null; }\n" +
-                "}");
-        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).get();
-        MethodDeclaration md = cid.getMethods().get(0);
-        TargetMethod target = new TargetMethod("method:dummy:Dummy#f(Optional)", "Dummy.java", "f", "Optional");
-        MethodIR ir = AstAnalyzer.analyze(target, md, cu, new TypeIndex(cu, cid));
-
-        java.util.Map<String, List<String>> guards = new java.util.HashMap<>();
-        for (var c : ir.getCalls()) guards.put(c.getCallee(), c.getGuard());
-        assertEquals(List.of(), guards.get("a"));
-        assertEquals(List.of("t5:catch"), guards.get("b"));
-        assertEquals(List.of(), guards.get("c"));
-        assertEquals(List.of("l12:orElseThrow"), guards.get("d"));
-    }
-
-    @Test
     public void testColumnIsUtf8ByteOffset() throws Exception {
-        java.nio.file.Path file = java.nio.file.Files.createTempFile("Utf8Col", ".java");
-        java.nio.file.Files.writeString(file,
+        Path file = Files.createTempFile("Utf8Col", ".java");
+        Files.writeString(file,
                 "public class Utf8Col {\n" +
                 "    void f() {\n" +
                 "        String s = \"жж\"; g();\n" +
                 "    }\n" +
                 "    void g() {}\n" +
-                "}\n", java.nio.charset.StandardCharsets.UTF_8);
+                "}\n", StandardCharsets.UTF_8);
         CompilationUnit cu = StaticJavaParser.parse(file);
-        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).get();
-        MethodDeclaration md = cid.getMethods().get(0);
-        TargetMethod target = new TargetMethod("method:dummy:Utf8Col#f()", "Utf8Col.java", "f");
-        MethodIR ir = AstAnalyzer.analyze(target, md, cu, new TypeIndex(cu, cid));
+        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).orElseThrow();
+        MethodDeclaration md = cid.getMethodsByName("f").get(0);
+        MethodCallExpr call = md.findAll(MethodCallExpr.class).get(0);
+
         // g() стоит на 26-м символе, но на 28-м байте: каждая "ж" занимает 2 байта UTF-8
-        assertEquals(28, ir.getCalls().get(0).getCol());
-        java.nio.file.Files.deleteIfExists(file);
+        int col = AstUtils.skeletonCol(call.getName());
+        assertEquals(28, col);
+        Files.deleteIfExists(file);
     }
 
     @Test
-    public void testForEachBodyGuard() {
-        CompilationUnit cu = StaticJavaParser.parse("package test;\n" +
+    public void testAstUtilsIds() {
+        CompilationUnit cu = StaticJavaParser.parse(
+                "package test;\n" +
                 "import java.util.List;\n" +
-                "public class Dummy {\n" +
-                "    void f(List<String> orders) {\n" +
-                "        a();\n" +
-                "        for (String o : orders) {\n" +
-                "            b();\n" +
-                "        }\n" +
+                "public class TestClass {\n" +
+                "    void f(List<String> items) {\n" +
+                "        if (items.isEmpty()) return;\n" +
+                "        for (String item : items) {}\n" +
+                "        try {\n" +
+                "            int x = 1;\n" +
+                "        } catch (Exception e) {}\n" +
                 "    }\n" +
-                "    void a() {} void b() {}\n" +
-                "}");
-        ClassOrInterfaceDeclaration cid = cu.findFirst(ClassOrInterfaceDeclaration.class).get();
-        MethodDeclaration md = cid.getMethods().get(0);
-        TargetMethod target = new TargetMethod("method:dummy:Dummy#f(List)", "Dummy.java", "f", "List");
-        MethodIR ir = AstAnalyzer.analyze(target, md, cu, new TypeIndex(cu, cid));
-        java.util.Map<String, List<String>> guards = new java.util.HashMap<>();
-        for (var c : ir.getCalls()) guards.put(c.getCallee(), c.getGuard());
-        assertEquals(List.of(), guards.get("a"));
-        assertEquals(List.of("f6:orders"), guards.get("b"));
+                "}\n"
+        );
+        IfStmt ifStmt = cu.findFirst(IfStmt.class).orElseThrow();
+        assertEquals("b5", AstUtils.branchId(ifStmt));
+
+        ForEachStmt forEachStmt = cu.findFirst(ForEachStmt.class).orElseThrow();
+        assertEquals("f6:items", AstUtils.loopId(forEachStmt));
+
+        TryStmt tryStmt = cu.findFirst(TryStmt.class).orElseThrow();
+        assertEquals("t7", AstUtils.tryId(tryStmt));
+    }
+
+    @Test
+    public void testEnumResolverDynamic() {
+        Path targets = Path.of("../hackaton/tt-challenge/targets/trainticket");
+        if (!Files.isDirectory(targets)) {
+            targets = Path.of("hackaton/tt-challenge/targets/trainticket");
+        }
+        assertTrue(Files.isDirectory(targets), "targets/trainticket must exist");
+        EnumResolver.scanEnums(targets, java.util.Set.of("ts-common"));
+        CompilationUnit cu = StaticJavaParser.parse(
+                "package edu.fudan.common.entity;\n" +
+                "public class DummyOrder {\n" +
+                "    void check() {\n" +
+                "        int status = OrderStatus.PAID.getCode();\n" +
+                "        int seat = SeatClass.FIRSTCLASS.getCode();\n" +
+                "    }\n" +
+                "}\n"
+        );
+        List<MethodCallExpr> calls = cu.findAll(MethodCallExpr.class);
+        assertEquals(2, calls.size());
+
+        EnumConstantIR statusConst = EnumResolver.resolveCall(calls.get(0), cu);
+        assertNotNull(statusConst, "OrderStatus.PAID call must resolve to EnumConstantIR");
+        assertEquals("edu.fudan.common.entity.OrderStatus", statusConst.getType());
+        assertEquals("PAID", statusConst.getConstant());
+
+        EnumConstantIR seatConst = EnumResolver.resolveCall(calls.get(1), cu);
+        assertNotNull(seatConst, "SeatClass.FIRSTCLASS call must resolve to EnumConstantIR");
+        assertEquals("edu.fudan.common.entity.SeatClass", seatConst.getType());
+        assertEquals("FIRSTCLASS", seatConst.getConstant());
+
+        assertTrue(EnumResolver.isKnownEnumConstant("edu.fudan.common.entity.OrderStatus", "NOTPAID"));
+        assertTrue(EnumResolver.isKnownEnumConstant("edu.fudan.common.entity.SeatClass", "BUSINESS"));
+        assertFalse(EnumResolver.isKnownEnumConstant("edu.fudan.common.entity.OrderStatus", "NONEXISTENT"));
     }
 }

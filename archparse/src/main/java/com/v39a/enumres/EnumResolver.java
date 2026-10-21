@@ -1,46 +1,129 @@
 package com.v39a.enumres;
 
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.body.EnumConstantDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.v39a.model.EnumConstantIR;
+import com.v39a.parser.ProjectIndex;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 /**
- * правило R7
- * Разрешает константы OrderStatus и SeatClass для вызовов getCode() / getNameByCode().
+ * Универсальный резолвер констант перечислений (enum).
+ * Автоматически индексирует все перечисления проекта и сопоставляет
+ * обращения к константам (FieldAccessExpr, NameExpr со static import, MethodCallExpr).
  */
 public class EnumResolver {
 
-    public static final String ORDER_STATUS_FQN = "edu.fudan.common.entity.OrderStatus";
-    public static final String SEAT_CLASS_FQN = "edu.fudan.common.entity.SeatClass";
+    private static final Map<String, Set<String>> ENUM_CONSTANTS = new ConcurrentHashMap<>();
+    private static final Map<String, List<String>> FQNS_BY_SIMPLE = new ConcurrentHashMap<>();
+    /** Модуль перечисления (первый каталог пути относительно корня исходников). */
+    private static final Map<String, String> MODULE_OF = new ConcurrentHashMap<>();
+    /** Общие библиотеки проекта: при одинаковом простом имени предпочитается перечисление из них. */
+    private static volatile Set<String> sharedModules = Set.of();
+    private static volatile boolean initialized = false;
 
-    private static final Set<String> ORDER_STATUS_CONSTANTS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-            "NOTPAID", "PAID", "COLLECTED", "CHANGE", "CANCEL", "REFUNDS", "USED"
-    )));
+    /** Регистрация перечисления и его констант. */
+    public static void registerEnum(String fqn, Set<String> constants) {
+        if (fqn == null || constants == null) return;
+        ENUM_CONSTANTS.put(fqn, Collections.unmodifiableSet(new HashSet<>(constants)));
+        String simple = fqn.substring(fqn.lastIndexOf('.') + 1).replace('$', '.');
+        if (simple.contains(".")) {
+            String shortSimple = simple.substring(simple.lastIndexOf('.') + 1);
+            FQNS_BY_SIMPLE.computeIfAbsent(shortSimple, k -> new ArrayList<>()).add(fqn);
+        }
+        FQNS_BY_SIMPLE.computeIfAbsent(simple, k -> new ArrayList<>()).add(fqn);
+    }
 
-    private static final Set<String> SEAT_CLASS_CONSTANTS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-            "NONE", "BUSINESS", "FIRSTCLASS", "SECONDCLASS", "HARDSEAT", "SOFTSEAT",
-            "HARDBED", "SOFTBED", "HIGHSOFTBED"
-    )));
+    /** Инициализация из ProjectIndex. */
+    public static void initFrom(ProjectIndex projectIndex) {
+        // ProjectIndex уже содержит все типы проекта
+        initialized = true;
+    }
+
+    /**
+     * Сканирование всех enum в директории исходников проекта. `shared` — общие библиотеки проекта
+     * (`SkeletonGraph.sharedModules`): из них берётся перечисление, если простое имя неоднозначно.
+     */
+    public static synchronized void scanEnums(Path targetsDir, Set<String> shared) {
+        if (targetsDir == null || !Files.exists(targetsDir)) return;
+        sharedModules = Set.copyOf(shared);
+        try (Stream<Path> stream = Files.walk(targetsDir)) {
+            stream.filter(p -> p.toString().endsWith(".java")).forEach(path -> {
+                try {
+                    // Быстрая проверка наличия enum перед полным парсингом
+                    String content = Files.readString(path);
+                    if (!content.contains("enum ")) return;
+
+                    CompilationUnit cu = StaticJavaParser.parse(path);
+                    String module = targetsDir.relativize(path).getName(0).toString();
+                    for (String fqn : indexCompilationUnit(cu)) {
+                        MODULE_OF.put(fqn, module);
+                    }
+                } catch (Exception ignored) {
+                }
+            });
+            initialized = true;
+        } catch (IOException ignored) {
+        }
+    }
+
+    /** Регистрирует перечисления файла; возвращает их FQN. */
+    public static List<String> indexCompilationUnit(CompilationUnit cu) {
+        if (cu == null) return List.of();
+        String pkg = cu.getPackageDeclaration().map(p -> p.getNameAsString()).orElse("");
+        List<String> out = new ArrayList<>();
+        for (EnumDeclaration ed : cu.findAll(EnumDeclaration.class)) {
+            String fqn = binaryName(pkg, ed);
+            Set<String> constants = new HashSet<>();
+            for (EnumConstantDeclaration ecd : ed.getEntries()) {
+                constants.add(ecd.getNameAsString());
+            }
+            registerEnum(fqn, constants);
+            out.add(fqn);
+        }
+        return out;
+    }
+
+    /** Перечисления проекта регистрирует `scanEnums`; здесь — только перечисления самого файла. */
+    private static void ensureInitialized(CompilationUnit cu) {
+        if (cu != null) indexCompilationUnit(cu);
+    }
+
+    private static String binaryName(String pkg, TypeDeclaration<?> td) {
+        Deque<String> names = new ArrayDeque<>();
+        com.github.javaparser.ast.Node cur = td;
+        while (cur != null) {
+            if (cur instanceof TypeDeclaration<?> t) {
+                names.addFirst(t.getNameAsString());
+            }
+            cur = cur.getParentNode().orElse(null);
+        }
+        String name = String.join("$", names);
+        return pkg.isEmpty() ? name : pkg + "." + name;
+    }
 
     /**
      * Проверяет, является ли вызов метода вызовом на enum-константе.
      * Если да, возвращает EnumConstantIR, иначе null.
      */
     public static EnumConstantIR resolveCall(MethodCallExpr call, CompilationUnit cu) {
-        if (!call.getScope().isPresent()) {
+        if (call == null || !call.getScope().isPresent()) {
             return null;
         }
-
-        Expression scope = call.getScope().get();
-        return resolveExpression(scope, cu);
+        return resolveExpression(call.getScope().get(), cu);
     }
 
     /**
@@ -51,27 +134,28 @@ public class EnumResolver {
             return null;
         }
 
+        ensureInitialized(cu);
+
         if (expr.isFieldAccessExpr()) {
             FieldAccessExpr fae = expr.asFieldAccessExpr();
             String constName = fae.getNameAsString();
             String scopeStr = fae.getScope().toString();
 
-            if (scopeStr.equals("OrderStatus") || scopeStr.endsWith(".OrderStatus")) {
-                if (ORDER_STATUS_CONSTANTS.contains(constName)) {
-                    return new EnumConstantIR(ORDER_STATUS_FQN, constName);
-                }
-            } else if (scopeStr.equals("SeatClass") || scopeStr.endsWith(".SeatClass")) {
-                if (SEAT_CLASS_CONSTANTS.contains(constName)) {
-                    return new EnumConstantIR(SEAT_CLASS_FQN, constName);
+            String enumFqn = resolveEnumFqn(scopeStr, cu);
+            if (enumFqn != null) {
+                Set<String> constants = ENUM_CONSTANTS.get(enumFqn);
+                if (constants != null && constants.contains(constName)) {
+                    return new EnumConstantIR(enumFqn, constName);
                 }
             }
         } else if (expr.isNameExpr()) {
             String name = expr.asNameExpr().getNameAsString();
-            if (ORDER_STATUS_CONSTANTS.contains(name) && hasStaticImport(cu, ORDER_STATUS_FQN, name)) {
-                return new EnumConstantIR(ORDER_STATUS_FQN, name);
-            }
-            if (SEAT_CLASS_CONSTANTS.contains(name) && hasStaticImport(cu, SEAT_CLASS_FQN, name)) {
-                return new EnumConstantIR(SEAT_CLASS_FQN, name);
+            String enumFqn = resolveStaticImportEnum(name, cu);
+            if (enumFqn != null) {
+                Set<String> constants = ENUM_CONSTANTS.get(enumFqn);
+                if (constants != null && constants.contains(name)) {
+                    return new EnumConstantIR(enumFqn, name);
+                }
             }
         }
 
@@ -79,28 +163,88 @@ public class EnumResolver {
     }
 
     public static boolean isKnownEnumConstant(String type, String constant) {
-        if (ORDER_STATUS_FQN.equals(type)) {
-            return ORDER_STATUS_CONSTANTS.contains(constant);
-        }
-        if (SEAT_CLASS_FQN.equals(type)) {
-            return SEAT_CLASS_CONSTANTS.contains(constant);
-        }
-        return false;
+        ensureInitialized(null);
+        Set<String> constants = ENUM_CONSTANTS.get(type);
+        return constants != null && constants.contains(constant);
     }
 
-    private static boolean hasStaticImport(CompilationUnit cu, String enumFqn, String constName) {
-        if (cu == null) return false;
-        for (ImportDeclaration imp : cu.getImports()) {
-            if (imp.isStatic()) {
-                String impName = imp.getNameAsString();
-                if (imp.isAsterisk() && impName.equals(enumFqn)) {
-                    return true;
+    private static String resolveEnumFqn(String scopeStr, CompilationUnit cu) {
+        if (ENUM_CONSTANTS.containsKey(scopeStr)) {
+            return scopeStr;
+        }
+
+        if (cu != null) {
+            // 1. Явные импорты
+            for (ImportDeclaration imp : cu.getImports()) {
+                if (!imp.isStatic() && !imp.isAsterisk()) {
+                    String impFqn = imp.getNameAsString();
+                    if (impFqn.endsWith("." + scopeStr)) {
+                        String binary = impFqn.replace('.', '$');
+                        if (ENUM_CONSTANTS.containsKey(impFqn)) return impFqn;
+                        for (String fqn : ENUM_CONSTANTS.keySet()) {
+                            if (fqn.replace('$', '.').equals(impFqn)) return fqn;
+                        }
+                    }
                 }
-                if (impName.equals(enumFqn + "." + constName)) {
-                    return true;
+            }
+
+            // 2. Текущий пакет
+            String pkg = cu.getPackageDeclaration().map(p -> p.getNameAsString()).orElse("");
+            String localFqn = pkg.isEmpty() ? scopeStr : pkg + "." + scopeStr;
+            if (ENUM_CONSTANTS.containsKey(localFqn)) {
+                return localFqn;
+            }
+
+            // 3. Wildcard импорты
+            for (ImportDeclaration imp : cu.getImports()) {
+                if (!imp.isStatic() && imp.isAsterisk()) {
+                    String candidate = imp.getNameAsString() + "." + scopeStr;
+                    if (ENUM_CONSTANTS.containsKey(candidate)) return candidate;
+                    for (String fqn : ENUM_CONSTANTS.keySet()) {
+                        if (fqn.replace('$', '.').equals(candidate)) return fqn;
+                    }
                 }
             }
         }
-        return false;
+
+        // 4. Поиск по простому имени
+        List<String> candidates = FQNS_BY_SIMPLE.get(scopeStr);
+        if (candidates != null && !candidates.isEmpty()) {
+            if (candidates.size() == 1) {
+                return candidates.get(0);
+            }
+            // Если кандидатов несколько, предпочитаем перечисление из общей библиотеки проекта
+            for (String cand : candidates) {
+                if (sharedModules.contains(MODULE_OF.get(cand))) {
+                    return cand;
+                }
+            }
+            return candidates.get(0);
+        }
+
+        return null;
+    }
+
+    private static String resolveStaticImportEnum(String constName, CompilationUnit cu) {
+        if (cu == null) return null;
+        for (ImportDeclaration imp : cu.getImports()) {
+            if (imp.isStatic()) {
+                String impName = imp.getNameAsString();
+                if (imp.isAsterisk()) {
+                    if (ENUM_CONSTANTS.containsKey(impName)) {
+                        Set<String> constants = ENUM_CONSTANTS.get(impName);
+                        if (constants != null && constants.contains(constName)) {
+                            return impName;
+                        }
+                    }
+                } else if (impName.endsWith("." + constName)) {
+                    String enumFqn = impName.substring(0, impName.lastIndexOf('.'));
+                    if (ENUM_CONSTANTS.containsKey(enumFqn)) {
+                        return enumFqn;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

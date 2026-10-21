@@ -38,19 +38,21 @@ public class MethodIrWriter {
         public final List<String> foreignCallSites = new ArrayList<>();
     }
 
-    private record Source(String rel, String module, CompilationUnit cu) {}
-
     public static Result build(Path targetsDir, SkeletonGraph skeleton) throws IOException {
-        List<Source> sources = parseAll(targetsDir);
-        ProjectIndex project = new ProjectIndex();
-        for (Source s : sources) {
+        return build(targetsDir, skeleton, null);
+    }
+
+    public static Result build(Path targetsDir, SkeletonGraph skeleton, List<SourceLoader.SourceFile> preloadedSources) throws IOException {
+        List<SourceLoader.SourceFile> sources = preloadedSources != null ? preloadedSources : SourceLoader.parseAll(targetsDir);
+        ProjectIndex project = new ProjectIndex(skeleton::dependencies);
+        for (SourceLoader.SourceFile s : sources) {
             project.add(s.cu(), s.module());
         }
 
         Result r = new Result();
         Map<String, Map<String, ObjectNode>> byModule = new TreeMap<>();
         Set<String> matched = new HashSet<>();
-        for (Source s : sources) {
+        for (SourceLoader.SourceFile s : sources) {
             if (skeleton.methodsInFile(s.rel()).isEmpty()) {
                 continue; // файл вне модулей скелета (old-docs и т. п.)
             }
@@ -134,26 +136,5 @@ public class MethodIrWriter {
         return found;
     }
 
-    private static List<Source> parseAll(Path targetsDir) throws IOException {
-        List<Path> files;
-        try (Stream<Path> walk = Files.walk(targetsDir)) {
-            files = walk.filter(p -> p.toString().endsWith(".java"))
-                    .filter(p -> rel(targetsDir, p).contains("/src/main/java/"))
-                    .sorted().collect(Collectors.toList());
-        }
-        List<Source> out = new ArrayList<>();
-        for (Path p : files) {
-            String rel = rel(targetsDir, p);
-            try {
-                out.add(new Source(rel, rel.substring(0, rel.indexOf('/')), StaticJavaParser.parse(p)));
-            } catch (Exception e) {
-                System.err.println("Parse error, skipped: " + rel + ": " + e.getMessage());
-            }
-        }
-        return out;
-    }
-
-    private static String rel(Path root, Path p) {
-        return root.relativize(p).toString().replace('\\', '/');
-    }
+    private static String rel(Path root, Path p) { return SourceLoader.rel(root, p); }
 }

@@ -1,0 +1,41 @@
+{
+ "project": "trainticket",
+ "id": "X2",
+ "title": "Managing the contact book: adding a companion, a refused duplicate, changing the phone number and deleting the contact",
+ "description": "A registered passenger logs in with a username and password and opens the contact book. They add a new contact (a companion with an ID card), then try to add the same companion with the same ID card once more, and the system refuses because the contact already exists. They change the phone number of the new contact and open the contact book again. Then they delete the new contact and open the contact book once more: only the original contact is left.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in with username and password"
+  },
+  {
+   "n": 2,
+   "action": "Open the contact book"
+  },
+  {
+   "n": 3,
+   "action": "Add a new contact (a companion with an ID card) to the contact book"
+  },
+  {
+   "n": 4,
+   "action": "Try to add the same companion with the same ID card once more (the system refuses: the contact already exists)"
+  },
+  {
+   "n": 5,
+   "action": "Change the phone number of the new contact"
+  },
+  {
+   "n": 6,
+   "action": "Open the contact book"
+  },
+  {
+   "n": 7,
+   "action": "Delete the new contact from the contact book"
+  },
+  {
+   "n": 8,
+   "action": "Open the contact book"
+  }
+ ]
+}

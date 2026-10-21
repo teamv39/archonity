@@ -15,57 +15,72 @@ UnicodeEncodeError: 'charmap' codec can't encode character ...
 ```powershell
 $env:PYTHONUTF8=1; python run_eval.py
 ```
-или для одиночных команд:
+Без ключей `run_eval.py` даёт выдачу кода — конфигурацию рекорда ([AGENTS.md](../AGENTS.md), «Выдача кода и рекорд»). Других исполнителей нет: legacy-контур удалён 21.10.
+
+## 2. Разбор исходников: archonity-parse (Rust) и archparse (Java, эталон)
+
+### Основной путь: Rust ([ADR-009](adr/adr-009_archparse_rust.md))
+Сборка: `cd rust && cargo build --release --locked` (JDK не нужен). Пересборка IR и `entity_ir.json` из корня репозитория, пути любые, в том числе с пробелами:
+```bash
+T=hackaton/tt-challenge/targets/trainticket; K=hackaton/tt-challenge/skeleton/trainticket.json.gz
+rust/target/release/archonity-parse --mode all      --targets-dir $T --skeleton $K -o data          # ir/ + entity_ir.json, ~1 с
+rust/target/release/archonity-parse --mode bodies   --targets-dir $T --skeleton $K -o data/ir
+rust/target/release/archonity-parse --mode entities --targets-dir $T --skeleton $K -o data/entity_ir.json
+```
+Проверка: `git diff --stat data/` пуст (Rust воспроизводит закоммиченные артефакты байт в байт), `pytest tests/test_rust_parse.py`. В прогоне: `python run_eval.py --engine rust --parse-sources [--artifacts-dir <папка>]` сам пересобирает артефакты в папку перед M1; `scripts/run_final.sh` делает это по умолчанию.
+
+### Эталон: Java и Gradle
+
+### JDK и Gradle под Windows
+Нужен JDK 17+ (на машине Миши — `%USERPROFILE%\.jdks\openjdk-24.0.1`, системный `java` в PATH — Java 8, им Gradle не запустить). Wrapper при первом запуске качает Gradle 9.0 и зависимости (javaparser, jackson) в `%USERPROFILE%\.gradle`. Скрипт `gradlew` — bash, под Windows запускать `.bat` из `archparse/`:
 ```powershell
-$env:PYTHONUTF8=1; python scripts/decision_log.py --scenarios S2 S3
+$env:JAVA_HOME = "$env:USERPROFILE\.jdks\openjdk-24.0.1"
+.\gradlew.bat test
 ```
 
-## 2. Сборка Java и модуль archparse
-
-### Запуск Gradle под Windows
-Скрипт `gradlew` является bash-скриптом. В среде Windows PowerShell или CMD запуск выполняется через `.bat`:
+### Пересборка IR (data/ir, data/entity_ir.json)
+Пути — обязательные аргументы (`--targets-dir`, `--skeleton`), умолчаний под Train Ticket нет. В `--args` пути с пробелами не передаются: путь к репозиторию содержит пробел (`xakaton huawei`), поэтому пути — относительные от `archparse/`:
 ```powershell
-cmd /c gradlew.bat test
-cmd /c gradlew.bat run --args="--pool all"
+$T = "../hackaton/tt-challenge/targets/trainticket"; $K = "../hackaton/tt-challenge/skeleton/trainticket.json.gz"
+# Единый параллельный проход (рекомендуется, ~10 с):
+.\gradlew.bat -q run "--args=--mode all --targets-dir $T --skeleton $K -o ../data"
+
+# Или раздельная сборка:
+.\gradlew.bat -q run "--args=--mode bodies --targets-dir $T --skeleton $K -o ../data/ir"
+.\gradlew.bat -q run "--args=--mode entities --targets-dir $T --skeleton $K -o ../data/entity_ir.json"
 ```
-Команды выполнять из директории `archparse/` или указывать путь к `archparse/gradlew.bat`.
+После пересборки: `git diff --stat data/` (21.10 код archparse воспроизводил закоммиченные артефакты байт в байт), затем `run_eval.py` — sha256 рекорда.
 
-### Пайплайн обновления IR (pool_ir.json)
-При изменении пула методов в `TargetPool.java` строго соблюдать последовательность:
+### Привязка артефактов к проекту
 
-1. **Тесты парсера:**
-   ```powershell
-   cmd /c gradlew.bat test
-   ```
-2. **Генерация IR:**
-   ```powershell
-   cmd /c gradlew.bat run --args="--pool all"
-   ```
-   Генератор пишет прямо в `data/pool_ir.json`. Это единственный артефакт IR: движок, тесты и скрипты читают только его, копировать ничего не нужно. Старый `archparse/out/pool_ir.json` больше нигде не читается, его можно удалить.
-3. **Проверка геометрии (100% совпадение со скелетом):**
-   ```powershell
-   $env:PYTHONUTF8=1; python scripts/verify_pool_ir.py
-   ```
-4. **Проверка калибровки S0:**
-   ```powershell
-   $env:PYTHONUTF8=1; python run_eval.py
-   ```
-   Балл S0 обязан оставаться 1.0000.
+Конвейер сверяет IR и `entity_ir.json` со скелетом при старте, до M1 и M4 (`engine/artifacts.py`). Если от 5% ID методов IR нет в `nodes`, вызовов репозиториев без call_site или сущностей без типа в скелете, либо IR пуст, либо `entity_ir.json` не загрузился, конвейер не собирается: `ArtifactMismatch` с командой пересборки. `run_eval.py` по правилу Р2 всё равно пишет выдачу (аварийный `submission.json` с пустыми блоками), код выхода 0, а ошибка с командой идёт рамкой последними строками и в `ATTENTION.txt`; повторной сборки без LLM нет, она тут не поможет. Доля меньше предела — предупреждение в логе (скелет и артефакты соседних коммитов). Сверка идёт по ID, а не по телам методов.
+
+Кеш каталога UI `data/ui_catalog.json` пересобирать вручную не нужно: в нём отпечаток (проект и коммит скелета, обработчики, содержимое файлов UI), и при несовпадении каталог строится заново чистым Python. Кеш другого проекта прогон не перезаписывает (каталог живёт только в этом прогоне); принудительная пересборка с записью — `build_catalog(..., force_rebuild=True)`. Закоммиченный кеш Train Ticket после правки скелета или UI пакета обновляется так же (`tests/test_artifacts.py` проверяет, что отпечаток в нём актуален).
+
+Другой проект — своя папка артефактов (`ir/`, `entity_ir.json`, `ui_catalog.json`), `data/` не трогается. Папка `ui_catalog.json` создаётся сама при первом прогоне, IR и `entity_ir.json` строит `archonity-parse` (`--parse-sources` делает это в том же запуске):
+```bash
+A=artifacts/мой-проект
+rust/target/release/archonity-parse --mode all --targets-dir <targets> --skeleton <skeleton.json.gz> -o $A
+```
+затем из корня репозитория:
+```bash
+PYTHONUTF8=1 python run_eval.py --engine rust --skeleton <skeleton> --targets <targets> --scenarios <сценарии> --artifacts-dir $A
+```
+Ошибка `ArtifactMismatch` на умолчании (`data/`) сама подсказывает такую папку: `artifacts/<проект скелета>`. Из кода — `PipelineConfig(artifacts_dir=...)`; `method_ir_dir` и `entity_ir_path` переопределяют отдельные пути.
 
 ## 3. Особенности тестов pytest
 
-При запуске `python -m pytest -q tests`:
-- Два теста производительности:
-  - `test_performance_under_5_seconds` в `tests/test_contract_and_quality.py`
-  - `test_state_fork_latency_under_50us` в `tests/test_state.py`
-  сильно зависят от загрузки процессора и характеристик конкретной машины (на медленных CPU или под Windows могут превышать лимиты: например 5.2s вместо 5.0s, 65µs вместо 50µs).
-- **Правило:** если упали только эти два теста производительности, а остальные 171+ функциональных тестов зелёные — это не считается поломкой логики и не блокирует работу.
+При запуске `python -m pytest -q tests` (около 20 секунд):
+- Тесты производительности `test_fork_latency_under_100us` (`tests/test_db.py`), `test_fork_throughput_1000_operations` (`tests/test_db_stress.py`) и `test_performance_under_5_seconds` (`tests/test_contract_and_quality.py`) зависят от загрузки процессора и иногда падают на этой машине.
+- `test_pack_submission_creates_valid_archive` падает в worktree без `output/submission.json`.
+- **Правило:** если упали только они, а остальные зелёные — это не поломка логики (раздел 9, «Тесты»).
 
 ## 4. Программный запуск пайплайна (ArchonityPipeline)
 
-Для диагностических скриптов и обвязок пайплайн инициализируется следующим образом:
+Для диагностических скриптов и обвязок пайплайн инициализируется так же, как в `run_eval.py`:
 ```python
 from pathlib import Path
+from engine.grounding.llm import LLMClient
 from engine.pipeline import ArchonityPipeline
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -73,32 +88,26 @@ ROOT = Path(__file__).resolve().parent.parent
 pipeline = ArchonityPipeline(
     skeleton_path=ROOT / "hackaton" / "tt-challenge" / "skeleton" / "trainticket.json.gz",
     targets_root=ROOT / "hackaton" / "tt-challenge" / "targets" / "trainticket",
-    ir_path=ROOT / "data" / "pool_ir.json",
+    m1_options={"llm": LLMClient(use_server=False)},  # ответы LLM только из cache/llm
 )
 
 # Запуск сценария (например, S2)
 methods, calls, remote, data = pipeline.run_scenario(scenario_dict)
 ```
 
-## 5. Диагностика решений: журнал решений (decision_log.py)
+Умолчания `RuntimeRules` — конфигурация рекорда; режимы правил передаются ключами (`constructors="all"`), неизвестный ключ — `TypeError`. Без `llm` M1 берёт первый кандидат поиска: это не выдача кода. Дамп БД ищется рядом со скелетом (`<пакет>/context/db-after-warmup.sql.gz`), другой — `db_dump_path=...`. Для диагностики выдачи кода проще обёртка над `run_eval.py` ([agent_lessons.md](agent_lessons.md), раздел 4).
 
-Каждое решение по ребру (включение, отсев, удаление) пишет сам `GraphBuilder` в журнал `engine/decisions.py`. `run_eval.py` сохраняет журнал в `output/decisions.json` (evidence v2, ADR-005): для каждого ребра сценария — попало ли оно в ответ, на каких шагах, источник решения (`source_type`) и правило (`rule`), плюс все решения по шагам. Правило — это ID из `branch_rules.json` с предикатом (`BR_TRIP_GD_DISPATCH@b53:else`), R7/R15-R17, строка `rules.py` (`rules.py:508`) или имя правила движка.
+## 5. Диагностика решений: журнал решений
 
-Сводка и списки риска по сценариям:
-```powershell
-$env:PYTHONUTF8=1; python scripts/decision_log.py --scenarios S2 S3
-```
-- Список риска A — рёбра ответа, включённые только достижимостью скелета: условия на них движок не проверял. Пометка `[IR]` — метод уже в пуле, но ни одно правило не решило его ветки.
-- Список риска B — рёбра, отсеянные эвристиками `rules.py`, со строкой сработавшего правила.
-
-Скрипт не пересчитывает обход сам и на каждом прогоне проверяет, что журнал совпадает с ответом сценария.
+Каждое решение по ребру (включение, отсев, удаление) пишут M4, правило Spring Security и проекция M5 в журнал `engine/decisions.py`. `run_eval.py` сохраняет его в `decisions.json` рядом с выдачей (evidence v2, ADR-005): для каждого ребра сценария — попало ли оно в ответ, на каких шагах, источник решения (`source_type`) и правило (`rule`), плюс все решения по шагам. Классы рёбер по журналу — `scripts/probe_edge_classes.py` ([agent_lessons.md](agent_lessons.md), раздел 4). Прежний `scripts/decision_log.py` (списки риска legacy-обхода) удалён вместе с legacy.
 
 ## 6. Git, .gitattributes и сгенерированные JSON
 
-Файл `data/pool_ir.json` содержит десятки тысяч строк сгенерированного AST IR.
+Файлы `data/ir/*.json` и `data/entity_ir.json` — десятки тысяч строк сгенерированного AST IR, `cache/**` — ответы LLM и векторы.
 В `.gitattributes` для них настроены атрибуты:
 ```gitattributes
-data/pool_ir.json linguist-generated=true -diff
+data/ir/*.json linguist-generated=true -diff
+cache/** linguist-generated=true -diff -merge
 ```
 - `linguist-generated=true` скрывает файл из диффа Pull Request на GitHub.
 - `-diff` отключает построчный расчет в локальном `git diff` и `git diff --stat` (файл отображается как бинарный, без десятков тысяч строк).
@@ -128,10 +137,38 @@ data/pool_ir.json linguist-generated=true -diff
 
 ### Расчет колонок вызовов: байты UTF-8 vs символы Java (UTF-16)
 - В скелете (`skeleton/trainticket.json.gz`) поле `col` у каждого `call_site` — это **1-based смещение в байтах UTF-8** от начала строки, а не количество символов.
-- Если в строке исходника перед вызовом есть не-ASCII символы (кириллица или китайские иероглифы в комментариях/строках), метод JavaParser `getName().getBegin().column` возвращает номер символа (char), который меньше байтового смещения. Из-за этого геометрическое сопоставление вызовов в `verify_pool_ir.py` не находит вызов (0% совпадений).
+- Если в строке исходника перед вызовом есть не-ASCII символы (кириллица или китайские иероглифы в комментариях/строках), метод JavaParser `getName().getBegin().column` возвращает номер символа (char), который меньше байтового смещения. Из-за этого вызов не сопоставляется с call_site скелета по `file + line + col` (так 0% совпадений давал прежний пул IR).
 - **Правило:** при извлечении вызовов Java-парсер обязан пересчитывать символьное смещение строки в байтовую длину в кодировке UTF-8.
 
 ### Неразрешённые типы параметров в скелете (?TypeName)
 - В скелете параметры некоторых методов имеют признак `unresolved: True` и префикс `?` в дескрипторе (например, `?HttpHeaders` в ID `method:ts-user-service:user.service.impl.UserServiceImpl#saveUser(user.dto.UserDto,?HttpHeaders)`).
 - Если попытаться восстановить ID метода автоматически из AST JavaParser, получится `HttpHeaders` (без знака вопроса), и ID не совпадет со скелетом (что нарушает строгое правило «концы рёбер — ID методов из скелета дословно»).
 - **Правило:** `TargetMethod` всегда принимает и сохраняет строковый `methodId` из скелета строго дословно, а типы аргументов для поиска метода в AST задаются отдельно простыми именами.
+
+## 9. Несколько агентов, ветки и выдача. И водка
+
+Записано 19.10 по опыту сессии разбора M4.
+
+### Общая рабочая копия
+
+В основной папке репозитория одновременно работают несколько агентов: ветка может смениться посреди задачи, рядом появляются чужие неотслеживаемые файлы и незакоммиченные правки.
+
+- Для своей задачи — отдельный worktree от `dev`:
+  ```bash
+  git worktree add -b feature/<id>-kebab ../archonity-wt origin/dev
+  cp -r hackaton ../archonity-wt/
+  ```
+  `hackaton/` в `.gitignore`, поэтому его **копируют**, а не связывают junction: `git worktree remove` однажды удалил `hackaton/` через junction (восстанавливали из `hackaton.zip`).
+- Файлы добавлять поимённо (`git add <путь>`), не `git add docs` или `git add .`: так в коммит уже попадал чужой файл.
+- После мержа ветку не продолжать. Коммит, сделанный в локальную ветку после её пуша и мержа, в `dev` не попадёт (так потерялся `hypothesis_generation_guidelines.md`, возвращён в #72). Новая задача — новая ветка от свежего `origin/dev`.
+
+### Прогон и выдача
+
+- `run_eval.py -o <папка>/x.json` кладёт **все** артефакты прогона рядом с `x.json`: `decisions.json`, `m4_unknowns.json`, `evidence.json`, `step_requests.json`, `m1_report.json` (режим M1: сколько ответов LLM из кеша, от сервера, без ответа; README, «Проверка без кеша»). Без `-o` — в `output/`. Каждый прогон ещё синхронизирует `visualizer/public/data`.
+- Для экспериментов писать в отдельную папку (scratchpad), чтобы не затереть `output/` и не перепутать прогоны.
+- Чужую посылку воспроизводить так: `git archive <sha> | tar -x -C <папка>`, туда скопировать `hackaton/`, запустить команду из её отчёта и сверить `sha256` у `submission.json`.
+- В Python под Windows пути вида `/c/Users/...` не работают внутри строк кода. Передавать путь аргументом (Git Bash сам переведёт) или через `cygpath -w`.
+
+### Тесты
+
+Кроме двух тестов производительности из раздела 3, на этой машине стабильно падают `test_fork_throughput_1000_operations` (`tests/test_db_stress.py`) и `test_pack_submission_creates_valid_archive`. Падали и до правок M4 (проверено 19.10). Признак поломки — новые падения сверх этих. Называйте их в чатах "известные" (famous) тесты. Тесты-селебрити, тесты-звёзды.

@@ -9,6 +9,7 @@ import com.github.javaparser.ast.expr.LiteralExpr;
 import com.github.javaparser.ast.expr.UnaryExpr;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Индекс всего проекта для IR тел методов: типы по простому имени, константы enum
@@ -22,6 +23,12 @@ public class ProjectIndex {
     private final Map<String, List<TypeInfo>> typesBySimple = new HashMap<>();
     private final Map<String, Map<String, List<Expression>>> enumConstants = new HashMap<>();
     private final Map<String, Map<String, Expression>> constants = new HashMap<>();
+    /** Модуль -> модули, классы которых он видит (`SkeletonGraph.dependencies`). */
+    private final Function<String, List<String>> dependencies;
+
+    public ProjectIndex(Function<String, List<String>> dependencies) {
+        this.dependencies = dependencies;
+    }
 
     /** Добавляет все типы файла. */
     public void add(CompilationUnit cu, String module) {
@@ -70,7 +77,7 @@ public class ProjectIndex {
 
     /**
      * FQN типа проекта по простому имени из файла: явный импорт, тот же пакет, импорт пакета со звёздочкой,
-     * тот же модуль, ts-common. null — тип не из проекта.
+     * тот же модуль, модули, от которых он зависит. null — тип не из проекта.
      */
     public String resolveType(String simple, CompilationUnit cu, String module) {
         List<TypeInfo> cands = typesBySimple.get(simple);
@@ -108,9 +115,11 @@ public class ProjectIndex {
                 return t.fqn();
             }
         }
-        for (TypeInfo t : cands) {
-            if (t.module().equals("ts-common")) {
-                return t.fqn();
+        for (String dep : dependencies.apply(module)) {
+            for (TypeInfo t : cands) {
+                if (t.module().equals(dep)) {
+                    return t.fqn();
+                }
             }
         }
         return null;

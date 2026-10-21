@@ -5,9 +5,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any
 
 OUTCOMES = ("success", "refused")
-# Сущности, на которые шаг может сослаться (refs): результат предыдущего шага
-REF_ENTITIES = ("trip", "contact", "order", "food", "store", "station", "route", "train", "price", "consign",
-                "assurance", "user")
+# Ссылка шага на результат прежнего шага: `<pick>_of_step_<n>`; виды ссылок — из манифеста сущностей (ADR-007)
 REF_PICKS = ("first", "second", "new")
 
 
@@ -22,6 +20,8 @@ class StepRequest:
     expected_outcome: str = "success"
     refs: dict[str, str] = field(default_factory=dict)
     ui_source: dict[str, Any] | None = None
+    # Поле тела -> поле записи прежнего шага, из которого UI его берёт (каталог UI, `UIRequest.body_src`)
+    body_src: dict[str, str] = field(default_factory=dict)
     grounding: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:

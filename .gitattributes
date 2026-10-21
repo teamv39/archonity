@@ -1,9 +1,8 @@
-# Автоматически скрывать большие сгенерированные JSON-артефакты из диффа на GitHub и локального git diff
-# data/pool_ir.json linguist-generated=true -diff
-cache/llm/*.json linguist-generated=true -diff
-cache/emb/** linguist-generated=true -diff
-# data/pool_ir.json linguist-generated=true -diff
+# Сгенерированные JSON-артефакты скрыты из диффа на GitHub и локального git diff
+# Кеш LLM и эмбеддингов: в диффе и при слиянии — как двоичные файлы (-diff -merge). Не `binary`: он снимает и
+# перевод строк (-text), а файлы лежат в индексе с LF — при core.autocrlf=true все стали бы «изменёнными»
+cache/** linguist-generated=true -diff -merge
 data/entity_ir.json linguist-generated=true -diff
 data/ir/*.json linguist-generated=true -diff
-data/pool_ir.json binary
 
+eval/records/*.json binary linguist-generated=true

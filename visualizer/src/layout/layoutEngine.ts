@@ -15,11 +15,22 @@ export async function computeLayout(
   );
 
   const children = nodes.map((n) => {
-    const dims = NODE_DIMENSIONS[n.type] || { width: 280, height: 120 };
+    const dims = NODE_DIMENSIONS[n.type] || { width: 300, height: 130 };
+    const isGateway = n.id === 'ts-gateway-service';
+    const isDb = n.type === 'DATABASE';
+
+    const childLayoutOptions: Record<string, string> = {};
+    if (isGateway) {
+      childLayoutOptions['elk.layered.layering.layerConstraint'] = 'FIRST';
+    } else if (isDb) {
+      childLayoutOptions['elk.layered.layering.layerConstraint'] = 'LAST';
+    }
+
     return {
       id: n.id,
       width: dims.width,
       height: dims.height,
+      layoutOptions: childLayoutOptions,
     };
   });
 
@@ -34,10 +45,24 @@ export async function computeLayout(
     layoutOptions: {
       'elk.algorithm': 'layered',
       'elk.direction': direction,
-      'elk.spacing.nodeNode': '60',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '100',
+      // Просторное расстояние между узлами и слоями без наездов
+      'elk.spacing.nodeNode': '80',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '160',
+      'elk.spacing.edgeNode': '40',
+      'elk.spacing.edgeEdge': '25',
+      'elk.spacing.componentComponent': '140',
+      'elk.layered.spacing.edgeNodeBetweenLayers': '35',
+      // Минимизация пересечений и сбалансированное размещение
       'elk.edgeRouting': 'SPLINES',
+      'elk.layered.crossingMinimization.strategy': 'LAYER_SWEEP',
+      'elk.layered.crossingMinimization.greedySwitch.type': 'TWO_SIDED',
+      'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
       'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
+      'elk.layered.cycleBreaking.strategy': 'GREEDY',
+      'elk.layered.layering.strategy': 'NETWORK_SIMPLEX',
+      'elk.separateConnectedComponents': 'true',
+      'elk.layered.compaction.postCompaction.strategy': 'EDGE_LENGTH',
+      'elk.aspectRatio': '1.6',
     },
     children,
     edges: elkEdges,

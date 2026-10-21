@@ -1,4 +1,4 @@
-"""Каталог UI-запросов из ts-ui-dashboard (ADR-005, M1, п. 1).
+"""Каталог UI-запросов из модуля веб-интерфейса проекта (`find_ui_dir`; ADR-005, M1, п. 1).
 
 Каждая запись — один HTTP-запрос, который UI отправляет через шлюз: JS-функция действия, страница, надписи кнопок,
 глагол, шаблон URL, поля тела (литералы — отдельно), условия выбора варианта и сопоставленные обработчики скелета.
@@ -11,8 +11,10 @@
 from __future__ import annotations
 
 import collections
+import hashlib
 import html.parser
 import json
+import logging
 import os
 import re
 from dataclasses import asdict, dataclass, field
@@ -24,7 +26,8 @@ import tree_sitter_javascript as tsj
 
 from engine.adapters.skeleton import SkeletonIndex, path_segs
 
-UI_DIR = "ts-ui-dashboard"
+logger = logging.getLogger(__name__)
+
 VENDOR = re.compile(
     r"(\.min\.|^(vue|angular|jquery|bootstrap|echarts|amazeui|iscroll|cropper|aliyun|react|lodash|moment|d3|three|npm)\b"
     r"|^vue-upload)",
@@ -65,6 +68,10 @@ class UIRequest:
     body_fields: list[str] = field(default_factory=list)
     body_consts: dict[str, Any] = field(default_factory=dict)
     body_cond: list[dict[str, Any]] = field(default_factory=list)
+    body_opt: list[dict[str, Any]] = field(default_factory=list)
+    # Поле тела -> поле элемента списка в шаблоне, из которого UI его берёт (`payMyOrder(item.trainNumber)` ->
+    # `this.tripId` -> `info.tripId`): {"tripId": "trainNumber"}. Только поля, чьё имя отличается от источника
+    body_src: dict[str, str] = field(default_factory=dict)
     messages: list[str] = field(default_factory=list)
     handlers: list[str] = field(default_factory=list)
     group: str = ""
@@ -334,6 +341,7 @@ class _FileParser:
         self.tree = ts.Parser(_JS).parse(src)
         self.root = self.tree.root_node
         self.calls_by_name: dict[str, list[ts.Node]] = collections.defaultdict(list)
+        self._state: dict[str, tuple[str, int]] | None = None
         for n in _walk(self.root):
             if n.type == "call_expression":
                 f = n.child_by_field_name("function")
@@ -410,19 +418,22 @@ class _FileParser:
         return [("{" + _placeholder(expr) + "}", [])]
 
     def body(self, expr: ts.Node | None, ctx: _Ctx,
-             seen: frozenset[str] = frozenset()) -> tuple[list[str], dict[str, Any], list[dict[str, Any]]]:
-        """Тело запроса → (поля, литералы без условий, литералы под условием)."""
+             seen: frozenset[str] = frozenset()
+             ) -> tuple[list[str], dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
+        """Тело запроса → (поля, литералы без условий, литералы под условием, поля только под условием).
+
+        Поле только под условием: каждое присваивание стоит под общим условием, без него UI поле не шлёт."""
         if expr is None:
-            return [], {}, []
+            return [], {}, [], []
         if expr.type == "identifier" and _text(expr) in ctx.env:
             return self.body(ctx.env[_text(expr)], _Ctx({}, None, []), seen)
         if expr.type == "call_expression" and _callee(expr) == "JSON.stringify":
             args = expr.child_by_field_name("arguments")
             return self.body(args.named_children[0] if args and args.named_children else None, ctx, seen)
         if expr.type == "object":
-            return self._object_fields(expr, None)
+            return (*self._object_fields(expr, None), [])
         if expr.type != "identifier":
-            return [], {}, []
+            return [], {}, [], []
         name = _text(expr)
         assigns, scope = self._scope_assignments(name, expr)
         if name not in seen:
@@ -432,6 +443,7 @@ class _FileParser:
         fields: list[str] = []
         consts: dict[str, Any] = {}
         cond: list[dict[str, Any]] = []
+        opt: list[dict[str, Any]] = []
         seen: dict[str, list[tuple[bool, Any, list[str]]]] = collections.defaultdict(list)
         for _, v in assigns:
             if v is not None and v.type == "object":
@@ -461,7 +473,14 @@ class _FileParser:
                 for ok, val, g in vals:
                     if ok:
                         cond.append({"field": k, "value": val, "guards": g})
-        return fields, consts, cond
+            common: list[str] = []
+            for parts in zip(*(g for _, _, g in vals)):
+                if len(set(parts)) != 1:
+                    break
+                common.append(parts[0])
+            if common and all(g for _, _, g in vals):
+                opt.append({"field": k, "guards": common})
+        return fields, consts, cond, opt
 
     def _object_fields(self, obj: ts.Node, scope: ts.Node | None) -> tuple[list[str], dict[str, Any], list[dict[str, Any]]]:
         fields, consts = [], {}
@@ -477,6 +496,90 @@ class _FileParser:
         return fields, consts, []
 
     # --- контексты вызова
+
+    def state_params(self) -> dict[str, tuple[str, int]]:
+        """Состояние компонента из параметров его методов: `this.P = p` в методе `m(…, p, …)` -> {P: (m, индекс p)}.
+        Свойство, которое присваивают из разных мест, не берётся."""
+        if self._state is None:
+            found: dict[str, set[tuple[str, int]]] = collections.defaultdict(set)
+            for fn in _walk(self.root):
+                if fn.type not in FUNC_TYPES:
+                    continue
+                name, params = _func_name(fn), _params(fn)
+                if not name or not params:
+                    continue
+                for n in _walk(fn):
+                    if n.type != "assignment_expression":
+                        continue
+                    left, right = n.child_by_field_name("left"), n.child_by_field_name("right")
+                    if left is not None and left.type == "member_expression" \
+                            and _text(left.child_by_field_name("object")) == "this" \
+                            and right is not None and right.type == "identifier" and _text(right) in params \
+                            and self._param_owner(_text(right), n) == fn:
+                        found[_text(left.child_by_field_name("property"))].add((name, params.index(_text(right))))
+            self._state = {k: next(iter(v)) for k, v in found.items() if len(v) == 1}
+        return self._state
+
+    def _is_this(self, n: ts.Node | None) -> bool:
+        """`this` или переменная, которой присвоен `this` (`var that = this`)."""
+        if n is None:
+            return False
+        if n.type == "this":
+            return True
+        if n.type != "identifier":
+            return False
+        assigns, _ = self._scope_assignments(_text(n), n)
+        return bool(assigns) and all(v is not None and v.type == "this" for _, v in assigns)
+
+    def _source(self, v: ts.Node | None) -> tuple[str, int] | None:
+        """Значение поля тела — параметр метода UI, прямо или через состояние компонента: (метод, индекс)."""
+        if v is None:
+            return None
+        if v.type == "member_expression" and self._is_this(v.child_by_field_name("object")):
+            return self.state_params().get(_text(v.child_by_field_name("property")))
+        if v.type == "identifier":
+            owner = self._param_owner(_text(v), v)
+            name = _func_name(owner) if owner is not None else None
+            if name:
+                return name, _params(owner).index(_text(v))
+        return None
+
+    def body_sources(self, expr: ts.Node | None, ctx: _Ctx,
+                     seen: frozenset[str] = frozenset()) -> dict[str, list[Any]]:
+        """Поля тела, значение которых — параметр метода UI: {поле: [метод, индекс]}. Аргумент на месте вызова
+        метода в шаблоне страницы сопоставляет `build_catalog`."""
+        if expr is None:
+            return {}
+        if expr.type == "identifier" and _text(expr) in ctx.env:
+            return self.body_sources(ctx.env[_text(expr)], _Ctx({}, None, []), seen)
+        if expr.type == "call_expression" and _callee(expr) == "JSON.stringify":
+            args = expr.child_by_field_name("arguments")
+            return self.body_sources(args.named_children[0] if args and args.named_children else None, ctx, seen)
+        out: dict[str, list[Any]] = {}
+        if expr.type == "object":
+            for pr in expr.named_children:
+                src = self._source(pr.child_by_field_name("value")) if pr.type == "pair" else None
+                if src:
+                    out[_text(pr.child_by_field_name("key")).strip("'\"")] = list(src)
+            return out
+        if expr.type != "identifier":
+            return {}
+        name = _text(expr)
+        assigns, scope = self._scope_assignments(name, expr)
+        for _, v in assigns:
+            if v is not None and v.type == "call_expression" and _callee(v) == "JSON.stringify" and name not in seen:
+                return self.body_sources(v, ctx, seen | {name})
+            if v is not None and v.type == "object":
+                out.update(self.body_sources(v, ctx, seen))
+        if scope is not None:
+            for n in _walk(scope):
+                left = n.child_by_field_name("left") if n.type == "assignment_expression" else None
+                if left is None or left.type != "member_expression" or _text(left.child_by_field_name("object")) != name:
+                    continue
+                src = self._source(n.child_by_field_name("right"))
+                if src:
+                    out[_text(left.child_by_field_name("property"))] = list(src)
+        return out
 
     def contexts(self, call: ts.Node, used: Iterable[ts.Node]) -> list[_Ctx]:
         """Если URL/тело берутся из параметров функции-помощника — по контексту на каждое её место вызова."""
@@ -535,7 +638,11 @@ class _FileParser:
         inner_guards = _guards(call, _action_fn(call))
         anchor = ctx.via if ctx.via is not None else call
         func, outer = _action_name(anchor)
-        fields, consts, cond = self.body(data, ctx)
+        fields, consts, cond, opt = self.body(data, ctx)
+        # условие, под которым стоит и сам запрос, поле не отделяет: без него не уходит весь запрос
+        call_guards = set(_guards(call, None))
+        opt = [{"field": o["field"], "guards": g} for o in opt
+               if (g := [x for x in o["guards"] if x not in call_guards])]
         msgs = []
         for n in _walk(msg_root):
             s = _string_value(n)
@@ -553,6 +660,8 @@ class _FileParser:
             "body_fields": fields,
             "body_consts": consts,
             "body_cond": cond,
+            "body_opt": opt,
+            "body_src": self.body_sources(data, ctx),
             "messages": list(dict.fromkeys(msgs)),
         }
 
@@ -608,12 +717,14 @@ class _HtmlScan(html.parser.HTMLParser):
         self.stack: list[tuple[str, dict[str, str], list[str]]] = []
         self.by_id: dict[str, str] = {}
         self.by_func: dict[str, list[str]] = collections.defaultdict(list)
+        self.call_args: dict[str, list[list[str]]] = collections.defaultdict(list)
         self.scripts: list[str] = []
         self.title = ""
         self._in_title = False
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         a = {k: v or "" for k, v in attrs}
+        self._args(a)
         if tag == "script" and a.get("src"):
             self.scripts.append(a["src"])
         if tag == "title":
@@ -638,6 +749,12 @@ class _HtmlScan(html.parser.HTMLParser):
             self.title += data
         if self.stack:
             self.stack[-1][2].append(data)
+
+    def _args(self, a: dict[str, str]) -> None:
+        """Аргументы вызовов в обработчиках клика: `payMyOrder(index, item.id)` -> call_args["payMyOrder"]."""
+        for k in self.CLICK:
+            for m in re.finditer(r"([A-Za-z_$][\w$]*)\s*\(([^()]*)\)", a.get(k) or ""):
+                self.call_args[m.group(1)].append([x.strip() for x in m.group(2).split(",")] if m.group(2).strip() else [])
 
     def _close(self, tag: str, a: dict[str, str], buf: list[str]) -> None:
         txt = _norm(re.sub(r"\{\{.*?\}\}", " ", " ".join(buf)), 80)
@@ -732,14 +849,103 @@ class UICatalog:
         return {"requests": [r.to_dict() for r in self.requests], "unresolved": self.unresolved,
                 "pages_title": self.pages_title}
 
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> UICatalog:
+        reqs = [UIRequest(**r) for r in d.get("requests", [])]
+        return cls(requests=reqs, unresolved=d.get("unresolved", []), pages_title=d.get("pages_title", {}))
 
-def build_catalog(targets_root: str | Path, ix: SkeletonIndex) -> UICatalog:
-    """Каталог всех UI-запросов проекта, сопоставленных с обработчиками скелета."""
+def find_ui_dir(targets_root: str | Path, ix: SkeletonIndex) -> str | None:
+    """Модуль веб-интерфейса: каталог верхнего уровня, который не модуль Java скелета, с наибольшим числом
+    HTML-страниц (в Train Ticket — `ts-ui-dashboard`). None — страниц нет."""
     root = Path(targets_root)
-    ui_root = root / UI_DIR
+    java = {n.get("module") for n in ix.N.values() if n.get("module")}
+    best: tuple[int, str] | None = None
+    for d in sorted(p for p in root.iterdir() if p.is_dir() and p.name not in java and not p.name.startswith(".")):
+        pages = sum(1 for f in ui_files(d) if f.suffix in (".html", ".htm"))
+        if pages and (best is None or pages > best[0]):
+            best = (pages, d.name)
+    return best[1] if best else None
+
+
+def _template_sources(raw: dict[str, list[Any]], call_args: dict[str, list[list[str]]]) -> dict[str, str]:
+    """{поле: [метод, индекс]} -> {поле: F}, если на всех местах вызова метода в шаблонах аргумент — `x.F` элемента
+    списка (`v-for="item in myOrders"`) и F не совпадает с именем поля."""
+    out: dict[str, str] = {}
+    for k, (method, i) in raw.items():
+        found = set()
+        for args in call_args.get(method, ()):
+            m = re.fullmatch(r"[A-Za-z_$][\w$]*\.([A-Za-z_$][\w$]*)", args[i]) if i < len(args) else None
+            found.add(m.group(1) if m else None)
+        if len(found) == 1 and None not in found and (f := next(iter(found))) != k:
+            out[k] = f
+    return out
+
+
+def catalog_fingerprint(root: Path, ix: SkeletonIndex, ui_dir: str) -> dict[str, Any]:
+    """Отпечаток входов каталога: проект и коммит скелета, его обработчики и файлы UI (путь и содержимое без
+    различий CRLF/LF). Путь к `targets` не входит: кеш лежит в репозитории и должен совпадать на любой машине."""
+    ui = hashlib.sha256()
+    for p in ui_files(root / ui_dir):
+        ui.update(p.relative_to(root).as_posix().encode("utf-8") + b"\0")
+        ui.update(p.read_bytes().replace(b"\r\n", b"\n") + b"\0")
+    handlers = hashlib.sha256(json.dumps(ix.handlers, ensure_ascii=False).encode("utf-8"))
+    return {"project": ix.project, "commit": ix.sk.get("commit"), "ui_dir": ui_dir,
+            "handlers": handlers.hexdigest()[:16], "ui_files": ui.hexdigest()[:16]}
+
+
+def _read_cache(path: Path) -> dict[str, Any] | None:
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else None
+    except (OSError, ValueError) as e:
+        logger.debug("Не удалось прочитать кеш UI-каталога %s: %s", path, e)
+        return None
+
+
+def build_catalog(
+    targets_root: str | Path,
+    ix: SkeletonIndex,
+    ui_dir: str | None = None,
+    cache_path: str | Path | None = None,
+    force_rebuild: bool = False,
+) -> UICatalog:
+    """Каталог всех UI-запросов проекта, сопоставленных с обработчиками скелета; `ui_dir` — по `find_ui_dir`.
+
+    Кеш привязан к проекту отпечатком (`catalog_fingerprint`): не совпал — каталог пересобирается. Кеш другого
+    проекта при этом не затирается (в репозитории лежит кеш Train Ticket-подобного пакета задачи, его пакует
+    `pack_submission.py`): пересобранный каталог живёт только в этом прогоне, если не `force_rebuild`."""
+    resolved_cache = (
+        Path(cache_path)
+        if cache_path
+        else Path(__file__).resolve().parent.parent.parent / "data" / "ui_catalog.json"
+    )
+    root = Path(targets_root)
+    ui_dir = ui_dir or find_ui_dir(root, ix)
+    if ui_dir is None:
+        return UICatalog([], [], {})
+    fingerprint = catalog_fingerprint(root, ix, ui_dir)
+    cached = _read_cache(resolved_cache) if resolved_cache.is_file() else None
+    keep_cache = False
+    if cached is not None and not force_rebuild:
+        if cached.get("fingerprint") == fingerprint:
+            try:
+                return UICatalog.from_dict(cached)
+            except Exception as e:  # noqa: BLE001 — битый кеш не должен ронять конвейер: пересобираем
+                logger.debug("Не удалось загрузить кеш UI-каталога из %s: %s", resolved_cache, e)
+        else:
+            owner = (cached.get("fingerprint") or {}).get("project")
+            keep_cache = owner is not None and owner != ix.project
+            logger.log(logging.WARNING if keep_cache else logging.INFO,
+                       "Кеш UI-каталога %s не подходит (проект %s, коммит %s): каталог пересобран%s",
+                       resolved_cache, owner or "?", (cached.get("fingerprint") or {}).get("commit") or "?",
+                       ", чужой кеш не перезаписан (другой путь — build_catalog(cache_path=...))" if keep_cache else "")
+
+    ui_root = root / ui_dir
     script_pages: dict[str, list[str]] = collections.defaultdict(list)
     by_id: dict[str, str] = {}
     by_func: dict[str, list[str]] = collections.defaultdict(list)
+    call_args: dict[str, list[list[str]]] = collections.defaultdict(list)
     titles: dict[str, str] = {}
     js: list[Path] = []
     for p in ui_files(ui_root):
@@ -757,6 +963,8 @@ def build_catalog(targets_root: str | Path, ix: SkeletonIndex) -> UICatalog:
             by_id.setdefault(k, v)
         for k, v in sc.by_func.items():
             by_func[k] += v
+        for k, v in sc.call_args.items():
+            call_args[k] += v
         for s in sc.scripts:
             if re.match(r"^(https?:)?//", s):
                 continue
@@ -785,14 +993,23 @@ def build_catalog(targets_root: str | Path, ix: SkeletonIndex) -> UICatalog:
                     file=rel, line=rec["line"], via_line=rec["via_line"], function=rec["function"],
                     outer=rec["outer"], pages=sorted(set(script_pages.get(rel, []))), labels=labels,
                     verb=rec["verb"], url=url, guards=guards, body_fields=rec["body_fields"],
-                    body_consts=rec["body_consts"], body_cond=rec["body_cond"], messages=rec["messages"],
+                    body_consts=rec["body_consts"], body_cond=rec["body_cond"], body_opt=rec["body_opt"],
+                    body_src=_template_sources(rec["body_src"], call_args), messages=rec["messages"],
                     handlers=hs, group=base,
                 )
                 if hs:
                     requests.append(r)
                 else:
                     unresolved.append({"id": r.id, "verb": r.verb, "url": url, "function": r.function})
-    return UICatalog(requests, unresolved, titles)
+    catalog = UICatalog(requests, unresolved, titles)
+    if not keep_cache:
+        try:
+            resolved_cache.parent.mkdir(parents=True, exist_ok=True)
+            with open(resolved_cache, "w", encoding="utf-8") as f:
+                json.dump({"fingerprint": fingerprint, **catalog.to_dict()}, f, ensure_ascii=False, indent=1)
+        except Exception as e:
+            logger.debug("Не удалось сохранить кэш UI-каталога в %s: %s", resolved_cache, e)
+    return catalog
 
 
 def main() -> None:
@@ -800,7 +1017,7 @@ def main() -> None:
 
     from engine.adapters.skeleton import load_json
 
-    ap = argparse.ArgumentParser(description="Каталог UI-запросов ts-ui-dashboard")
+    ap = argparse.ArgumentParser(description="Каталог UI-запросов модуля веб-интерфейса")
     ap.add_argument("--skeleton", default="hackaton/tt-challenge/skeleton/trainticket.json.gz")
     ap.add_argument("--targets", default="hackaton/tt-challenge/targets/trainticket")
     ap.add_argument("-o", "--out", default="output/ui_catalog.json")

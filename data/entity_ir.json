@@ -3286,9 +3286,13 @@
       "col" : 31,
       "callee" : "getCode",
       "receiver" : "Gender.OTHER",
-      "kind" : "OTHER",
+      "kind" : "ENUM",
       "arg_count" : 0,
-      "guard" : [ ]
+      "guard" : [ ],
+      "enum_constant" : {
+        "type" : "edu.fudan.common.entity.Gender",
+        "constant" : "OTHER"
+      }
     }, {
       "call_site_id_guess" : null,
       "file" : "ts-common/src/main/java/edu/fudan/common/entity/Account.java",
@@ -3296,9 +3300,13 @@
       "col" : 42,
       "callee" : "getCode",
       "receiver" : "DocumentType.NONE",
-      "kind" : "OTHER",
+      "kind" : "ENUM",
       "arg_count" : 0,
-      "guard" : [ ]
+      "guard" : [ ],
+      "enum_constant" : {
+        "type" : "edu.fudan.common.entity.DocumentType",
+        "constant" : "NONE"
+      }
     } ],
     "unsupported" : [ ]
   }, {
@@ -3968,9 +3976,13 @@
       "col" : 45,
       "callee" : "getCode",
       "receiver" : "WaitListOrderStatus.NOTPAID",
-      "kind" : "OTHER",
+      "kind" : "ENUM",
       "arg_count" : 0,
-      "guard" : [ ]
+      "guard" : [ ],
+      "enum_constant" : {
+        "type" : "waitorder.entity.WaitListOrderStatus",
+        "constant" : "NOTPAID"
+      }
     } ],
     "unsupported" : [ ]
   } ]

@@ -10,7 +10,11 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
+import com.v39a.enumres.EnumResolver;
+import com.v39a.skeleton.SkeletonGraph;
+import com.v39a.model.CallIR;
 import com.v39a.model.EntityReportIR;
+import com.v39a.model.EnumConstantIR;
 import com.v39a.model.MethodIR;
 
 import java.io.IOException;
@@ -38,9 +42,8 @@ public class EntityScanner {
             "List", "ArrayList", "Set", "HashSet", "Collection", "Map", "HashMap", "LinkedList");
 
     private final Path targetsDir;
-
-    /** Разобранный файл проекта. */
-    private record SourceFile(String relFile, String module, CompilationUnit cu) {}
+    /** Модуль -> модули, классы которых он видит, и общие библиотеки проекта (рёбра depends_on скелета). */
+    private final SkeletonGraph skeleton;
 
     /** Описание интерфейса репозитория. */
     private record RepoInfo(String module, String name, String entitySimple, CompilationUnit cu, Set<String> modifying) {}
@@ -48,19 +51,28 @@ public class EntityScanner {
     /** Сущность с её объявлением (для разбора конструкторов и полей). */
     private record EntityDecl(EntityReportIR.Entity ir, ClassOrInterfaceDeclaration cid, CompilationUnit cu) {}
 
-    public EntityScanner(Path targetsDir) {
+    private final List<SourceLoader.SourceFile> preloadedFiles;
+
+    public EntityScanner(Path targetsDir, SkeletonGraph skeleton) {
+        this(targetsDir, skeleton, null);
+    }
+
+    public EntityScanner(Path targetsDir, SkeletonGraph skeleton, List<SourceLoader.SourceFile> preloadedFiles) {
         this.targetsDir = targetsDir;
+        this.skeleton = skeleton;
+        this.preloadedFiles = preloadedFiles;
     }
 
     public EntityReportIR scan() throws IOException {
-        List<SourceFile> files = parseAll();
+        EnumResolver.scanEnums(targetsDir, skeleton.sharedModules());
+        List<SourceLoader.SourceFile> files = preloadedFiles != null ? preloadedFiles : SourceLoader.parseAll(targetsDir);
 
         Map<String, EntityDecl> entitiesByFqn = new LinkedHashMap<>();
         Map<String, RepoInfo> repos = new HashMap<>(); // module + ":" + имя интерфейса
         EntityReportIR report = new EntityReportIR();
 
         // Проход 1: сущности, репозитории, конструкторы без аргументов
-        for (SourceFile sf : files) {
+        for (SourceLoader.SourceFile sf : files) {
             String pkg = sf.cu().getPackageDeclaration().map(p -> p.getNameAsString()).orElse("");
             for (ClassOrInterfaceDeclaration cid : sf.cu().findAll(ClassOrInterfaceDeclaration.class)) {
                 String fqn = binaryName(pkg, cid);
@@ -112,7 +124,7 @@ public class EntityScanner {
 
         // Методы классов по модулю и имени: для захода в проектный метод, которому передана сущность
         Map<String, Map<String, List<MethodDeclaration>>> methodsByModule = new HashMap<>();
-        for (SourceFile sf : files) {
+        for (SourceLoader.SourceFile sf : files) {
             for (MethodDeclaration md : sf.cu().findAll(MethodDeclaration.class)) {
                 if (md.getBody().isPresent()) {
                     methodsByModule.computeIfAbsent(sf.module(), k -> new HashMap<>())
@@ -122,7 +134,7 @@ public class EntityScanner {
         }
 
         // Проход 2: вызовы репозиториев во всех классах проекта
-        for (SourceFile sf : files) {
+        for (SourceLoader.SourceFile sf : files) {
             for (ClassOrInterfaceDeclaration cid : sf.cu().findAll(ClassOrInterfaceDeclaration.class)) {
                 if (cid.isInterface()) {
                     continue;
@@ -148,7 +160,7 @@ public class EntityScanner {
                     if (repo == null) {
                         continue;
                     }
-                    EntityDecl entity = resolveEntity(repo, entitiesByFqn);
+                    EntityDecl entity = resolveEntity(repo, entitiesByFqn, skeleton.dependencies(repo.module()));
                     EntityReportIR.RepositoryCall rc = describeCall(sf, call, repo, entity);
                     if ("READ".equals(rc.operation) && entity != null) {
                         loadedCollections(call, entity, methodsByModule.getOrDefault(sf.module(), Map.of()), rc);
@@ -170,33 +182,7 @@ public class EntityScanner {
     // Разбор файлов
     // ------------------------------------------------------------------
 
-    private List<SourceFile> parseAll() throws IOException {
-        List<Path> javaFiles;
-        try (Stream<Path> walk = Files.walk(targetsDir)) {
-            javaFiles = walk.filter(p -> p.toString().endsWith(".java"))
-                    .filter(p -> {
-                        String rel = rel(p);
-                        return rel.contains("/src/main/java/");
-                    })
-                    .sorted()
-                    .collect(Collectors.toList());
-        }
-        List<SourceFile> out = new ArrayList<>();
-        for (Path p : javaFiles) {
-            String rel = rel(p);
-            try {
-                CompilationUnit cu = StaticJavaParser.parse(p);
-                out.add(new SourceFile(rel, rel.substring(0, rel.indexOf('/')), cu));
-            } catch (Exception e) {
-                System.err.println("Parse error, skipped: " + rel + ": " + e.getMessage());
-            }
-        }
-        return out;
-    }
-
-    private String rel(Path p) {
-        return targetsDir.relativize(p).toString().replace('\\', '/');
-    }
+    private String rel(Path p) { return SourceLoader.rel(targetsDir, p); }
 
     /** Двоичное имя класса как в ID скелета: вложенные классы через '$'. */
     static String binaryName(String pkg, ClassOrInterfaceDeclaration cid) {
@@ -225,7 +211,7 @@ public class EntityScanner {
         return null;
     }
 
-    private static EntityReportIR.Entity describeEntity(SourceFile sf, ClassOrInterfaceDeclaration cid, String fqn, String kind) {
+    private static EntityReportIR.Entity describeEntity(SourceLoader.SourceFile sf, ClassOrInterfaceDeclaration cid, String fqn, String kind) {
         EntityReportIR.Entity e = new EntityReportIR.Entity();
         e.type = fqn;
         e.module = sf.module();
@@ -359,21 +345,78 @@ public class EntityScanner {
     }
 
     /** IR тела явного конструктора без аргументов, если в нём есть вызовы. */
-    private static MethodIR noArgConstructorIr(SourceFile sf, ClassOrInterfaceDeclaration cid, String fqn) {
+    private static MethodIR noArgConstructorIr(SourceLoader.SourceFile sf, ClassOrInterfaceDeclaration cid, String fqn) {
         Optional<ConstructorDeclaration> ctor = noArgConstructor(cid);
         if (ctor.isEmpty()) {
             return null;
         }
+        BlockStmt body = ctor.get().getBody();
+        List<CallIR> calls = new ArrayList<>();
+
+        body.walk(node -> {
+            if (isInsideAnonymousClass(node, ctor.get())) {
+                return;
+            }
+            if (node instanceof MethodCallExpr call) {
+                int line = call.getName().getBegin().map(p -> p.line).orElse(0);
+                int col = AstUtils.skeletonCol(call.getName());
+                String callee = call.getNameAsString();
+                String receiver = call.getScope().map(Expression::toString).orElse("this");
+                EnumConstantIR enumConst = EnumResolver.resolveCall(call, sf.cu());
+                int argCount = call.getArguments().size();
+                String kind;
+                if (enumConst != null) {
+                    kind = "ENUM";
+                } else if ("this".equals(receiver) || (!call.getScope().isPresent() && isClassMethod(cid, callee))) {
+                    kind = "SAME_CLASS";
+                } else {
+                    kind = "OTHER";
+                }
+                calls.add(new CallIR(sf.relFile(), line, col, callee, receiver, kind, argCount, List.of(), enumConst));
+            } else if (node instanceof ObjectCreationExpr creation) {
+                int line = creation.getType().getBegin().map(p -> p.line).orElse(0);
+                int col = AstUtils.skeletonCol(creation);
+                String callee = "<init>";
+                String receiver = creation.getType().asString();
+                int argCount = creation.getArguments().size();
+                calls.add(new CallIR(sf.relFile(), line, col, callee, receiver, "CONSTRUCTOR", argCount, List.of(), null));
+            }
+        });
+
+        if (calls.isEmpty()) {
+            return null;
+        }
+
+        calls.sort(Comparator.comparingInt(CallIR::getLine).thenComparingInt(CallIR::getCol));
         String id = "method:" + sf.module() + ":" + fqn + "#<init>()";
-        MethodIR ir = AstAnalyzer.analyzeConstructor(id, sf.relFile(), ctor.get(), sf.cu(), new TypeIndex(sf.cu(), cid));
-        return ir.getCalls().isEmpty() ? null : ir;
+        MethodIR ir = new MethodIR(id, sf.relFile());
+        ir.setCalls(calls);
+        return ir;
+    }
+
+    private static boolean isClassMethod(ClassOrInterfaceDeclaration cid, String name) {
+        for (MethodDeclaration m : cid.getMethods()) {
+            if (m.getNameAsString().equals(name)) return true;
+        }
+        return false;
+    }
+
+    private static boolean isInsideAnonymousClass(Node node, ConstructorDeclaration ctor) {
+        Node cur = node.getParentNode().orElse(null);
+        while (cur != null && cur != ctor) {
+            if (cur instanceof ObjectCreationExpr oce && oce.getAnonymousClassBody().isPresent()) {
+                return true;
+            }
+            cur = cur.getParentNode().orElse(null);
+        }
+        return false;
     }
 
     // ------------------------------------------------------------------
     // Репозитории
     // ------------------------------------------------------------------
 
-    private static RepoInfo repositoryInfo(SourceFile sf, ClassOrInterfaceDeclaration cid) {
+    private static RepoInfo repositoryInfo(SourceLoader.SourceFile sf, ClassOrInterfaceDeclaration cid) {
         for (ClassOrInterfaceType ext : cid.getExtendedTypes()) {
             if (!SPRING_DATA_REPOSITORIES.contains(ext.getNameAsString())) {
                 continue;
@@ -403,8 +446,8 @@ public class EntityScanner {
         return cu.getPackageDeclaration().map(p -> p.getNameAsString() + "." + simple).orElse(simple);
     }
 
-    /** Сущность репозитория: явный импорт, затем тот же модуль, затем ts-common. */
-    private static EntityDecl resolveEntity(RepoInfo repo, Map<String, EntityDecl> entitiesByFqn) {
+    /** Сущность репозитория: явный импорт, затем тот же модуль, затем модули, от которых он зависит. */
+    private static EntityDecl resolveEntity(RepoInfo repo, Map<String, EntityDecl> entitiesByFqn, List<String> deps) {
         for (ImportDeclaration imp : repo.cu().getImports()) {
             if (!imp.isAsterisk() && !imp.isStatic() && imp.getNameAsString().endsWith("." + repo.entitySimple())) {
                 EntityDecl e = entitiesByFqn.get(imp.getNameAsString());
@@ -413,18 +456,21 @@ public class EntityScanner {
                 }
             }
         }
-        EntityDecl fallback = null;
-        for (EntityDecl e : entitiesByFqn.values()) {
-            if (simpleName(e.ir().type).equals(repo.entitySimple())) {
-                if (e.ir().module.equals(repo.module())) {
+        List<EntityDecl> same = entitiesByFqn.values().stream()
+                .filter(e -> simpleName(e.ir().type).equals(repo.entitySimple())).toList();
+        for (EntityDecl e : same) {
+            if (e.ir().module.equals(repo.module())) {
+                return e;
+            }
+        }
+        for (String dep : deps) {
+            for (EntityDecl e : same) {
+                if (e.ir().module.equals(dep)) {
                     return e;
-                }
-                if ("ts-common".equals(e.ir().module)) {
-                    fallback = e;
                 }
             }
         }
-        return fallback;
+        return null;
     }
 
     /** Имя поля-репозитория, на котором сделан вызов: repo.find(...) или this.repo.find(...). */
@@ -442,11 +488,11 @@ public class EntityScanner {
         return null;
     }
 
-    private static EntityReportIR.RepositoryCall describeCall(SourceFile sf, MethodCallExpr call, RepoInfo repo, EntityDecl entity) {
+    private static EntityReportIR.RepositoryCall describeCall(SourceLoader.SourceFile sf, MethodCallExpr call, RepoInfo repo, EntityDecl entity) {
         EntityReportIR.RepositoryCall rc = new EntityReportIR.RepositoryCall();
         rc.file = sf.relFile();
         rc.line = call.getName().getBegin().map(p -> p.line).orElse(0);
-        rc.col = AstAnalyzer.skeletonCol(call.getName());
+        rc.col = AstUtils.skeletonCol(call.getName());
         rc.callee = call.getNameAsString();
         rc.repository = repo.name();
         rc.entity = entity == null ? null : entity.ir().type;
@@ -532,7 +578,7 @@ public class EntityScanner {
             cb.method = "method:" + entity.ir().module + ":" + entity.ir().type + "#equals(java.lang.Object)";
             cb.via = c.getNameAsString();
             cb.line = line(c.getName());
-            cb.col = AstAnalyzer.skeletonCol(c.getName());
+            cb.col = AstUtils.skeletonCol(c.getName());
             out.add(cb);
         }
         if (!out.isEmpty()) {
