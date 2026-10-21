@@ -84,8 +84,16 @@ LLM и эмбеддер вместе в 16 ГБ не помещаются:
 - `ARCHONITY_LLAMA_ARGS="-ncmoe 7"` — часть экспертов MoE в RAM;
 - `ARCHONITY_EMBED_DEVICE=cpu` — эмбеддер на процессоре.
 
-Сборка `llama.cpp` под Vulkan (единый `llama` из WindowsApps) видит и встроенную AMD Radeon (Vulkan0, память общая с RAM), и RTX 5070 Ti (Vulkan1), и делит слои между ними. 21.10 так автозапуск упал на выделении памяти: `unable to allocate Vulkan1 buffer`. Устройства — `llama server --list-devices`; закрепить сервер за NVIDIA — `ARCHONITY_LLAMA_ARGS="-ncmoe 7 -dev Vulkan1"`. На A100 со сборкой CUDA из манифеста этого нет.
+21.10 автозапуск дважды падал на `unable to allocate Vulkan1 buffer` (`ErrorOutOfDeviceMemory`) при 7.7 ГБ занятой видеопамяти из 16. Причина — лимит выделенной памяти Windows: RAM 31 ГБ и подкачка 3.6 ГБ, в простое свободно около 10.7 ГБ. Эмбеддер на CPU в том же процессе держит около 8 ГБ, и буферам Vulkan их не хватает. Без эмбеддера тот же сервер поднимается за 17 с и занимает 15.4 ГБ. Обход — сначала векторы шагов отдельным прогоном, потом основной: эмбеддер второй раз не грузится.
+
+```powershell
+python -m engine.grounding.grounder <файлы сценариев> --no-llm --embed-model
+```
+
+Сборка `llama.cpp` под Vulkan (единый `llama` из WindowsApps) видит встроенную AMD Radeon (Vulkan0, память общая с RAM) и RTX 5070 Ti (Vulkan1) и без `-dev` делит слои между ними (`llama server --list-devices`). Замеры 21.10 шли с сервером, закреплённым за NVIDIA: `ARCHONITY_LLAMA_ARGS="-ncmoe 7 -dev Vulkan1"`. На A100 со сборкой CUDA из манифеста встроенной видеокарты нет.
 
 Замер 21.10 на RTX 5070 Ti 16 ГБ, S0 с пустым кешем LLM. Автозапуск `llama server` с `-ncmoe 7`: загрузка модели с диска заняла 284 с, весь прогон — 340 с (11 ответов сервера, IoU S0 = 1.0). Пик видеопамяти — 15.4 ГБ, после выхода — 0. Эмбеддер на `cuda`: загрузка из `models/` 155 с, пик 7.7 ГиБ. Векторы совпали с `cache/emb`, косинус 0.998–1.007 — разница в округлении bf16.
+
+Замер 21.10, «закрытый» сценарий: S0 с перефразированными шагами, `scripts/run_final.sh` из Git Bash, кеш LLM из репозитория. Векторы шагов — промах, эмбеддер посчитал их на CPU. Ответы на шаги — промах, сервер поднялся сам за 17 с и дал 39 ответов. Прогон — 165 с, пик видеопамяти 15.4 ГБ, итог против эталона S0 — 0.903 (на исходном тексте 1.0): шаг «Reload my orders on high-speed GaoTie/DongChe trains» ушёл в `calculateSoldTicket` вместо `queryOrdersForRefresh`.
 
 Сервер вручную — `scripts/start_llm.ps1`. Уже скачанную модель кладёт в `models/` команда `python scripts/fetch_models.py --from <путь>/Qwen3.6-35B-A3B-UD-IQ4_XS.gguf`: она проверяет sha256 и ставит жёсткую ссылку или копию. Для эмбеддера `--only embedder --from <кеш HF>/snapshots/<ревизия>`.
