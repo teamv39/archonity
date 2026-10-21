@@ -84,6 +84,8 @@ LLM и эмбеддер вместе в 16 ГБ не помещаются:
 - `ARCHONITY_LLAMA_ARGS="-ncmoe 7"` — часть экспертов MoE в RAM;
 - `ARCHONITY_EMBED_DEVICE=cpu` — эмбеддер на процессоре.
 
+Сборка `llama.cpp` под Vulkan (единый `llama` из WindowsApps) видит и встроенную AMD Radeon (Vulkan0, память общая с RAM), и RTX 5070 Ti (Vulkan1), и делит слои между ними. 21.10 так автозапуск упал на выделении памяти: `unable to allocate Vulkan1 buffer`. Устройства — `llama server --list-devices`; закрепить сервер за NVIDIA — `ARCHONITY_LLAMA_ARGS="-ncmoe 7 -dev Vulkan1"`. На A100 со сборкой CUDA из манифеста этого нет.
+
 Замер 21.10 на RTX 5070 Ti 16 ГБ, S0 с пустым кешем LLM. Автозапуск `llama server` с `-ncmoe 7`: загрузка модели с диска заняла 284 с, весь прогон — 340 с (11 ответов сервера, IoU S0 = 1.0). Пик видеопамяти — 15.4 ГБ, после выхода — 0. Эмбеддер на `cuda`: загрузка из `models/` 155 с, пик 7.7 ГиБ. Векторы совпали с `cache/emb`, косинус 0.998–1.007 — разница в округлении bf16.
 
 Сервер вручную — `scripts/start_llm.ps1`. Уже скачанную модель кладёт в `models/` команда `python scripts/fetch_models.py --from <путь>/Qwen3.6-35B-A3B-UD-IQ4_XS.gguf`: она проверяет sha256 и ставит жёсткую ссылку или копию. Для эмбеддера `--only embedder --from <кеш HF>/snapshots/<ревизия>`.
