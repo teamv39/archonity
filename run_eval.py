@@ -113,21 +113,6 @@ def parse_args() -> argparse.Namespace:
              "входом (по умолчанию, посылка 27: 1.00000), keep — как выбрал M1",
     )
     parser.add_argument(
-        "--ref-kinds",
-        choices=("v7", "v8"),
-        default=None,
-        help="Виды сущностей в ссылках шагов (StepRequest.refs, ADR-007): v7 — 12 видов M1 до ADR-007 (кеш m1-v7), "
-             "M4 переводит их в виды манифеста; v8 — виды манифеста engine/manifest.py (@Entity/@Embeddable скелета: "
-             "contacts, priceConfig, consignRecord, trainType). По умолчанию — как у --m1-prompt: M1 v8 даёт виды v8",
-    )
-    parser.add_argument(
-        "--module-roles",
-        choices=("skeleton", "names"),
-        default="skeleton",
-        help="Общий модуль типов и близнецы M1: skeleton (по умолчанию) — по depends_on и совпадению API модулей, "
-             "имена которых отличаются одним токеном; names — 'ts-common' и 'other' или цифры в пути, как до feature/84",
-    )
-    parser.add_argument(
         "--no-eval",
         action="store_true",
         help="Пропустить автоматический вызов evaluate_golden.py",
@@ -145,22 +130,6 @@ def parse_args() -> argparse.Namespace:
         default="on",
         help="M4: шаг ожидает успех, а по значениям M1 отказал — повтор с нормализованными, затем неизвестными "
              "строковыми параметрами (on по умолчанию)",
-    )
-    parser.add_argument(
-        "--m4-conventions",
-        choices=("code", "names"),
-        default="code",
-        help="M4: соглашения проекта — code (по умолчанию) из кода: ответ-обёртка и значение успеха, строки шага "
-             "при повторе — значения мира БД, поля тела — источники из шаблона UI; names — как до feature/102 "
-             "(Response/status/1, нормализация названий станций, алиасы tripId/oldTripId)",
-    )
-    parser.add_argument(
-        "--m1-prompt",
-        choices=("v7", "v8"),
-        default="v8",
-        help="Промпт M1 (ADR-007): v8 — общий шаблон, домен и правила близнецов из профиля проекта (ответ "
-             "LLM-профилировщика), виды refs из манифеста, кеш m1-v8 (по умолчанию с 21.10, рекорд); v7 — до ADR-007, "
-             "с доменом Train Ticket, кеш m1-v7 (флаг отката до сдачи 22.10, тот же рекорд)",
     )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
@@ -186,18 +155,7 @@ def parse_args() -> argparse.Namespace:
                         help="M1 v8: рассуждение в ответе выбора; off — ответ вдвое короче")
     parser.add_argument("--llm-cache", type=Path, default=None,
                         help="M1: папка кеша ответов LLM (по умолчанию cache/llm); для прогона другой модели")
-    parser.add_argument(
-        "--judge",
-        choices=("on", "cache", "off"),
-        default="off",
-        help="Судья M4 для условий UNKNOWN, где иначе исполнились бы оба плеча: on — кеш, на промахе сервер; "
-             "cache — только кеш; off — без судьи (по умолчанию)",
-    )
-    parser.add_argument("--judge-budget", type=int, default=400, help="M4: вызовов сервера судьи на прогон")
-    args = parser.parse_args()
-    if args.ref_kinds is None:
-        args.ref_kinds = "v8" if args.m1_prompt == "v8" else "v7"
-    return args
+    return parser.parse_args()
 
 
 def resolve_scenario_paths(args_scenarios: list[str] | None) -> list[Path]:
@@ -292,7 +250,6 @@ def main() -> None:
                                                   refresh=args.no_cache and not args.require_cache,
                                                   timeout=args.llm_timeout,
                                                   **({"cache_dir": args.llm_cache} if args.llm_cache else {})),
-        "prompt": args.m1_prompt,
         "votes": args.select_votes,
         "top_k": args.m1_top_k,
         "index": args.m1_index == "on",
@@ -308,14 +265,9 @@ def main() -> None:
         jackson_ctor=args.jackson_ctor,
         lombok_tostring=args.lombok_tostring,
         unbound_handlers=args.unbound_handlers,
-        ref_kinds=args.ref_kinds,
-        module_roles=args.module_roles,
         m1_options=m1_options,
         unresolved_receiver_calls=args.m4_unresolved_calls,
         m4_success_retry=args.m4_success_retry,
-        m4_conventions=args.m4_conventions,
-        m4_judge=args.judge,
-        m4_judge_budget=args.judge_budget,
     )
 
     print("Генерация графов для сценариев...")

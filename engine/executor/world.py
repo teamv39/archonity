@@ -53,8 +53,7 @@ def parse_java_args(text: str) -> list[Any]:
 class TypeIndex:
     """Типы проекта из скелета: поля по порядку объявления, колонки, enum-константы, методы."""
 
-    def __init__(self, nodes: dict[str, dict[str, Any]], edges: list[dict[str, Any]], targets_root: Path | None,
-                 module_roles: str = "skeleton") -> None:
+    def __init__(self, nodes: dict[str, dict[str, Any]], edges: list[dict[str, Any]], targets_root: Path | None) -> None:
         self.nodes = nodes
         self.types: dict[str, dict[str, Any]] = {}  # type node id -> node
         self.by_fqn: dict[str, list[str]] = {}
@@ -85,7 +84,6 @@ class TypeIndex:
                 self.deps.setdefault(e["source"].removeprefix("module:"), []).append(e["target"].removeprefix("module:"))
         # Общие библиотеки проекта — модули, от которых зависят другие
         self.shared = sorted({m for ms in self.deps.values() for m in ms})
-        self.module_roles = module_roles
         self.targets_root = targets_root
         self._enum_consts: dict[str, list[tuple[str, list[Any]]]] = {}
         self._all_fields_cache: dict[str, list[dict[str, Any]]] = {}
@@ -93,9 +91,7 @@ class TypeIndex:
 
     def _prefs(self, module: str | None) -> list[str | None]:
         """Порядок модулей при неоднозначном имени типа: модуль вызывающего, затем его зависимости
-        (без известного модуля или зависимостей — общие библиотеки проекта); names — `ts-common`, как до feature/84."""
-        if self.module_roles == "names":
-            return [module, "ts-common"]
+        (без известного модуля или зависимостей — общие библиотеки проекта)."""
         return [module, *(self.deps.get(module or "") or self.shared)]
 
     def resolve(self, fqn: str | None, module: str | None = None) -> str | None:

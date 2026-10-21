@@ -34,12 +34,6 @@ class RuntimeRules:
     unresolved_receiver_calls: str = "emit"
     # Шаг ожидает успех, а по значениям M1 отказал: повтор с нормализованными, затем неизвестными строками
     m4_success_retry: str = "on"
-    # Общий модуль типов и близнецы M1: skeleton — по depends_on и API модулей; names — по именам, как до feature/84
-    module_roles: str = "skeleton"
-    # Виды сущностей в StepRequest.refs (ADR-007): v8 — виды манифеста; v7 — 12 видов M1 до ADR-007
-    ref_kinds: str = "v8"
-    # Соглашения проекта в M4: code — из кода (envelope.py, мир БД, каталог UI); names — как до feature/102
-    m4_conventions: str = "code"
 
     MODES: ClassVar[dict[str, tuple[str, ...]]] = {
         "constructors": ("caller_only", "all", "off"),
@@ -51,9 +45,6 @@ class RuntimeRules:
         "unbound_handlers": ("rebind", "keep"),
         "unresolved_receiver_calls": ("emit", "mute"),
         "m4_success_retry": ("on", "off"),
-        "module_roles": ("skeleton", "names"),
-        "ref_kinds": ("v8", "v7"),
-        "m4_conventions": ("code", "names"),
     }
 
     def __post_init__(self) -> None:

@@ -10,7 +10,7 @@
    ответ не оборван (`finish_reason` = stop). Ответ в ключ не входит: правка ответа руками ключ не ломает.
 2. Покрытие: прогон с `--require-cache` пишет ключи всех запросов к LLM (`m1_report.json`, `llm_keys`). Каждый
    должен быть в кеше и пройти п. 1 — то есть промпты, которые строит текущий код, дословно те, на которые записаны
-   ответы. Записи вне прогона — режимы отката (`--m1-prompt v7`) и судья (`--judge on`), по группам.
+   ответы. Записи вне прогона (ответы старых версий промпта) показываются по группам.
 3. Перепроверка (`--recheck N`, нужен сервер `ARCHONITY_LLM_URL`): N случайных записей прогона спрашиваются заново
    с теми же сообщениями, схемой и выборкой; ответ сравнивается с записанным. Кеш не меняется (ответы — во временную
    папку). На другом железе или другой сборке llama.cpp ответ модели может отличаться — это видно по доле совпадений.
@@ -33,13 +33,6 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from engine.grounding.llm import CACHE_DIR, LLMClient  # noqa: E402
-
-# Записи вне прогона по умолчанию: зачем они в кеше
-PURPOSE = {
-    "m1-v7": "откат M1: --m1-prompt v7",
-    "m4-judge-v1": "судья M4: --judge on (по умолчанию выключен)",
-}
-
 
 def check_entry(path: Path, client: LLMClient, validator: object | None) -> list[str]:
     """Нарушения целостности одной записи (пусто — запись цела)."""
@@ -139,7 +132,7 @@ def main() -> None:
     used = set(keys)
     for g, ks in sorted(groups.items()):
         n_used = len(ks & used)
-        why = "" if n_used else f" — {PURPOSE.get(g.split('/')[0], 'не используется')}"
+        why = "" if n_used else " — не используется"
         print(f"   {g:<22} записей {len(ks):4}, в прогоне {n_used:4}{why}")
 
     diff = recheck(keys, args.recheck, args.seed) if args.recheck else 0

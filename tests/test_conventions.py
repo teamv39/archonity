@@ -63,9 +63,10 @@ class TestEnvelope:
 
     def test_derived_from_train_ticket(self, ix: SkeletonIndex, ir: dict) -> None:
         # Класс — из `return new X(<код>, "<сообщение>")`, поля — из скелета, успех — из проверок UI
-        assert envelope.derive(ix, ir, TARGETS) == envelope.NAMES
+        tt = envelope.Envelope(name="Response", status="status", success=1, data="data")
+        assert envelope.derive(ix, ir, TARGETS) == tt
         # Без UI значение успеха дают сравнения get<Статус>() сервисов
-        assert envelope.derive(ix, ir, None) == envelope.NAMES
+        assert envelope.derive(ix, ir, None) == tt
 
 
 class TestWorldString:

@@ -240,7 +240,6 @@ class TestArchitectureRefactoring:
         cfg = PipelineConfig(rules=RuntimeRules(constructors="all"))
         assert cfg.rules.constructors == "all"
         assert cfg.rules.unbound_handlers == "rebind"
-        assert cfg.m4_judge == "off"
         with pytest.raises(ValueError):
             RuntimeRules(constructors="maybe")
 

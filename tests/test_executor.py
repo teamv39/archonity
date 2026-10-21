@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 
 from engine.adapters.db import DatabaseState
-from engine.executor.envelope import NAMES
+from engine.executor.envelope import Envelope
 from engine.executor.interpreter import arm_fails, match_template
 from engine.executor.library import _date_call, call_library, new_library
 from engine.executor.values import (
@@ -18,6 +18,8 @@ from engine.executor.values import (
 from engine.executor.world import derived_props, native_query_conds, parse_java_args
 
 ROOT = Path(__file__).resolve().parent.parent
+# Обёртка ответа Train Ticket, как её выводит envelope.derive (tests/test_conventions.py)
+NAMES = Envelope(name="Response", status="status", success=1, data="data")
 SKELETON_PATH = ROOT / "hackaton" / "tt-challenge" / "skeleton" / "trainticket.json.gz"
 TARGETS_ROOT = ROOT / "hackaton" / "tt-challenge" / "targets" / "trainticket"
 SCENARIOS = ROOT / "hackaton" / "tt-challenge" / "scenarios"

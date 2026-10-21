@@ -22,7 +22,7 @@ TT = ROOT / "hackaton" / "tt-challenge"
 p = ArchonityPipeline(
     skeleton_path=TT / "skeleton" / "trainticket.json.gz",
     targets_root=TT / "targets" / "trainticket",
-    m1_options={"embedder": "qwen3-4b", "llm": LLMClient(use_server=False), "prompt": "v8"},
+    m1_options={"embedder": "qwen3-4b", "llm": LLMClient(use_server=False)},
 )
 used = set()
 for f in (ROOT / "eval" / "m1_steps.json",):
@@ -43,7 +43,7 @@ for nid, h in cat.items():
     t = time.perf_counter()
     rec = {"handler": nid, "in_s1_s7": nid in used}
     try:
-        m, c, r, d = p.m4.run_step(req, ctx, ledger=p.ledger, scenario={"id": "SX", "steps": []})
+        m, c, r, d = p.m4.run_step(req, ctx, ledger=p.ledger)
         rec.update(ok=True, executes=sorted(m), calls=sorted(c), remote=sorted(r), data=sorted(d))
     except Exception as e:  # noqa: BLE001
         rec.update(ok=False, error=f"{type(e).__name__}: {e}", where=traceback.format_exc().splitlines()[-3].strip())

@@ -37,7 +37,6 @@ def ir_pipeline() -> ArchonityPipeline:
         jackson_ctor="on",
         lombok_tostring="on",
         unbound_handlers="rebind",
-        module_roles="skeleton",
     )
 
 
@@ -132,11 +131,11 @@ class TestMetamorphicRelations:
         state1 = resolve_passenger_context(ir_pipeline.index.context, ir_pipeline.index.db_state)
 
         ir_pipeline.m4.begin_scenario("S1_IDEMP")
-        m1, c1, r1, d1 = ir_pipeline.m4.run_step(step_menu, state1, scenario=s1_dict)
+        m1, c1, r1, d1 = ir_pipeline.m4.run_step(step_menu, state1)
 
         # Повторное выполнение того же шага из того же состояния
         ir_pipeline.m4.begin_scenario("S1_IDEMP")
-        m2, c2, r2, d2 = ir_pipeline.m4.run_step(step_menu, state1, scenario=s1_dict)
+        m2, c2, r2, d2 = ir_pipeline.m4.run_step(step_menu, state1)
 
         assert m1 == m2
         assert c1 == c2

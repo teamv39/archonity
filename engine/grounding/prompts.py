@@ -13,53 +13,20 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from engine.grounding.docs import SKIP_PARAM_TYPES, HandlerInfo
-from engine.grounding.request import OUTCOMES, REF_ENTITIES, REF_PICKS
+from engine.grounding.request import OUTCOMES, REF_PICKS
 from engine.grounding.ui_catalog import UIRequest
 
-PROMPT_VERSION = "m1-v7"
-# Режимы промпта (ADR-007): v8 — общий шаблон, домен и правила близнецов из профиля проекта; v7 — до ADR-007, откат
-PROMPT_MODES = ("v8", "v7")
-PROMPT_VERSIONS = {"v8": "m1-v8", "v7": PROMPT_VERSION}
+# Версия промпта (ключ кеша LLM): v8 — промпт ADR-007, без слов домена; домен и правила близнецов — из профиля проекта
+PROMPT_VERSION = "m1-v8"
 CAND_SRC_LINES = 6
 REF_PAIRS_MAX = 6
-
-# Режим v7: тексты до ADR-007, с доменом Train Ticket. Оставлены для отката (`--m1-prompt v7`, кеш m1-v7)
-SYSTEM = """You map steps of a user scenario in the Train Ticket web application to backend REST requests.
-Train Ticket is a set of Java microservices behind a gateway (/api/v1/<service>/...). A browser UI (ts-ui-dashboard) sends the requests.
-
-Rules:
-- Every scenario step sends exactly one HTTP request through the gateway. Pick the one backend handler that serves it, even when the web UI would send several requests or none for that action.
-- Services come in twins for the two train kinds: high-speed trains (GaoTie/DongChe, trip numbers starting with G or D) and regular trains (the 'Other' type, e.g. K, T, Z). The twin with 'other' or '2' in its service name (ts-travel2-service, ts-order-other-service, ts-preserve-other-service) serves regular trains; the plain one serves high-speed trains. Choose the twin by the train kind of the trip or order the step works with.
-- When a UI variant is sent only under a condition, check the condition against the scenario.
-- Prefer a handler that the web UI calls for this kind of action (candidates show their UI page and action). Handlers without UI are mostly internal APIs that other services call; choose one only when no UI handler does what the step asks.
-- Administrator steps (admin console) use admin services; passenger steps do not.
-- A step that the system refuses still sends its request: pick the handler that refuses it.
-
-Enum codes used in request fields:
-{enums}
-"""
 
 INDEX = """
 Handler index. Each step lists candidate handlers: the closest search matches, with details. Search can miss: when no candidate does what the step asks, pick the right handler from this index, which lists every handler (label: route -> Class#method; "ui" marks handlers that the web UI calls).
 {index}
 """
 
-SELECT_TASK = """Current step {n}: {action}
-
-Candidate handlers (closest search matches):
-{candidates}
-
-Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler (a candidate, or a handler from the index when no candidate fits), whether the system serves the step ('success') or refuses it ('refused', only if the step says so), and refs — which results of earlier steps this request uses (e.g. "trip": "first_of_step_2" for the first trip found at step 2, "order": "new_of_step_6" for the order created at step 6). Leave refs empty when the request uses nothing from earlier steps."""
-
-PARAMS_TASK = """Current step {n}: {action}
-Chosen request: {verb} {path} -> {signature}
-
-Request fields (Java type):
-{fields}
-{ui_hints}
-Fill only the fields whose value follows from the step text or the scenario description: seat class, food, assurance, consignment weight and consignee, query filters and date ranges, names, numbers and dates of new entities. Use enum codes from the reference for coded fields. Use null for identifiers and for anything taken from results of earlier steps, and for everything the text does not determine."""
-
-# Режим v8 (ADR-007): без слов домена. Домен, правила близнецов — из профиля проекта (engine/grounding/profile.py),
+# Без слов домена (ADR-007): домен, правила близнецов — из профиля проекта (engine/grounding/profile.py),
 # окружение — из `context` скелета, модуль UI — из `find_ui_dir`
 SYSTEM_V8 = """You map steps of a user scenario in a web application to backend REST requests.
 {domain}The backend is a set of Java microservices behind a gateway; a browser UI ({ui}) sends the requests.{environment}
@@ -110,12 +77,6 @@ def enum_reference(enums: dict[str, list[str]]) -> str:
     return "\n".join(f"- {name}: {', '.join(consts)}" for name, consts in sorted(enums.items()))
 
 
-def system_prompt(enums: dict[str, list[str]], index: str | None = None) -> str:
-    """Индекс обработчиков нужен только вызову выбора; вызову параметров он лишний и отвлекает."""
-    text = SYSTEM.format(enums=enum_reference(enums))
-    return text + INDEX.format(index=index) if index else text
-
-
 def has_twin_rules(profile: Any) -> bool:
     """Есть ли в профиле пара близнецов с правилом. Сами правила идут не в системный промпт, а в карточку
     кандидата-близнеца (`twin_note`): список пар в системном промпте модель брала как правило выбора сервиса
@@ -164,7 +125,7 @@ def example_kinds(kinds: dict[str, Any], handlers: dict[str, HandlerInfo]) -> tu
 
 
 def twin_note(profile: Any, module: str) -> str | None:
-    """Строка карточки кандидата-близнеца (v8): что обслуживает этот модуль и его близнец, по профилю."""
+    """Строка карточки кандидата-близнеца: что обслуживает этот модуль и его близнец, по профилю."""
     got = profile.rule_for(module) if profile is not None else None
     if got is None:
         return None
@@ -224,7 +185,7 @@ STATUS_TEST = re.compile(r"""\w+(?:\[["']status["']\]|\.status)\s*===?\s*(-?\d+)
 
 
 def followup_notes(ui: list[tuple[UIRequest, list[UIRequest]]], answers: Any, guards: Any = None) -> list[str]:
-    """Режим v8: запрос, который UI шлёт из обработчика ответа другого запроса по коду статуса, — и что этот код
+    """Запрос, который UI шлёт из обработчика ответа другого запроса по коду статуса, — и что этот код
     значит в исходнике первого запроса. `answers(verb, url)` → {код: сообщения} (`HandlerCatalog.answers`),
     `guards(verb, url)` → {код: условия возврата} (`HandlerCatalog.answer_guards`, по IR)."""
     notes: list[str] = []
@@ -260,16 +221,12 @@ def followup_notes(ui: list[tuple[UIRequest, list[UIRequest]]], answers: Any, gu
 
 
 def candidate_block(label: str, h: HandlerInfo, ui: list[tuple[UIRequest, list[UIRequest]]],
-                    train_kind: str | None = None, twin: str | None = None, notes: list[str] | None = None,
-                    calls: list[str] | None = None) -> str:
-    """`train_kind` — строка близнеца v7; `twin`, `notes` (`followup_notes`) и `calls` (`HandlerCatalog.service_calls`)
-    — v8."""
+                    twin: str | None = None, notes: list[str] | None = None, calls: list[str] | None = None) -> str:
+    """`twin` — строка близнеца (`twin_note`), `notes` — `followup_notes`, `calls` — `HandlerCatalog.service_calls`."""
     lines = [f"{label}: " + "; ".join(f"{v} {p}" for v, p in h.routes)]
     lines.append(f"    handler {h.signature} in {h.module}")
     if twin:
         lines.append(f"    {twin}")
-    elif train_kind:
-        lines.append(f"    serves {train_kind} only; its twin serves the other kind")
     if h.body_fields:
         lines.append("    body: " + ", ".join(f["name"] for f in h.body_fields))
     if calls:
@@ -285,32 +242,19 @@ def candidate_block(label: str, h: HandlerInfo, ui: list[tuple[UIRequest, list[U
     return "\n".join(lines)
 
 
-def train_kind(module: str) -> str:
-    """Режим v7: какие поезда обслуживает модуль из пары близнецов: `other` или цифра в имени — обычные."""
-    core = module.removeprefix("ts-").removesuffix("-service")
-    if re.search(r"other|\d", core):
-        return "regular trains (the 'Other' type, not G/D)"
-    return "high-speed trains (GaoTie/DongChe, G/D)"
+def select_schema(labels: list[str], step: int, kinds: Iterable[str], reasoning: bool = True) -> dict[str, Any]:
+    """`kinds` — виды refs из манифеста сущностей. `reasoning=False` — ответ без рассуждения (режим CPU: ответ вдвое
+    короче).
 
-
-def select_schema(labels: list[str], step: int, kinds: Iterable[str] = REF_ENTITIES,
-                  ref_pairs: bool = False, reasoning: bool = True) -> dict[str, Any]:
-    """`kinds` — виды refs: v7 — `REF_ENTITIES`, v8 — виды манифеста сущностей. `reasoning=False` — ответ без
-    рассуждения (режим CPU: ответ вдвое короче).
-
-    `ref_pairs` (v8): refs — массив пар {kind, ref}, а не объект с ключом на вид. Грамматика JSON-схемы llama.cpp
-    пишет необязательные свойства объекта только в порядке схемы: после ключа `trip` ключ `contacts` уже не написать,
-    и модель брала ближайший доступный вид (`user`, `train`, `price`) вместо нужного."""
+    refs — массив пар {kind, ref}, а не объект с ключом на вид. Грамматика JSON-схемы llama.cpp пишет необязательные
+    свойства объекта только в порядке схемы: после ключа `trip` ключ `contacts` уже не написать, и модель брала
+    ближайший доступный вид (`user`, `train`, `price`) вместо нужного."""
     ref_values = [f"{p}_of_step_{i}" for i in range(1, step) for p in REF_PICKS]
-    if ref_pairs:
-        item = {"type": "object", "properties": {"kind": {"type": "string", "enum": list(kinds)},
-                                                 "ref": {"type": "string", "enum": ref_values}},
-                "required": ["kind", "ref"], "additionalProperties": False}
-        refs = ({"type": "array", "items": item, "maxItems": REF_PAIRS_MAX} if ref_values
-                else {"type": "array", "maxItems": 0})
-    else:
-        ref_props = {e: {"type": "string", "enum": ref_values} for e in kinds} if ref_values else {}
-        refs = {"type": "object", "properties": ref_props, "additionalProperties": False}
+    item = {"type": "object", "properties": {"kind": {"type": "string", "enum": list(kinds)},
+                                             "ref": {"type": "string", "enum": ref_values}},
+            "required": ["kind", "ref"], "additionalProperties": False}
+    refs = ({"type": "array", "items": item, "maxItems": REF_PAIRS_MAX} if ref_values
+            else {"type": "array", "maxItems": 0})
     schema = {
         "type": "object",
         "properties": {
@@ -329,15 +273,12 @@ def select_schema(labels: list[str], step: int, kinds: Iterable[str] = REF_ENTIT
 
 
 def refs_of(sel: dict[str, Any]) -> dict[str, str]:
-    """refs ответа выбора как {вид: ссылка}: из объекта (v7) или из массива пар (v8; первая пара вида побеждает)."""
-    raw = sel.get("refs") or {}
-    if isinstance(raw, list):
-        out: dict[str, str] = {}
-        for x in raw:
-            if isinstance(x, dict) and x.get("kind") and x.get("ref"):
-                out.setdefault(x["kind"], x["ref"])
-        return out
-    return {k: v for k, v in raw.items() if v}
+    """refs ответа выбора как {вид: ссылка} из массива пар (первая пара вида побеждает)."""
+    out: dict[str, str] = {}
+    for x in sel.get("refs") or ():
+        if isinstance(x, dict) and x.get("kind") and x.get("ref"):
+            out.setdefault(x["kind"], x["ref"])
+    return out
 
 
 JSON_TYPES = {
@@ -371,8 +312,9 @@ def params_schema(fields: list[tuple[str, str, str]]) -> dict[str, Any]:
 
 
 def params_task(n: int, action: str, verb: str, path: str, h: HandlerInfo, fields: list[tuple[str, str, str]],
-                ui: UIRequest | None, template: str = PARAMS_TASK, optional: bool = False) -> str:
-    """`optional` (режим v8) — ещё и поля, которые UI шлёт только под условием, сгруппированные по условию."""
+                ui: UIRequest | None) -> str:
+    """Задание вызова параметров; подсказки UI — константы тела, значения под условием и поля, которые UI шлёт только
+    под условием, сгруппированные по условию."""
     flines = "\n".join(f"  {name} ({src}): {jt}" for name, src, jt in fields)
     hints = ""
     if ui is not None:
@@ -384,12 +326,12 @@ def params_task(n: int, action: str, verb: str, path: str, h: HandlerInfo, field
             hints += "Values the web UI sends under conditions:\n" + "\n".join(
                 f"  {c['field']}={c['value']!r} when {' && '.join(c['guards']) or 'always'}" for c in cond[:12]) + "\n"
         groups: dict[str, list[str]] = {}
-        for o in ui.body_opt if optional else []:
+        for o in ui.body_opt:
             if any(o["field"] == f for f, _, _ in fields):
                 groups.setdefault(" && ".join(o["guards"]), []).append(o["field"])
         if groups:
             hints += ("Fields the web UI sends only under a condition; when it does not hold, the request leaves them out "
                       "and they keep their Java default (0 for numbers, false for booleans, null otherwise):\n") + "\n".join(
                 f"  {', '.join(fs)} when {g}" for g, fs in list(groups.items())[:8]) + "\n"
-    return template.format(n=n, action=action, verb=verb, path=path, signature=h.signature, fields=flines,
-                           ui_hints=hints)
+    return PARAMS_TASK_V8.format(n=n, action=action, verb=verb, path=path, signature=h.signature, fields=flines,
+                                 ui_hints=hints)

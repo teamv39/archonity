@@ -27,9 +27,8 @@ from engine.grounding.docs import HandlerCatalog, HandlerInfo
 from engine.grounding.binding import rebind
 from engine.grounding.llm import LLMClient
 from engine.grounding.profile import ProjectProfile, build_profile
-from engine.grounding.request import REF_ENTITIES, StepRequest
+from engine.grounding.request import StepRequest
 from engine.grounding.retrieval import Ranked, Retriever
-from engine.grounding.text import DOMAIN_SYN
 from engine.grounding.ui_catalog import UIRequest, build_catalog, find_ui_dir, match_handlers
 from engine.manifest import entity_kinds
 
@@ -37,7 +36,7 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 TT = ROOT / "hackaton" / "tt-challenge"
 DEFAULT_EMBEDDER = "qwen3-4b"
 TOP_K = 10
-# Режим v8: выбор обработчика голосованием — жадный ответ и SELECT_VOTES выборок с параметрами модели по умолчанию
+# Выбор обработчика голосованием — жадный ответ и SELECT_VOTES выборок с параметрами модели по умолчанию
 # для режима без thinking и seed 1..SELECT_VOTES (заданы заранее, под результат не подбираются); побеждает
 # обработчик большинства (`StepGrounder._vote`). При temperature 0 правка текста промпта переставляла пограничные шаги.
 SELECT_VOTES = 5
@@ -99,32 +98,25 @@ class ScenarioSession:
 class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
-                 top_k: int = TOP_K, module_roles: str = "skeleton", prompt: str = "v8",
-                 votes: int = SELECT_VOTES, index: bool = True, reasoning: bool = True) -> None:
-        """`prompt` — режим промпта (ADR-007): v8 — общий шаблон и профиль проекта, v7 — промпт до ADR-007.
+                 top_k: int = TOP_K, votes: int = SELECT_VOTES, index: bool = True, reasoning: bool = True) -> None:
+        """Промпт ADR-007: общий шаблон, домен и правила близнецов из профиля проекта, виды refs из манифеста.
 
-        Режим CPU (v8; docs/researches/gpu_dependence_and_cpu_fallback_study.md, раздел 7.5): `votes` — выборок
+        Режим CPU (docs/researches/gpu_dependence_and_cpu_fallback_study.md, раздел 7.5): `votes` — выборок
         голосования сверх жадного ответа (0 — только жадный); `index=False` — без индекса обработчиков в системном
         промпте выбора, выбор только из кандидатов (контекст ~3 тыс. токенов вместо ~10); `reasoning=False` — ответ
         выбора без рассуждения. Умолчания — промпт и ключи кеша рекорда."""
-        if prompt not in P.PROMPT_MODES:
-            raise ValueError(f"prompt: {prompt!r}, ожидается одно из {P.PROMPT_MODES}")
-        if prompt == "v7" and not (index and reasoning):
-            raise ValueError("index=False и reasoning=False — только для prompt v8")
         self.ix = ix
         self.root = Path(targets_root)
-        self.prompt = prompt
-        self.version = P.PROMPT_VERSIONS[prompt]
-        v7 = prompt == "v7"
+        self.version = P.PROMPT_VERSION
         self.ui_dir = find_ui_dir(self.root, ix)
         self.ui = build_catalog(self.root, ix, self.ui_dir)
         self.cat = HandlerCatalog(ix, self.root, self.ui, ROOT / "data" / "ir")
         emb = None
         if embedder:
-            from engine.grounding.embedder import QUERY_TASK, QUERY_TASK_V7, make_embedder
+            from engine.grounding.embedder import QUERY_TASK, make_embedder
 
-            emb = make_embedder(embedder, allow_model=allow_embed_model, task=QUERY_TASK_V7 if v7 else QUERY_TASK)
-        self.retriever = Retriever(self.cat, render, emb, module_roles, syn=DOMAIN_SYN if v7 else None)
+            emb = make_embedder(embedder, allow_model=allow_embed_model, task=QUERY_TASK)
+        self.retriever = Retriever(self.cat, render, emb)
         self.llm = llm
         self.top_k = top_k
         self.votes = votes
@@ -134,24 +126,17 @@ class StepGrounder:
         self.by_label = {lb: h for h, lb in self.labels.items()}
         enums = enum_codes(ix, self.root)
         index = P.handler_index(self.cat.handlers, self.labels) if self.index else None
-        self.profile: ProjectProfile | None = None
-        self.ref_kinds: tuple[str, ...] = REF_ENTITIES
-        self.example_kinds: tuple[str, str] | None = None
-        if v7:
-            self.system_select = P.system_prompt(enums, index)
-            self.system_params = P.system_prompt(enums)
-        else:
-            # Виды refs — из манифеста сущностей (ADR-007, решение 2), M4 их понимает в режиме --ref-kinds v8
-            kinds = entity_kinds(ix)
-            self.ref_kinds = tuple(kinds)
-            self.example_kinds = P.example_kinds(kinds, self.cat.handlers)
-            modules = {n.get("fqn"): n.get("module", "") for n in ix.N.values() if n.get("kind") == "type"}
-            self.profile = build_profile(ix, self.root, self.cat, self.ui, self.retriever.twins, llm)
-            env = (ix.sk.get("context") or {}).get("profile")
-            admin = any("admin" in h.module.split("-") for h in self.cat.handlers.values())
-            self.system_select = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin, index,
-                                                    P.ref_kinds_block(kinds, modules))
-            self.system_params = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin)
+        # Виды refs — из манифеста сущностей (ADR-007, решение 2)
+        kinds = entity_kinds(ix)
+        self.ref_kinds: tuple[str, ...] = tuple(kinds)
+        self.example_kinds: tuple[str, str] = P.example_kinds(kinds, self.cat.handlers)
+        modules = {n.get("fqn"): n.get("module", "") for n in ix.N.values() if n.get("kind") == "type"}
+        self.profile: ProjectProfile | None = build_profile(ix, self.root, self.cat, self.ui, self.retriever.twins, llm)
+        env = (ix.sk.get("context") or {}).get("profile")
+        admin = any("admin" in h.module.split("-") for h in self.cat.handlers.values())
+        self.system_select = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin, index,
+                                                P.ref_kinds_block(kinds, modules))
+        self.system_params = P.system_prompt_v8(enums, self.profile, self.ui_dir, env, admin)
 
     def rebind(self, req: StepRequest) -> StepRequest | None:
         """R20: M1 выбрал обработчик, который Spring вызвать не может (`@PathVariable` не совпадает с шаблоном
@@ -186,11 +171,9 @@ class StepGrounder:
         return [(r, self.ui.siblings(r)) for r in reqs]
 
     def _candidate(self, h: str) -> str:
-        """Карточка кандидата; у близнеца — какие данные он обслуживает (v7 — типы поездов, v8 — профиль)."""
+        """Карточка кандидата; у близнеца — какие данные он обслуживает (по профилю проекта)."""
         info = self.cat.handlers[h]
         twin = h in self.retriever.twins
-        if self.prompt == "v7":
-            return P.candidate_block(self.labels[h], info, self._ui_for(info), P.train_kind(info.module) if twin else None)
         ui = self._ui_for(info)
         return P.candidate_block(self.labels[h], info, ui, twin=P.twin_note(self.profile, info.module) if twin else None,
                                  notes=P.followup_notes(ui, self._answers, self._answer_guards),
@@ -240,27 +223,20 @@ class StepGrounder:
         cands = ranked.candidates(self.top_k, self.retriever.twins)
         prefix = P.scenario_block(sc) + "\n" + P.history_block(history) + "\n"
         grounding: dict[str, Any] = {"candidates": cands, "cache_keys": {}}
-        v7 = self.prompt == "v7"
         if self.profile is not None and self.profile.key:
             grounding["cache_keys"]["profile"] = self.profile.key
 
         sel = None
         if self.llm is not None:
             blocks = "\n".join(self._candidate(h) for h in cands)
-            if v7:
-                task = P.SELECT_TASK.format(n=n, action=action, candidates=blocks)
-            else:
-                ex1, ex2 = self.example_kinds or ("", "")
-                task = P.SELECT_TASK_V8.format(n=n, action=action, candidates=blocks, ex1=ex1, ex2=ex2,
-                                               reasoning=P.REASONING_ASK if self.reasoning else "",
-                                               choice=P.CHOICE_INDEX if self.index else P.CHOICE_CANDIDATES)
+            ex1, ex2 = self.example_kinds
+            task = P.SELECT_TASK_V8.format(n=n, action=action, candidates=blocks, ex1=ex1, ex2=ex2,
+                                           reasoning=P.REASONING_ASK if self.reasoning else "",
+                                           choice=P.CHOICE_INDEX if self.index else P.CHOICE_CANDIDATES)
             msgs = [{"role": "system", "content": self.system_select}, {"role": "user", "content": prefix + task}]
             labels = list(self.by_label) if self.index else [self.labels[h] for h in cands]
-            schema = P.select_schema(labels, n, self.ref_kinds, ref_pairs=not v7, reasoning=self.reasoning)
-            if v7:
-                sel, key = self.llm.complete_json("select", self.version, msgs, schema)
-            else:
-                sel, key = self._vote(msgs, schema, grounding)
+            schema = P.select_schema(labels, n, self.ref_kinds, reasoning=self.reasoning)
+            sel, key = self._vote(msgs, schema, grounding)
             grounding["cache_keys"]["select"] = key
         if sel is not None and sel.get("handler") in self.by_label:
             handler = self.by_label[sel["handler"]]
@@ -288,8 +264,7 @@ class StepGrounder:
                 if k in names:
                     params[k], sources[k] = v, "UI"
         if self.llm is not None and grounding["source"] == "LLM" and P.needs_params(h):
-            task = P.params_task(n, action, verb, path, h, fields, ui_req, P.PARAMS_TASK if v7 else P.PARAMS_TASK_V8,
-                                 optional=not v7)
+            task = P.params_task(n, action, verb, path, h, fields, ui_req)
             msgs = [{"role": "system", "content": self.system_params}, {"role": "user", "content": prefix + task}]
             got, key = self.llm.complete_json("params", self.version, msgs, P.params_schema(fields))
             grounding["cache_keys"]["params"] = key
@@ -383,14 +358,13 @@ def main() -> None:
     ap.add_argument("--no-server", action="store_true", help="LLM только из кеша")
     ap.add_argument("--no-cache", action="store_true", help="пересчитать ответы LLM")
     ap.add_argument("--top-k", type=int, default=TOP_K)
-    ap.add_argument("--prompt", choices=P.PROMPT_MODES, default="v8", help="режим промпта M1 (ADR-007); v7 — откат")
     a = ap.parse_args()
 
     paths = a.scenarios or sorted(glob.glob(str(TT / "scenarios" / "*.json")))
     ix = SkeletonIndex(load_json(a.skeleton))
     llm = None if a.no_llm else LLMClient(use_server=not a.no_server, refresh=a.no_cache)
     g = StepGrounder(ix, a.targets, embedder=None if a.no_embed else a.embedder,
-                     allow_embed_model=a.embed_model, llm=llm, top_k=a.top_k, prompt=a.prompt)
+                     allow_embed_model=a.embed_model, llm=llm, top_k=a.top_k)
     a.out.mkdir(parents=True, exist_ok=True)
     results: dict[str, list[StepRequest]] = {}
     for p in paths:

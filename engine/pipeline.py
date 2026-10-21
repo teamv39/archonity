@@ -56,8 +56,6 @@ class PipelineConfig:
     method_ir_dir: str | Path | None = None
     rules: RuntimeRules = dataclasses.field(default_factory=RuntimeRules)
     m1_options: dict[str, Any] | None = None
-    m4_judge: str = "off"
-    m4_judge_budget: int = 400
 
 
 class ArchonityPipeline:
@@ -94,20 +92,9 @@ class ArchonityPipeline:
         self.ledger = DecisionLedger()
         self.step_requests: dict[str, list[dict[str, Any]]] = {}
 
-        m1_options = dict(cfg.m1_options or {})
-        m1_options.setdefault("module_roles", self.rules.module_roles)
-        self.m1 = StepGrounder(self.index, self.targets_root, **m1_options)
-
-        judge = None
-        llm = m1_options.get("llm")
-        if cfg.m4_judge != "off" and llm is not None:
-            # Судья M4 с кешем и бюджетом вызовов сервера (engine/executor/judge.py)
-            from engine.executor.judge import Judge
-
-            judge = Judge(self.targets_root, self.index.sk.get("context"), llm, mode=cfg.m4_judge,
-                          budget=cfg.m4_judge_budget)
+        self.m1 = StepGrounder(self.index, self.targets_root, **(cfg.m1_options or {}))
         ir_dir = Path(cfg.method_ir_dir) if cfg.method_ir_dir else ROOT / "data" / "ir"
-        self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root, judge=judge)
+        self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root)
 
     def run_scenario(
         self, scenario_dict: dict[str, Any],
@@ -135,7 +122,7 @@ class ArchonityPipeline:
                 step_req = self.m1.rebind(step_req) or step_req
             self.step_requests[sid].append(step_req.to_dict())
 
-            m, c, r, d = self.m4.run_step(step_req, passenger, ledger=self.ledger, scenario=scenario_dict)
+            m, c, r, d = self.m4.run_step(step_req, passenger, ledger=self.ledger)
             apply_spring_security(self.index, m, c, d, self.ledger)
             # M5: конструктор в ответе, только если из него исполнился вызов проекта (R7, ADR-006)
             project_constructors(m, c, r, d, self.rules.constructors, self.ledger)

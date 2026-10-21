@@ -96,21 +96,18 @@ class _Abort(Exception):
 class Interpreter:
     """Исполнитель IR. Один на прогон; `begin_scenario` создаёт мир сценария, `run_step` — исполняет шаг."""
 
-    def __init__(self, index: Any, rules: Any, ir_dir: Path, targets_root: Path | None, judge: Any = None) -> None:
+    def __init__(self, index: Any, rules: Any, ir_dir: Path, targets_root: Path | None) -> None:
         self.index = index
         self.rules = rules
         self.N: dict[str, dict[str, Any]] = index.N
-        self.judge = judge
         sk_edges = index.sk.get("edges", [])
-        self.types = TypeIndex(self.N, sk_edges, targets_root, getattr(rules, "module_roles", "skeleton"))
+        self.types = TypeIndex(self.N, sk_edges, targets_root)
         self.ir: dict[str, dict[str, Any]] = {}
         for p in sorted(Path(ir_dir).glob("*.json")):
             with open(p, encoding="utf-8") as f:
                 self.ir.update(json.load(f).get("methods", {}))
-        # Ответ-обёртка проекта (класс, статус, успех, данные): из кода или, в режиме отката, зашитое соглашение
-        self.envelope: Envelope | None = (
-            envelope.NAMES if getattr(rules, "m4_conventions", "code") == "names"
-            else envelope.derive(index, self.ir, targets_root))
+        # Ответ-обёртка проекта (класс, статус, успех, данные): из кода
+        self.envelope: Envelope | None = envelope.derive(index, self.ir, targets_root)
         # Рёбра скелета по call_site
         self.cs_calls: dict[str, set[str]] = {}
         self.cs_dispatch: dict[str, set[str]] = {}
@@ -408,18 +405,6 @@ class Interpreter:
                 self.sink.unknowns.append({"method": fr.method, "branch": bid, "line": s.get("line"),
                                            "decided": f"success_path:{arm}"})
                 return comp
-        verdict = None
-        if self.judge is not None and not self.sink.muted:
-            verdict = self.judge(fr, s)
-        if verdict in (True, False):
-            arm = "then" if verdict else "else"
-            why = ("LLM_JUDGE", f"{short}@{bid}:{arm}")
-            self._prune_arm(else_s if verdict else then_s, fr, why)
-            comp, env = self._arm(then_s if verdict else else_s, fr, why)
-            fr.env.update(env)
-            self.sink.unknowns.append({"method": fr.method, "branch": bid, "line": s.get("line"),
-                                       "decided": f"judge:{arm}"})
-            return comp
         self.sink.unknowns.append({"method": fr.method, "branch": bid, "line": s.get("line"), "decided": "both"})
         return self.run_arms([then_s, else_s], fr)
 
@@ -1275,21 +1260,6 @@ class Interpreter:
 # --- вспомогательное ---------------------------------------------------------
 
 _MISSING = object()
-
-
-def facts_lines(env: dict[str, Any], limit: int = 12) -> list[str]:
-    """Известные значения переменных для судьи (только конкретные), по порядку появления в кадре."""
-    out = []
-    for k, v in env.items():
-        if isinstance(v, (str, int, float, bool)) or v is None:
-            out.append(f"{k} = {v!r}")
-        elif isinstance(v, (Obj, EnumV)):
-            known = {f: x for f, x in v.fields.items() if isinstance(x, (str, int, float, bool)) or x is None}
-            if known:
-                out.append(f"{k} = {v!r} {known}")
-        if len(out) >= limit:
-            break
-    return out
 
 
 def _current(o: Any, f: str) -> Any:

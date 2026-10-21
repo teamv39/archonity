@@ -21,7 +21,6 @@ SOURCE_TYPES = frozenset({
     "STATE",           # решено миром БД сценария
     "DEFAULT_RULE",    # правило по умолчанию движка (R19, проекция R7)
     "FRAMEWORK_RULE",  # правило фреймворка (Spring Security, конструкторы сущностей)
-    "LLM_JUDGE",
 })
 
 INCLUDE = "include"
