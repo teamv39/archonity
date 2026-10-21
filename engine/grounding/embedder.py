@@ -2,15 +2,19 @@
 
 Кеш: `cache/emb/<модель>/vectors.npz` (ключи и векторы) и `manifest.json` (репозиторий, ревизия, форматы промптов).
 Ключ вектора — sha256 от имени модели, версии формата промпта, вида (query/doc) и итогового текста. Прогон из кеша
-не требует ни torch, ни GPU. Промах без модели — `None` и предупреждение: ретривер работает на одном BM25.
+не требует ни torch, ни GPU. Промах без модели, нехватка памяти или другая ошибка модели — `None` и предупреждение:
+ретривер работает на одном BM25.
 
-Модели качаются в кеш Hugging Face; путь задаётся `HF_HOME` (у нас `D:/models/hf`).
-LLM и эмбеддер вместе в 16 ГБ VRAM не помещаются: векторы считаем при остановленном `llama server`.
+Эмбеддер из `models/manifest.json` (qwen3-4b) грузится из `models/<dir>` с ревизией манифеста; нет файлов — качает их
+туда же (проверка sha256 — scripts/fetch_models.py). Остальные эмбеддеры (bakeoff) — из кеша Hugging Face (`HF_HOME`).
+Устройство — `ARCHONITY_EMBED_DEVICE` (`cuda`, `cpu`), по умолчанию GPU, если есть. LLM и эмбеддер вместе в 16 ГБ VRAM
+не помещаются: рядом с `llama server` эмбеддер — на `cpu`. На A100 40 ГБ оба на GPU.
 """
 from __future__ import annotations
 
 import hashlib
 import json
+import os
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -20,6 +24,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 CACHE_DIR = ROOT / "cache" / "emb"
+MODELS_DIR = ROOT / "models"
 # Инструкция запроса Qwen3-Embedding: общая (M1 v8) и прежняя, про Train Ticket (M1 v7, векторы кеша v7), ADR-007
 QUERY_TASK = "Given a user action in a web application, retrieve the REST endpoint handler that implements it"
 QUERY_TASK_V7 = "Given a user action in a train ticket booking web app, retrieve the REST endpoint handler that implements it"
@@ -92,6 +97,7 @@ class STEmbedder:
         self.cache = VectorCache(spec.name)
         self._model: Any = None
         self._revision: str | None = None
+        self._broken: str | None = None  # причина отказа модели: после первой ошибки модель больше не трогаем
         self.misses = 0  # векторы, которых не было в кеше и не было модели (итог M1, engine/grounding/report.py)
 
     def key(self, kind: str, text: str) -> str:
@@ -103,13 +109,17 @@ class STEmbedder:
             import torch
             from sentence_transformers import SentenceTransformer
 
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            device = os.environ.get("ARCHONITY_EMBED_DEVICE") or ("cuda" if torch.cuda.is_available() else "cpu")
+            source, self._revision = self.spec.repo, None
+            entry = manifest_entry(self.spec.name)
+            if entry:
+                source, self._revision = str(ensure_local(entry)), entry["revision"]
             mk = {"dtype": getattr(torch, self.spec.dtype), **self.spec.model_kwargs}
             self._model = SentenceTransformer(
-                self.spec.repo, device=device, model_kwargs=mk, config_kwargs=self.spec.config_kwargs or None,
+                source, device=device, model_kwargs=mk, config_kwargs=self.spec.config_kwargs or None,
                 tokenizer_kwargs=self.spec.tokenizer_kwargs or None,
             )
-            self._revision = _revision(self.spec.repo)
+            self._revision = self._revision or _revision(self.spec.repo)
             print(f"[embed] {self.spec.repo} rev {self._revision} на {device}", file=sys.stderr)
         return self._model
 
@@ -121,14 +131,21 @@ class STEmbedder:
                 self.misses += len(miss)
                 print(f"[embed] {self.name}: {len(miss)} промахов кеша, модель запрещена — dense выключен", file=sys.stderr)
                 return None
+            if self._broken:
+                self.misses += len(miss)
+                print(f"[embed] {self.name}: {len(miss)} промахов кеша, модель недоступна ({self._broken}) — "
+                      f"dense выключен", file=sys.stderr)
+                return None
             try:
                 model = self._load()
-            except Exception as e:  # noqa: BLE001 — нет torch/модели: работаем без dense
+                vecs = model.encode([texts[i] for i in miss], batch_size=self.batch_size, normalize_embeddings=True,
+                                    convert_to_numpy=True, show_progress_bar=False)
+            except Exception as e:  # noqa: BLE001 — нет torch/модели, не хватило памяти: работаем без dense
                 self.misses += len(miss)
-                print(f"[embed] {self.name}: модель недоступна ({e}) — dense выключен", file=sys.stderr)
+                self._broken = f"{type(e).__name__}: {e}"
+                self._model = None
+                print(f"[embed] {self.name}: модель недоступна ({self._broken}) — dense выключен", file=sys.stderr)
                 return None
-            vecs = model.encode([texts[i] for i in miss], batch_size=self.batch_size, normalize_embeddings=True,
-                                convert_to_numpy=True, show_progress_bar=False)
             for i, v in zip(miss, vecs):
                 self.cache.vecs[keys[i]] = np.asarray(v, dtype=np.float32)
             self.cache.dirty = True
@@ -142,6 +159,27 @@ class STEmbedder:
 
     def embed_docs(self, docs: list[tuple[str, str]]) -> np.ndarray | None:
         return self._embed("doc", [self.spec.doc_fmt.format(title=t, text=x) for t, x in docs])
+
+
+def manifest_entry(name: str) -> dict[str, Any] | None:
+    """Запись эмбеддера `name` в `models/manifest.json` (репозиторий, ревизия, каталог, файлы) или None."""
+    try:
+        entry = json.loads((MODELS_DIR / "manifest.json").read_text(encoding="utf-8")).get("embedder") or {}
+    except (OSError, ValueError):
+        return None
+    return entry if entry.get("name") == name else None
+
+
+def ensure_local(entry: dict[str, Any]) -> Path:
+    """Каталог модели в `models/`; нет файлов — качает их с ревизией манифеста (sha256 проверяет fetch_models.py)."""
+    local = MODELS_DIR / entry["dir"]
+    missing = [f for f in entry["files"] if not (local / f).is_file()]
+    if missing:
+        from huggingface_hub import snapshot_download
+
+        print(f"[embed] качаю {entry['repo']}@{entry['revision'][:12]} в {local} ({len(missing)} файлов)", file=sys.stderr)
+        snapshot_download(entry["repo"], revision=entry["revision"], local_dir=local, allow_patterns=missing)
+    return local
 
 
 def _revision(repo: str) -> str | None:
