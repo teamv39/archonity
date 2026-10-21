@@ -67,7 +67,7 @@ class TestManifestTrainTicket:
         assert len(ks) == 23
         assert {"trainType", "contacts", "priceConfig", "consignRecord", "stationFoodStore", "food", "trip",
                 "order", "user"} <= set(ks)
-        assert not {"train", "contact", "price", "consign", "store"} & set(ks)  # виды M1 v7
+        assert not {"train", "contact", "price", "consign", "store"} & set(ks)  # не виды манифеста
 
     def test_id_fields_and_tables(self, shared_skeleton_index) -> None:
         ks = entity_kinds(shared_skeleton_index)

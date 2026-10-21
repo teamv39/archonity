@@ -202,7 +202,7 @@ final class ResultExpectation {
     /**
      * Последовательность операторов — путь отказа: throw, return new Response<>(0, ...) или LOGGER.error/warn
      * на верхнем уровне. Лог ошибки считается отказом и при return new Response<>(1, ...) («Trip already exists»)
-     * и без return: в Train Ticket путь отказа всегда пишет error/warn.
+     * и без return. Допущение о соглашении проекта: путь отказа пишет error/warn (так во всех сервисах Train Ticket).
      */
     static boolean listError(List<Statement> stmts) {
         for (Statement s : stmts) {

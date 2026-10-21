@@ -12,7 +12,7 @@ import java.util.zip.GZIPInputStream;
 
 /**
  * Узлы скелета, которые нужны IR тел методов: методы (чтобы взять их ID дословно),
- * call_site по (file, line, col) и анонимные типы по (file, line).
+ * call_site по (file, line, col), анонимные типы по (file, line) и зависимости модулей (рёбра depends_on).
  */
 public class SkeletonGraph {
 
@@ -27,9 +27,15 @@ public class SkeletonGraph {
     private final Map<String, Set<String>> callSitesByMethod = new HashMap<>();
     private final List<MethodNode> methods = new ArrayList<>();
     private final Set<String> callSitesWithEdges = new HashSet<>();
+    /** Модуль -> модули, классы которых он видит (depends_on скелета, из сборки проекта), в порядке рёбер. */
+    private final Map<String, List<String>> dependsOn = new HashMap<>();
+    /** Общие библиотеки проекта: модули, от которых зависят другие. */
+    private final SortedSet<String> shared = new TreeSet<>();
 
-    public static SkeletonGraph load(Path gz) throws IOException {
-        try (InputStream in = new GZIPInputStream(Files.newInputStream(gz))) {
+    /** Скелет `.json.gz` или `.json`. */
+    public static SkeletonGraph load(Path path) throws IOException {
+        try (InputStream raw = Files.newInputStream(path);
+             InputStream in = path.toString().endsWith(".gz") ? new GZIPInputStream(raw) : raw) {
             return new SkeletonGraph(new ObjectMapper().readTree(in));
         }
     }
@@ -65,8 +71,26 @@ public class SkeletonGraph {
             String src = e.path("source").asText();
             if (src.startsWith("call:")) {
                 callSitesWithEdges.add(src);
+            } else if ("depends_on".equals(e.path("type").asText())) {
+                String target = e.path("target").asText().replaceFirst("^module:", "");
+                dependsOn.computeIfAbsent(src.replaceFirst("^module:", ""), k -> new ArrayList<>()).add(target);
+                shared.add(target);
             }
         }
+    }
+
+    /**
+     * Модули, где ищется тип по простому имени после модуля вызывающего: его зависимости, а без них — общие
+     * библиотеки проекта (как `TypeIndex._prefs` в engine/executor/world.py).
+     */
+    public List<String> dependencies(String module) {
+        List<String> deps = dependsOn.get(module);
+        return deps != null && !deps.isEmpty() ? deps : List.copyOf(shared);
+    }
+
+    /** Общие библиотеки проекта: модули, от которых зависят другие. */
+    public Set<String> sharedModules() {
+        return Collections.unmodifiableSortedSet(shared);
     }
 
     static String pos(String file, int line, int col) {

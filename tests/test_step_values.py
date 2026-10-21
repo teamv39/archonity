@@ -64,21 +64,3 @@ class TestDtoValues:
         executor._verb, executor._user_name = "POST", "passenger"
         login = executor.build_dto("auth.dto.BasicAuthDto", {}, {}, None, LOGIN)
         assert login.fields["username"] == "passenger"
-
-
-class TestV7Refs:
-    def test_v7_kinds_to_manifest(self, executor) -> None:
-        executor.begin_scenario("T")
-        assert executor._v7_refs({"contact": "first_of_step_1", "price": "new_of_step_2", "consign": "new_of_step_3",
-                                  "order": "new_of_step_4"}) == {
-            "contacts": "first_of_step_1", "priceConfig": "new_of_step_2", "consignRecord": "new_of_step_3",
-            "order": "new_of_step_4"}
-
-    def test_v7_train_is_type_or_trip_by_referenced_step(self, executor) -> None:
-        executor.begin_scenario("T")
-        executor.saved[3] = [("train.entity.TrainType", Obj("train.entity.TrainType", {"id": "t1"}))]
-        executor.results[2] = ListV([Obj("edu.fudan.common.entity.TripResponse", {"tripId": "G1"})])
-        assert executor._v7_refs({"train": "new_of_step_3"}) == {"trainType": "new_of_step_3"}
-        assert executor._v7_refs({"train": "second_of_step_2"}) == {"trip": "second_of_step_2"}
-        # рейс уже есть в ссылках шага — `train` его не перекрывает
-        assert executor._v7_refs({"trip": "first_of_step_5", "train": "first_of_step_2"}) == {"trip": "first_of_step_5"}

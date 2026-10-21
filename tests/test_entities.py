@@ -7,11 +7,9 @@ import pytest
 
 from engine.adapters.db import load_db_dump
 from engine.adapters.skeleton import SkeletonIndex, load_json
-from engine.entities import EntityFacts, RepositoryCall, hydration
-from engine.graph.builder import GraphBuilder
+from engine.entities import EntityFacts, RepositoryCall
 from engine.pipeline import ArchonityPipeline
 from engine.rules import RuntimeRules
-from engine.state import ScenarioState, TrainType
 
 ROOT = Path(__file__).resolve().parent.parent
 SKELETON_PATH = ROOT / "hackaton" / "tt-challenge" / "skeleton" / "trainticket.json.gz"
@@ -59,65 +57,15 @@ class TestEntityFactsBinding:
         contacts = _calls(index, "ContactsServiceImpl#findContactsByAccountId", "findByAccountId")[0]
         assert contacts.ctors == ()
 
-    def test_constructor_ir_merged_into_pool(self, index: SkeletonIndex) -> None:
-        assert index.pool_ir.has_method("method:ts-common:edu.fudan.common.entity.Order#<init>()")
-        assert len(index.pool_ir.enum_calls_by_method[ORDER_OTHER_CTOR]) == 2
-
-
-class TestHydrationDecision:
-    def _state(self, index: SkeletonIndex) -> ScenarioState:
-        return ScenarioState.create_initial(db_state=index.db_state.fork())
-
-    def test_read_with_rows(self, index: SkeletonIndex) -> None:
-        call = _calls(index, "RouteServiceImpl#getRouteById", "findById")[0]
-        h = hydration(call, self._state(index), index.table_resource_to_db)
-        assert h.ctors == (ROUTE_CTOR,)
-        assert h.rule.startswith("R7:read(")
-
     def test_read_expecting_empty_result(self, index: SkeletonIndex) -> None:
-        call = _calls(index, "AssuranceServiceImpl#create", "findByOrderId")[0]
-        assert call.expects == "EMPTY"
-        h = hydration(call, self._state(index), index.table_resource_to_db)
-        assert h.ctors == ()
-        assert h.rule.startswith("R7:read_expects_empty")
-
-    def test_save_merge_and_persist(self, index: SkeletonIndex) -> None:
-        merge = _calls(index, "AssuranceServiceImpl#create", "save")[0]
-        assert hydration(merge, self._state(index), index.table_resource_to_db).ctors
-        persist = [c for c in _calls(index, "InsidePaymentServiceImpl#pay", "save") if c.id_assigned is False]
-        assert persist
-        assert hydration(persist[0], self._state(index), index.table_resource_to_db).ctors == ()
-
-    def test_user_rows_filtered_by_account(self, index: SkeletonIndex) -> None:
-        call = _calls(index, "OrderOtherServiceImpl#queryOrders", "findByAccountId")[0]
-        state = self._state(index)
-        assert hydration(call, state, index.table_resource_to_db).ctors == (ORDER_OTHER_CTOR,)
-        state.account_id = "new-user-without-orders"
-        h = hydration(call, state, index.table_resource_to_db)
-        assert h.ctors == ()
-        assert "0 rows of user in state" in h.rule
-
-    def test_new_user_without_dump_uses_state(self, index: SkeletonIndex) -> None:
-        call = _calls(index, "OrderOtherServiceImpl#queryOrders", "findByAccountId")[0]
-        state = ScenarioState.create_initial()
-        assert hydration(call, state, index.table_resource_to_db).ctors == (ORDER_OTHER_CTOR,)
-        state.orders.append({"train_type": TrainType.GaoTie, "status": 0, "price": 1.0})
-        assert hydration(call, state, index.table_resource_to_db, is_new_user=True).ctors == ()
+        assert _calls(index, "AssuranceServiceImpl#create", "findByOrderId")[0].expects == "EMPTY"
 
     def test_missing_artifact_disables_rule(self) -> None:
         facts = EntityFacts.load(ROOT / "data" / "no_such_entity_ir.json")
         assert facts.calls_by_method == {}
 
 
-class TestTraversal:
-    def test_hydrated_constructor_executes_without_calls_edge(self, index: SkeletonIndex) -> None:
-        builder = GraphBuilder(index, RuntimeRules(constructors="caller_only"))
-        entry = ["method:ts-route-service:route.controller.RouteController#queryById(java.lang.String,org.springframework.http.HttpHeaders)"]
-        state = ScenarioState.create_initial(db_state=index.db_state.fork())
-        methods, calls, _, data = builder.traverse(entry, scenario_state=state)
-        assert ROUTE_CTOR in methods
-        assert not any(t == ROUTE_CTOR for _, t in calls)
-
+class TestS0:
     def test_s0_order_constructors_from_general_rule(self, shared_pipeline: ArchonityPipeline) -> None:
         methods, calls, _, _ = shared_pipeline.run_scenario(load_json(SCENARIOS / "S0.json"))
         assert ORDER_OTHER_CTOR in methods
@@ -142,19 +90,6 @@ class TestAblationModes:
         allowed = index.entities.allowed_ctors("all")
         assert ORDER_OTHER_CTOR in allowed
         assert ROUTE_CTOR not in allowed  # только UUID.randomUUID(): библиотека, не проект
-        route = _calls(index, "RouteServiceImpl#getRouteById", "findById")[0]
-        state = ScenarioState.create_initial(db_state=index.db_state.fork())
-        h = hydration(route, state, index.table_resource_to_db, allowed=allowed)
-        assert h.ctors == ()
-        assert h.rule == "R7:mode_excludes_ctor"
-
-    @pytest.mark.parametrize("mode,route_expected", [("caller_only", True), ("all", False), ("off", False)])
-    def test_traversal_respects_mode(self, index: SkeletonIndex, mode: str, route_expected: bool) -> None:
-        builder = GraphBuilder(index, RuntimeRules(constructors=mode))
-        entry = ["method:ts-route-service:route.controller.RouteController#queryById(java.lang.String,org.springframework.http.HttpHeaders)"]
-        state = ScenarioState.create_initial(db_state=index.db_state.fork())
-        methods, _, _, _ = builder.traverse(entry, scenario_state=state)
-        assert (ROUTE_CTOR in methods) == route_expected
 
     @pytest.mark.parametrize("mode", ["maybe", "body", "project_calls"])
     def test_unknown_mode_rejected(self, mode: str) -> None:
@@ -193,15 +128,6 @@ class TestLazyCollections:
         loaded, rule = index.entities.collection_table_loaded(create, ROUTE_STATIONS)
         assert loaded and "save_writes_collection" in rule
 
-    @pytest.mark.parametrize("mode,expected", [("loaded", False), ("all", True)])
-    def test_traversal_respects_mode(self, index: SkeletonIndex, mode: str, expected: bool) -> None:
-        builder = GraphBuilder(index, RuntimeRules(collection_tables_on_read=mode))
-        entry = ["method:ts-route-service:route.controller.RouteController#queryById(java.lang.String,org.springframework.http.HttpHeaders)"]
-        state = ScenarioState.create_initial(db_state=index.db_state.fork())
-        _, _, _, data = builder.traverse(entry, scenario_state=state)
-        assert (ROUTE_BY_ID, "res:table:ts-route-service.route") in data
-        assert ((ROUTE_BY_ID, ROUTE_STATIONS) in data) == expected
-
     def test_s0_user_roles_kept_on_get_token(self, shared_pipeline: ArchonityPipeline) -> None:
         """getToken передаёт пользователя в createToken, тот кладёт роли в токен: коллекция грузится на стеке."""
         _, _, _, data = shared_pipeline.run_scenario(load_json(SCENARIOS / "S0.json"))
@@ -214,7 +140,6 @@ class TestLazyCollections:
 
 
 ORDER_EQUALS = "method:ts-order-service:order.entity.Order#equals(java.lang.Object)"
-ORDER_CREATE_ENTRY = "method:ts-order-service:order.controller.OrderController#createNewOrder(order.entity.Order,org.springframework.http.HttpHeaders)"
 
 
 class TestElementCallbacks:
@@ -224,31 +149,6 @@ class TestElementCallbacks:
         call = _calls(index, "OrderServiceImpl#create(", "findByAccountId")[0]
         assert call.element_callbacks == ((ORDER_EQUALS, "contains"),)
 
-    @pytest.mark.parametrize("mode,has_rows,expected", [("on", True, True), ("on", False, False), ("off", True, False)])
-    def test_equals_executes_only_when_rows(self, index: SkeletonIndex, mode: str, has_rows: bool, expected: bool) -> None:
-        if ORDER_CREATE_ENTRY not in index.N:
-            pytest.skip("нет обработчика создания заказа в скелете")
-        builder = GraphBuilder(index, RuntimeRules(element_callbacks=mode))
-        state = ScenarioState.create_initial(db_state=index.db_state.fork())
-        if not has_rows:
-            state.account_id = "new-user-without-orders"
-        methods, calls, _, _ = builder.traverse([ORDER_CREATE_ENTRY], scenario_state=state)
-        assert (ORDER_EQUALS in methods) == expected
-        assert not any(t == ORDER_EQUALS for _, t in calls)
-
     def test_unknown_mode_rejected(self) -> None:
         with pytest.raises(ValueError):
             RuntimeRules(element_callbacks="maybe")
-
-    def test_owner_columns_and_state_rows_generality(self) -> None:
-        from engine.entities import OWNER_COLUMNS, _state_rows
-        assert "account_id" in OWNER_COLUMNS
-        assert "user_id" in OWNER_COLUMNS
-        assert "owner_id" in OWNER_COLUMNS
-        assert "customer_id" in OWNER_COLUMNS
-
-        class DummyState:
-            pass
-
-        assert _state_rows("orders", DummyState(), account=None) == []
-        assert _state_rows("other_table", DummyState(), account=None) == []

@@ -1,7 +1,4 @@
-"""Текстовые утилиты заземления: токены, стеммер, отрицания, BM25.
-
-Перенесено из engine/resolver.py без изменения поведения; resolver импортирует отсюда.
-"""
+"""Текстовые утилиты заземления: токены, стеммер, отрицания, BM25."""
 from __future__ import annotations
 
 import collections
@@ -11,13 +8,6 @@ import re
 from engine.adapters.skeleton import toks
 
 VOWELS = set("aeiouy")
-NOISE = set(
-    """ajax json type url data success error function result status headers authorization bearer token session storage content
-application alert console log window location reload var let const this that return true false null undefined push length
-document href value text html attr disabled true string object new array get post put delete method dataType contentType
-xhrFields withCredentials responseJSON message indexOf setItem getItem stringify parse then catch async await response
-request params query body import export default class extends require module exports """.split()
-)
 NEG = re.compile(
     r"\b(?:no|not|without|non)[- ]+([a-z][a-z-]*(?:\s+[a-z][a-z-]*){0,2}?)(?=\s*(?:,|;|\band\b|\bor\b|\)|$))",
     re.I,
@@ -33,24 +23,8 @@ VERB_SYN = {
     **{v: ["delete", "remove", "cancel"] for v in ("cancel", "delete", "remove", "withdraw")},
 }
 
-# Синонимы Train Ticket: legacy `resolver.py` и M1 в режиме v7. M1 v8 их не берёт (ADR-007, решение 5):
-# синонимы — работа эмбеддера
-DOMAIN_SYN = {
-    "consignments": ["consign", "consigns", "consignee"],
-    "consignment": ["consign", "consigns", "consignee"],
-    "luggage": ["consign", "consigns", "baggage"],
-    "contacts": ["contact", "contacts"],
-    "account": ["user", "account"],
-    "orders": ["order", "orders"],
-}
-
-
-def stem(w: str, syn: dict[str, list[str]] | None = DOMAIN_SYN) -> str:
-    """Улучшенный стеммер: обрабатывает окончания и специфические суффиксы; `syn` — словарь синонимов или None."""
-    w_lower = w.lower()
-    if syn and w_lower in syn:
-        return syn[w_lower][0]
-
+def stem(w: str) -> str:
+    """Стеммер: окончания множественного числа, -ing, -ed. Синонимов нет: синонимы — работа эмбеддера (ADR-007)."""
     if len(w) >= 5 and w.endswith("ies"):
         return w[:-3] + "y"
     if len(w) >= 5 and w.endswith("es") and w[-3] in "sxz" or w.endswith(("ches", "shes")):
@@ -66,19 +40,13 @@ def stem(w: str, syn: dict[str, list[str]] | None = DOMAIN_SYN) -> str:
     return w
 
 
-def ntoks(t: str | None, syn: dict[str, list[str]] | None = DOMAIN_SYN) -> list[str]:
-    return [stem(w, syn) for w in toks(t)]
+def ntoks(t: str | None) -> list[str]:
+    return [stem(w) for w in toks(t)]
 
 
-def query_toks(text: str, syn: dict[str, list[str]] | None = DOMAIN_SYN) -> list[str]:
+def query_toks(text: str) -> list[str]:
     """Токены подписи шага без отрицаемых слов."""
-    base_tokens = ntoks(NEG.sub(" ", text), syn)
-    expanded: list[str] = []
-    for t in base_tokens:
-        expanded.append(t)
-        if syn and t in syn:
-            expanded.extend(syn[t])
-    return expanded
+    return ntoks(NEG.sub(" ", text))
 
 
 def expand_query(q: list[str]) -> list[str]:

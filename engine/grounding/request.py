@@ -5,9 +5,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any
 
 OUTCOMES = ("success", "refused")
-# Сущности, на которые шаг может сослаться (refs): результат предыдущего шага
-REF_ENTITIES = ("trip", "contact", "order", "food", "store", "station", "route", "train", "price", "consign",
-                "assurance", "user")
+# Ссылка шага на результат прежнего шага: `<pick>_of_step_<n>`; виды ссылок — из манифеста сущностей (ADR-007)
 REF_PICKS = ("first", "second", "new")
 
 

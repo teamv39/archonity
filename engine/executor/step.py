@@ -8,8 +8,7 @@
 - `@RequestHeader` — неизвестно.
 
 Ссылки `<first|second|new>_of_step_<n>` разрешаются по миру M4: `new` — сущность, сохранённая шагом n,
-`first`/`second` — элемент результата обработчика шага n; если не нашли — модель состояния M3. Виды ссылок —
-из манифеста `engine/manifest.py`; виды M1 v7 переводятся в них (`--ref-kinds v7`, `_v7_refs`).
+`first`/`second` — элемент результата обработчика шага n. Виды ссылок — из манифеста `engine/manifest.py`.
 """
 from __future__ import annotations
 
@@ -21,11 +20,8 @@ from engine.executor.envelope import Envelope
 from engine.executor.interpreter import Interpreter, Sink
 from engine.executor.schema import EntitySchema, simple_name
 from engine.executor.values import UNKNOWN, EnumV, ListV, Obj, OptionalV, Wrapper
-from engine.executor.world import camel
 
 _REF = re.compile(r"^(first|second|new)_of_step_(\d+)$")
-# Виды M1 v7 (кеш m1-v7), которых нет в манифесте: вид манифеста с тем же смыслом. `train` — в StepExecutor._v7_refs
-_V7_KINDS = {"contact": "contacts", "price": "priceConfig", "consign": "consignRecord", "store": "stationFoodStore"}
 _WORDY = re.compile(r"^[A-Za-z][A-Za-z ,.'-]*$")
 
 _DEFAULT_SCHEMA = EntitySchema()
@@ -34,19 +30,11 @@ _DEFAULT_SCHEMA = EntitySchema()
 class StepExecutor:
     """M4 на уровне сценария: мир, реестр результатов шагов, сборка рёбер шага."""
 
-    def __init__(self, index: Any, rules: Any, ir_dir: str | Path, targets_root: str | Path | None,
-                 judge: Any = None) -> None:
+    def __init__(self, index: Any, rules: Any, ir_dir: str | Path, targets_root: str | Path | None) -> None:
         self.index = index
         self.schema = EntitySchema(index)
-        self.ref_kinds = getattr(rules, "ref_kinds", "v7")  # словарь видов в StepRequest.refs (ADR-007)
-        self.judge = judge  # engine.executor.judge.Judge (кеш, бюджет вызовов сервера) или None
-        self.it = Interpreter(index, rules, Path(ir_dir), Path(targets_root) if targets_root else None,
-                              self._ask_judge if judge is not None else None)
-        self.targets_root = Path(targets_root) if targets_root else None
-        self._scenario: dict[str, Any] = {}
-        self._step_req: Any = None
+        self.it = Interpreter(index, rules, Path(ir_dir), Path(targets_root) if targets_root else None)
         self._body_src: dict[str, str] = {}
-        self._src: dict[str, list[str]] = {}
         self.results: dict[int, Any] = {}
         self.current_user: str | None = None
         self.written: dict[str, Any] = {}
@@ -113,13 +101,6 @@ class StepExecutor:
             ent = self.resolve_ref(kind, prev, state, depth + 1)
             if ent is not None:
                 return ent
-        # Модель состояния M3 последним слоем — только в режиме m4_m3_refs=on (до feature/84). Выдачу M3 здесь не
-        # меняла (зонд 19.10: при ответе None от M3 sha256 тот же), а держится на перечислениях Train Ticket.
-        if getattr(self.it.rules, "m4_m3_refs", "off") == "on" and state is not None and hasattr(state, "resolve_ref"):
-            d = state.resolve_ref(kind, ref)
-            if isinstance(d, dict):
-                return Obj(None, {camel(k): (v.value if hasattr(v, "value") else v) for k, v in d.items()
-                                  if isinstance(k, str)}, open=True)
         return None
 
     def _table_entity(self, n: int, kind: str, idx: int) -> Obj | None:
@@ -205,11 +186,10 @@ class StepExecutor:
             return user
         if name == "id":
             return UNKNOWN
-        names = getattr(self.it.rules, "m4_conventions", "code") == "names"
-        aliases = self.schema.field_aliases(name, names)
-        if not names and self._body_src.get(name) and self._body_src[name] not in aliases:
+        aliases: tuple[str, ...] = (name,)
+        if self._body_src.get(name) and self._body_src[name] != name:
             # Поле, которое UI берёт из другого поля записи прежнего шага (каталог UI)
-            aliases = (*aliases, self._body_src[name])
+            aliases = (name, self._body_src[name])
         for alias in aliases:
             for kind, ent in ents.items():
                 # сама сущность, затем вложенные объекты (TripAllDetail -> tripResponse)
@@ -352,19 +332,14 @@ class StepExecutor:
 
     # --- шаг -----------------------------------------------------------------
 
-    def run_step(self, step_req: Any, state: Any, ledger: Any = None,
-                 scenario: dict[str, Any] | None = None) -> tuple[set, set, set, set]:
+    def run_step(self, step_req: Any, state: Any, ledger: Any = None) -> tuple[set, set, set, set]:
         n = getattr(step_req, "step", None)
-        self._scenario = scenario or {}
-        self._step_req = step_req
         handler = step_req.handler
         params = {k: v for k, v in (getattr(step_req, "params", None) or {}).items() if v is not None}
         self._user_name = getattr(state, "user_name", None)
         self._verb = (getattr(step_req, "http", None) or {}).get("method")
         self._body_src = dict(getattr(step_req, "body_src", None) or {})
         refs = getattr(step_req, "refs", None) or {}
-        if self.ref_kinds == "v7":
-            refs = self._v7_refs(refs)
         expected = getattr(step_req, "expected_outcome", "success")
         before = len(self.it.world.saved)
         world = self.it.world
@@ -376,15 +351,11 @@ class StepExecutor:
             # (восстановлены LLM из английского текста: регистр, пробелы) не совпали с тем, что принял бэкенд.
             # Откат мира и повтор шага со строковыми параметрами UNKNOWN.
             # Ступень 1: словесные строки — в том виде, в каком значение лежит в мире БД (`_world_string`: текст
-            #   «Ning Bo» — запись значения «ningbo», которое сохранил сеттер проекта); в режиме names — названия
-            #   станций по подстрокам имени параметра, без пробелов и строчными.
+            #   «Ning Bo» — запись значения «ningbo», которое сохранил сеттер проекта).
             # Ступень 2: неизвестны словесные строки (станции, типы поездов); ID и время остаются.
             # Ступень 3: неизвестны все строки.
-            if getattr(self.it.rules, "m4_conventions", "code") == "names":
-                first = {k: (_station_norm(v) if _is_place_param(k, v) else v) for k, v in params.items()}
-            else:
-                first = {k: (self._world_string(v) if isinstance(v, str) and _WORDY.match(v) else v)
-                         for k, v in params.items()}
+            first = {k: (self._world_string(v) if isinstance(v, str) and _WORDY.match(v) else v)
+                     for k, v in params.items()}
             ladder = (
                 (1, first),
                 (2, {k: v for k, v in params.items() if not (isinstance(v, str) and _WORDY.match(v))}),
@@ -437,24 +408,6 @@ class StepExecutor:
             out.append(part)
         return ",".join(out)
 
-    def _v7_refs(self, refs: dict[str, str]) -> dict[str, str]:
-        """Совместимость с видами M1 v7 (кеш m1-v7, до ADR-007): перевод в виды манифеста. Уйдёт с режимом v7.
-
-        `train` в v7 значит то тип поезда (S6: `new_of_step_3` после создания типа), то рейс из поиска (S4.6,
-        S7.10): тип поезда, если шаг ссылки сохранил или вернул сущность `trainType`, иначе рейс.
-        """
-        out: dict[str, str] = {}
-        for k, v in refs.items():
-            if k != "train":
-                out[_V7_KINDS.get(k, k)] = v
-        if "train" in refs:
-            m = _REF.match(refs["train"] or "")
-            n = int(m.group(2)) if m else -1
-            is_type = any(self.schema.is_kind(fqn, "trainType") for fqn, _ in self.saved.get(n, [])) \
-                or bool(_find_kind(_payload(self.results.get(n), self.it.envelope), "trainType", schema=self.schema))
-            out.setdefault("trainType" if is_type else "trip", refs["train"])
-        return out
-
     def _logged_in_user(self, sink: Sink, ret: Any) -> str | None:
         """ID пользователя из ответа шага входа или None, если шаг не вход.
 
@@ -471,89 +424,14 @@ class StepExecutor:
                     return v
         return None
 
-    # --- судья -----------------------------------------------------------------
+    # --- отчёт -----------------------------------------------------------------
 
     def stats(self) -> dict[str, Any]:
-        """Счётчики M4 для run_eval: решения по UNKNOWN и судья."""
+        """Счётчики M4 для run_eval: решения по условиям UNKNOWN."""
         import collections
 
         decided = collections.Counter(u["decided"].split(":")[0] for us in self.unknowns.values() for u in us)
-        out: dict[str, Any] = {"unknown_conditions": dict(sorted(decided.items()))}
-        if self.judge is not None:
-            out["judge"] = self.judge.stats.to_dict()
-        return out
-
-    def _lines(self, file: str) -> list[str]:
-        if file not in self._src:
-            try:
-                self._src[file] = (self.targets_root / file).read_text(encoding="utf-8", errors="replace").splitlines()
-            except (OSError, TypeError):
-                self._src[file] = []
-        return self._src[file]
-
-    def _condition_text(self, file: str, line: int) -> tuple[str, int]:
-        """Текст условия `if (...)` из исходника и последняя строка условия (по балансу скобок)."""
-        lines = self._lines(file)
-        if not 0 < line <= len(lines):
-            return "", line
-        text, depth, started, end = "", 0, False, line
-        for i in range(line - 1, min(len(lines), line + 8)):
-            chunk = lines[i] if i > line - 1 else lines[i][lines[i].find("if") if "if" in lines[i] else 0:]
-            for ch in chunk:
-                if ch == "(":
-                    depth += 1
-                    started = True
-                    if depth == 1:
-                        continue
-                elif ch == ")":
-                    depth -= 1
-                    if started and depth == 0:
-                        return " ".join(text.split()), i + 1
-                if started:
-                    text += ch
-            text += " "
-            end = i + 1
-        return " ".join(text.split()), end
-
-    def _state_lines(self) -> tuple[str, ...]:
-        """Сводка мира для судьи: пассажир и его заказы (ID, статус, поезд)."""
-        user = self.current_user
-        out = [f"passenger account id: {user}"] if user else []
-        w = self.it.world
-        for table in ("orders", "orders_other"):
-            for r in w.rows(table):
-                if user and r.get("account_id") == user:
-                    out.append(f"order {r.get('id')}: status {r.get('status')}, train {r.get('train_number')}, "
-                               f"travel date {r.get('travel_date')}")
-        return tuple(out[:9])
-
-    def _ask_judge(self, fr: Any, stmt: dict[str, Any]) -> bool | None:
-        """Вердикт судьи по условию UNKNOWN; None — ответа нет (режим, бюджет, промах кеша)."""
-        from engine.executor.interpreter import facts_lines
-        from engine.executor.judge import JudgeQuery
-
-        node = self.index.N.get(fr.method, {})
-        file = node.get("file", "")
-        line = stmt.get("line") or node.get("line", 1)
-        cond, cond_end = self._condition_text(file, line)
-        sr = self._step_req
-        sc = self._scenario
-        q = JudgeQuery(
-            scenario_id=sc.get("id", ""), scenario_title=sc.get("title", ""),
-            scenario_description=sc.get("description", ""),
-            step_n=getattr(sr, "step", 0) or 0, step_action=getattr(sr, "action", ""),
-            expected_outcome=getattr(sr, "expected_outcome", "success"),
-            step_params={k: v for k, v in (getattr(sr, "params", None) or {}).items() if v is not None},
-            step_refs=dict(getattr(sr, "refs", None) or {}),
-            method_id=fr.method, file=file, method_line=node.get("line", line), method_end=node.get("end", line),
-            cond_line=line, cond_end=cond_end, condition=cond, kind="if",
-            path=tuple(f"in {m.split(':', 2)[-1]}" for m in self.it.stack),
-            facts=tuple(facts_lines(fr.env)), state=self._state_lines(),
-        )
-        v = self.judge.ask(q)
-        if v is None or v.verdict == "UNKNOWN":
-            return None
-        return v.verdict == "TRUE"
+        return {"unknown_conditions": dict(sorted(decided.items()))}
 
     def _emit(self, sink: Sink, ledger: Any) -> tuple[set, set, set, set]:
         methods = set(sink.methods)
@@ -619,16 +497,6 @@ def _login_principal_ids(nodes: dict[str, dict[str, Any]]) -> dict[str, tuple[st
 def _canon(s: str) -> str:
     """Ключ сравнения строки шага со значением мира БД: только строчные буквы и цифры."""
     return re.sub(r"[^0-9a-z]", "", s.casefold())
-
-
-def _is_place_param(name: str, v: Any) -> bool:
-    """Режим names (до feature/102): параметр-название места по подстрокам имени."""
-    n = name.lower()
-    return isinstance(v, str) and bool(_WORDY.match(v)) and any(h in n for h in ("station", "place", "from", "to"))
-
-
-def _station_norm(v: str) -> str:
-    return ",".join(p.replace(" ", "").lower() for p in v.split(","))
 
 
 def _is_failure(ret: Any, env: Envelope | None) -> bool:

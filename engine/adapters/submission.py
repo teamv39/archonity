@@ -13,7 +13,7 @@ class SubmissionAdapter:
 
     def __init__(
         self,
-        project: str = "trainticket",
+        project: str = "",
         evidence_logger: EvidenceLogger | None = None,
     ) -> None:
         self.project = project
@@ -61,11 +61,11 @@ class SubmissionAdapter:
         self.scenarios[scenario_id] = edges
 
         if self.evidence_logger:
-            for s, t in remote:
+            for s, t in sorted(remote):
                 self.evidence_logger.record_remote_call(s, t, scenario_id=scenario_id)
-            for s, t in data:
+            for s, t in sorted(data):
                 self.evidence_logger.record_data_access(s, t, scenario_id=scenario_id)
-            for m in methods:
+            for m in sorted(methods):
                 if m.startswith("method:"):
                     svc = m.split(":")[1]
                     self.evidence_logger.record_gateway_route(svc)
@@ -177,23 +177,23 @@ class SubmissionAdapter:
                             edges_list.append(edge_data)
 
         # 4. Маршруты шлюза из evidence_logger
-        if self.evidence_logger:
+        gateway = self.evidence_logger.gateway if self.evidence_logger else None
+        if gateway:
             for edge_id, ev in self.evidence_logger.evidence.items():
-                src = ev.get("source", "")
-                if "gateway" in src.lower():
+                if ev.get("source") == gateway:
                     tgt = ev.get("target")
                     if tgt in nodes_map and edge_id not in seen_edges:
-                        if src not in nodes_map:
-                            nodes_map[src] = {
-                                "id": src,
-                                "name": src,
+                        if gateway not in nodes_map:
+                            nodes_map[gateway] = {
+                                "id": gateway,
+                                "name": gateway,
                                 "type": "SERVICE",
                                 "endpoints": [],
                             }
                         seen_edges.add(edge_id)
                         edge_data = {
                             "id": edge_id,
-                            "source": src,
+                            "source": gateway,
                             "target": tgt,
                             "relation_type": "REST_HTTP",
                             "source_type": "CONFIG",

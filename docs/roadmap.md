@@ -54,6 +54,8 @@
 
 ### П1. Воспроизводимость и запуск на A100 (выбыть нельзя)
 
+21.10, PR #111: `scripts/run_final.sh`, `models/manifest.json` и `scripts/fetch_models.py` (версии и sha256 LLM, эмбеддера, сборки llama.cpp), автозапуск `llama-server` на промахе кеша, эмбеддер из `models/`, `uv.lock` и `requirements.txt`, [docs/run_on_a100.md](run_on_a100.md). PR #110: эмбеддер грузится на промахе кеша векторов (`--embed-model on`). Осталось: живой прогон нового сценария, чистый клон.
+
 - `scripts/run_final.sh` под Linux — одна команда: поднять `llama-server`, дождаться `/health`, запустить `run_eval.py`, остановить сервер. Параметры под 40 ГБ: все слои на GPU, без `-ncmoe`.
 - Закрепить версии:
   - тег сборки `llama.cpp`;
@@ -84,28 +86,11 @@
 - Перефразированные шаги S1–S7: тот же обработчик выбирается при другой формулировке?
 - Правки по найденному — только с механизмом, под флагом, с проверкой sha256 на S0–S7. Правка промпта M1 меняет ключи кеша, то есть требует пересборки кеша на GPU и сверки с рекордом.
 
-### П2а. Удаление legacy-контура (Миша, в работе)
+### П2а. Удаление legacy-контура (Миша, готово 21.10, PR #110)
 
-В legacy-контуре подгонки под Train Ticket по именам классов и таблиц. Жюри, читающее код, их увидит, а ответ организаторов о проверке на других Java-проектах делает это заметнее. Миша удаляет контур (OQ-10) и делает запасной вариант на основе M4.
+Удалены legacy-контур (обход скелета с правилами отсева, `resolver.py`, `state.py`, `branch_rules.py`, `rules.py` с `ScenarioProfile`, пул IR), режимы отката (`--m1-prompt v7`, `--m4-conventions names`, `--module-roles names`, `--m4-state m3`, `--spring-security names`), судья M4 и литералы Train Ticket в рабочем пути: таблица 33 узлов в `db.py`, пассажир и UUID в `pipeline.py`, шлюз в `evidence.py`, `ts-common` и `edu.fudan` в archparse. Конвейер один: M1 → M4 → правило Spring Security → M5. Сторож литералов — `tests/test_no_project_literals.py`. Что осталось с обоснованием — [аудит универсальности](researches/universality_audit_after_1_0.md), раздел 12.
 
-При умолчаниях из legacy-модулей вызываются только:
-- `RuntimeRules` из `rules.py`;
-- `apply_spring_security` из `graph/builder.py`;
-- загрузка `pool_ir.json` в `ir.py`.
-
-`resolver.py`, `state.py`, `branch_rules.py`, `ScenarioProfile` и обход `builder.py` только импортируются (замер `cProfile`, 21.10).
-
-Доменные литералы Train Ticket в коде, который работает при умолчаниях. Их тоже стоит вычистить или обосновать:
-
-| Где | Что | Влияет на выдачу |
-|---|---|---|
-| `engine/adapters/db.py`, `load_db_dump` | `known_skeleton_mappings`: 33 таблицы Train Ticket вписаны вручную | удалено 21.10 (#108), заменено динамическим сопоставлением схем, выдача = рекорд байт в байт |
-| `engine/adapters/submission.py`, `engine/evidence.py` | `ts-gateway-service` в каноническом графе и evidence | обобщено 21.10 (#108) на динамическое извлечение имени шлюза из топологии, выдача = рекорд |
-| `engine/executor/step.py`, `_state_lines` | таблицы `orders`, `orders_other` | нет, только судья (выключен) |
-| `engine/executor/world.py`, `_prefs` | `ts-common` | нет, только `--module-roles names` (по умолчанию `skeleton`) |
-| `engine/entities.py` | `STATE_TRACKED_TABLES`, `TrainType` | нет, только путь M3 (M4 использует `resolve_passenger_context`) |
-
-Готово, когда: выдача = рекорд байт в байт, `handler_sweep` без изменений.
+Проверено: выдача = рекорд байт в байт после каждой части; `decisions.json`, `evidence.json`, `step_requests.json` тоже; `handler_sweep` = `dev` на всех 262 обработчиках при тех же режимах (умолчание теперь `emit`, как у `run_eval.py`); `data/ir/` и `data/entity_ir.json`, собранные новым archparse, — байт в байт.
 
 ### П3. Ресурсы
 
@@ -136,7 +121,7 @@
 | Участник | Задачи |
 |---|---|
 | Паша (@Pavelgrr7) | П4 Rust, если Р1 = да. Если нет — разбор ошибок M4 на своих сценариях (П2) |
-| Миша (@vocisyy) | П2а legacy (в работе). П1 по инфраструктуре LLM — после него: запуск на A100, закрепление версий, живой прогон, прогон без кеша; П3 |
+| Миша (@vocisyy) | П2а legacy (готово, PR #110). П1 по инфраструктуре LLM: запуск на A100, закрепление версий, живой прогон, прогон без кеша; П3 |
 | Денис (@ischademadda) | П2: свои сценарии и ответы к ним, изоляция ошибок, заметная ошибка; README для организаторов |
 
 У Миши две большие задачи подряд. Если П1 к вечеру 21.10 не начат, его часть без GPU (скрипт, закрепление версий, README) берёт Денис.
@@ -229,10 +214,10 @@
 | Модуль | Состояние |
 |---|---|
 | M0 индекс скелета и БД | готов |
-| M1 заземление шагов | готов: BM25, `Qwen3-Embedding-4B`, `Qwen3.6-35B-A3B`; ответы в `cache/`, прогон без GPU. С 21.10 промпт `v8` без слов домена (ADR-007), `v7` — откат. Обработчик, который Spring вызвать не может, заменяется рабочим того же контроллера (R20, шаг 4 в S2/S3) |
-| M2 IR тел методов (`archparse`) | готов: `data/ir/`, `data/pool_ir.json`, `data/entity_ir.json` |
-| M3 состояние сценария | готов |
-| M4 исполнитель по IR (`--executor ir`) | готов, даёт выдачу кода. Судья выдачу не меняет ([OQ-13](open-questions.md#oq-13)) |
+| M1 заземление шагов | готов: BM25, `Qwen3-Embedding-4B`, `Qwen3.6-35B-A3B`; ответы в `cache/`, прогон без GPU. Промпт без слов домена (ADR-007). Обработчик, который Spring вызвать не может, заменяется рабочим того же контроллера (R20, шаг 4 в S2/S3) |
+| M2 IR тел методов (`archparse`) | готов: `data/ir/`, `data/entity_ir.json` |
+| M3 состояние сценария | отдельного модуля нет с 21.10: мир БД сценария ведёт M4 |
+| M4 исполнитель по IR | готов, единственный исполнитель. Судья удалён 21.10 ([OQ-13](open-questions.md#oq-13)) |
 | M5 атрибуция | правила R1–R20 ([annotation_rules.md](annotation_rules.md)), видимость конструкторов — `engine/projection.py` |
 | M6 оценка | S0 = 1.0; `compare_submissions.py`, `probe_kind_counts.py`, `probe_edge_classes.py` |
 | `visualizer/` | React Flow под формат ADR-001, под трассу сценария не переделан |
@@ -276,4 +261,4 @@
 
 - ADR-001, ADR-003, ADR-004, RFC-01…05 заменены ADR-005 и хранятся для истории.
 - `docs/analytics/*`, [идейка.md](идейка.md), [frontend_roadmap.md](frontend_roadmap.md) и `DESIGN.md` писались под задачу глобального графа сервисов. Это справка.
-- `engine/resolver.py` (`--grounder legacy`) и legacy-исполнитель живы, но выдача кода их не использует ([OQ-10](open-questions.md#oq-10)).
+- `engine/resolver.py` и legacy-исполнитель удалены 21.10 ([OQ-10](open-questions.md#oq-10), PR #110).

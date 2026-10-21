@@ -7,10 +7,10 @@ exec(src("wrap_jackson_ctor.py"), {"__name__": "jk"})
 exec(src("wrap_lombok_tostring.py"), {"__name__": "lb"})
 from engine.executor import step as sm2
 _orig_run_step = sm2.StepExecutor.run_step
-def run_step(self, step_req, state, ledger=None, scenario=None):
+def run_step(self, step_req, state, ledger=None):
     if os.environ.get("DROP_STEP4", "1") == "1" and "StationFoodController#getFoodStoresOfStation" in step_req.handler:
         return set(), set(), set(), set()
-    return _orig_run_step(self, step_req, state, ledger, scenario)
+    return _orig_run_step(self, step_req, state, ledger)
 sm2.StepExecutor.run_step = run_step
 sys.argv = ["run_eval.py"] + sys.argv[1:]
 runpy.run_path("run_eval.py", run_name="__main__")

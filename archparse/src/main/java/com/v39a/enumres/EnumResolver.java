@@ -29,6 +29,10 @@ public class EnumResolver {
 
     private static final Map<String, Set<String>> ENUM_CONSTANTS = new ConcurrentHashMap<>();
     private static final Map<String, List<String>> FQNS_BY_SIMPLE = new ConcurrentHashMap<>();
+    /** Модуль перечисления (первый каталог пути относительно корня исходников). */
+    private static final Map<String, String> MODULE_OF = new ConcurrentHashMap<>();
+    /** Общие библиотеки проекта: при одинаковом простом имени предпочитается перечисление из них. */
+    private static volatile Set<String> sharedModules = Set.of();
     private static volatile boolean initialized = false;
 
     /** Регистрация перечисления и его констант. */
@@ -49,9 +53,13 @@ public class EnumResolver {
         initialized = true;
     }
 
-    /** Сканирование всех enum в директории исходников проекта. */
-    public static synchronized void scanEnums(Path targetsDir) {
+    /**
+     * Сканирование всех enum в директории исходников проекта. `shared` — общие библиотеки проекта
+     * (`SkeletonGraph.sharedModules`): из них берётся перечисление, если простое имя неоднозначно.
+     */
+    public static synchronized void scanEnums(Path targetsDir, Set<String> shared) {
         if (targetsDir == null || !Files.exists(targetsDir)) return;
+        sharedModules = Set.copyOf(shared);
         try (Stream<Path> stream = Files.walk(targetsDir)) {
             stream.filter(p -> p.toString().endsWith(".java")).forEach(path -> {
                 try {
@@ -60,7 +68,10 @@ public class EnumResolver {
                     if (!content.contains("enum ")) return;
 
                     CompilationUnit cu = StaticJavaParser.parse(path);
-                    indexCompilationUnit(cu);
+                    String module = targetsDir.relativize(path).getName(0).toString();
+                    for (String fqn : indexCompilationUnit(cu)) {
+                        MODULE_OF.put(fqn, module);
+                    }
                 } catch (Exception ignored) {
                 }
             });
@@ -69,9 +80,11 @@ public class EnumResolver {
         }
     }
 
-    public static void indexCompilationUnit(CompilationUnit cu) {
-        if (cu == null) return;
+    /** Регистрирует перечисления файла; возвращает их FQN. */
+    public static List<String> indexCompilationUnit(CompilationUnit cu) {
+        if (cu == null) return List.of();
         String pkg = cu.getPackageDeclaration().map(p -> p.getNameAsString()).orElse("");
+        List<String> out = new ArrayList<>();
         for (EnumDeclaration ed : cu.findAll(EnumDeclaration.class)) {
             String fqn = binaryName(pkg, ed);
             Set<String> constants = new HashSet<>();
@@ -79,46 +92,14 @@ public class EnumResolver {
                 constants.add(ecd.getNameAsString());
             }
             registerEnum(fqn, constants);
+            out.add(fqn);
         }
+        return out;
     }
 
+    /** Перечисления проекта регистрирует `scanEnums`; здесь — только перечисления самого файла. */
     private static void ensureInitialized(CompilationUnit cu) {
-        if (initialized && !ENUM_CONSTANTS.isEmpty()) {
-            if (cu != null) indexCompilationUnit(cu);
-            return;
-        }
-        synchronized (EnumResolver.class) {
-            if (initialized && !ENUM_CONSTANTS.isEmpty()) {
-                if (cu != null) indexCompilationUnit(cu);
-                return;
-            }
-
-            if (cu != null) {
-                indexCompilationUnit(cu);
-            }
-
-            Path targetsDir = resolveDefaultTargetsDir();
-            if (targetsDir != null) {
-                scanEnums(targetsDir);
-            }
-            initialized = true;
-        }
-    }
-
-    private static Path resolveDefaultTargetsDir() {
-        String[] candidates = {
-                "hackaton/tt-challenge/targets/trainticket",
-                "../hackaton/tt-challenge/targets/trainticket",
-                "data/train-ticket",
-                "../data/train-ticket"
-        };
-        for (String cand : candidates) {
-            Path p = Paths.get(cand);
-            if (Files.isDirectory(p)) {
-                return p;
-            }
-        }
-        return null;
+        if (cu != null) indexCompilationUnit(cu);
     }
 
     private static String binaryName(String pkg, TypeDeclaration<?> td) {
@@ -232,9 +213,9 @@ public class EnumResolver {
             if (candidates.size() == 1) {
                 return candidates.get(0);
             }
-            // Если кандидатов несколько, предпочитаем ts-common или edu.fudan
+            // Если кандидатов несколько, предпочитаем перечисление из общей библиотеки проекта
             for (String cand : candidates) {
-                if (cand.contains("edu.fudan.common")) {
+                if (sharedModules.contains(MODULE_OF.get(cand))) {
                     return cand;
                 }
             }

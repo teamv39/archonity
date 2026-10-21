@@ -11,6 +11,7 @@ import com.github.javaparser.ast.stmt.*;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.v39a.enumres.EnumResolver;
+import com.v39a.skeleton.SkeletonGraph;
 import com.v39a.model.CallIR;
 import com.v39a.model.EntityReportIR;
 import com.v39a.model.EnumConstantIR;
@@ -41,6 +42,8 @@ public class EntityScanner {
             "List", "ArrayList", "Set", "HashSet", "Collection", "Map", "HashMap", "LinkedList");
 
     private final Path targetsDir;
+    /** Модуль -> модули, классы которых он видит, и общие библиотеки проекта (рёбра depends_on скелета). */
+    private final SkeletonGraph skeleton;
 
     /** Разобранный файл проекта. */
     private record SourceFile(String relFile, String module, CompilationUnit cu) {}
@@ -51,11 +54,13 @@ public class EntityScanner {
     /** Сущность с её объявлением (для разбора конструкторов и полей). */
     private record EntityDecl(EntityReportIR.Entity ir, ClassOrInterfaceDeclaration cid, CompilationUnit cu) {}
 
-    public EntityScanner(Path targetsDir) {
+    public EntityScanner(Path targetsDir, SkeletonGraph skeleton) {
         this.targetsDir = targetsDir;
+        this.skeleton = skeleton;
     }
 
     public EntityReportIR scan() throws IOException {
+        EnumResolver.scanEnums(targetsDir, skeleton.sharedModules());
         List<SourceFile> files = parseAll();
 
         Map<String, EntityDecl> entitiesByFqn = new LinkedHashMap<>();
@@ -151,7 +156,7 @@ public class EntityScanner {
                     if (repo == null) {
                         continue;
                     }
-                    EntityDecl entity = resolveEntity(repo, entitiesByFqn);
+                    EntityDecl entity = resolveEntity(repo, entitiesByFqn, skeleton.dependencies(repo.module()));
                     EntityReportIR.RepositoryCall rc = describeCall(sf, call, repo, entity);
                     if ("READ".equals(rc.operation) && entity != null) {
                         loadedCollections(call, entity, methodsByModule.getOrDefault(sf.module(), Map.of()), rc);
@@ -464,8 +469,8 @@ public class EntityScanner {
         return cu.getPackageDeclaration().map(p -> p.getNameAsString() + "." + simple).orElse(simple);
     }
 
-    /** Сущность репозитория: явный импорт, затем тот же модуль, затем ts-common. */
-    private static EntityDecl resolveEntity(RepoInfo repo, Map<String, EntityDecl> entitiesByFqn) {
+    /** Сущность репозитория: явный импорт, затем тот же модуль, затем модули, от которых он зависит. */
+    private static EntityDecl resolveEntity(RepoInfo repo, Map<String, EntityDecl> entitiesByFqn, List<String> deps) {
         for (ImportDeclaration imp : repo.cu().getImports()) {
             if (!imp.isAsterisk() && !imp.isStatic() && imp.getNameAsString().endsWith("." + repo.entitySimple())) {
                 EntityDecl e = entitiesByFqn.get(imp.getNameAsString());
@@ -474,18 +479,21 @@ public class EntityScanner {
                 }
             }
         }
-        EntityDecl fallback = null;
-        for (EntityDecl e : entitiesByFqn.values()) {
-            if (simpleName(e.ir().type).equals(repo.entitySimple())) {
-                if (e.ir().module.equals(repo.module())) {
+        List<EntityDecl> same = entitiesByFqn.values().stream()
+                .filter(e -> simpleName(e.ir().type).equals(repo.entitySimple())).toList();
+        for (EntityDecl e : same) {
+            if (e.ir().module.equals(repo.module())) {
+                return e;
+            }
+        }
+        for (String dep : deps) {
+            for (EntityDecl e : same) {
+                if (e.ir().module.equals(dep)) {
                     return e;
-                }
-                if ("ts-common".equals(e.ir().module)) {
-                    fallback = e;
                 }
             }
         }
-        return fallback;
+        return null;
     }
 
     /** Имя поля-репозитория, на котором сделан вызов: repo.find(...) или this.repo.find(...). */

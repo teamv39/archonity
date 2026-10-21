@@ -42,13 +42,3 @@ class TestEntitySchema:
         assert schema.primary_id_field("invoice") == "invoiceId"
         assert schema.id_fields("metrics") == ("metricsId", "metricId", "id")
         assert schema.id_fields("TrainType") == ("trainTypeId", "trainTypesId", "id")
-
-    def test_field_aliases(self):
-        schema = EntitySchema()
-        # Маршрут и дату бронирования M1 берёт из текста (feature/108): по умолчанию алиасов нет
-        assert schema.field_aliases("from") == ("from",)
-        assert "startStation" in schema.field_aliases("from", names=True)
-        assert schema.field_aliases("unknown") == ("unknown",)
-        # ID рейса из записи заказа — каталог UI (StepRequest.body_src); в режиме отката — алиасы по именам
-        assert schema.field_aliases("tripId") == ("tripId",)
-        assert schema.field_aliases("tripId", names=True) == ("tripId", "trainNumber")

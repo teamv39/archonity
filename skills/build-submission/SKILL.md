@@ -8,7 +8,7 @@ description: >-
 
 # Сборка и валидация архива submission.zip
 
-> **Устарело частично.** Шаг 2 снова верен: `run_eval.py` без ключей даёт конфигурацию рекорда 1.0 (с 19.10). Описание пайплайна (`GraphBuilder`, `RuntimeRules`), ожидаемые размеры архива и число тестов писались 17.10. Текущий рекорд и sha256 — [eval/records/](../../eval/records/README.md).
+> **Устарело частично.** Шаг 2 верен: `run_eval.py` без ключей даёт конфигурацию рекорда 1.0. Конвейер и состав `data/` обновлены 21.10 (legacy удалён, PR #110); ожидаемые размеры архива и число тестов писались 17.10. Состав архива под требования организаторов 21.10 (модели, зависимости) — часть C плана, `pack_submission.py`. Текущий рекорд и sha256 — [eval/records/](../../eval/records/README.md).
 
 Этот навык описывает полный регламент подготовки официального архива `output/submission.zip` для бенчмарка Train Ticket (TechArena 2026).
 
@@ -39,9 +39,9 @@ description: >-
   * Дамп БД: `hackaton/tt-challenge/context/db-after-warmup.sql.gz`
   * Открытый эталон: `hackaton/tt-challenge/gold/S0.json`
 * **Факты и IR-модели:**
-  * `data/runtime_and_topology_rules.json`
-  * `data/pool_ir.json` (IR тел методов)
-  * `data/entity_ir.json` (структуры сущностей и конструкторы R7)
+  * `data/ir/<module>.json` (IR тел методов, archparse)
+  * `data/entity_ir.json` (сущности, вызовы репозиториев и конструкторы R7)
+  * `data/ui_catalog.json` (кеш каталога UI)
 
 ---
 
@@ -62,8 +62,8 @@ uv run --with pytest pytest
 uv run python run_eval.py
 ```
 Команда выполняет:
-1. Заземление шагов $S_0 \dots S_7$ через M1 (`engine/grounding`, `--grounder m1` по умолчанию): ответы LLM и векторы эмбеддера берутся из `cache/`, сервер LLM не нужен. Старый `ScenarioGrounder` — `--grounder legacy`.
-2. Обход графа скелета и фильтрацию веток через `GraphBuilder` и `RuntimeRules`.
+1. Заземление шагов $S_0 \dots S_7$ через M1 (`engine/grounding`): ответы LLM и векторы эмбеддера берутся из `cache/`, сервер LLM не нужен.
+2. Исполнение шагов по IR тел методов (M4, `engine/executor`), правило Spring Security и проекцию конструкторов (M5).
 3. Сохранение `output/submission.json`, `output/evidence.json`, `output/decisions.json`.
 4. Синхронизацию данных с графовым визуализатором (`visualizer/public/data/`).
 5. Автоматический запуск официального валидатора `evaluate_golden.py`.
@@ -93,7 +93,7 @@ unzip -l output/submission.zip
 ```
 Убедись, что:
 1. В корне присутствуют `submission.json` и `evidence.json`.
-2. В каталоге `code/` присутствуют `code/run_eval.py`, `code/engine/`, `code/data/pool_ir.json`, `code/data/entity_ir.json`, `code/data/ir/` (IR тел методов, 42 файла), `code/cache/llm/` и `code/cache/emb/qwen3-4b/` (кеши M1).
+2. В каталоге `code/` присутствуют `code/run_eval.py`, `code/engine/`, `code/data/entity_ir.json`, `code/data/ir/` (IR тел методов, 42 файла), `code/cache/llm/` и `code/cache/emb/qwen3-4b/` (кеши M1).
 3. Отсутствуют сторонние мусорные файлы и размер архива составляет около 3.5 MB (из них около 3 MB — кеши M1).
 
 ---
@@ -112,7 +112,7 @@ uv run python run_eval.py && uv run python pack_submission.py
 * **`UnicodeEncodeError` / `charmap codec can't encode characters` (Windows):**
   Установи переменную окружения `$env:PYTHONUTF8=1` перед вызовом скриптов.
 * **Балл на $S_0$ меньше 1.0000:**
-  Проверь `git diff engine/rules.py engine/resolver.py` — возможно, новое правило фильтрации случайно задело вызовы калибровочного сценария $S_0$.
+  Сравни выдачу с рекордом ребро в ребро (`scripts/compare_submissions.py`) и разбери расходящиеся рёбра по `decisions.json`.
 * **Отклоненные рёбра (`отклонено > 0`) на $S_1 \dots S_7$:**
   В граф попали идентификаторы методов или таблиц, отсутствующие в `nodes` скелета. Запусти валидацию против `SkeletonIndex`.
 * **Статус `W` (Wrong Answer) и балл 0 в NSUTS:**

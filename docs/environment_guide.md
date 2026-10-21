@@ -15,60 +15,39 @@ UnicodeEncodeError: 'charmap' codec can't encode character ...
 ```powershell
 $env:PYTHONUTF8=1; python run_eval.py
 ```
-Без ключей `run_eval.py` даёт выдачу кода — конфигурацию рекорда ([AGENTS.md](../AGENTS.md), «Выдача кода и рекорд»). Legacy-исполнитель — только явно: `--grounder legacy --executor legacy`.
-
-или для одиночных команд:
-```powershell
-$env:PYTHONUTF8=1; python scripts/decision_log.py --scenarios S2 S3
-```
+Без ключей `run_eval.py` даёт выдачу кода — конфигурацию рекорда ([AGENTS.md](../AGENTS.md), «Выдача кода и рекорд»). Других исполнителей нет: legacy-контур удалён 21.10.
 
 ## 2. Сборка Java и модуль archparse
 
-### Запуск Gradle под Windows
-Скрипт `gradlew` является bash-скриптом. В среде Windows PowerShell или CMD запуск выполняется через `.bat`:
+### JDK и Gradle под Windows
+Нужен JDK 17+ (на машине Миши — `%USERPROFILE%\.jdks\openjdk-24.0.1`, системный `java` в PATH — Java 8, им Gradle не запустить). Wrapper при первом запуске качает Gradle 9.0 и зависимости (javaparser, jackson) в `%USERPROFILE%\.gradle`. Скрипт `gradlew` — bash, под Windows запускать `.bat` из `archparse/`:
 ```powershell
-cmd /c gradlew.bat test
-cmd /c gradlew.bat run --args="--pool all"
+$env:JAVA_HOME = "$env:USERPROFILE\.jdks\openjdk-24.0.1"
+.\gradlew.bat test
 ```
-Команды выполнять из директории `archparse/` или указывать путь к `archparse/gradlew.bat`.
 
-### Пайплайн обновления IR (pool_ir.json)
-При изменении пула методов в `TargetPool.java` строго соблюдать последовательность:
-
-1. **Тесты парсера:**
-   ```powershell
-   cmd /c gradlew.bat test
-   ```
-2. **Генерация IR:**
-   ```powershell
-   cmd /c gradlew.bat run --args="--pool all"
-   ```
-   Генератор пишет прямо в `data/pool_ir.json`. Это единственный артефакт IR: движок, тесты и скрипты читают только его, копировать ничего не нужно. Старый `archparse/out/pool_ir.json` больше нигде не читается, его можно удалить.
-3. **Проверка геометрии (100% совпадение со скелетом):**
-   ```powershell
-   $env:PYTHONUTF8=1; python scripts/verify_pool_ir.py
-   ```
-4. **Проверка калибровки S0:**
-   ```powershell
-   $env:PYTHONUTF8=1; python run_eval.py
-   ```
-   Балл S0 обязан оставаться 1.0000.
+### Пересборка IR (data/ir, data/entity_ir.json)
+Пути — обязательные аргументы (`--targets-dir`, `--skeleton`), умолчаний под Train Ticket нет. В `--args` пути с пробелами не передаются: путь к репозиторию содержит пробел (`xakaton huawei`), поэтому пути — относительные от `archparse/`:
+```powershell
+$T = "../hackaton/tt-challenge/targets/trainticket"; $K = "../hackaton/tt-challenge/skeleton/trainticket.json.gz"
+.\gradlew.bat -q run "--args=--mode bodies --targets-dir $T --skeleton $K -o ../data/ir"
+.\gradlew.bat -q run "--args=--mode entities --targets-dir $T --skeleton $K -o ../data/entity_ir.json"
+```
+После пересборки: `git diff --stat data/` (21.10 код archparse воспроизводил закоммиченные артефакты байт в байт), затем `run_eval.py` — sha256 рекорда.
 
 ## 3. Особенности тестов pytest
 
-При запуске `python -m pytest -q tests`:
-- Набор из 331 теста выполняется в среднем за 7–8 секунд.
-- Два теста производительности:
-  - `test_performance_under_5_seconds` в `tests/test_contract_and_quality.py`
-  - `test_state_fork_latency_under_50us` в `tests/test_state.py`
-  сильно зависят от загрузки процессора и характеристик конкретной машины (на медленных CPU или под Windows могут превышать лимиты: например 5.2s вместо 5.0s, 65µs вместо 50µs).
-- **Правило:** если упали только эти два теста производительности, а остальные 329+ функциональных тестов зелёные — это не считается поломкой логики и не блокирует работу.
+При запуске `python -m pytest -q tests` (около 20 секунд):
+- Тесты производительности `test_fork_latency_under_100us` (`tests/test_db.py`), `test_fork_throughput_1000_operations` (`tests/test_db_stress.py`) и `test_performance_under_5_seconds` (`tests/test_contract_and_quality.py`) зависят от загрузки процессора и иногда падают на этой машине.
+- `test_pack_submission_creates_valid_archive` падает в worktree без `output/submission.json`.
+- **Правило:** если упали только они, а остальные зелёные — это не поломка логики (раздел 9, «Тесты»).
 
 ## 4. Программный запуск пайплайна (ArchonityPipeline)
 
-Для диагностических скриптов и обвязок пайплайн инициализируется следующим образом:
+Для диагностических скриптов и обвязок пайплайн инициализируется так же, как в `run_eval.py`:
 ```python
 from pathlib import Path
+from engine.grounding.llm import LLMClient
 from engine.pipeline import ArchonityPipeline
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -76,36 +55,26 @@ ROOT = Path(__file__).resolve().parent.parent
 pipeline = ArchonityPipeline(
     skeleton_path=ROOT / "hackaton" / "tt-challenge" / "skeleton" / "trainticket.json.gz",
     targets_root=ROOT / "hackaton" / "tt-challenge" / "targets" / "trainticket",
-    ir_path=ROOT / "data" / "pool_ir.json",
+    m1_options={"llm": LLMClient(use_server=False)},  # ответы LLM только из cache/llm
 )
 
 # Запуск сценария (например, S2)
 methods, calls, remote, data = pipeline.run_scenario(scenario_dict)
 ```
 
-Так пайплайн собирается с умолчаниями класса: `grounder="legacy"`, `executor="legacy"`, `unresolved_receiver_calls="mute"`. Это не выдача кода. Для неё нужны `grounder="m1"` с `m1_options`, `executor="ir"`, `unresolved_receiver_calls="emit"` — как их собирает `run_eval.py`. Для диагностики выдачи кода проще обёртка над `run_eval.py` ([agent_lessons.md](agent_lessons.md), раздел 4).
+Умолчания `RuntimeRules` — конфигурация рекорда; режимы правил передаются ключами (`constructors="all"`), неизвестный ключ — `TypeError`. Без `llm` M1 берёт первый кандидат поиска: это не выдача кода. Дамп БД ищется рядом со скелетом (`<пакет>/context/db-after-warmup.sql.gz`), другой — `db_dump_path=...`. Для диагностики выдачи кода проще обёртка над `run_eval.py` ([agent_lessons.md](agent_lessons.md), раздел 4).
 
-## 5. Диагностика решений: журнал решений (decision_log.py)
+## 5. Диагностика решений: журнал решений
 
-Каждое решение по ребру (включение, отсев, удаление) пишет сам `GraphBuilder` в журнал `engine/decisions.py`. `run_eval.py` сохраняет журнал в `output/decisions.json` (evidence v2, ADR-005): для каждого ребра сценария — попало ли оно в ответ, на каких шагах, источник решения (`source_type`) и правило (`rule`), плюс все решения по шагам. Правило — это ID из `branch_rules.json` с предикатом (`BR_TRIP_GD_DISPATCH@b53:else`), R7/R15-R17, строка `rules.py` (`rules.py:508`) или имя правила движка.
-
-Сводка и списки риска по сценариям:
-```powershell
-$env:PYTHONUTF8=1; python scripts/decision_log.py --scenarios S2 S3
-```
-- Список риска A — рёбра ответа, включённые только достижимостью скелета: условия на них движок не проверял. Пометка `[IR]` — метод уже в пуле, но ни одно правило не решило его ветки.
-- Список риска B — рёбра, отсеянные эвристиками `rules.py`, со строкой сработавшего правила.
-
-Скрипт не пересчитывает обход сам и на каждом прогоне проверяет, что журнал совпадает с ответом сценария.
-
-**Только legacy.** `decision_log.py` собирает пайплайн без ключей исполнителя, поэтому списки риска A и B относятся к legacy-исполнителю и `rules.py`, а не к выдаче кода. Для выдачи кода — `decisions.json` прогона `run_eval.py` с ключами из раздела 1 и `scripts/probe_edge_classes.py` ([agent_lessons.md](agent_lessons.md), раздел 4).
+Каждое решение по ребру (включение, отсев, удаление) пишут M4, правило Spring Security и проекция M5 в журнал `engine/decisions.py`. `run_eval.py` сохраняет его в `decisions.json` рядом с выдачей (evidence v2, ADR-005): для каждого ребра сценария — попало ли оно в ответ, на каких шагах, источник решения (`source_type`) и правило (`rule`), плюс все решения по шагам. Классы рёбер по журналу — `scripts/probe_edge_classes.py` ([agent_lessons.md](agent_lessons.md), раздел 4). Прежний `scripts/decision_log.py` (списки риска legacy-обхода) удалён вместе с legacy.
 
 ## 6. Git, .gitattributes и сгенерированные JSON
 
-Файл `data/pool_ir.json` содержит десятки тысяч строк сгенерированного AST IR.
+Файлы `data/ir/*.json` и `data/entity_ir.json` — десятки тысяч строк сгенерированного AST IR, `cache/**` — ответы LLM и векторы.
 В `.gitattributes` для них настроены атрибуты:
 ```gitattributes
-data/pool_ir.json linguist-generated=true -diff
+data/ir/*.json linguist-generated=true -diff
+cache/** linguist-generated=true -diff -merge
 ```
 - `linguist-generated=true` скрывает файл из диффа Pull Request на GitHub.
 - `-diff` отключает построчный расчет в локальном `git diff` и `git diff --stat` (файл отображается как бинарный, без десятков тысяч строк).
@@ -135,7 +104,7 @@ data/pool_ir.json linguist-generated=true -diff
 
 ### Расчет колонок вызовов: байты UTF-8 vs символы Java (UTF-16)
 - В скелете (`skeleton/trainticket.json.gz`) поле `col` у каждого `call_site` — это **1-based смещение в байтах UTF-8** от начала строки, а не количество символов.
-- Если в строке исходника перед вызовом есть не-ASCII символы (кириллица или китайские иероглифы в комментариях/строках), метод JavaParser `getName().getBegin().column` возвращает номер символа (char), который меньше байтового смещения. Из-за этого геометрическое сопоставление вызовов в `verify_pool_ir.py` не находит вызов (0% совпадений).
+- Если в строке исходника перед вызовом есть не-ASCII символы (кириллица или китайские иероглифы в комментариях/строках), метод JavaParser `getName().getBegin().column` возвращает номер символа (char), который меньше байтового смещения. Из-за этого вызов не сопоставляется с call_site скелета по `file + line + col` (так 0% совпадений давал прежний пул IR).
 - **Правило:** при извлечении вызовов Java-парсер обязан пересчитывать символьное смещение строки в байтовую длину в кодировке UTF-8.
 
 ### Неразрешённые типы параметров в скелете (?TypeName)

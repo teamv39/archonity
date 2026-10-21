@@ -1,7 +1,7 @@
 # Аудит универсальности пайплайна Archonity после достижения 1.00000
 
 Дата: 19.10.2026  
-Статус: выдача кода = 1.00000 (посылка 28, ветка feature/82-unbound-path-variable в dev); пункты 7, 10–12 и 2.1.4 обобщены 19.10 (раздел 6); пункты 2 и 3 (2.2.1, 2.2.2) — 20.10, фаза A ADR-007 (раздел 8); пункт 4 и 2.1.2, 2.1.3 (промпт и виды ссылок M1) — 21.10, фазы B1 и B2, `--m1-prompt v8` по умолчанию (раздел 9); пункты 5, 6 и `tripId`/`oldTripId` из 2.2.1 — 20.10, `--m4-conventions code` (раздел 10)  
+Статус: выдача кода = 1.00000 (посылка 28, ветка feature/82-unbound-path-variable в dev); пункты 7, 10–12 и 2.1.4 обобщены 19.10 (раздел 6); пункты 2 и 3 (2.2.1, 2.2.2) — 20.10, фаза A ADR-007 (раздел 8); пункт 4 и 2.1.2, 2.1.3 (промпт и виды ссылок M1) — 21.10, фазы B1 и B2, `--m1-prompt v8` по умолчанию (раздел 9); пункты 5, 6 и `tripId`/`oldTripId` из 2.2.1 — 20.10, `--m4-conventions code` (раздел 10); legacy, режимы отката, судья и литералы Train Ticket в рабочем пути — 21.10 (раздел 12)  
 Связано: testing_system.md, reaching_1_0.md, code_record_drift.md, annotation_rules.md  
 
 ---
@@ -278,3 +278,26 @@
 | 2.2.1 | `from`, `to`, `date` бронирования M1 берёт из текста шага и сценария (правка `PARAMS_TASK_V8`, пересобраны 68 вызовов `params`). Таблица `_FIELD_ALIASES` по умолчанию пуста, осталась только у режима отката `--m4-conventions names`. Выдача — sha256 `94463c41…5a08` в обоих режимах. Разбор — [m4_code_derived_conventions.md](m4_code_derived_conventions.md), «Маршрут и дата бронирования из текста» |
 
 Осталось в пути M4 по умолчанию: группа полей получателя багажа при весе 0 (R21) и поля текущего пользователя (раздел 8) — нужен каталог UI с нелитеральными источниками полей, правкой промпта не снимается.
+
+## 12. Обобщено 21.10 (ветка `feature/110-remove-legacy`, PR #110)
+
+| Что | Как было | Как стало |
+|---|---|---|
+| Legacy-контур (2.4) | обход скелета с правилами отсева по именам (`builder.py`, `rules.py`, `branch_rules.json`), `resolver.py`, модель M3 `state.py`, пул IR | удалён; Spring Security — `engine/spring_security.py` по контракту фреймворка |
+| Режимы отката | `--m1-prompt v7` (домен Train Ticket, `REF_ENTITIES`, `DOMAIN_SYN`), `--m4-conventions names` (`Response`/`status`/1, алиасы полей, нормализация станций), `--module-roles names` (`ts-common`, `other`, цифры), `--m4-state m3`, `--spring-security names` | удалены вместе с кешем `m1-v7` |
+| Судья M4 | промпт про Train Ticket, кеш `m4-judge-v1` | удалён: выдачу не менял (OQ-13) |
+| `db.py` | таблица 33 узлов Train Ticket и правило `ts_x → ts-x-service` | удалены: то же даёт `normalize_table_name` |
+| Пассажир | литерал `fdse_microservice` и UUID, поиск по таблице `user` | имя — из `context` скелета, ID — поле `@Id` сущности `UserDetails` в её таблице |
+| Дамп и контекст | пути `hackaton/tt-challenge/context` в `SkeletonIndex` | дамп — рядом со скелетом по раскладке пакета задачи, контекст — поле `context` скелета |
+| Шлюз в evidence | литерал `ts-gateway-service` | `service_name` из `facts/configs_topology.json` |
+| archparse | `ts-common` и `edu.fudan.common` при неоднозначном типе, пути `targets/trainticket` по умолчанию | зависимости модулей из `depends_on` скелета; `--targets-dir` и `--skeleton` обязательны |
+
+Сторож: `tests/test_no_project_literals.py` проверяет строковые литералы `engine/`, `run_eval.py` и `archparse/src/main` (кроме умолчаний путей входа к пакету задачи). Каждая часть проверена: sha256 `94463c41…5a08`, `decisions.json`, `evidence.json`, `step_requests.json` байт в байт; `data/ir/` и `data/entity_ir.json` новым archparse — байт в байт.
+
+Осталось с обоснованием:
+
+- **Поля получателя багажа при весе 0 (R21) и поля текущего пользователя (`accountId`, `userId`, `loginId`)** — имена полей Train Ticket в `step.py` и `schema.py`. Общий путь — поток данных UI, но каталог UI нелитеральные источники полей не хранит. Правкой промпта не снимается.
+- **Формат пакета задачи**: раскладка `skeleton/` и `context/db-after-warmup.sql.gz`, фразы контекста («pre-registered user», «booked for», «system clock is», «no … at login»). Это формат входа задачи, а не домен Train Ticket.
+- **Соглашение об отказе в archparse** (`ResultExpectation`): путь отказа пишет `error`/`warn` в лог. Проверено на всех сервисах Train Ticket; в проекте без такого соглашения ожидание успешного пути будет `UNKNOWN` чаще.
+- **Артефакты не привязаны к проекту.** `data/ir/`, `data/entity_ir.json` и кеш каталога UI `data/ui_catalog.json` построены по Train Ticket и читаются при любом `--skeleton`/`--targets`: на другом Java-проекте прогон молча возьмёт их. Для другого проекта их нужно пересобрать (archparse с `--targets-dir`/`--skeleton`, каталог UI — `build_catalog(force_rebuild=True)`); проверки соответствия скелету пока нет.
+- `facts/configs_topology.json` — факты о конфигурации Train Ticket, собранные вручную; нужны только `canonical_graph.json` и `evidence.json`, не выдаче.

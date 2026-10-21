@@ -76,7 +76,8 @@ class TestQualityAndConstraints:
         assert "Archonity: генерация submission.json" in res.stdout
         assert "--skeleton" in res.stdout
         assert "--gold" in res.stdout
-        assert "--rules" in res.stdout
+        assert "--ctors" in res.stdout
+        assert "--rules" not in res.stdout
 
     def test_cli_custom_output(self, tmp_path: Path) -> None:
         """Тестирование CLI: вывод в кастомный путь."""

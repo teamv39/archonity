@@ -1,4 +1,4 @@
-"""In-memory DB dump loader and query interface for Train Ticket static analysis."""
+"""In-memory DB state loaded from a MySQL dump, and the scenario context of the task package."""
 from __future__ import annotations
 
 import gzip
@@ -149,36 +149,6 @@ class TableCollection(dict):
         return super().__contains__(key)
 
 
-class TableNodeResolution(list):
-    """Dual representation of a resolved table node.
-
-    Behaves both as a list of rows (for iteration and record inspection)
-    and as a dictionary of metadata (for node_id, service, db, table, qualified attributes).
-    """
-
-    def __init__(self, rows: list[dict[str, Any]], metadata: dict[str, str]) -> None:
-        super().__init__(rows)
-        self._metadata = metadata
-        self.node_id = metadata.get("node_id", "")
-        self.service = metadata.get("service", "")
-        self.db = metadata.get("db", "")
-        self.table = metadata.get("table", "")
-        self.qualified = metadata.get("qualified", "")
-
-    def __getitem__(self, item: Any) -> Any:
-        if isinstance(item, str):
-            return self._metadata[item]
-        return super().__getitem__(item)
-
-    def get(self, key: str, default: Any = None) -> Any:
-        return self._metadata.get(key, default)
-
-    def __eq__(self, other: object) -> bool:
-        if isinstance(other, dict):
-            return self._metadata == other
-        return super().__eq__(other)
-
-
 class DatabaseState:
     """In-memory representation of database tables loaded from warmup dump."""
 
@@ -196,11 +166,11 @@ class DatabaseState:
     def normalize_table_name(self, table_name: str) -> str:
         """Normalizes table identifier variants to bare canonical name.
 
-        Variants supported:
+        Variants supported (the table name is the part after the first dot):
           - 'orders'
-          - 'ts_order.orders'
-          - 'ts-order-service.orders'
-          - 'res:table:ts-order-service.orders'
+          - '<db>.orders'
+          - '<service>.orders'
+          - 'res:table:<service>.orders' (skeleton table node)
         """
         if not table_name:
             return ""
@@ -266,26 +236,6 @@ class DatabaseState:
         for r in matching_rows:
             r.update(updates)
         return len(matching_rows)
-
-    def get_user_by_name(self, user_name: str) -> dict[str, Any] | None:
-        """Finds user row in 'user' table by user_name."""
-        return self.find_one("user", user_name=user_name)
-
-    def get_user_balance(self, user_id: str) -> float | None:
-        """Computes current balance for user_id from inside_money deposits and inside_payment records.
-
-        Matches InsidePaymentServiceImpl logic:
-        money = sum(inside_money.money)
-        expand = sum(inside_payment.price)
-        balance = max(0.0, money - expand)
-        """
-        add_monies = self.query("inside_money", user_id=user_id)
-        payments = self.query("inside_payment", user_id=user_id)
-        if not add_monies and not payments:
-            return None
-        total_money = sum(float(m.get("money") or 0.0) for m in add_monies)
-        total_expand = sum(float(p.get("price") or 0.0) for p in payments)
-        return max(0.0, total_money - total_expand)
 
     def fork(self) -> DatabaseState:
         """Creates an isolated copy in < 20 µs for scenario isolation."""
@@ -379,19 +329,12 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
             tables_data[tbl] = []
         tables_data[tbl].extend(row_dicts)
 
+    # Узел таблицы скелета `res:table:<service>.<table>` и `<db>.<table>` сводятся к имени таблицы
+    # (`DatabaseState.normalize_table_name`), отдельных псевдонимов не нужно
     table_aliases: dict[str, str] = {}
     for tbl, db in table_to_db.items():
         table_aliases[tbl] = tbl
         table_aliases[f"{db}.{tbl}"] = tbl
-        svc_name = db.replace("_", "-") + "-service"
-        table_aliases[f"{svc_name}.{tbl}"] = tbl
-        table_aliases[f"res:table:{svc_name}.{tbl}"] = tbl
-
-    # Dynamic alias mapping derived from schema without hardcoded project tables
-    for tbl, db in table_to_db.items():
-        base_svc = db.replace("_", "-")
-        table_aliases[f"{base_svc}.{tbl}"] = tbl
-        table_aliases[f"res:table:{base_svc}.{tbl}"] = tbl
 
     return DatabaseState(
         tables=tables_data,
@@ -401,19 +344,22 @@ def load_db_dump(gz_path: str | Path) -> DatabaseState:
 
 
 def parse_context_readme(readme_path: str | Path) -> dict[str, Any]:
-    """Extracts benchmark execution context from context/README.md.
-
-    Parses:
-      - travel_date (e.g. '1 October 2026' or '2026-10-01')
-      - system_date (e.g. '15 September 2026' or '2026-09-15')
-      - user_name (e.g. 'fdse_microservice')
-      - balance (e.g. 10000.0)
-    """
+    """Scenario context from the task package's context/README.md (see `parse_context`)."""
     path = Path(readme_path)
     if not path.is_file():
         return {}
+    return parse_context(path.read_text(encoding="utf-8", errors="replace"))
 
-    text = path.read_text(encoding="utf-8", errors="replace")
+
+def parse_context(text: str) -> dict[str, Any]:
+    """Extracts the scenario context: the `context` field of the skeleton or context/README.md of the task package.
+
+    Parses:
+      - travel_date ('booked for 1 October 2026' or '... 2026-10-01')
+      - system_date ('system clock is 15 September 2026')
+      - user_name ('pre-registered user <name>')
+      - balance ('account balance 10 000')
+    """
     info: dict[str, Any] = {}
 
     months = {

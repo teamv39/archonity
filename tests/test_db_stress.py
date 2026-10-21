@@ -21,7 +21,6 @@ import pytest
 from engine.adapters.db import (
     DatabaseState,
     TableCollection,
-    TableNodeResolution,
     _parse_sql_values,
     load_db_dump,
 )
@@ -46,7 +45,7 @@ def skeleton_dict() -> dict[str, Any]:
 
 @pytest.fixture(scope="module")
 def skeleton_index(skeleton_dict: dict[str, Any]) -> SkeletonIndex:
-    return SkeletonIndex(skeleton_dict)
+    return SkeletonIndex(skeleton_dict, db_dump_path=DUMP_PATH)
 
 
 # ==============================================================================
@@ -410,58 +409,23 @@ class TestQueryEngineEdgeCases:
 # ==============================================================================
 
 class TestSkeletonResolutionAdversarial:
-    """Tests resolution of all 33 skeleton nodes, unknown nodes, and malformed inputs."""
+    """Every skeleton table node resolves to its dump table by name; unknown nodes give no rows."""
 
-    def test_all_33_nodes_detailed_attributes(
+    def test_all_33_nodes_resolve_to_dump_tables(
         self,
         skeleton_index: SkeletonIndex,
         skeleton_dict: dict[str, Any],
     ) -> None:
-        """Exhaustively verify every one of the 33 table nodes has correct metadata."""
         table_nodes = [nid for nid in skeleton_dict["nodes"] if nid.startswith("res:table:")]
         assert len(table_nodes) == 33
-
         for nid in table_nodes:
-            res = skeleton_index.resolve_table_node(nid)
-            assert isinstance(res, TableNodeResolution)
-            assert res.node_id == nid
-            assert res.service != ""
-            assert res.table != ""
-            assert res.db != ""
-            assert res.qualified == f"{res.db}.{res.table}"
-            # Check dict interface
-            assert res["node_id"] == nid
-            assert res["service"] == res.service
-            assert res["db"] == res.db
-            assert res["table"] == res.table
-            assert res["qualified"] == res.qualified
-            # Check list interface
-            assert isinstance(res, list)
+            name = skeleton_index.table_resource_to_db(nid)
+            assert name == nid.split(".", 1)[1]
+            assert skeleton_index.get_table_records(nid) == skeleton_index.db_state.get_table(name)
 
-    def test_resolve_unknown_table_node(self, skeleton_index: SkeletonIndex) -> None:
-        """A valid res:table: format but for an unknown service/table returns empty list without error."""
-        unknown_nid = "res:table:ts-unknown-future-service.future_table"
-        res = skeleton_index.resolve_table_node(unknown_nid)
-        assert isinstance(res, TableNodeResolution)
-        assert res.node_id == unknown_nid
-        assert res.service == "ts-unknown-future-service"
-        assert res.db == "ts_unknown_future"
-        assert res.table == "future_table"
-        assert res.qualified == "ts_unknown_future.future_table"
-        assert len(res) == 0
-
-    def test_resolve_invalid_non_table_node(self, skeleton_index: SkeletonIndex) -> None:
-        """Calling resolve_table_node on a method or module node raises ValueError."""
-        with pytest.raises(ValueError, match="Not a table resource node"):
-            skeleton_index.resolve_table_node("ts-order-service:com.example.OrderService:createOrder()")
-
-        with pytest.raises(ValueError, match="Not a table resource node"):
-            skeleton_index.resolve_table_node("module:ts-order-service")
-
-    def test_table_resource_to_qualified_db_errors(self, skeleton_index: SkeletonIndex) -> None:
-        """Non-resource strings raise ValueError."""
-        with pytest.raises(ValueError):
-            skeleton_index.table_resource_to_qualified_db("not_a_resource")
+    def test_unknown_table_node_has_no_rows(self, skeleton_index: SkeletonIndex) -> None:
+        assert skeleton_index.get_table_records("res:table:unknown-future-service.future_table") == []
+        assert skeleton_index.table_resource_to_db("res:table:unknown-future-service.future_table") == "future_table"
 
 
 # ==============================================================================

@@ -9,7 +9,7 @@ from typing import Protocol
 import numpy as np
 
 from engine.grounding.docs import HandlerCatalog
-from engine.grounding.text import BM25, DOMAIN_SYN, expand_query, query_toks
+from engine.grounding.text import BM25, expand_query, query_toks
 
 RRF_K = 60
 
@@ -20,9 +20,6 @@ class Embedder(Protocol):
     def embed_docs(self, docs: list[tuple[str, str]]) -> np.ndarray | None: ...
 
     def embed_queries(self, texts: list[str]) -> np.ndarray | None: ...
-
-
-_NAMES_MARKER = re.compile(r"other|\d+")  # режим names (до feature/84): маркеры Train Ticket
 
 
 def _module_marker(base: str, variant: str) -> str | None:
@@ -62,15 +59,12 @@ def twin_markers(cat: HandlerCatalog, min_share: float = 0.5) -> list[str]:
     return sorted(out, key=lambda m: (-len(m), m))
 
 
-def twin_groups(cat: HandlerCatalog, module_roles: str = "skeleton") -> dict[str, list[str]]:
+def twin_groups(cat: HandlerCatalog) -> dict[str, list[str]]:
     """Близнецы: обработчики разных модулей с одинаковым путём после снятия маркера близнеца в сегментах
     (`travelservice` / `travel2service`, `order/refresh` / `orderOther/refresh`, `preserve` / `preserveOther`).
-    Маркеры — `twin_markers` (skeleton) или `other` и цифры (names, до feature/84)."""
-    if module_roles == "names":
-        marker = _NAMES_MARKER
-    else:
-        mks = twin_markers(cat)
-        marker = re.compile("|".join(re.escape(m) for m in mks)) if mks else None
+    Маркеры — `twin_markers`."""
+    mks = twin_markers(cat)
+    marker = re.compile("|".join(re.escape(m) for m in mks)) if mks else None
     groups: dict[tuple[str, str], set[str]] = collections.defaultdict(set)
     for nid, h in cat.handlers.items():
         for verb, path in h.routes:
@@ -113,21 +107,19 @@ class Ranked:
 
 
 class Retriever:
-    def __init__(self, cat: HandlerCatalog, mode: str = "code_ui", embedder: Embedder | None = None,
-                 module_roles: str = "skeleton", syn: dict[str, list[str]] | None = DOMAIN_SYN) -> None:
+    def __init__(self, cat: HandlerCatalog, mode: str = "code_ui", embedder: Embedder | None = None) -> None:
         self.cat = cat
         self.mode = mode
-        self.syn = syn  # синонимы BM25: DOMAIN_SYN в режиме M1 v7, None в v8 (ADR-007)
         self.ids = sorted(cat.handlers)
-        self.bm25 = BM25({nid: cat.bm25_tokens(nid, mode, syn) for nid in self.ids})
-        self.twins = twin_groups(cat, module_roles)
+        self.bm25 = BM25({nid: cat.bm25_tokens(nid, mode) for nid in self.ids})
+        self.twins = twin_groups(cat)
         self.embedder = embedder
         self.doc_vecs: np.ndarray | None = None
         if embedder is not None:
             self.doc_vecs = embedder.embed_docs([(cat.handlers[nid].signature, cat.render(nid, mode)) for nid in self.ids])
 
     def rank_bm25(self, query: str) -> list[str]:
-        ranked = [h for _, h in self.bm25.rank(expand_query(query_toks(query, self.syn)))]
+        ranked = [h for _, h in self.bm25.rank(expand_query(query_toks(query)))]
         return ranked + [h for h in self.ids if h not in set(ranked)]
 
     def rank_dense(self, queries: list[str]) -> list[list[str]]:

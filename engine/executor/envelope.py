@@ -6,8 +6,7 @@
 - Значение успеха — литерал, с которым клиент сравнивает поле статуса: UI (`<ответ>.<статус> == <литерал>`), без UI —
   сервисы проекта (`get<Статус>() == / != <литерал>` в IR), по большинству.
 
-Нет класса или значения успеха — `None`: отказ остаётся только у `throw` и `return null`. Режим отката
-`--m4-conventions names` — значения, зашитые до feature/102 (`NAMES`).
+Нет класса или значения успеха — `None`: отказ остаётся только у `throw` и `return null`.
 """
 from __future__ import annotations
 
@@ -38,10 +37,6 @@ class Envelope:
     @property
     def getter(self) -> str:
         return "get" + self.status[:1].upper() + self.status[1:]
-
-
-# Откат (--m4-conventions names): соглашение, зашитое до feature/102
-NAMES = Envelope(name="Response", status="status", success=1, data="data")
 
 
 def _walk(x: Any):
@@ -130,4 +125,4 @@ def derive(ix: Any, ir: dict[str, dict[str, Any]], targets_root: Path | None) ->
     return Envelope(name=name, status=status, success=top[0][0], data=data)
 
 
-__all__ = ["Envelope", "NAMES", "derive"]
+__all__ = ["Envelope", "derive"]
