@@ -393,7 +393,7 @@ class Interpreter:
             comp, env = self._arm(then_s if cond else else_s, fr, why)
             fr.env.update(env)
             return comp
-        # UNKNOWN: правило успешного пути, затем судья, иначе оба плеча (ADR-005: сначала правила по умолчанию)
+        # UNKNOWN: правило успешного пути, иначе оба плеча (ADR-005: сначала правила по умолчанию)
         if self.expected != "refused":
             tf, ef = arm_fails(then_s, self.envelope), arm_fails(else_s, self.envelope)
             if tf != ef:

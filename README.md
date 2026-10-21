@@ -26,10 +26,14 @@ pip install -r requirements.txt
 ```
 или через `uv`:
 ```bash
-uv sync
+uv sync --locked
 ```
 
-Запуск на машине организаторов (Linux, A100 40 ГБ) одной командой, версии моделей и `llama.cpp` — [docs/run_on_a100.md](docs/run_on_a100.md).
+Запуск на машине организаторов (Linux, A100 40 ГБ) одной командой: модели докачиваются по `models/manifest.json`, `llama-server` поднимается сам на первом промахе кеша. Подробно — [docs/run_on_a100.md](docs/run_on_a100.md).
+
+```bash
+scripts/run_final.sh <файлы сценариев>   # без аргументов — S0–S7
+```
 
 ### Воспроизведение сабмишна
 
@@ -75,7 +79,7 @@ M1: режим full. Шагов 103: выбрано моделью 103, перв
 python pack_submission.py
 ```
 
-Скрипт соберёт `output/submission.zip` с `submission.json` и `evidence.json` в корне, кодом движка, кешами M1 и артефактами IR с нормализацией строк под Unix LF.
+Скрипт соберёт `output/submission.zip`. В корне — `submission.json`, `evidence.json` и `RUN.md` с командами воспроизведения. В `code/` — всё для запуска из этого каталога: код (`run_eval.py`, `engine/`, исходники `archparse/`), артефакты M2 (`data/`), кеши M1 (`cache/`), зависимости (`pyproject.toml`, `uv.lock`, `requirements.txt`), манифест моделей (`models/manifest.json`), скрипты запуска (`scripts/run_final.sh`, `scripts/fetch_models.py`) и `docs/run_on_a100.md`. Модели и пакет организаторов в архив не входят. Текст — с LF, скрипты `.sh` — исполняемые.
 
 ---
 
@@ -83,28 +87,22 @@ python pack_submission.py
 
 Пайплайн состоит из нескольких независимых модулей (подробнее см. [ADR-005](docs/adr/adr-005_scenario_execution_pipeline.md)):
 
-```
-Сценарий (текст)
-       │
-       ▼
- [M1 Grounder] ────> Заземление текстовых шагов на HTTP-эндпоинты и методы (LLM + векторы)
-       │
-       ▼
- [M4 Executor] <─── [M2 IR (archparse)] ── AST тел методов и JPA-факты
-       │
-       ├───> [M3 State / Context] ──────── Модель состояния базы данных и параметров
-       │
-       ▼
- [M5 Projection] ──> Фильтрация видимости конструкторов и атрибуция рёбер (правила R1–R20)
-       │
-       ▼
- submission.json + evidence.json v2
+```mermaid
+flowchart TD
+    S[Сценарий: шаги текстом] --> M1[M1: заземление шагов на обработчики, BM25, векторы, LLM]
+    M1 -->|StepRequest| M4[M4: исполнение по IR тел методов, мир БД сценария]
+    M2[M2 archparse: IR тел методов и JPA-факты] --> M4
+    DB[Дамп БД из пакета задачи] --> M4
+    M4 --> SS[Правило Spring Security]
+    SS --> M5[M5: видимость конструкторов R7, согласованность R19]
+    M5 --> OUT[submission.json и evidence.json v2]
 ```
 
 - **M1 (Заземление шагов, `engine/grounding/`):** сопоставляет шаги сценария на естественном языке с методами контроллеров через комбинацию BM25, эмбеддингов (`Qwen3-Embedding-4B`) и компактной LLM (`Qwen3.6-35B-A3B`). Промпт не содержит слов предметной области: описание домена и правила сервисов-близнецов строит сама модель по README, `context` скелета и коду UI (профиль проекта), виды сущностей для ссылок берутся из `@Entity` скелета ([ADR-007](docs/adr/adr-007_project_profile.md)). Все предсказания сохранены в `cache/` для мгновенного детерминированного воспроизведения.
 - **M2 (Парсер тел методов, `archparse/`):** Java-приложение на базе JavaParser. Извлекает дерево операторов и вызовов методов в `data/ir/<module>.json`, а также факты о JPA-сущностях, связях и вызовах репозиториев в `data/entity_ir.json`.
-- **M4 (Интерпретатор исполнения, `engine/executor/`):** пошагово исполняет сценарий по сгенерированному IR. Вычисляет условия ветвлений (`if/else`, `switch`), отслеживает вызовы и межсервисные переходы.
-- **M5 (Правила разметки и атрибуция, `engine/`):** применяет правила эталона ([annotation_rules.md](docs/annotation_rules.md)), включая правила видимости конструкторов ([ADR-006](docs/adr/adr-006_constructor_visibility.md)), ленивые коллекции и обратные вызовы JPA.
+- **M4 (Интерпретатор исполнения, `engine/executor/`):** пошагово исполняет сценарий по сгенерированному IR. Вычисляет условия ветвлений (`if/else`, `switch`) по данным сценария, отслеживает вызовы и межсервисные переходы. Мир БД сценария — форк дампа из пакета задачи: записи, созданные шагом, видны следующим шагам.
+- **Правило Spring Security (`engine/spring_security.py`):** вход через `AuthenticationManager` достраивает по контракту фреймворка `loadUserByUsername`, фильтр запроса и методы `UserDetails` — их нет в коде проекта как вызовов.
+- **M5 (Правила разметки и атрибуция, `engine/projection.py`, `engine/pipeline.py`):** применяет правила эталона ([annotation_rules.md](docs/annotation_rules.md)): видимость конструкторов ([ADR-006](docs/adr/adr-006_constructor_visibility.md)) и согласованность `executes` с рёбрами (R19).
 
 ---
 
@@ -113,17 +111,25 @@ python pack_submission.py
 - `run_eval.py` — главная точка входа пайплайна анализа.
 - `pack_submission.py` — утилита сборки архива сдачи в NSUTS.
 - `engine/` — ядро анализатора на Python:
-  - `engine/executor/` — интерпретатор тел методов M4 (`world.py`, `interpreter.py`).
-  - `engine/grounding/` — модуль заземления шагов M1 (`grounder.py`, `llm.py`).
-  - `engine/adapters/` — адаптеры графа-скелета и снимка базы данных.
-  - `engine/entities.py` — правила работы с JPA-сущностями и таблицами.
-  - `engine/rules.py` — конфигурация профилей сценариев и топологических правил.
+  - `engine/pipeline.py` — конвейер сценария: M1 → M4 → правило Spring Security → M5, пассажир сценария.
+  - `engine/grounding/` — модуль заземления шагов M1 (`grounder.py`, `llm.py`, `embedder.py`).
+  - `engine/executor/` — интерпретатор тел методов M4 (`world.py`, `interpreter.py`, `step.py`).
+  - `engine/spring_security.py` — правило фреймворка Spring Security.
+  - `engine/projection.py` — проекция исполнения на рёбра эталона (M5, ADR-006).
+  - `engine/adapters/` — адаптеры графа-скелета, снимка базы данных и формата выдачи.
+  - `engine/entities.py` — JPA-сущности, таблицы и вызовы репозиториев из `data/entity_ir.json`.
+  - `engine/rules.py` — режимы правил M4 и M5 (`RuntimeRules`); умолчания — конфигурация рекорда.
+  - `engine/decisions.py`, `engine/evidence.py` — журнал решений и `evidence.json` v2.
 - `archparse/` — статический анализатор Java-кода:
   - `MethodIrWriter.java` — генерация структурного IR тел методов.
   - `EntityScanner.java` — сканер сущностей, таблиц и вызовов Spring Data.
   - `EnumResolver.java` — динамический резолвер констант перечислений.
-- `data/` — артефакты промежуточного представления (IR) и топологические правила.
-- `cache/` — локальные кеши эмбеддингов и ответов моделей.
+  - `SkeletonGraph.java` — зависимости модулей из рёбер `depends_on` скелета.
+- `data/` — артефакты M2 (`data/ir/`, `data/entity_ir.json`) и каталог UI (`data/ui_catalog.json`).
+- `cache/` — кеши ответов LLM (`cache/llm/`) и векторов эмбеддера (`cache/emb/`).
+- `models/manifest.json` — версии и sha256 LLM, эмбеддера и сборки `llama.cpp`; сами модели качает `scripts/fetch_models.py`.
+- `scripts/run_final.sh` — финальный запуск на A100; `scripts/start_llm.*` — ручной запуск `llama-server`.
+- `facts/configs_topology.json` — топология развёртывания: имя шлюза для `evidence.json`.
 - `docs/` — документация проекта:
   - `docs/roadmap.md` — текущий статус, прогресс и таблица посылок.
   - `docs/annotation_rules.md` — правила разметки графа и сопоставления рёбер.
