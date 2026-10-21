@@ -1,8 +1,5 @@
 //! `archonity-exec` (ADR-008): M4, R20, Spring Security, R19, M5 и запись `submission.json`, `evidence.json`,
-//! `decisions.json`. Вход — `step_requests_raw.json` от Python-части (M1). Владелец — Паша.
-
-// Этап 0: функции с todo!() ещё не вызываются. Паша убирает атрибут, когда подключит цикл сценариев.
-#![allow(dead_code)]
+//! `decisions.json`. Вход — `step_requests_raw.json` от Python-части (M1). Владелец — Денис (ADR-008).
 
 mod binding;
 mod catalog;
@@ -31,8 +28,11 @@ struct Args {
     #[arg(long, default_value = "data/ir")]
     ir_dir: PathBuf,
     /// `entity_ir.json`.
-    #[arg(long)]
-    entity_ir: Option<PathBuf>,
+    #[arg(long, default_value = "data/entity_ir.json")]
+    entity_ir: PathBuf,
+    /// `facts/configs_topology.json`: маршруты шлюза для `evidence.json`.
+    #[arg(long, default_value = "facts/configs_topology.json")]
+    configs_topology: PathBuf,
     /// Дамп БД; по умолчанию рядом со скелетом.
     #[arg(long)]
     db_dump: Option<PathBuf>,
@@ -42,9 +42,6 @@ struct Args {
     /// Флаги правил `name=value` (имена `RuntimeRules`, например `constructors=caller_only`).
     #[arg(long = "rule")]
     rules: Vec<String>,
-    /// Вместо M4 брать сырые рёбра и журнал шагов из `raw_steps.json` оракула Python (проверка R19, M5, записи файлов).
-    #[arg(long)]
-    replay: Option<PathBuf>,
 }
 
 fn main() -> Result<()> {
@@ -58,11 +55,11 @@ pub struct RunConfig {
     pub skeleton: PathBuf,
     pub targets: Option<PathBuf>,
     pub ir_dir: PathBuf,
-    pub entity_ir: Option<PathBuf>,
+    pub entity_ir: PathBuf,
+    pub configs_topology: PathBuf,
     pub db_dump: Option<PathBuf>,
     pub out: PathBuf,
     pub rules: Vec<String>,
-    pub replay: Option<PathBuf>,
 }
 
 impl From<Args> for RunConfig {
@@ -73,10 +70,10 @@ impl From<Args> for RunConfig {
             targets: a.targets,
             ir_dir: a.ir_dir,
             entity_ir: a.entity_ir,
+            configs_topology: a.configs_topology,
             db_dump: a.db_dump,
             out: a.out,
             rules: a.rules,
-            replay: a.replay,
         }
     }
 }

@@ -22,7 +22,7 @@ fn escape(s: &str, out: &mut String) {
     out.push('"');
 }
 
-fn write(v: &Json, level: usize, out: &mut String) {
+fn write(v: &Json, level: usize, step: usize, out: &mut String) {
     match v {
         Json::Null => out.push_str("null"),
         Json::Bool(b) => out.push_str(if *b { "true" } else { "false" }),
@@ -47,11 +47,11 @@ fn write(v: &Json, level: usize, out: &mut String) {
                     out.push(',');
                 }
                 out.push('\n');
-                out.push_str(&" ".repeat(level + 1));
-                write(x, level + 1, out);
+                out.push_str(&" ".repeat((level + 1) * step));
+                write(x, level + 1, step, out);
             }
             out.push('\n');
-            out.push_str(&" ".repeat(level));
+            out.push_str(&" ".repeat(level * step));
             out.push(']');
         }
         Json::Object(o) => {
@@ -65,23 +65,28 @@ fn write(v: &Json, level: usize, out: &mut String) {
                     out.push(',');
                 }
                 out.push('\n');
-                out.push_str(&" ".repeat(level + 1));
+                out.push_str(&" ".repeat((level + 1) * step));
                 escape(key, out);
                 out.push_str(": ");
-                write(x, level + 1, out);
+                write(x, level + 1, step, out);
             }
             out.push('\n');
-            out.push_str(&" ".repeat(level));
+            out.push_str(&" ".repeat(level * step));
             out.push('}');
         }
     }
 }
 
+/// `json.dumps(v, ensure_ascii=False, indent=step)`.
+pub fn dumps_indent(v: &Json, step: usize) -> String {
+    let mut out = String::new();
+    write(v, 0, step, &mut out);
+    out
+}
+
 /// `json.dumps(v, ensure_ascii=False, indent=1)`.
 pub fn dumps_indent1(v: &Json) -> String {
-    let mut out = String::new();
-    write(v, 0, &mut out);
-    out
+    dumps_indent(v, 1)
 }
 
 #[cfg(test)]
