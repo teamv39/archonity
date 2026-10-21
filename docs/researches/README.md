@@ -57,13 +57,3 @@
 
 | Документ | Почему |
 |---|---|
-| [next_day_hypotheses_and_todo.md](next_day_hypotheses_and_todo.md) | Пул гипотез до ADR-006. Таблица статусов — справка о проверенном |
-| [s2_gap_and_hypotheses.md](s2_gap_and_hypotheses.md) | Пул гипотез до ADR-006. S2.3 и S2.4 перепроверить замером 20.10 |
-| [s2_s3_gap_hypotheses.md](s2_s3_gap_hypotheses.md) | Пул гипотез до ADR-006 |
-| [s2_s3_mechanisms_audit.md](s2_s3_mechanisms_audit.md) | Пул гипотез до ADR-006 |
-| [s3_hypotheses_and_gap_analysis.md](s3_hypotheses_and_gap_analysis.md) | Пул гипотез до ADR-006 |
-| [s4_hypotheses_and_gap_analysis.md](s4_hypotheses_and_gap_analysis.md) | Пул гипотез до ADR-006 |
-| [hypothesis_generation_guidelines.md](hypothesis_generation_guidelines.md) | Методика заменена разделами 4 и 7 [agent_lessons.md](../agent_lessons.md) |
-| [station_food_list_step4_audit.md](station_food_list_step4_audit.md) | Шаг 4 в S2/S3 запроса не шлёт (посылки 13–14) |
-| [research_score_boost_findings.md](research_score_boost_findings.md) | Вывод 3.1 про шаг 4 опровергнут посылками 13–14 |
-| [Анализ зависимостей Train-Ticket (1).md](<Анализ зависимостей Train-Ticket (1).md>) | Обзор до пакета участника, под глобальный граф |

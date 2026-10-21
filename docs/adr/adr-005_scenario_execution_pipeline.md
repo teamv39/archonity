@@ -2,7 +2,7 @@
 
 ## Статус
 
-Принято 16.10.2026. Заменяет [ADR-001](adr-001_data_contracts_and_system_architecture.md), [ADR-003](adr-003_multimodal_ai_architecture.md), [ADR-004](adr-004_hybrid_recovery_pipeline_and_arbitration.md).
+Принято 16.10.2026. Заменяет `ADR-001` (удалён, в истории git), `ADR-003` (удалён, в истории git), `ADR-004` (удалён, в истории git).
 
 Обновлено 21.10 (PR #110): удалены legacy-контур (обход скелета с правилами отсева, `resolver.py`), модель состояния M3, судья M4 и режимы отката (`--m1-prompt v7`, `names`, `m3`). Конвейер один: M1 → M4 → правило Spring Security → M5.
 

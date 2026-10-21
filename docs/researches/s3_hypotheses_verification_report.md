@@ -4,7 +4,7 @@
 
 **Дата:** 18.10.2026  
 **Ветка:** `feature/s3-hypotheses-eval`  
-**Базовый документ гипотез:** [`docs/researches/s3_hypotheses_and_gap_analysis.md`](s3_hypotheses_and_gap_analysis.md)  
+**Базовый документ гипотез:** `docs/researches/s3_hypotheses_and_gap_analysis.md` (удалён, в истории git)  
 **Режим выполнения:** `/goal` с обязательной верификацией на платформе NSUts (`/nsuts-submission`)  
 **Официальный подтвержденный рекорд команды:** **0.936250** (NSUts #1665704 / #1665732)  
 **Балл сценария S3 (Тест 3):** **0.913353** (425 рёбер в предсказании Archonity)  
