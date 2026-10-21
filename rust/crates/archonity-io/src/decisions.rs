@@ -163,6 +163,22 @@ impl DecisionLedger {
         Json::Object(result)
     }
 
+    /// Записи шага по ключам рёбер (ключи отсортированы, пустые опущены): формат `journal` в `raw_steps.json`.
+    pub fn step_journal(&self, sid: &str, step: i64) -> Json {
+        let mut out = serde_json::Map::new();
+        if let Some(sc) = self.scenarios.get(sid) {
+            let mut keys: Vec<&String> = sc.keys().collect();
+            keys.sort();
+            for k in keys {
+                let ds: Vec<Json> = sc[k].iter().filter(|d| d.step == Some(step)).map(Decision::to_json).collect();
+                if !ds.is_empty() {
+                    out.insert(k.clone(), Json::Array(ds));
+                }
+            }
+        }
+        Json::Object(out)
+    }
+
     /// Тело `decisions.json` (version 2).
     pub fn to_json(&self) -> Json {
         let mut sids: Vec<&String> = self.scenarios.keys().collect();
