@@ -2,38 +2,7 @@
 
 use serde_json::Value as Json;
 
-/// `repr(float)` Python: кратчайшая запись, экспонента при `exp < -4` или `exp >= 16`.
-pub fn float_repr(f: f64) -> String {
-    if f.is_nan() {
-        return "nan".to_string();
-    }
-    if f.is_infinite() {
-        return if f > 0.0 { "inf" } else { "-inf" }.to_string();
-    }
-    if f == 0.0 {
-        return if f.is_sign_negative() { "-0.0" } else { "0.0" }.to_string();
-    }
-    // Кратчайшие цифры и десятичная экспонента от Rust: `d.ddde<exp>`
-    let sci = format!("{:e}", f.abs());
-    let (mant, exp) = sci.split_once('e').unwrap();
-    let exp: i32 = exp.parse().unwrap();
-    let digits: String = mant.chars().filter(|c| *c != '.').collect();
-    let sign = if f < 0.0 { "-" } else { "" };
-    let body = if !(-4..16).contains(&exp) {
-        let m = if digits.len() > 1 { format!("{}.{}", &digits[..1], &digits[1..]) } else { digits.clone() };
-        format!("{m}e{}{:02}", if exp < 0 { '-' } else { '+' }, exp.abs())
-    } else if exp >= 0 {
-        let e = exp as usize;
-        if digits.len() <= e + 1 {
-            format!("{}{}.0", digits, "0".repeat(e + 1 - digits.len()))
-        } else {
-            format!("{}.{}", &digits[..e + 1], &digits[e + 1..])
-        }
-    } else {
-        format!("0.{}{}", "0".repeat((-exp - 1) as usize), digits)
-    };
-    format!("{sign}{body}")
-}
+pub use archonity_model::pyfmt::float_repr;
 
 fn escape(s: &str, out: &mut String) {
     out.push('"');
@@ -118,24 +87,6 @@ pub fn dumps_indent1(v: &Json) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn float_repr_matches_python() {
-        for (f, s) in [
-            (1.0, "1.0"),
-            (0.1, "0.1"),
-            (1e16, "1e+16"),
-            (1e15, "1000000000000000.0"),
-            (1.5e-5, "1.5e-05"),
-            (0.0001, "0.0001"),
-            (123456.789, "123456.789"),
-            (-2.5, "-2.5"),
-            (1.2345678901234568e17, "1.2345678901234568e+17"),
-            (100.0, "100.0"),
-        ] {
-            assert_eq!(float_repr(f), s, "{f}");
-        }
-    }
 
     #[test]
     fn indent_like_python() {

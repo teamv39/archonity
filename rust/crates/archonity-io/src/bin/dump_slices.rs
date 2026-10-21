@@ -41,7 +41,11 @@ fn main() -> anyhow::Result<()> {
         .table_names()
         .into_iter()
         .map(|t| {
-            let rows: Vec<Json> = db.get_table(&t).iter().map(|r| Json::Object(r.iter().map(|(k, v)| (k.clone(), v.clone())).collect())).collect();
+            let rows: Vec<Json> = db
+                .get_table(&t)
+                .iter()
+                .map(|r| Json::Object(r.iter().map(|(k, v)| (k.clone(), v.to_json().unwrap_or(Json::Null))).collect()))
+                .collect();
             (t.clone(), json!({"columns": db.get_columns(&t), "rows": rows}))
         })
         .collect();

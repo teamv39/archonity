@@ -3,6 +3,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::io::Read;
 use std::path::{Path, PathBuf};
+use std::rc::Rc;
 
 use anyhow::{Context, Result};
 use flate2::read::GzDecoder;
@@ -22,8 +23,8 @@ pub const DB_DUMP_NAME: &str = "db-after-warmup.sql.gz";
 pub struct SkeletonIndex {
     pub project: String,
     /// Узлы по ID, в порядке файла.
-    pub n: IndexMap<String, Node>,
-    pub edges: Vec<Json>,
+    pub n: Rc<IndexMap<String, Node>>,
+    pub edges: Rc<Vec<Json>>,
     pub table_nodes: IndexMap<String, Node>,
     pub db_state: DatabaseState,
     /// Поле `context` скелета, разобранное `parse_context`.
@@ -191,6 +192,7 @@ impl SkeletonIndex {
 
         let mut entities = entities;
         entities.bind(&n, &edges);
+        let (n, edges) = (Rc::new(n), Rc::new(edges));
 
         let module: IndexMap<String, Option<String>> = n
             .iter()

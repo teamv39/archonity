@@ -4,6 +4,7 @@
 pub mod edges;
 pub mod flags;
 pub mod names;
+pub mod pyfmt;
 pub mod request;
 pub mod values;
 

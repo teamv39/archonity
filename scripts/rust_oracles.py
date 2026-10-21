@@ -133,7 +133,26 @@ def slices(out: Path) -> None:
     }
     # ключи сортируем: порядок словарей из множеств (lazy_tables) в Python зависит от PYTHONHASHSEED
     _dump(data, out / "slices.json", sort_keys=True)
+    _dump(_m4_slices(ix), out / "m4_slices.json", sort_keys=True)
     print(f"срезы: {out / 'slices.json'}")
+
+
+def _m4_slices(ix) -> dict[str, Any]:
+    """Срезы исполнителя: ответ-обёртка проекта, виды сущностей, число тел IR."""
+    from engine.executor.step import StepExecutor
+    from engine.manifest import entity_kinds
+    from engine.rules import RuntimeRules
+
+    ex = StepExecutor(ix, RuntimeRules(), ROOT / "data" / "ir", TT / "targets" / "trainticket")
+    env = ex.it.envelope
+    return {
+        "envelope": dataclasses.asdict(env) if env else None,
+        "kinds": {k: dataclasses.asdict(v) for k, v in entity_kinds(ix).items()},
+        "ir_methods": sorted(ex.it.ir),
+        "known_kinds": sorted(ex.schema.known_kinds),
+        "login_ids": {m: list(v) for m, v in ex._login_ids.items()},
+        "login_blanks": sorted(ex._login_blanks),
+    }
 
 
 def main(argv: list[str]) -> None:

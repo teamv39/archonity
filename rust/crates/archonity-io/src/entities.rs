@@ -62,6 +62,11 @@ fn opt_string(v: &Json, key: &str) -> Option<String> {
 }
 
 impl EntityFacts {
+    /// Сырые описания сущностей из `entity_ir.json` (для мира БД).
+    pub fn raw_entities(&self) -> &[Json] {
+        &self.raw_entities
+    }
+
     /// Нет файла или он не читается — пустые факты (правило загрузки сущностей выключено), как в Python.
     pub fn load(path: &Path) -> EntityFacts {
         let data: Option<Json> = std::fs::read_to_string(path).ok().and_then(|t| serde_json::from_str(&t).ok());

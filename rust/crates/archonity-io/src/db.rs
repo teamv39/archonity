@@ -10,10 +10,12 @@ use anyhow::{Context, Result};
 use flate2::read::GzDecoder;
 use indexmap::IndexMap;
 use regex::Regex;
+use archonity_model::pyfmt::splitlines;
+use archonity_model::values::Value;
 use serde_json::Value as Json;
 
 /// Строка таблицы: колонка -> ячейка. Порядок колонок как в `CREATE TABLE`.
-pub type Row = IndexMap<String, Json>;
+pub type Row = IndexMap<String, Value>;
 
 #[derive(Clone, Debug, Default)]
 pub struct DatabaseState {
@@ -75,30 +77,9 @@ impl DatabaseState {
     }
 }
 
-/// Сравнение ячеек `val != expected and str(val) != str(expected)` из `query`: равны по значению или по `str()`.
-pub fn cell_matches(val: &Json, expected: &Json) -> bool {
-    val == expected || py_str(val) == py_str(expected)
-}
-
-fn py_str(v: &Json) -> String {
-    match v {
-        Json::Null => "None".to_string(),
-        Json::String(s) => s.clone(),
-        Json::Bool(b) => if *b { "True" } else { "False" }.to_string(),
-        Json::Number(n) => match n.as_i64() {
-            Some(i) => i.to_string(),
-            None => crate::json_py::float_repr(n.as_f64().unwrap_or(f64::NAN)),
-        },
-        other => other.to_string(),
-    }
-}
-
-fn is_ws(c: u8) -> bool {
-    matches!(c, b' ' | b'\t' | b'\r' | b'\n')
-}
 
 /// Разбор `VALUES (...), (...)` одним проходом (`_parse_sql_values`). Вход и выход — latin1-символы.
-fn parse_sql_values(s: &str) -> Vec<Vec<Json>> {
+fn parse_sql_values(s: &str) -> Vec<Vec<Value>> {
     let b: Vec<char> = s.chars().collect();
     let n = b.len();
     let mut rows = Vec::new();
@@ -112,7 +93,7 @@ fn parse_sql_values(s: &str) -> Vec<Vec<Json>> {
             break;
         }
         i += 1;
-        let mut row: Vec<Json> = Vec::new();
+        let mut row: Vec<Value> = Vec::new();
         while i < n {
             while i < n && ws(b[i]) {
                 i += 1;
@@ -160,7 +141,7 @@ fn parse_sql_values(s: &str) -> Vec<Vec<Json>> {
                         i += 1;
                     }
                 }
-                row.push(Json::String(chars));
+                row.push(Value::string(chars));
             } else if starts_with(&b, i, "_binary '") {
                 i += 9;
                 let mut chars = String::new();
@@ -180,9 +161,9 @@ fn parse_sql_values(s: &str) -> Vec<Vec<Json>> {
                         i += 1;
                     }
                 }
-                row.push(Json::String(chars));
+                row.push(Value::string(chars));
             } else if starts_with(&b, i, "NULL") {
-                row.push(Json::Null);
+                row.push(Value::Null);
                 i += 4;
             } else {
                 let start = i;
@@ -214,44 +195,17 @@ fn starts_with(b: &[char], i: usize, pat: &str) -> bool {
     true
 }
 
-fn number_or_str(token: &str) -> Json {
+fn number_or_str(token: &str) -> Value {
     if token.contains('.') {
-        if let Ok(f) = token.parse::<f64>() {
-            if let Some(n) = serde_json::Number::from_f64(f) {
-                return Json::Number(n);
-            }
+        match token.parse::<f64>() {
+            Ok(f) => Value::Float(f),
+            Err(_) => Value::str(token),
         }
-        Json::String(token.to_string())
     } else if let Ok(i) = token.parse::<i64>() {
-        Json::from(i)
+        Value::Int(i)
     } else {
-        Json::String(token.to_string())
+        Value::str(token)
     }
-}
-
-/// Строки как `str.splitlines()` Python: разделители `\n`, `\r`, `\r\n`, `\v`, `\f`, `\x1c`-`\x1e`, `\x85`.
-fn splitlines(text: &str) -> Vec<&str> {
-    let mut out = Vec::new();
-    let mut start = 0;
-    let bytes: Vec<(usize, char)> = text.char_indices().collect();
-    let mut k = 0;
-    while k < bytes.len() {
-        let (pos, c) = bytes[k];
-        if matches!(c, '\n' | '\r' | '\x0b' | '\x0c' | '\x1c' | '\x1d' | '\x1e' | '\u{85}' | '\u{2028}' | '\u{2029}') {
-            out.push(&text[start..pos]);
-            let mut next = pos + c.len_utf8();
-            if c == '\r' && k + 1 < bytes.len() && bytes[k + 1].1 == '\n' {
-                k += 1;
-                next += 1;
-            }
-            start = next;
-        }
-        k += 1;
-    }
-    if start < text.len() {
-        out.push(&text[start..]);
-    }
-    out
 }
 
 fn latin1(bytes: &[u8]) -> String {
@@ -339,8 +293,7 @@ pub fn load_db_dump(gz_path: &Path) -> Result<DatabaseState> {
         aliases.insert(tbl.clone(), tbl.clone());
         aliases.insert(format!("{db}.{tbl}"), tbl.clone());
     }
-    let _ = is_ws;
-    Ok(DatabaseState { tables, table_aliases: aliases, table_columns: table_cols })
+        Ok(DatabaseState { tables, table_aliases: aliases, table_columns: table_cols })
 }
 
 /// Поле `context` скелета (или `context/README.md`): пассажир, даты, баланс (`parse_context`).
