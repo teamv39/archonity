@@ -1,0 +1,69 @@
+{
+ "project": "trainticket",
+ "id": "X1",
+ "title": "Upgrading a paid high-speed ticket to first class with an extra payment; cancelling the upgraded order; booking and cancelling an unpaid order",
+ "description": "A registered passenger logs in with a username and password. They search for high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026, open the contact book and take the first contact. They book one second-class seat on the first trip found for this contact, without food, assurance or consignment, refresh the list of orders and pay for the order from the internal account balance. They rebook the paid ticket to a first-class seat on the same trip: the new seat is more expensive, so the system asks to pay the difference, and they pay it. Then they ask how much would be refunded for the rebooked order (the system refuses to calculate it) and cancel the rebooked order. They book another second-class seat on the same trip for the same contact, refresh the list of orders, ask how much would be refunded for this unpaid order and cancel it. Finally they refresh the list of orders filtered by the 'Cancel' status.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in with username and password"
+  },
+  {
+   "n": 2,
+   "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026"
+  },
+  {
+   "n": 3,
+   "action": "Open the contact book and take the first contact"
+  },
+  {
+   "n": 4,
+   "action": "Book one second-class seat on the first trip found for this contact, without food, assurance or consignment"
+  },
+  {
+   "n": 5,
+   "action": "Refresh the list of orders"
+  },
+  {
+   "n": 6,
+   "action": "Pay for the order from the internal account balance"
+  },
+  {
+   "n": 7,
+   "action": "Rebook the paid ticket to a first-class seat on the same trip (the new seat is more expensive: the system asks to pay the difference)"
+  },
+  {
+   "n": 8,
+   "action": "Pay the price difference for the rebooking"
+  },
+  {
+   "n": 9,
+   "action": "Ask how much would be refunded if the rebooked order were cancelled (the system refuses to calculate it)"
+  },
+  {
+   "n": 10,
+   "action": "Cancel the rebooked order (the refund goes back to the internal balance)"
+  },
+  {
+   "n": 11,
+   "action": "Book another second-class seat on the same trip for the same contact, without food, assurance or consignment"
+  },
+  {
+   "n": 12,
+   "action": "Refresh the list of orders"
+  },
+  {
+   "n": 13,
+   "action": "Ask how much would be refunded if the new unpaid order were cancelled (nothing has been paid yet)"
+  },
+  {
+   "n": 14,
+   "action": "Cancel the unpaid order"
+  },
+  {
+   "n": 15,
+   "action": "Refresh the list of orders filtered by the 'Cancel' status"
+  }
+ ]
+}
