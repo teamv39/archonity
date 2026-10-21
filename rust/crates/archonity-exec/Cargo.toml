@@ -1,0 +1,22 @@
+[package]
+name = "archonity-exec"
+description = "Бинарник: сценарии, R20, правило Spring Security, R19, M5, запись выдачи"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "archonity-exec"
+path = "src/main.rs"
+
+[dependencies]
+archonity-model.workspace = true
+archonity-io.workspace = true
+archonity-m4.workspace = true
+anyhow.workspace = true
+clap.workspace = true
+indexmap.workspace = true
+regex.workspace = true
+serde.workspace = true
+serde_json.workspace = true

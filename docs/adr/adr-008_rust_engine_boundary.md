@@ -2,7 +2,7 @@
 
 ## Статус
 
-**Предложен 21.10.2026**, ждёт решения пользователя. Условие Р1 из [roadmap](../roadmap.md) — «да, отдельной дорожкой с жёсткой контрольной точкой». Без принятия этого ADR код в `rust/` не начинаем. Планы: [rust_port_plan.md](../researches/rust_port_plan.md), раздел работы — [rust_port_split.md](../researches/rust_port_split.md).
+**Принят 21.10.2026** (Денис; влит PR #119). Условие Р1 из [roadmap](../roadmap.md) — «да, отдельной дорожкой с жёсткой контрольной точкой». Этап 0 — `rust/`, `scripts/rust_oracles.py`. Планы: [rust_port_plan.md](../researches/rust_port_plan.md), раздел работы — [rust_port_split.md](../researches/rust_port_split.md).
 
 ## Контекст
 
@@ -24,7 +24,7 @@ M1 остаётся на Python: это сопоставление текста 
 
 ### 2. Вход и выход Rust
 
-- Вход: `step_requests_raw.json` — `StepRequest` каждого шага **до R20**, по сценариям, в порядке сценария. Пишет Python; существующий `step_requests.json` (после R20) не меняется.
+- Вход: `step_requests_raw.json` — `StepRequest` каждого шага **до R20**, по сценариям, в порядке сценария. Пишет Python (этап 0: `scripts/rust_oracles.py steps`, затем `run_eval.py --engine rust`); существующий `step_requests.json` (после R20) не меняется.
 - Остальной вход: те же файлы, что у Python (`--skeleton`, `--targets`, `data/ir/`, `data/entity_ir.json`, дамп из `context/`), и флаги правил `RuntimeRules` теми же именами.
 - Выход: `submission.json`, `evidence.json`, `decisions.json` рядом с выдачей. Байт в байт с Python, включая порядок ключей и формат чисел.
 - `m4_unknowns.json` и `canonical_graph.json` пишет Python-часть (`run_eval.py`) только для визуализатора и отладки. В Rust не переносим (см. «Открыто», 1).
