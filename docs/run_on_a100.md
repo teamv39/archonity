@@ -12,7 +12,7 @@ scripts/run_final.sh <файлы сценариев>              # без ар�
 `scripts/run_final.sh` делает три шага:
 
 1. `scripts/fetch_models.py` докачивает в `models/` недостающие файлы и сверяет sha256 каждого с манифестом. Уже лежащие файлы не перекачиваются. `llama.cpp` качается, если не задан `ARCHONITY_LLAMA_SERVER` и `llama-server` нет в `PATH`.
-2. `run_eval.py --scenarios <файлы> -o output/submission.json`. Ответы берутся из кеша. На первом промахе клиент сам поднимает `llama-server`, ждёт `/health` и гасит сервер при выходе.
+2. `run_eval.py --scenarios <файлы> -o output/submission.json`. Перед ним скрипт удаляет выдачу, `m1_report.json` и `ATTENTION.txt` прошлого прогона в той же папке: если `run_eval.py` упадёт, итог не покажет старые. Выдачи нет — код выхода не 0. Ответы берутся из кеша. На первом промахе клиент сам поднимает `llama-server`, ждёт `/health` и гасит сервер при выходе.
 3. Итог: sha256 выдачи, режим M1 из `m1_report.json` и последней — рамка из `ATTENTION.txt`, если он есть.
 
 Выдача строится всегда, код выхода 0 (roadmap, Р2):
