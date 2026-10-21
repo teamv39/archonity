@@ -34,6 +34,19 @@ def test_pack_submission_creates_valid_archive():
         assert "code/data/" in names
         assert "code/run_eval.py" in names
 
+        # 2a. Команда запуска, зависимости, модели, данные прогона (docs/run_on_a100.md)
+        for f in ("RUN.md", "code/requirements.txt", "code/uv.lock", "code/pyproject.toml", "code/models/manifest.json",
+                  "code/facts/configs_topology.json", "code/data/entity_ir.json", "code/scripts/fetch_models.py",
+                  "code/archparse/src/main/java/com/v39a/Main.java"):
+            assert f in names, f"Нет {f} в архиве"
+        assert any(n.startswith("code/data/ir/") and n.endswith(".json") for n in names)
+        assert any(n.startswith("code/cache/llm/") and n.endswith(".json") for n in names)
+        assert "code/cache/emb/qwen3-4b/vectors.npz" in names
+        run_final = zf.getinfo("code/scripts/run_final.sh")
+        assert (run_final.external_attr >> 16) & 0o111, "run_final.sh должен быть исполняемым"
+        assert b"\r\n" not in zf.read("code/scripts/run_final.sh")
+        assert not any(n.startswith(("code/hackaton/", "code/models/Qwen")) for n in names)
+
         # 3. Отсутствие артефактов и кэшей
         for name in names:
             assert "__pycache__" not in name, f"Мусорный кэш в архиве: {name}"

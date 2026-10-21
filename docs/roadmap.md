@@ -54,7 +54,7 @@
 
 ### П1. Воспроизводимость и запуск на A100 (выбыть нельзя)
 
-21.10, PR #111: `scripts/run_final.sh`, `models/manifest.json` и `scripts/fetch_models.py` (версии и sha256 LLM, эмбеддера, сборки llama.cpp), автозапуск `llama-server` на промахе кеша, эмбеддер из `models/`, `uv.lock` и `requirements.txt`, [docs/run_on_a100.md](run_on_a100.md). PR #110: эмбеддер грузится на промахе кеша векторов (`--embed-model on`). Осталось: живой прогон нового сценария, чистый клон.
+21.10, PR #111: `scripts/run_final.sh`, `models/manifest.json` и `scripts/fetch_models.py` (версии и sha256 LLM, эмбеддера, сборки llama.cpp), автозапуск `llama-server` на промахе кеша, эмбеддер из `models/`, `uv.lock` и `requirements.txt`, [docs/run_on_a100.md](run_on_a100.md). PR #110: эмбеддер грузится на промахе кеша векторов (`--embed-model on`). PR #116: архив посылки с зависимостями, манифестом моделей и `RUN.md`. Проверено 21.10: распакованный архив и чистый клон с GitHub в новом venv из `requirements.txt` без GPU и сервера LLM дают sha256 рекорда; перефразированный S0 через `run_final.sh` — автозапуск сервера, эмбеддер на промахе, 0.903 ([run_on_a100.md](run_on_a100.md), «Видеокарта 16 ГБ»).
 
 - `scripts/run_final.sh` под Linux — одна команда: поднять `llama-server`, дождаться `/health`, запустить `run_eval.py`, остановить сервер. Параметры под 40 ГБ: все слои на GPU, без `-ncmoe`.
 - Закрепить версии:
