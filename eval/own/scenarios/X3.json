@@ -1,0 +1,53 @@
+{
+ "project": "trainticket",
+ "id": "X3",
+ "title": "An administrator maintains stations, train types and prices: adding, a refused duplicate, changing and deleting",
+ "description": "An administrator logs in to the admin console with the administrator's username and password and opens the list of stations. They add a new station Ning Bo with a stay time of 5 minutes, then try to add the existing station suzhou once more, and the system refuses. They change the stay time of the new station Ning Bo to 10 minutes and then delete it. They open the list of train types and change the average speed of the train type GaoTieOne to 280. They open the list of price configurations, change the basic rate of the price configuration for the train type KuaiSu to 0.25 and delete the price configuration for the train type TeKuai.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in to the admin console with the administrator's username and password"
+  },
+  {
+   "n": 2,
+   "action": "Open the list of stations"
+  },
+  {
+   "n": 3,
+   "action": "Add a new station Ning Bo with a stay time of 5 minutes"
+  },
+  {
+   "n": 4,
+   "action": "Try to add the existing station suzhou once more (the system refuses: a station with this name already exists)"
+  },
+  {
+   "n": 5,
+   "action": "Change the stay time of the new station Ning Bo to 10 minutes"
+  },
+  {
+   "n": 6,
+   "action": "Delete the station Ning Bo"
+  },
+  {
+   "n": 7,
+   "action": "Open the list of train types"
+  },
+  {
+   "n": 8,
+   "action": "Change the average speed of the train type GaoTieOne to 280"
+  },
+  {
+   "n": 9,
+   "action": "Open the list of price configurations"
+  },
+  {
+   "n": 10,
+   "action": "Change the basic rate of the price configuration for the train type KuaiSu to 0.25"
+  },
+  {
+   "n": 11,
+   "action": "Delete the price configuration for the train type TeKuai"
+  }
+ ]
+}
