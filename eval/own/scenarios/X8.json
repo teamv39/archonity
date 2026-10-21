@@ -1,0 +1,61 @@
+{
+ "project": "trainticket",
+ "id": "X8",
+ "title": "Adding luggage to a paid high-speed ticket afterwards: looking it up, changing its weight, finding it by the consignee, checking prices and the missing assurance",
+ "description": "A registered passenger logs in with a username and password. They search for high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026, open the contact book and take the first contact. They book one first-class seat on the first trip found for this contact, without food, assurance or consignment, refresh the list of orders and pay for the order from the internal account balance. They look up the luggage consignment of the order, and there is none yet. They add a luggage consignment of 5 kg to the order for a consignee and look it up again. They change the weight of the consignment to 8 kg and look up the consignments registered for the consignee's name. They check what a 5 kg consignment outside the region costs and look up the assurance (insurance) record of the order, and there is none.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in with username and password"
+  },
+  {
+   "n": 2,
+   "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026"
+  },
+  {
+   "n": 3,
+   "action": "Open the contact book and take the first contact"
+  },
+  {
+   "n": 4,
+   "action": "Book one first-class seat on the first trip found for this contact, without food, assurance or consignment"
+  },
+  {
+   "n": 5,
+   "action": "Refresh the list of orders"
+  },
+  {
+   "n": 6,
+   "action": "Pay for the order from the internal account balance"
+  },
+  {
+   "n": 7,
+   "action": "Look up the luggage consignment of the order (there is none yet)"
+  },
+  {
+   "n": 8,
+   "action": "Add a luggage consignment of 5 kg to the order for a consignee"
+  },
+  {
+   "n": 9,
+   "action": "Look up the luggage consignment of the order"
+  },
+  {
+   "n": 10,
+   "action": "Change the weight of the consignment to 8 kg"
+  },
+  {
+   "n": 11,
+   "action": "Look up the luggage consignments registered for the consignee's name"
+  },
+  {
+   "n": 12,
+   "action": "Check what a 5 kg consignment outside the region costs"
+  },
+  {
+   "n": 13,
+   "action": "Look up the assurance (insurance) record of the order (there is none)"
+  }
+ ]
+}

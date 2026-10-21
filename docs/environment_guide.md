@@ -30,10 +30,32 @@ $env:JAVA_HOME = "$env:USERPROFILE\.jdks\openjdk-24.0.1"
 Пути — обязательные аргументы (`--targets-dir`, `--skeleton`), умолчаний под Train Ticket нет. В `--args` пути с пробелами не передаются: путь к репозиторию содержит пробел (`xakaton huawei`), поэтому пути — относительные от `archparse/`:
 ```powershell
 $T = "../hackaton/tt-challenge/targets/trainticket"; $K = "../hackaton/tt-challenge/skeleton/trainticket.json.gz"
+# Единый параллельный проход (рекомендуется, ~10 с):
+.\gradlew.bat -q run "--args=--mode all --targets-dir $T --skeleton $K -o ../data"
+
+# Или раздельная сборка:
 .\gradlew.bat -q run "--args=--mode bodies --targets-dir $T --skeleton $K -o ../data/ir"
 .\gradlew.bat -q run "--args=--mode entities --targets-dir $T --skeleton $K -o ../data/entity_ir.json"
 ```
 После пересборки: `git diff --stat data/` (21.10 код archparse воспроизводил закоммиченные артефакты байт в байт), затем `run_eval.py` — sha256 рекорда.
+
+### Привязка артефактов к проекту
+
+Конвейер сверяет IR и `entity_ir.json` со скелетом при старте, до M1 и M4 (`engine/artifacts.py`). Если от 5% ID методов IR нет в `nodes`, вызовов репозиториев без call_site или сущностей без типа в скелете, либо IR пуст, либо `entity_ir.json` не загрузился, конвейер не собирается: `ArtifactMismatch` с командой пересборки. `run_eval.py` по правилу Р2 всё равно пишет выдачу (аварийный `submission.json` с пустыми блоками), код выхода 0, а ошибка с командой идёт рамкой последними строками и в `ATTENTION.txt`; повторной сборки без LLM нет, она тут не поможет. Доля меньше предела — предупреждение в логе (скелет и артефакты соседних коммитов). Сверка идёт по ID, а не по телам методов.
+
+Кеш каталога UI `data/ui_catalog.json` пересобирать вручную не нужно: в нём отпечаток (проект и коммит скелета, обработчики, содержимое файлов UI), и при несовпадении каталог строится заново чистым Python. Кеш другого проекта прогон не перезаписывает (каталог живёт только в этом прогоне); принудительная пересборка с записью — `build_catalog(..., force_rebuild=True)`. Закоммиченный кеш Train Ticket после правки скелета или UI пакета обновляется так же (`tests/test_artifacts.py` проверяет, что отпечаток в нём актуален).
+
+Другой проект — своя папка артефактов (`ir/`, `entity_ir.json`, `ui_catalog.json`), `data/` не трогается. Папка `ui_catalog.json` создаётся сама при первом прогоне, IR и `entity_ir.json` строит archparse:
+```powershell
+$T = "../путь/к/targets"; $K = "../путь/к/skeleton.json.gz"; $A = "../artifacts/мой-проект"
+.\gradlew.bat -q run "--args=--mode bodies --targets-dir $T --skeleton $K -o $A/ir"
+.\gradlew.bat -q run "--args=--mode entities --targets-dir $T --skeleton $K -o $A/entity_ir.json"
+```
+затем из корня репозитория:
+```powershell
+$env:PYTHONUTF8=1; python run_eval.py --skeleton <skeleton> --targets <targets> --scenarios <сценарии> --artifacts-dir artifacts/мой-проект
+```
+Ошибка `ArtifactMismatch` на умолчании (`data/`) сама подсказывает такую папку: `artifacts/<проект скелета>`. Из кода — `PipelineConfig(artifacts_dir=...)`; `method_ir_dir` и `entity_ir_path` переопределяют отдельные пути.
 
 ## 3. Особенности тестов pytest
 

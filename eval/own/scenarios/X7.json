@@ -1,0 +1,37 @@
+{
+ "project": "trainticket",
+ "id": "X7",
+ "title": "An administrator manages contacts in the admin console: adding a contact for a passenger, a refused duplicate, changing and deleting it",
+ "description": "An administrator logs in to the admin console with the administrator's username and password and opens the list of all contacts in the system. They add a new contact for the passenger fdse_microservice (a name, an ID card and a phone number), then try to add the same contact once more, and the system refuses because the contact already exists. They change the phone number of the new contact, delete the new contact and open the list of all contacts again.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in to the admin console with the administrator's username and password"
+  },
+  {
+   "n": 2,
+   "action": "Open the list of all contacts in the system"
+  },
+  {
+   "n": 3,
+   "action": "Add a new contact for the passenger fdse_microservice (a name, an ID card and a phone number)"
+  },
+  {
+   "n": 4,
+   "action": "Try to add the same contact once more (the system refuses: the contact already exists)"
+  },
+  {
+   "n": 5,
+   "action": "Change the phone number of the new contact"
+  },
+  {
+   "n": 6,
+   "action": "Delete the new contact"
+  },
+  {
+   "n": 7,
+   "action": "Open the list of all contacts in the system"
+  }
+ ]
+}
