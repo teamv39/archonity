@@ -30,6 +30,10 @@ $env:JAVA_HOME = "$env:USERPROFILE\.jdks\openjdk-24.0.1"
 Пути — обязательные аргументы (`--targets-dir`, `--skeleton`), умолчаний под Train Ticket нет. В `--args` пути с пробелами не передаются: путь к репозиторию содержит пробел (`xakaton huawei`), поэтому пути — относительные от `archparse/`:
 ```powershell
 $T = "../hackaton/tt-challenge/targets/trainticket"; $K = "../hackaton/tt-challenge/skeleton/trainticket.json.gz"
+# Единый параллельный проход (рекомендуется, ~10 с):
+.\gradlew.bat -q run "--args=--mode all --targets-dir $T --skeleton $K -o ../data"
+
+# Или раздельная сборка:
 .\gradlew.bat -q run "--args=--mode bodies --targets-dir $T --skeleton $K -o ../data/ir"
 .\gradlew.bat -q run "--args=--mode entities --targets-dir $T --skeleton $K -o ../data/entity_ir.json"
 ```

@@ -45,30 +45,34 @@ public class EntityScanner {
     /** Модуль -> модули, классы которых он видит, и общие библиотеки проекта (рёбра depends_on скелета). */
     private final SkeletonGraph skeleton;
 
-    /** Разобранный файл проекта. */
-    private record SourceFile(String relFile, String module, CompilationUnit cu) {}
-
     /** Описание интерфейса репозитория. */
     private record RepoInfo(String module, String name, String entitySimple, CompilationUnit cu, Set<String> modifying) {}
 
     /** Сущность с её объявлением (для разбора конструкторов и полей). */
     private record EntityDecl(EntityReportIR.Entity ir, ClassOrInterfaceDeclaration cid, CompilationUnit cu) {}
 
+    private final List<SourceLoader.SourceFile> preloadedFiles;
+
     public EntityScanner(Path targetsDir, SkeletonGraph skeleton) {
+        this(targetsDir, skeleton, null);
+    }
+
+    public EntityScanner(Path targetsDir, SkeletonGraph skeleton, List<SourceLoader.SourceFile> preloadedFiles) {
         this.targetsDir = targetsDir;
         this.skeleton = skeleton;
+        this.preloadedFiles = preloadedFiles;
     }
 
     public EntityReportIR scan() throws IOException {
         EnumResolver.scanEnums(targetsDir, skeleton.sharedModules());
-        List<SourceFile> files = parseAll();
+        List<SourceLoader.SourceFile> files = preloadedFiles != null ? preloadedFiles : SourceLoader.parseAll(targetsDir);
 
         Map<String, EntityDecl> entitiesByFqn = new LinkedHashMap<>();
         Map<String, RepoInfo> repos = new HashMap<>(); // module + ":" + имя интерфейса
         EntityReportIR report = new EntityReportIR();
 
         // Проход 1: сущности, репозитории, конструкторы без аргументов
-        for (SourceFile sf : files) {
+        for (SourceLoader.SourceFile sf : files) {
             String pkg = sf.cu().getPackageDeclaration().map(p -> p.getNameAsString()).orElse("");
             for (ClassOrInterfaceDeclaration cid : sf.cu().findAll(ClassOrInterfaceDeclaration.class)) {
                 String fqn = binaryName(pkg, cid);
@@ -120,7 +124,7 @@ public class EntityScanner {
 
         // Методы классов по модулю и имени: для захода в проектный метод, которому передана сущность
         Map<String, Map<String, List<MethodDeclaration>>> methodsByModule = new HashMap<>();
-        for (SourceFile sf : files) {
+        for (SourceLoader.SourceFile sf : files) {
             for (MethodDeclaration md : sf.cu().findAll(MethodDeclaration.class)) {
                 if (md.getBody().isPresent()) {
                     methodsByModule.computeIfAbsent(sf.module(), k -> new HashMap<>())
@@ -130,7 +134,7 @@ public class EntityScanner {
         }
 
         // Проход 2: вызовы репозиториев во всех классах проекта
-        for (SourceFile sf : files) {
+        for (SourceLoader.SourceFile sf : files) {
             for (ClassOrInterfaceDeclaration cid : sf.cu().findAll(ClassOrInterfaceDeclaration.class)) {
                 if (cid.isInterface()) {
                     continue;
@@ -178,34 +182,7 @@ public class EntityScanner {
     // Разбор файлов
     // ------------------------------------------------------------------
 
-    private List<SourceFile> parseAll() throws IOException {
-        List<Path> javaFiles;
-        try (Stream<Path> walk = Files.walk(targetsDir)) {
-            javaFiles = walk.filter(p -> p.toString().endsWith(".java"))
-                    .filter(p -> {
-                        String rel = rel(p);
-                        return rel.contains("/src/main/java/");
-                    })
-                    .sorted()
-                    .collect(Collectors.toList());
-        }
-        ThreadLocal<com.github.javaparser.JavaParser> parser = ThreadLocal.withInitial(com.github.javaparser.JavaParser::new);
-        return javaFiles.parallelStream().map(p -> {
-            String rel = rel(p);
-            try {
-                return parser.get().parse(p).getResult()
-                        .map(cu -> new SourceFile(rel, rel.substring(0, rel.indexOf('/')), cu))
-                        .orElse(null);
-            } catch (Exception e) {
-                System.err.println("Parse error, skipped: " + rel + ": " + e.getMessage());
-                return null;
-            }
-        }).filter(Objects::nonNull).collect(Collectors.toList());
-    }
-
-    private String rel(Path p) {
-        return targetsDir.relativize(p).toString().replace('\\', '/');
-    }
+    private String rel(Path p) { return SourceLoader.rel(targetsDir, p); }
 
     /** Двоичное имя класса как в ID скелета: вложенные классы через '$'. */
     static String binaryName(String pkg, ClassOrInterfaceDeclaration cid) {
@@ -234,7 +211,7 @@ public class EntityScanner {
         return null;
     }
 
-    private static EntityReportIR.Entity describeEntity(SourceFile sf, ClassOrInterfaceDeclaration cid, String fqn, String kind) {
+    private static EntityReportIR.Entity describeEntity(SourceLoader.SourceFile sf, ClassOrInterfaceDeclaration cid, String fqn, String kind) {
         EntityReportIR.Entity e = new EntityReportIR.Entity();
         e.type = fqn;
         e.module = sf.module();
@@ -368,7 +345,7 @@ public class EntityScanner {
     }
 
     /** IR тела явного конструктора без аргументов, если в нём есть вызовы. */
-    private static MethodIR noArgConstructorIr(SourceFile sf, ClassOrInterfaceDeclaration cid, String fqn) {
+    private static MethodIR noArgConstructorIr(SourceLoader.SourceFile sf, ClassOrInterfaceDeclaration cid, String fqn) {
         Optional<ConstructorDeclaration> ctor = noArgConstructor(cid);
         if (ctor.isEmpty()) {
             return null;
@@ -439,7 +416,7 @@ public class EntityScanner {
     // Репозитории
     // ------------------------------------------------------------------
 
-    private static RepoInfo repositoryInfo(SourceFile sf, ClassOrInterfaceDeclaration cid) {
+    private static RepoInfo repositoryInfo(SourceLoader.SourceFile sf, ClassOrInterfaceDeclaration cid) {
         for (ClassOrInterfaceType ext : cid.getExtendedTypes()) {
             if (!SPRING_DATA_REPOSITORIES.contains(ext.getNameAsString())) {
                 continue;
@@ -511,7 +488,7 @@ public class EntityScanner {
         return null;
     }
 
-    private static EntityReportIR.RepositoryCall describeCall(SourceFile sf, MethodCallExpr call, RepoInfo repo, EntityDecl entity) {
+    private static EntityReportIR.RepositoryCall describeCall(SourceLoader.SourceFile sf, MethodCallExpr call, RepoInfo repo, EntityDecl entity) {
         EntityReportIR.RepositoryCall rc = new EntityReportIR.RepositoryCall();
         rc.file = sf.relFile();
         rc.line = call.getName().getBegin().map(p -> p.line).orElse(0);
