@@ -27,6 +27,8 @@ pub struct SkeletonIndex {
     pub edges: Rc<Vec<Json>>,
     pub table_nodes: IndexMap<String, Node>,
     pub db_state: DatabaseState,
+    /// Поле `context` скелета как есть.
+    pub raw_context: Json,
     /// Поле `context` скелета, разобранное `parse_context`.
     pub context: IndexMap<String, Json>,
     /// `(ID метода, глагол, сегменты пути)`.
@@ -221,6 +223,7 @@ impl SkeletonIndex {
             edges,
             table_nodes,
             db_state,
+            raw_context: jx::get(sk, "context").cloned().unwrap_or(Json::Null),
             context,
             handlers,
             cs_nodes_by_method,

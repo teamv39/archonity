@@ -56,6 +56,8 @@ pub enum Value {
     Date(Shared<DateV>),
     Json(Shared<JsonV>),
     Concat(Shared<Concat>),
+    /// Список или словарь из параметров шага (JSON): в Python — сырой `list`/`dict`, для исполнителя непрозрачный объект.
+    Raw(Rc<serde_json::Value>),
 }
 
 /// Ключ словаря `MapV`: в Python — любой хэшируемый объект. Равные по `==` числа и булевы — один ключ (`1 == 1.0 == True`).
@@ -275,7 +277,7 @@ impl Value {
                 None => Value::Float(n.as_f64().unwrap_or(f64::NAN)),
             },
             J::String(s) => Value::str(s),
-            _ => Value::Unknown,
+            other => Value::Raw(Rc::new(other.clone())),
         }
     }
 
@@ -309,6 +311,7 @@ impl Value {
             Value::Json(r) => Rc::as_ptr(r) as *const u8 as usize,
             Value::Concat(r) => Rc::as_ptr(r) as *const u8 as usize,
             Value::Str(s) => Rc::as_ptr(s) as *const u8 as usize,
+            Value::Raw(r) => Rc::as_ptr(r) as *const u8 as usize,
             _ => return None,
         })
     }
