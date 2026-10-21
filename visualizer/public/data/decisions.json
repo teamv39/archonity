@@ -2486,14 +2486,14 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -2518,14 +2518,14 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -2534,14 +2534,14 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -4033,14 +4033,14 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -4393,14 +4393,14 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -6036,14 +6036,14 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -6052,14 +6052,14 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -8763,15 +8763,15 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "remote|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "remote|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -8781,15 +8781,15 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -8817,15 +8817,15 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "remote|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "remote|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -8835,15 +8835,15 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#getServiceUrl(java.lang.String)",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#getServiceUrl(java.lang.String)"
      }
     ]
@@ -8853,15 +8853,15 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -10118,15 +10118,15 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-preserve-service:preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-preserve-service:preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -11894,14 +11894,14 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -12154,14 +12154,14 @@
     "steps": [
      6
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 6,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -28784,14 +28784,14 @@
      7,
      14
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      },
      {
       "step": 14,
@@ -28806,14 +28806,14 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -28822,14 +28822,14 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -30284,14 +30284,14 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -30800,14 +30800,14 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      },
      {
       "step": 8,
@@ -32682,14 +32682,14 @@
      7,
      14
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      },
      {
       "step": 14,
@@ -32704,14 +32704,14 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -35785,15 +35785,15 @@
      7,
      14
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "remote|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "remote|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
      },
      {
@@ -35811,15 +35811,15 @@
      7,
      14
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)"
      },
      {
@@ -35836,15 +35836,15 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "remote|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "remote|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -35854,15 +35854,15 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#getServiceUrl(java.lang.String)",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#getServiceUrl(java.lang.String)"
      }
     ]
@@ -35872,15 +35872,15 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -37082,15 +37082,15 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-preserve-service:preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-preserve-service:preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -39104,14 +39104,14 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -39295,14 +39295,14 @@
     "steps": [
      7
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 7,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -72659,13 +72659,13 @@
       "step": 5,
       "op": "prune",
       "source_type": "IR_BRANCH",
-      "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:then"
+      "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:else"
      },
      {
       "step": 5,
       "op": "include",
       "source_type": "IR_BRANCH",
-      "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:then"
+      "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b44:then"
      },
      {
       "step": 5,
@@ -74427,25 +74427,19 @@
      5
     ],
     "source_type": "IR_BRANCH",
-    "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:then",
+    "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:else",
     "decisions": [
      {
       "step": 5,
       "op": "prune",
       "source_type": "IR_BRANCH",
-      "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:then"
-     },
-     {
-      "step": 5,
-      "op": "prune",
-      "source_type": "IR_BRANCH",
-      "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:then"
+      "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:else"
      },
      {
       "step": 5,
       "op": "include",
       "source_type": "IR_BRANCH",
-      "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:then"
+      "rule": "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:else"
      }
     ]
    },
@@ -74493,20 +74487,14 @@
     "steps": [
      4
     ],
-    "source_type": "SKELETON",
-    "rule": "ENTRY",
+    "source_type": "IR_BRANCH",
+    "rule": "route.service.RouteServiceImpl#createAndModify(route.entity.RouteInfo,org.springframework.http.HttpHeaders)@b49:else",
     "decisions": [
      {
       "step": 4,
-      "op": "prune",
-      "source_type": "IR_BRANCH",
-      "rule": "route.service.RouteServiceImpl#createAndModify(route.entity.RouteInfo,org.springframework.http.HttpHeaders)@b49:then"
-     },
-     {
-      "step": 4,
       "op": "include",
-      "source_type": "SKELETON",
-      "rule": "ENTRY"
+      "source_type": "IR_BRANCH",
+      "rule": "route.service.RouteServiceImpl#createAndModify(route.entity.RouteInfo,org.springframework.http.HttpHeaders)@b49:else"
      }
     ]
    },
@@ -74518,12 +74506,6 @@
     "source_type": "STATE",
     "rule": "R10:save_writes_collection(line 63)",
     "decisions": [
-     {
-      "step": 4,
-      "op": "prune",
-      "source_type": "IR_BRANCH",
-      "rule": "route.service.RouteServiceImpl#createAndModify(route.entity.RouteInfo,org.springframework.http.HttpHeaders)@b49:then"
-     },
      {
       "step": 4,
       "op": "include",
@@ -74540,12 +74522,6 @@
     "source_type": "STATE",
     "rule": "R10:save_writes_collection(line 63)",
     "decisions": [
-     {
-      "step": 4,
-      "op": "prune",
-      "source_type": "IR_BRANCH",
-      "rule": "route.service.RouteServiceImpl#createAndModify(route.entity.RouteInfo,org.springframework.http.HttpHeaders)@b49:then"
-     },
      {
       "step": 4,
       "op": "include",
@@ -78093,6 +78069,12 @@
     "decisions": [
      {
       "step": 5,
+      "op": "prune",
+      "source_type": "STATE",
+      "rule": "R7:read_no_rows(m4)"
+     },
+     {
+      "step": 5,
       "op": "include",
       "source_type": "FRAMEWORK_RULE",
       "rule": "R7:jackson_ctor",
@@ -78283,6 +78265,12 @@
     "source_type": "FRAMEWORK_RULE",
     "rule": "R7:ctor_visibility:no_project_call",
     "decisions": [
+     {
+      "step": 4,
+      "op": "prune",
+      "source_type": "STATE",
+      "rule": "R7:read_no_rows(m4)"
+     },
      {
       "step": 4,
       "op": "include",
@@ -81521,14 +81509,14 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -81553,14 +81541,14 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -81585,14 +81573,14 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -83032,14 +83020,14 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -83368,14 +83356,14 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -84674,14 +84662,14 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -84690,14 +84678,14 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -86903,15 +86891,15 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "remote|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "remote|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -86921,15 +86909,15 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)|method:ts-consign-price-service:consignprice.service.ConsignPriceServiceImpl#getPriceByWeightAndRegion(double,boolean,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -86957,15 +86945,15 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "remote|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "remote|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -86993,15 +86981,15 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#getServiceUrl(java.lang.String)",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#getServiceUrl(java.lang.String)"
      }
     ]
@@ -87011,15 +86999,15 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-consign-service:consign.controller.ConsignController#insertConsign(consign.entity.Consign,org.springframework.http.HttpHeaders)|method:ts-consign-service:consign.service.ConsignServiceImpl#insertConsignRecord(consign.entity.Consign,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -88121,15 +88109,15 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "via": "calls|method:ts-preserve-service:preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+      "source_type": "SKELETON",
+      "rule": "ENTRY",
       "via": "calls|method:ts-preserve-service:preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)|method:ts-preserve-service:preserve.service.PreserveServiceImpl#createConsign(edu.fudan.common.entity.Consign,org.springframework.http.HttpHeaders)"
      }
     ]
@@ -89534,14 +89522,14 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
@@ -89686,14 +89674,14 @@
     "steps": [
      4
     ],
-    "source_type": "IR_BRANCH",
-    "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
+    "source_type": "SKELETON",
+    "rule": "ENTRY",
     "decisions": [
      {
       "step": 4,
       "op": "include",
-      "source_type": "IR_BRANCH",
-      "rule": "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+      "source_type": "SKELETON",
+      "rule": "ENTRY"
      }
     ]
    },
