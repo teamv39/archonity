@@ -141,6 +141,10 @@ def parse_args() -> argparse.Namespace:
              "выдача тогда построена не моделью (m1_report.json, README «Проверка без кеша»)",
     )
     parser.add_argument("--no-embed", action="store_true", help="M1 без dense-ретривера (только BM25)")
+    parser.add_argument("--embed-model", choices=("on", "off"), default="on",
+                        help="M1: на промахе кеша векторов (новые сценарии) загрузить эмбеддер из models/ "
+                             "(on, по умолчанию; S1–S7 берут векторы из cache/emb) или работать на одном BM25 (off). "
+                             "С --require-cache модель не грузится")
     # Режим CPU (исследование GPU, раздел 7.5): сервер LLM без видеокарты отвечает минутами, а не секундами
     parser.add_argument("--llm-timeout", type=float, default=300,
                         help="M1: таймаут одного вызова сервера LLM, с (на CPU вызов выбора — 2–7 минут)")
@@ -246,6 +250,7 @@ def main() -> None:
 
     m1_options = {
         "embedder": None if args.no_embed else "qwen3-4b",
+        "allow_embed_model": args.embed_model == "on" and not args.require_cache,
         "llm": None if args.no_llm else LLMClient(use_server=not (args.no_server or args.require_cache),
                                                   refresh=args.no_cache and not args.require_cache,
                                                   timeout=args.llm_timeout,
