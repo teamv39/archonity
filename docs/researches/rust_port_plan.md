@@ -80,6 +80,8 @@ flowchart LR
 | 4 | `evidence.json` и `decisions.json` | файлы совпадают с Python |
 | 5 | archparse на `tree-sitter-java` | IR совпадает без полей `text`, выдача = рекорд |
 
+Раздел работы между Денисом и Пашей — [rust_port_split.md](rust_port_split.md).
+
 Распараллелить можно так:
 
 - после этапа 0 один человек берёт загрузчики и запись ответа, другой — модель значений;
