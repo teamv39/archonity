@@ -8,7 +8,7 @@
 # 1. Модели: fetch_models.py докачивает в models/ недостающее и сверяет sha256 с models/manifest.json. llama.cpp —
 #    релизная сборка манифеста, если не задан ARCHONITY_LLAMA_SERVER и llama-server нет в PATH.
 # 2. run_eval.py: ответы из кеша; на промахе клиент сам поднимает llama-server и гасит его при выходе.
-# 3. Итог: sha256 выдачи и режим M1 (m1_report.json рядом с выдачей).
+# 3. Итог: sha256 выдачи, режим M1 (m1_report.json рядом с выдачей) и последней — рамка ATTENTION.txt, если она есть.
 # Сбой моделей прогон не останавливает: выдача строится всегда (roadmap, Р2), но с заметным предупреждением.
 set -uo pipefail
 
@@ -58,8 +58,11 @@ except (OSError, ValueError):
 llm = r["llm"]
 print(f"M1: режим {r['mode']}, шагов {r['steps']}, выбрано моделью {r['steps_by_llm']}; ответы LLM: из кеша "
       f"{llm['from_cache']}, от сервера {llm['from_server']}, без ответа {llm['missing']}, ошибок {llm['errors']}")
-if r["mode"] != "full":
-    print(f"!! ВНИМАНИЕ: выдача построена не целиком моделью (режим {r['mode']}). Свяжитесь с командой Archonity.",
-          file=sys.stderr)
 EOF
+# Рамка ошибки (Р2) — последней: run_eval.py пишет ATTENTION.txt, если M1 не в режиме full или были сбои
+ATT="$(dirname "$OUT")/ATTENTION.txt"
+if [[ -f "$ATT" ]]; then
+    cat "$ATT" >&2
+    cat "$ATT"
+fi
 exit "$RC"
