@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -30,6 +31,17 @@ from engine.executor.values import (
 from engine.executor.world import (
     TypeIndex, World, derived_props, native_query_conds, optional_of,
 )
+
+# Трасса вызовов для сверки порта на Rust (rust_port_split, «Оракулы»): путь файла в ARCHONITY_TRACE, по умолчанию выключена.
+# Строка — глубина стека и ID метода, чьё тело исполняется, в порядке исполнения; на выдачу не влияет.
+_TRACE = open(os.environ["ARCHONITY_TRACE"], "a", encoding="utf-8", newline="\n") if os.environ.get("ARCHONITY_TRACE") else None
+
+
+def trace(line: str) -> None:
+    if _TRACE is not None:
+        _TRACE.write(line + "\n")
+        _TRACE.flush()
+
 
 LOGGER = logging.getLogger(__name__)
 
@@ -303,6 +315,8 @@ class Interpreter:
         self.invocations += 1
         if self.invocations > MAX_INVOCATIONS:
             raise _Abort()
+        if _TRACE is not None:
+            trace(f"{self.depth}\t{mid}")
         return self._run_body(mid, this, args, unit, why)
 
     def _run_body(self, mid: str, this: Any, args: list[Any], unit: str, why: tuple[str, str]) -> Any:

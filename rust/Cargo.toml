@@ -1,0 +1,33 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/archonity-model",
+    "crates/archonity-io",
+    "crates/archonity-m4",
+    "crates/archonity-exec",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+# Общие зависимости (ADR-008): новую добавляем только в Cargo.toml своего crate.
+[workspace.dependencies]
+anyhow = "1"
+chrono = { version = "0.4", default-features = false, features = ["std", "clock"] }
+clap = { version = "4", features = ["derive"] }
+fancy-regex = "0.14"
+flate2 = "1"
+indexmap = { version = "2", features = ["serde"] }
+regex = "1"
+serde = { version = "1", features = ["derive", "rc"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+
+archonity-model = { path = "crates/archonity-model" }
+archonity-io = { path = "crates/archonity-io" }
+archonity-m4 = { path = "crates/archonity-m4" }
+
+[profile.release]
+opt-level = 3
