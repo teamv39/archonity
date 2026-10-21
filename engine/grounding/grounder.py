@@ -99,10 +99,18 @@ class ScenarioSession:
 class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
-                 top_k: int = TOP_K, module_roles: str = "skeleton", prompt: str = "v8") -> None:
-        """`prompt` — режим промпта (ADR-007): v8 — общий шаблон и профиль проекта, v7 — промпт до ADR-007."""
+                 top_k: int = TOP_K, module_roles: str = "skeleton", prompt: str = "v8",
+                 votes: int = SELECT_VOTES, index: bool = True, reasoning: bool = True) -> None:
+        """`prompt` — режим промпта (ADR-007): v8 — общий шаблон и профиль проекта, v7 — промпт до ADR-007.
+
+        Режим CPU (v8; docs/researches/gpu_dependence_and_cpu_fallback_study.md, раздел 7.5): `votes` — выборок
+        голосования сверх жадного ответа (0 — только жадный); `index=False` — без индекса обработчиков в системном
+        промпте выбора, выбор только из кандидатов (контекст ~3 тыс. токенов вместо ~10); `reasoning=False` — ответ
+        выбора без рассуждения. Умолчания — промпт и ключи кеша рекорда."""
         if prompt not in P.PROMPT_MODES:
             raise ValueError(f"prompt: {prompt!r}, ожидается одно из {P.PROMPT_MODES}")
+        if prompt == "v7" and not (index and reasoning):
+            raise ValueError("index=False и reasoning=False — только для prompt v8")
         self.ix = ix
         self.root = Path(targets_root)
         self.prompt = prompt
@@ -119,10 +127,13 @@ class StepGrounder:
         self.retriever = Retriever(self.cat, render, emb, module_roles, syn=DOMAIN_SYN if v7 else None)
         self.llm = llm
         self.top_k = top_k
+        self.votes = votes
+        self.index = index
+        self.reasoning = reasoning
         self.labels = P.handler_labels(self.cat.handlers)
         self.by_label = {lb: h for h, lb in self.labels.items()}
         enums = enum_codes(ix, self.root)
-        index = P.handler_index(self.cat.handlers, self.labels)
+        index = P.handler_index(self.cat.handlers, self.labels) if self.index else None
         self.profile: ProjectProfile | None = None
         self.ref_kinds: tuple[str, ...] = REF_ENTITIES
         self.example_kinds: tuple[str, str] | None = None
@@ -187,13 +198,13 @@ class StepGrounder:
 
     def _vote(self, msgs: list[dict[str, str]], schema: dict[str, Any],
               grounding: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
-        """Выбор голосованием: жадный ответ и `SELECT_VOTES` выборок, обработчик большинства (при равенстве —
+        """Выбор голосованием: жадный ответ и `self.votes` выборок, обработчик большинства (при равенстве —
         жадного ответа). Ответ целиком (refs, исход) — жадный, если его обработчик победил; иначе самый частый
         среди выборок победителя. Выборки проверяют решение, детали — от жадного вывода: при temperature 0.7 refs
         шумят (trip -> train для «первого рейса шага 2»)."""
         got = [self.llm.complete_json("select", self.version, msgs, schema)]
         got += [self.llm.complete_json("select", self.version, msgs, schema, sampling={**SAMPLING, "seed": i + 1})
-                for i in range(SELECT_VOTES)]
+                for i in range(self.votes)]
         valid = [(sel, key) for sel, key in got if sel is not None and sel.get("handler") in self.by_label]
         grounding["cache_keys"]["select_votes"] = [key for _, key in got]
         if not valid:
@@ -240,9 +251,12 @@ class StepGrounder:
                 task = P.SELECT_TASK.format(n=n, action=action, candidates=blocks)
             else:
                 ex1, ex2 = self.example_kinds or ("", "")
-                task = P.SELECT_TASK_V8.format(n=n, action=action, candidates=blocks, ex1=ex1, ex2=ex2)
+                task = P.SELECT_TASK_V8.format(n=n, action=action, candidates=blocks, ex1=ex1, ex2=ex2,
+                                               reasoning=P.REASONING_ASK if self.reasoning else "",
+                                               choice=P.CHOICE_INDEX if self.index else P.CHOICE_CANDIDATES)
             msgs = [{"role": "system", "content": self.system_select}, {"role": "user", "content": prefix + task}]
-            schema = P.select_schema(list(self.by_label), n, self.ref_kinds, ref_pairs=not v7)
+            labels = list(self.by_label) if self.index else [self.labels[h] for h in cands]
+            schema = P.select_schema(labels, n, self.ref_kinds, ref_pairs=not v7, reasoning=self.reasoning)
             if v7:
                 sel, key = self.llm.complete_json("select", self.version, msgs, schema)
             else:

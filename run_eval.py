@@ -269,6 +269,20 @@ def parse_args() -> argparse.Namespace:
              "выдача тогда построена не моделью (m1_report.json, README «Проверка без кеша»)",
     )
     parser.add_argument("--no-embed", action="store_true", help="M1 без dense-ретривера (только BM25)")
+    # Режим CPU (исследование GPU, раздел 7.5): сервер LLM без видеокарты отвечает минутами, а не секундами
+    parser.add_argument("--llm-timeout", type=float, default=300,
+                        help="M1: таймаут одного вызова сервера LLM, с (на CPU вызов выбора — 2–7 минут)")
+    parser.add_argument("--select-votes", type=int, default=5,
+                        help="M1 v8: выборок голосования сверх жадного ответа (0 — только жадный, в 6 раз меньше "
+                             "вызовов выбора; рекорд — 5)")
+    parser.add_argument("--m1-top-k", type=int, default=10, help="M1: кандидатов поиска в промпте выбора")
+    parser.add_argument("--m1-index", choices=("on", "off"), default="on",
+                        help="M1 v8: индекс всех обработчиков в системном промпте выбора; off — выбор только из "
+                             "кандидатов, контекст ~3 тыс. токенов вместо ~10 (на CPU ответ быстрее в разы)")
+    parser.add_argument("--select-reasoning", choices=("on", "off"), default="on",
+                        help="M1 v8: рассуждение в ответе выбора; off — ответ вдвое короче")
+    parser.add_argument("--llm-cache", type=Path, default=None,
+                        help="M1: папка кеша ответов LLM (по умолчанию cache/llm); для прогона другой модели")
     parser.add_argument(
         "--judge",
         choices=("on", "cache", "off"),
@@ -387,9 +401,15 @@ def main() -> None:
         m1_options = {
             "embedder": None if args.no_embed else "qwen3-4b",
             "llm": None if args.no_llm else LLMClient(use_server=not (args.no_server or args.require_cache),
-                                                      refresh=args.no_cache and not args.require_cache),
+                                                      refresh=args.no_cache and not args.require_cache,
+                                                      timeout=args.llm_timeout,
+                                                      **({"cache_dir": args.llm_cache} if args.llm_cache else {})),
             "module_roles": args.module_roles,
             "prompt": args.m1_prompt,
+            "votes": args.select_votes,
+            "top_k": args.m1_top_k,
+            "index": args.m1_index == "on",
+            "reasoning": args.select_reasoning == "on",
         }
     print(f"Grounder:   {args.grounder}")
     if args.executor == "m4":

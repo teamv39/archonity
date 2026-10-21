@@ -388,3 +388,55 @@ class TestProjectProfile:
 
         assert "consign" in query_toks("luggage")
         assert "consign" not in query_toks("luggage", None)
+
+
+class _RecordingLLM:
+    """LLM-заглушка для режима CPU: выбирает первый обработчик из схемы и запоминает сообщения, схему и выборку."""
+
+    def __init__(self) -> None:
+        self.calls: list[dict] = []
+
+    def complete_json(self, kind, prompt_version, messages, schema, max_tokens=600, sampling=None):
+        self.calls.append({"kind": kind, "messages": messages, "schema": schema, "sampling": sampling})
+        if kind == "select":
+            return {"handler": schema["properties"]["handler"]["enum"][0], "expected_outcome": "success",
+                    "refs": []}, "sha256:fake"
+        return None, "sha256:fake"
+
+
+class TestCpuMode:
+    """Режим CPU (исследование GPU, раздел 7.5): без голосов, без индекса, без рассуждения; умолчания — рекорд."""
+
+    def test_compact_select_prompt(self, ix: SkeletonIndex) -> None:
+        llm = _RecordingLLM()
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=llm, prompt="v8", votes=0, index=False, reasoning=False,
+                         top_k=5)
+        sc = load_json(TT / "scenarios" / "S0.json")
+        reqs = g.ground_scenario(sc)
+        sel = [c for c in llm.calls if c["kind"] == "select"]
+        assert len(sel) == len(reqs) and all(c["sampling"] is None for c in sel)  # без выборок голосования
+        assert "Handler index" not in g.system_select
+        for c, r in zip(sel, reqs):
+            enum = c["schema"]["properties"]["handler"]["enum"]
+            assert enum == [g.labels[h] for h in r.grounding["candidates"]]  # выбор только из кандидатов
+            assert "reasoning" not in c["schema"]["properties"]
+            task = c["messages"][1]["content"]
+            assert "(one of the candidates)" in task and "a short reasoning" not in task
+
+    def test_defaults_keep_record_prompt(self, ix: SkeletonIndex) -> None:
+        llm = _RecordingLLM()
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=llm, prompt="v8")
+        g.ground_scenario({"id": "S0", "steps": [load_json(TT / "scenarios" / "S0.json")["steps"][0]]})
+        sel = [c for c in llm.calls if c["kind"] == "select"]
+        assert len(sel) == 6 and "Handler index" in g.system_select
+        assert ("Answer with JSON: a short reasoning (one or two sentences), the label of the chosen handler "
+                "(a candidate, or a handler from the index when no candidate fits), whether") in sel[0]["messages"][1]["content"]
+        assert len(sel[0]["schema"]["properties"]["handler"]["enum"]) == len(g.labels)
+
+    def test_v7_has_no_compact_mode(self, ix: SkeletonIndex) -> None:
+        with pytest.raises(ValueError):
+            StepGrounder(ix, TARGETS, embedder=None, llm=None, prompt="v7", index=False)
+
+    def test_client_timeout(self, tmp_path: Path) -> None:
+        assert LLMClient(use_server=False, cache_dir=tmp_path).timeout == 300
+        assert LLMClient(use_server=False, cache_dir=tmp_path, timeout=900).timeout == 900
