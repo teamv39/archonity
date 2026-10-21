@@ -29,7 +29,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires logging in with username and password, which corresponds to the authentication endpoint. Handler H55 is the specific UI handler for user login that accepts credentials and returns a token.",
+        "reasoning": "The step asks to log in with username and password, which corresponds to the login action in the web UI. Handler H55 is the specific endpoint for user login that accepts credentials and returns a token.",
         "services": [
           "ts-auth-service",
           "ts-common"
@@ -67,7 +67,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user opens their contact book, which corresponds to refreshing the list of contacts for the logged-in account. Handler H83 is explicitly marked with UI action 'refresh_booking_contacts' and retrieves contacts by accountId, matching the passenger's action.",
+        "reasoning": "The user opens their contact book, which corresponds to refreshing the list of contacts for the logged-in account. Handler H83 is explicitly marked with the UI action 'refresh_booking_contacts' on the 'client_ticket_book' page, matching the scenario step. It uses the accountId from the login token.",
         "services": [
           "ts-contacts-service"
         ],
@@ -102,11 +102,10 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "travelDateStart": null,
           "travelDateEnd": null,
           "boughtDateStart": null,
-          "boughtDateEnd": null,
-          "state": 0
+          "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires refreshing the order list for high-speed trains (GaoTie/DongChe). According to the rules, the 'orderservice' handles high-speed trains, and the specific action 'refresh' maps to the queryOrdersForRefresh endpoint. Candidate H153 is the correct handler for this action on the high-speed service twin.",
+        "reasoning": "The step asks to refresh orders for high-speed (GaoTie/DongChe) trains. According to the twin selection rule, G/D train types use the base service (ts-order-service). Handler H153 is the refresh endpoint for the base order service, which matches the UI action for refreshing order lists.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -146,11 +145,10 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "travelDateStart": null,
           "travelDateEnd": null,
           "boughtDateStart": null,
-          "boughtDateEnd": null,
-          "state": 0
+          "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires refreshing the order list for regular ('Other' type) trains. According to the twin service rule, the 'orderOtherService' handles regular trains, and the specific action 'refresh' maps to the queryOrdersForRefresh endpoint.",
+        "reasoning": "The step asks to refresh orders for regular ('Other' type) trains. According to the twin selection rule, G/D trains use the base service (ts-order-service) while other types use the variant service (ts-order-other-service). Therefore, the handler in ts-order-other-service is the correct choice.",
         "services": [
           "ts-common",
           "ts-order-other-service"
@@ -193,7 +191,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "state": 1
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires refreshing the order list with a 'Paid' status filter. Since the previous steps handled high-speed (step 3) and regular (step 4) trains separately, and this step is a general refresh with a status filter, it typically targets the primary high-speed service (ts-order-service) which is the default context for order management unless specified otherwise, or it could be interpreted.5",
+        "reasoning": "The step asks to refresh the list of orders filtered by 'Paid' status. Since the scenario involves both high-speed (G/D) and regular ('Other') trains, and the previous steps refreshed both separately, this step likely targets one of them or both. However, the UI action 'queryMyOrderList' sends requests to both services simultaneously (as noted in H137 and H153 candidates). The prompt asks for the ",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -229,7 +227,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-consign-service:consign.controller.ConsignController#findByAccountId(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user wants to look up luggage consignments registered on their account. Handler H74 (GET /api/v1/consignservice/consigns/account/{id}) is explicitly marked with UI action 'queryMyConsign' on the 'client_consign_list' page, which matches the scenario of viewing consignments for the logged-in user. The accountId is derived from the login token obtained in step 1.",
+        "reasoning": "The step asks to look up luggage consignments registered on the account. Handler H74 (ConsignController#findByAccountId) is the specific UI endpoint for querying consignments by account ID, matching the action 'queryMyConsign' on the 'client_consign_list' page.",
         "services": [
           "ts-consign-service"
         ],
@@ -267,7 +265,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires logging in with a username and password, which corresponds to the authentication endpoint. Handler H55 is the specific UI handler for user login that accepts credentials and returns a token.",
+        "reasoning": "The step asks to log in with username and password, which corresponds to the login action in the web UI. Handler H55 (UserController#getToken) is the specific endpoint for user login, accepting username and password.",
         "services": [
           "ts-auth-service",
           "ts-common"
@@ -296,9 +294,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 2,
         "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
-        "edgeId": "ts-travel-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelservice/trips/left",
         "relationType": "REST_HTTP",
@@ -309,7 +307,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "departureTime": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is searching for high-speed trains (GaoTie/DongChe), which corresponds to the 'ts-travel-service' twin. The UI action for searching trains by route and date is handled by TravelController#queryInfo, which serves high-speed trains when the train type selection indicates high-speed (or default).",
+        "reasoning": "The user searches for high-speed (GaoTie/DongChe) trains, which corresponds to the base travel service side (ts-travel-service) as specified by the twin selection rule. The UI action for searching routes sends a POST to /api/v1/travelservice/trips/left.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -383,9 +381,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 3,
         "action": "Open the details of the first trip found",
-        "edgeId": "ts-travel-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelservice/trip_detail",
         "relationType": "REST_HTTP",
@@ -396,7 +394,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "to": "Suzhou"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is viewing details for a specific high-speed train trip found in step 2. The handler `TravelController#getTripAllDetailInfo` (H230) is the correct service for retrieving detailed information about a specific trip for high-speed trains (GaoTie/DongChe).",
+        "reasoning": "The user wants to open the details of the first trip found in step 2. Step 2 searched for high-speed (GaoTie/DongChe) trains, which are handled by the base travel service (ts-travel-service). The handler for retrieving detailed trip information including tickets is POST /api/v1/travelservice/trip_detail. The request uses the tripId from the first result of step 2.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -470,16 +468,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 4,
         "action": "View the food menu offered on this trip",
-        "edgeId": "ts-food-service->ts-train-food-service:REST_HTTP",
+        "edgeId": "ts-food-service->ts-station-food-service:REST_HTTP",
         "source": "ts-food-service",
-        "target": "ts-train-food-service",
+        "target": "ts-station-food-service",
         "httpMethod": "GET",
         "endpoint": "/api/v1/foodservice/foods/{date}/{startStation}/{endStation}/{tripId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user wants to view the food menu for the specific high-speed trip selected in step 3. Handler H105 is the UI-marked endpoint for initializing food selection (`initFoodSelect`) and accepts the trip ID along with date and station details, which matches the context of viewing food for a specific journey.",
+        "reasoning": "The step asks to view the food menu for the specific trip found in previous steps. Handler H105 is the UI-facing endpoint for getting food options for a specific trip, date, and route, which matches the action 'initFoodSelect' on the ticket booking page.",
         "services": [
           "ts-common",
           "ts-food-service",
@@ -541,7 +539,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires retrieving the user's contact list to select a passenger. The handler `ContactsController#findContactsByAccountId` is the specific UI endpoint for refreshing/loading contacts in the ticket booking flow, identified by the 'client_ticket_book' page context in its metadata.",
+        "reasoning": "The user needs to retrieve their personal contact list to select a passenger; the handler `findContactsByAccountId` is the specific UI endpoint for refreshing/loading contacts for the logged-in user on the ticket booking page.",
         "services": [
           "ts-contacts-service"
         ],
@@ -562,25 +560,28 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 6,
         "action": "Book one first-class seat on the trip for this contact, with food on the train, assurance (insurance) of the first type and luggage consignment of 2 kg to a consignee",
-        "edgeId": "ts-preserve-service->ts-station-service:REST_HTTP",
+        "edgeId": "ts-preserve-service->ts-consign-price-service:REST_HTTP",
         "source": "ts-preserve-service",
-        "target": "ts-station-service",
+        "target": "ts-consign-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/preserveservice/preserve",
         "relationType": "REST_HTTP",
         "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
         "params": {
           "seatType": 2,
+          "date": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Suzhou",
           "assurance": 1,
           "foodType": 1,
           "stationName": "",
           "storeName": "",
-          "foodPrice": 0.0,
+          "foodPrice": 0,
           "consigneeWeight": 2.0,
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The scenario involves booking a high-speed train (GaoTie/DongChe), and the UI sends the preservation request to the high-speed service when the trip type is G or D. Step 6 is the booking action, which corresponds to the preserve endpoint for high-speed trains.",
+        "reasoning": "The user is booking a high-speed train (G/D type), which routes to the base preserve service (ts-preserve-service) according to the twin selection rule. The step involves booking a seat with food, insurance, and luggage, which matches the full payload of the PreserveController#preserve endpoint.",
         "services": [
           "ts-assurance-service",
           "ts-basic-service",
@@ -638,7 +639,6 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b148:then",
           "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b179:else",
           "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b193:then",
-          "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
           "seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b53:then",
           "seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b97:then",
           "seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b138:then",
@@ -745,7 +745,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "state": 0
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is refreshing their list of orders after booking a high-speed train ticket (step 6 used ts-preserve-service, which handles high-speed trains). The UI action 'queryMyOrderList' sends a POST request to the order service for high-speed trains to refresh the order list. Therefore, the handler in ts-order-service is the correct choice.",
+        "reasoning": "The step asks to refresh the list of orders. The scenario involves high-speed trains (GaoTie/DongChe), which map to the base order service (ts-order-service) according to the twin selection rule (G/D uses base). Candidate H153 is the correct handler for refreshing orders in the base service, as indicated by the UI action 'queryMyOrderList' on the ticket collect/enter station pages which triggers a",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -781,7 +781,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user wants to open/view the details of the new order created in step 6. Since the scenario involves high-speed trains, the request must go to the high-speed order service. The handler `getOrderById` is the standard REST endpoint to retrieve a specific order's details by its ID.",
+        "reasoning": "The user wants to open the details of the new order created in step 6. Since the booking was for a high-speed train (G/D type), the order resides in the base order service (ts-order-service). The specific action is to retrieve a single order by its ID, which corresponds to the getOrderById handler.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -816,7 +816,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-order-service:order.controller.OrderController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires checking the price of the order created in step 6. The candidate H147 (GET /api/v1/orderservice/order/price/{orderId}) is the specific handler for retrieving the price of an order in the high-speed train service, which matches the scenario's train type.",
+        "reasoning": "The step asks to check the price of the order created in step 6. The candidate H147 (OrderController#getOrderPrice) is the specific handler for retrieving the price of an order by its ID. Since the scenario involves high-speed trains (G/D type), the base order service (ts-order-service) is the correct side to use, as indicated by the twin selection rule.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -842,16 +842,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 10,
         "action": "Pay for the order from the internal account balance",
-        "edgeId": "ts-inside-payment-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-inside-payment-service->ts-common:REST_HTTP",
         "source": "ts-inside-payment-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "POST",
         "endpoint": "/api/v1/inside_pay_service/inside_payment",
         "relationType": "REST_HTTP",
         "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user is paying for an order using their internal account balance. The candidate H113 (InsidePaymentController#pay) is explicitly marked with UI action 'payMyOrder' on the order list page, which matches the scenario step of paying for the order. The other payment handlers are either for differences, external payments, or not triggered by the UI for this specific action.",
+        "reasoning": "The step asks to pay for the order from the internal account balance. Handler H113 (InsidePaymentController#pay) is the specific UI-handler for paying via the internal payment service, which matches the requirement to use the internal account balance. The other payment handlers (H151, H135) are for external/general payment flows and are not marked as UI handlers for this specific action, while H15",
         "services": [
           "ts-common",
           "ts-inside-payment-service",
@@ -891,16 +891,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 11,
         "action": "Collect the ticket for the order",
-        "edgeId": "ts-execute-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-execute-service->ts-common:REST_HTTP",
         "source": "ts-execute-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "GET",
         "endpoint": "/api/v1/executeservice/execute/collected/{orderId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires collecting the ticket for the order, which corresponds to the 'collectTicket' action in the UI. The candidate H88 matches this action exactly for high-speed train orders (the scenario involves a high-speed train).",
+        "reasoning": "The step asks to collect the ticket for the order, which corresponds to the 'collectTicket' action in the UI. Handler H88 is the specific endpoint for collecting a ticket by orderId.",
         "services": [
           "ts-common",
           "ts-execute-service",
@@ -932,16 +932,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 12,
         "action": "Enter the station (board the train) with the order",
-        "edgeId": "ts-execute-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-execute-service->ts-common:REST_HTTP",
         "source": "ts-execute-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "GET",
         "endpoint": "/api/v1/executeservice/execute/execute/{orderId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step 'Enter the station (board the train)' corresponds to the 'executeTicket' action in the UI, which maps to the executeTicket handler. The scenario involves a high-speed train, but the execute service is generic and does not distinguish between train types in its routing for this action.",
+        "reasoning": "The step asks to enter the station (board the train), which corresponds to the 'executeTicket' action in the execute service. The candidate H89 matches this action and is explicitly marked as the UI handler for 'enterStation'.",
         "services": [
           "ts-common",
           "ts-execute-service",
@@ -983,7 +983,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires looking up the luggage consignment record for a specific order. Handler H76 (GET /api/v1/consignservice/consigns/order/{id}) is the UI-mapped endpoint for querying consignment records by order ID, which matches the requirement.",
+        "reasoning": "The step asks to look up the luggage consignment record for the order. Handler H76 (ConsignController#findByOrderId) is the specific endpoint for retrieving consignment records by order ID, which matches the requirement to look up the record associated with the order from previous steps.",
         "services": [
           "ts-consign-service"
         ],
@@ -1013,7 +1013,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires looking up the assurance record for the order created in step 6. Handler H44 is the specific endpoint for finding an assurance by its associated orderId, which matches the requirement to look up the record for the specific order.",
+        "reasoning": "The step asks to look up the assurance record for the order. Handler H44 is the specific endpoint to find an assurance by its associated orderId, which matches the requirement. The orderId is available from the order created in step 6 and retrieved in step 8.",
         "services": [
           "ts-assurance-service"
         ],
@@ -1051,7 +1051,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step is a login action, which corresponds to the authentication endpoint. H55 is the specific handler for user login via the web UI.",
+        "reasoning": "The step asks to log in with username and password, which corresponds to the login action in the web UI. Handler H55 is the specific endpoint for user login that returns a token, matching the UI action described.",
         "services": [
           "ts-auth-service",
           "ts-common"
@@ -1080,9 +1080,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 2,
         "action": "Search regular trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing departing on 1 October 2026",
-        "edgeId": "ts-travel2-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-travel2-service->ts-price-service:REST_HTTP",
         "source": "ts-travel2-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travel2service/trips/left",
         "relationType": "REST_HTTP",
@@ -1093,7 +1093,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "departureTime": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is searching for regular trains (Other type), which maps to the 'travel2' service twin. The UI action for searching trips is 'searchRouteList', which sends a POST to /api/v1/travel2service/trips/left for regular trains.",
+        "reasoning": "The user searches for regular trains (train type 'Other', not G/D), which maps to the variant travel service ts-travel2-service. The UI action for searching routes with trainTypeSelected == 0 (Other) sends a POST to /api/v1/travel2service/trips/left.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -1167,9 +1167,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 3,
         "action": "Open the details of the first trip found",
-        "edgeId": "ts-travel2-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-travel2-service->ts-price-service:REST_HTTP",
         "source": "ts-travel2-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travel2service/trip_detail",
         "relationType": "REST_HTTP",
@@ -1180,7 +1180,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "to": "Nanjing"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is viewing details for a regular train trip found in step 2. The 'travel2service' twin handles regular trains ('Other' type). Although the candidate H243 is marked as having no UI, it is the specific backend handler for retrieving detailed trip information (including remaining tickets) for a specific trip ID, which is required to 'open the details' before booking.",
+        "reasoning": "The user is viewing details of a trip found in step 2, which used the 'Other' train type service (ts-travel2-service). The twin handler for getting trip details in ts-travel2-service is H243 (POST /api/v1/travel2service/trip_detail), which returns full detail info including tickets, matching the 'open details' action better than the simple retrieve (H248) which excludes ticket info.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -1263,7 +1263,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresByStationNames(java.util.List)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires browsing food stores at a specific station (Suzhou). Handler H198 (`getFoodStoresOfStation`) is the correct endpoint to retrieve food stores associated with a station name or ID. Although the candidate list marks it as 'ui: none', it is the only handler that accepts a station identifier to return its stores, which matches the user action of browsing stores at Suzhou station.",
+        "reasoning": "The step asks to browse food stores at Suzhou station. H198 is the handler for getting food stores by station name/ID, which matches the intent of browsing stores at a specific station. Although the candidate list marks it as 'ui: none', it is the correct backend service endpoint for this data retrieval action in the context of the scenario's flow (browsing available stores before selecting food).",
         "services": [
           "ts-station-food-service"
         ],
@@ -1296,7 +1296,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires retrieving the user's contact list to select a passenger. The handler `findContactsByAccountId` is the specific UI endpoint for refreshing/loading contacts in the ticket booking flow, matching the action 'refresh_booking_contacts'.",
+        "reasoning": "The step requires opening the contact book for the logged-in user, which corresponds to fetching contacts by the current account ID. Handler H83 is the UI-mapped endpoint for refreshing/finding contacts by account ID on the ticket booking page.",
         "services": [
           "ts-contacts-service"
         ],
@@ -1317,23 +1317,27 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 6,
         "action": "Book one first-class seat on the regular train for this contact, with food from a station store, no assurance (insurance) and no luggage consignment",
-        "edgeId": "ts-preserve-other-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-preserve-other-service->ts-price-service:REST_HTTP",
         "source": "ts-preserve-other-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/preserveotherservice/preserveOther",
         "relationType": "REST_HTTP",
         "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
         "params": {
           "seatType": 2,
+          "date": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Nanjing",
           "assurance": 0,
           "foodType": 2,
-          "foodPrice": 0.0,
-          "consigneeWeight": 0.0,
+          "stationName": "Suzhou",
+          "foodPrice": 0,
+          "consigneeWeight": 0,
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is booking a ticket for a regular train (Other type), which requires the 'preserveOther' service. The UI action 'Select' on the booking page sends a POST to /api/v1/preserveotherservice/preserveOther when the trip type is not G or D. This handler accepts the contact, seat, and food details specified in the scenario.",
+        "reasoning": "The step involves booking a ticket for a regular train (non-G/D type), which routes to the 'Other' service variant. The UI action for selecting a contact and confirming the booking on non-high-speed trains triggers the preserve endpoint in ts-preserve-other-service. This handler accepts the trip ID from step 3, the contact ID from step 5, and handles the food and seat selection internally.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -1473,11 +1477,10 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "travelDateStart": null,
           "travelDateEnd": null,
           "boughtDateStart": null,
-          "boughtDateEnd": null,
-          "state": 0
+          "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is refreshing the list of orders for a regular train booking (created in step 6 via ts-preserve-other-service). The UI action 'queryMyOrderList' sends requests to both order services, but since the context is regular trains ('Other' type), the request to the 'orderOtherService' is the relevant one for this scenario's data flow.",
+        "reasoning": "The step asks to refresh the list of orders. The previous booking (step 6) was for a regular train ('Other' type), which is handled by the `ts-order-other-service`. Therefore, the refresh request must target the variant service (`orderOtherService`) to retrieve orders for non-G/D trains.",
         "services": [
           "ts-common",
           "ts-order-other-service"
@@ -1512,7 +1515,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires paying for an existing order using the internal account balance. The UI action 'Pay' on the order list page triggers the inside payment service. Since the order is for a regular train (created in step 6 via preserveotherservice), the relevant service context is consistent, but the payment handler itself (InsidePaymentController#pay) is service-agnostic regarding train type, yet H",
+        "reasoning": "The user is paying for an order using the internal account balance. The candidate H113 (InsidePaymentController#pay) is the UI-handler for paying orders via the internal payment service, which matches the action 'payMyOrder' on the order list page. The order was created in step 6 (preserveOther) and is a non-G/D train order (regular train), so it resides in the orderOtherService, but the payment逻辑",
         "services": [
           "ts-common",
           "ts-inside-payment-service",
@@ -1561,7 +1564,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step asks to calculate the refund amount for cancelling an order, which corresponds to the 'calculate' action in the CancelService. The UI candidate H60 matches this action ('Cancel' button on the order list page triggers a refund calculation). Since the order is for a regular train (created in step 6 via preserveotherservice), the cancel service handles the logic regardless of train type, but",
+        "reasoning": "The step asks to calculate the refund amount for a cancelled order, which corresponds to the 'calculate' action in the CancelService. Handler H60 is explicitly marked for the 'Cancel' button action on the order list page and its method name is 'calculate', matching the requirement to ask how much would be refunded.",
         "services": [
           "ts-cancel-service",
           "ts-common",
@@ -1610,7 +1613,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user is cancelling a regular train order. The candidate H61 (CancelController#cancelTicket) is the UI handler for cancelling tickets, which matches the action described in the scenario and is marked with 'ui'. It serves the cancel service which handles the logic for both high-speed and regular trains, but given the context of the previous steps using the 'Other' (regular) train services, this ",
+        "reasoning": "The step asks to cancel the order. The previous steps (6-8) involved booking and paying for an order on a regular train (non-G/D type) via the 'Other' service side. The cancellation logic for tickets is handled by the CancelService, specifically the cancelTicket endpoint which processes the cancellation and refunds. Although H128 (deleteOrder in orderOtherService) exists, the UI action for 'Cancel",
         "services": [
           "ts-cancel-service",
           "ts-common",
@@ -1660,23 +1663,27 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 11,
         "action": "Book another first-class seat on the same regular train for the same contact with the same station food",
-        "edgeId": "ts-preserve-other-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-preserve-other-service->ts-price-service:REST_HTTP",
         "source": "ts-preserve-other-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/preserveotherservice/preserveOther",
         "relationType": "REST_HTTP",
         "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
         "params": {
           "seatType": 2,
+          "date": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Nanjing",
           "assurance": 0,
           "foodType": 2,
-          "foodPrice": 0.0,
-          "consigneeWeight": 0.0,
+          "stationName": "Suzhou",
+          "foodPrice": 0,
+          "consigneeWeight": 0,
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves booking a ticket for a regular train ('Other' type), which maps to the 'preserveother' service. The UI action for confirming a booking with selected contacts and food is handled by PreserveOtherController#preserve, as indicated by the UI condition for non-G/D trains.",
+        "reasoning": "The step asks to book a ticket for a regular train (non-G/D type), which maps to the 'Other' service variant. The UI action for booking tickets on non-high-speed trains is handled by PreserveOtherController#preserve, which creates the order, handles food, and manages the reservation process.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -1816,11 +1823,10 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "travelDateStart": null,
           "travelDateEnd": null,
           "boughtDateStart": null,
-          "boughtDateEnd": null,
-          "state": 0
+          "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The scenario involves regular trains ('Other' type), so the twin service `ts-order-other-service` must be used. Step 12 is refreshing the order list, which corresponds to the `queryOrdersForRefresh` action in the UI, mapped to the `orderOther` service for regular trains.",
+        "reasoning": "The user is refreshing their order list after booking a second ticket on a regular train (non-G/D type). Since the previous booking (step 11) was on a regular train, the orders are stored in the 'other' service variant. The UI action for refreshing orders on this service is POST /api/v1/orderOtherService/orderOther/refresh.",
         "services": [
           "ts-common",
           "ts-order-other-service"
@@ -1855,7 +1861,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires paying for an order using the internal account balance. The candidate H113 (InsidePaymentController#pay) is the UI handler for this action, as indicated by the UI label 'payMyOrder'. Since the order was created on a regular train (step 11 used preserveotherservice), the payment service is generic and handles the transaction regardless of train type, but the context implies this是对",
+        "reasoning": "The step asks to pay for the new order from the internal account balance. This corresponds to the InsidePaymentController#pay handler, which processes payments using the internal balance for a specific order. The order was created in step 11, so the orderId from that step is required.",
         "services": [
           "ts-common",
           "ts-inside-payment-service",
@@ -1895,9 +1901,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 14,
         "action": "Rebook the paid ticket to a second-class seat on the same regular train (the cheaper ticket: the difference is refunded to the internal balance)",
-        "edgeId": "ts-rebook-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-rebook-service->ts-price-service:REST_HTTP",
         "source": "ts-rebook-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/rebookservice/rebook",
         "relationType": "REST_HTTP",
@@ -1906,7 +1912,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "seatType": 3
         },
         "expectedOutcome": "success",
-        "reasoning": "The user initiates rebooking of the paid ticket to a second-class seat on the regular train. The web UI action triggers POST /api/v1/rebookservice/rebook (H174). Since the new seat is cheaper, RebookServiceImpl refunds the difference directly via drawBackMoney, so payDifference is not called.",
+        "reasoning": "The step asks to rebook a paid ticket to a cheaper seat class, which triggers a refund of the difference. According to the handler details, when the new price is not higher than the old price (cheaper or equal), the `rebook` endpoint (H174) handles the rebooking and refunds the difference directly, whereas the `payDifference` endpoint (H173) is only for when the new price is higher. Since the step",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -2026,7 +2032,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires logging in with username and password, which corresponds to the authentication endpoint. Handler H55 is the specific UI handler for user login that accepts credentials and returns a token.",
+        "reasoning": "The step asks to log in with username and password, which corresponds to the login action in the web UI. Handler H55 (UserController#getToken) is the specific endpoint for user login, accepting username and password (and optionally a verification code).",
         "services": [
           "ts-auth-service",
           "ts-common"
@@ -2055,9 +2061,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 2,
         "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
-        "edgeId": "ts-travel-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelservice/trips/left",
         "relationType": "REST_HTTP",
@@ -2068,7 +2074,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "departureTime": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is searching for high-speed trains (GaoTie/DongChe), which corresponds to the 'ts-travel-service' twin. The UI action for searching trains by route and date is handled by the queryInfo endpoint in this service.",
+        "reasoning": "The user searches for high-speed (GaoTie/DongChe) trains, which corresponds to the 'base' side of the travel services. According to the handler descriptions, H234 (ts-travel-service) is the base side handling GaoTie/DongChe train types, while H247 is for other types. The UI action 'searchRouteList' sends to H234 when trainTypeSelected is 0 or 1 (high-speed).",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -2142,9 +2148,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 3,
         "action": "Open the details of the first trip found",
-        "edgeId": "ts-travel-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelservice/trip_detail",
         "relationType": "REST_HTTP",
@@ -2155,7 +2161,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "to": "Suzhou"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is viewing details for a specific high-speed train trip found in step 2. The handler `TravelController#getTripAllDetailInfo` in `ts-travel-service` is the correct backend endpoint for retrieving detailed information about a specific trip, identified by its `tripId` and travel date.",
+        "reasoning": "The user wants to open the details of the first trip found in step 2. Step 2 searched for high-speed (GaoTie/DongChe) trains, which are handled by the base travel service (ts-travel-service). The handler for retrieving detailed trip information including tickets is POST /api/v1/travelservice/trip_detail. Since the trip was found via the high-speed search, the base service side (H230) is the twin, ",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -2238,7 +2244,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresByStationNames(java.util.List)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user wants to browse food stores at Suzhou station. Step 3 retrieved the trip details, which would include the station ID or name for the destination (Suzhou). Handler H198 (`getFoodStoresOfStation`) takes a station name/ID and returns the food stores for that specific station, which matches the action of browsing stores at a specific location. Although marked 'ui: none' in the index, it is a ",
+        "reasoning": "The step asks to browse food stores at Suzhou station. H198 is the handler for getting food stores by station name/ID, which matches the intent of browsing stores at a specific station. Although the candidate description says 'none' for UI, it is the correct functional endpoint for retrieving stores associated with a station, and the station name 'Suzhou' is known from previous steps (step 2/3).",
         "services": [
           "ts-station-food-service"
         ],
@@ -2271,7 +2277,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires opening the contact book for the logged-in passenger, which corresponds to fetching contacts associated with the user's account ID. Handler H83 is the specific UI endpoint for refreshing/loading contacts by account ID.",
+        "reasoning": "The step asks to open the contact book, which corresponds to retrieving the list of contacts for the current user. Handler H83 is the UI-mapped endpoint for refreshing/loading contacts by account ID, which matches the action of opening the contact book.",
         "services": [
           "ts-contacts-service"
         ],
@@ -2303,7 +2309,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "documentType": 1
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves adding a new contact, which is a passenger-facing action handled by the contacts service. Handler H80 (ContactsController#createNewContacts) is the specific UI endpoint for creating new contacts in the client ticket booking flow, matching the action described.",
+        "reasoning": "The step asks to add a new contact, which corresponds to the create action in the contacts service. Handler H80 is the UI-callable endpoint for creating a new contact for the logged-in user, matching the scenario's requirement to add a companion.",
         "services": [
           "ts-contacts-service"
         ],
@@ -2324,23 +2330,27 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 7,
         "action": "Book a first-class seat on the trip for the first contact, with food from a station store, assurance (insurance) of the first type and a luggage consignment of 0.5 kg to a consignee",
-        "edgeId": "ts-preserve-service->ts-station-service:REST_HTTP",
+        "edgeId": "ts-preserve-service->ts-consign-price-service:REST_HTTP",
         "source": "ts-preserve-service",
-        "target": "ts-station-service",
+        "target": "ts-consign-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/preserveservice/preserve",
         "relationType": "REST_HTTP",
         "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
         "params": {
           "seatType": 2,
+          "date": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Suzhou",
           "assurance": 1,
           "foodType": 2,
+          "stationName": "Suzhou",
           "foodPrice": 0.0,
           "consigneeWeight": 0.5,
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves booking a high-speed train (GaoTie/DongChe) ticket with additional services (food, assurance, consignment). According to the rules, high-speed trains are served by the 'ts-preserve-service' twin, and the UI action for confirming contact selection on high-speed trains triggers the preserve endpoint. H164 is the correct handler for this scenario.",
+        "reasoning": "The step involves booking a ticket for a high-speed train (GaoTie/DongChe), which requires using the base preserve service (ts-preserve-service) as per the twin selection rule (G/D uses base). The request body includes details for food, assurance, and consignment, which are handled by the PreserveController#preserve endpoint.",
         "services": [
           "ts-assurance-service",
           "ts-basic-service",
@@ -2398,7 +2408,6 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b148:then",
           "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b179:else",
           "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b193:then",
-          "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
           "seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b53:then",
           "seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b97:then",
           "seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b138:then",
@@ -2487,15 +2496,18 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 8,
         "action": "Book a second-class seat on the same trip for the new contact, without food, assurance or consignment",
-        "edgeId": "ts-preserve-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-preserve-service->ts-price-service:REST_HTTP",
         "source": "ts-preserve-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/preserveservice/preserve",
         "relationType": "REST_HTTP",
         "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
         "params": {
           "seatType": 3,
+          "date": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Suzhou",
           "assurance": 0,
           "foodType": 0,
           "foodPrice": 0.0,
@@ -2503,7 +2515,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves booking a ticket for a high-speed train (same trip as step 7), so the high-speed twin service `ts-preserve-service` is used. The UI action for booking a ticket with contacts selected sends a POST to `/api/v1/preserveservice/preserve`. Although the step specifies no food, assurance, or consignment, the handler accepts these as optional or null fields in the `OrderTicketsInfo` body",
+        "reasoning": "The step books a second-class seat on the same high-speed (G/D) trip found in step 2, which requires using the base preserve service (ts-preserve-service) as per the twin selection rule for G/D trains. The request uses the trip details from step 3 and the new contact created in step 6.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -2629,11 +2641,10 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "travelDateStart": null,
           "travelDateEnd": null,
           "boughtDateStart": null,
-          "boughtDateEnd": null,
-          "state": 0
+          "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires refreshing the list of orders for high-speed trains (GaoTie/DongChe), as established by the scenario context and previous booking steps. Candidate H153 is the specific UI handler for refreshing orders in the high-speed train service (ts-order-service).",
+        "reasoning": "The step asks to refresh the list of orders. The scenario involves high-speed trains (GaoTie/DongChe), which use the base order service (ts-order-service) according to the twin selection rule. Handler H153 is the UI-mapped refresh endpoint for the base order service.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -2669,7 +2680,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user wants to open the details of the first new order created in step 7. Since the scenario involves high-speed trains (GaoTie), the request must go to the high-speed order service. The handler `getOrderById` retrieves a specific order by its ID, which is the standard way to 'open' or view an order's details after it has been created.",
+        "reasoning": "The step asks to open the first new order. Since the scenario involves high-speed trains (G/D), the order is stored in ts-order-service. The candidate H145 (findAllOrder) is marked as having no UI, but the step 'Open the first new order' implies retrieving a specific order by ID, which corresponds to the getOrderById handler. However, looking at the candidates, H146 (GET /api/v1/orderservice/order",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -2704,7 +2715,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The scenario involves high-speed trains (GaoTie/DongChe), so the high-speed order service (ts-order-service) is used. Step 11 is 'Open the second new order', which corresponds to retrieving the order details by ID. The candidate H146 (GET /api/v1/orderservice/order/{orderId}) is the correct handler for this action, although it was not listed in the closest search matches provided in the prompt's '",
+        "reasoning": "The step asks to open the second new order. Since the scenario involves high-speed trains (G/D), the base order service (ts-order-service) is used, as confirmed by the twin selection rule. The handler to retrieve a specific order by ID is OrderController#getOrderById.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -2730,16 +2741,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 12,
         "action": "Pay for the first order from the internal account balance",
-        "edgeId": "ts-inside-payment-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-inside-payment-service->ts-common:REST_HTTP",
         "source": "ts-inside-payment-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "POST",
         "endpoint": "/api/v1/inside_pay_service/inside_payment",
         "relationType": "REST_HTTP",
         "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires paying for an existing order using the internal account balance. Handler H113 (InsidePaymentController#pay) is the UI-marked handler for paying orders via the internal payment service, which matches the action 'payMyOrder' on the order list page.",
+        "reasoning": "The step asks to pay for the first order using the internal account balance. Handler H113 (InsidePaymentController#pay) is the specific UI handler for paying orders via the internal payment service, which matches the requirement to use the internal account balance. The order ID is derived from the first order created in step 7.",
         "services": [
           "ts-common",
           "ts-inside-payment-service",
@@ -2779,16 +2790,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 13,
         "action": "Pay for the second order from the internal account balance",
-        "edgeId": "ts-inside-payment-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-inside-payment-service->ts-common:REST_HTTP",
         "source": "ts-inside-payment-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "POST",
         "endpoint": "/api/v1/inside_pay_service/inside_payment",
         "relationType": "REST_HTTP",
         "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires paying for the second order using the internal account balance. The UI action for paying an order from the internal balance is handled by the InsidePaymentService, specifically the `pay` method which accepts the order ID and user details. Since the scenario involves high-speed trains (GaoTie/DongChe), the standard `preserveservice` was used for booking, and the payment flow for a",
+        "reasoning": "The step asks to pay for the second order using the internal account balance. Step 12 already demonstrated the use of the internal payment service for the first order; this step repeats the action for the second order. The handler InsidePaymentController#pay is the UI-facing endpoint for paying orders via internal balance, and since the trip is high-speed (G/D), the base order service is used, but",
         "services": [
           "ts-common",
           "ts-inside-payment-service",
@@ -2837,7 +2848,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step asks to check the cost of a 0.5 kg consignment within the region. Handler H69 specifically accepts weight and region parameters to calculate the price, which matches the requirement exactly.",
+        "reasoning": "The step asks to check the cost of a 0.5 kg consignment within the region, which directly maps to the handler that calculates consignment price by weight and region flag. No previous step's data is required for this lookup as it is a general price query based on the parameters provided in the step.",
         "services": [
           "ts-consign-price-service"
         ],
@@ -2845,7 +2856,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "ts-consign-price-service.consign_price"
         ],
         "rules": [
-          "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then"
+          "ENTRY"
         ],
         "activeNodes": [
           "db-ts-consign-price-service-consign_price",
@@ -2867,7 +2878,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssuranceType(org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step asks to look at the list of assurance types, which corresponds to the UI action 'getAssuranceType' on the ticket booking page. Handler H45 is explicitly marked with this UI action and retrieves all assurance types.",
+        "reasoning": "The step asks to look at the list of assurance types, which corresponds directly to the UI action 'getAssuranceType' on the 'client_ticket_book' page. Handler H45 is explicitly marked with this UI action and retrieves all assurance types.",
         "services": [
           "ts-assurance-service"
         ],
@@ -2904,7 +2915,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "documentType": 1
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires registering a new passenger account, which is handled by the user registration endpoint in the user service. H254 is the specific handler for user registration, whereas H36 is for admin user creation.",
+        "reasoning": "The step requires registering a new passenger account, which is handled by the user registration endpoint. H254 is the specific handler for user registration in the ts-user-service, whereas H36 is for admin creation and H50 is an internal auth call not directly exposed to the UI for this action.",
         "services": [
           "ts-auth-service",
           "ts-user-service"
@@ -2945,7 +2956,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user is logging in with their username and password, which corresponds to the authentication endpoint that returns a token. Handler H55 is the specific UI handler for login actions.",
+        "reasoning": "The step asks to log in with the new username and password. Handler H55 (UserController#getToken) is the specific endpoint for user login via the web UI, accepting username and password to generate a token.",
         "services": [
           "ts-auth-service",
           "ts-common"
@@ -2986,7 +2997,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "documentType": 1
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is adding a new contact to their personal contact book, which is a passenger-facing action. Handler H80 (ContactsController#createNewContacts) is the specific UI handler for creating new contacts, as indicated by the UI action 'preserveCreateNewContacts'.",
+        "reasoning": "The step requires adding a new contact for the logged-in passenger. H80 (ContactsController#createNewContacts) is the UI-handler for creating contacts in the passenger booking flow, which matches the action of adding a contact to an empty book.",
         "services": [
           "ts-contacts-service"
         ],
@@ -3007,9 +3018,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 4,
         "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
-        "edgeId": "ts-travel-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelservice/trips/left",
         "relationType": "REST_HTTP",
@@ -3020,7 +3031,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "departureTime": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is searching for high-speed trains (GaoTie/DongChe), which are served by the 'ts-travel-service' twin. The UI action for searching routes sends a POST request to the trips/left endpoint with start, end, and departure time parameters. H234 is the handler for high-speed trains, while H247 is for regular trains.",
+        "reasoning": "The user searches for high-speed (GaoTie/DongChe) trains, which corresponds to the base travel service side (ts-travel-service) as specified by the twin selection rule. The UI action for searching routes sends a POST to /api/v1/travelservice/trips/left.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -3094,9 +3105,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 5,
         "action": "Open the details of the first trip found",
-        "edgeId": "ts-travel-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelservice/trip_detail",
         "relationType": "REST_HTTP",
@@ -3107,7 +3118,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "to": "Suzhou"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user wants to view the details of the first high-speed train trip found in step 4. The handler `TravelController#getTripAllDetailInfo` (H230) is the specific endpoint for retrieving detailed trip information, including remaining tickets, and it serves high-speed trains (GaoTie/DongChe).",
+        "reasoning": "The step asks to open the details of the first trip found in step 4. Step 4 searched for high-speed (GaoTie/DongChe) trains, which are handled by the base travel service (ts-travel-service). The handler for retrieving detailed trip information including tickets is POST /api/v1/travelservice/trip_detail. The request uses the tripId from the first result of step 4.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -3181,16 +3192,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 6,
         "action": "View the food menu offered on this trip",
-        "edgeId": "ts-food-service->ts-train-food-service:REST_HTTP",
+        "edgeId": "ts-food-service->ts-station-food-service:REST_HTTP",
         "source": "ts-food-service",
-        "target": "ts-train-food-service",
+        "target": "ts-station-food-service",
         "httpMethod": "GET",
         "endpoint": "/api/v1/foodservice/foods/{date}/{startStation}/{endStation}/{tripId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user wants to view the food menu for a specific trip. Handler H105 is explicitly marked with UI action 'initFoodSelect' on the booking page and accepts the trip ID (along with date and stations) to retrieve food options for that trip. H210 is an internal service endpoint not called by the UI.",
+        "reasoning": "The step asks to view the food menu for the trip found in previous steps. Handler H105 is the UI-facing endpoint for initializing food selection, taking the trip ID (from step 5) and other context to return the food list.",
         "services": [
           "ts-common",
           "ts-food-service",
@@ -3243,25 +3254,28 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 7,
         "action": "Book a first-class seat on the trip for the new contact, with food on the train and assurance (insurance) of the first type, without consignment",
-        "edgeId": "ts-preserve-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-preserve-service->ts-price-service:REST_HTTP",
         "source": "ts-preserve-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/preserveservice/preserve",
         "relationType": "REST_HTTP",
         "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
         "params": {
           "seatType": 2,
+          "date": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Suzhou",
           "assurance": 1,
           "foodType": 1,
           "stationName": "",
           "storeName": "",
-          "foodPrice": 0.0,
-          "consigneeWeight": 0.0,
+          "foodPrice": 0,
+          "consigneeWeight": 0,
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves booking a high-speed train (GaoTie/DongChe), so the high-speed twin service `ts-preserve-service` is used. The UI action for confirming contact selection and initiating the booking sends a POST to `/api/v1/preserveservice/preserve` for G/D trains, which matches handler H164.",
+        "reasoning": "The step involves booking a ticket for a high-speed train (GaoTie/DongChe, type G or D) with food and assurance. According to the twin service rules, G/D trains use the base service (ts-preserve-service). The UI action for booking with these options maps to the preserve endpoint which handles assurance, food, and order creation.",
         "services": [
           "ts-assurance-service",
           "ts-basic-service",
@@ -3412,7 +3426,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "state": 0
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is refreshing their list of orders after booking a high-speed train (GaoTie/DongChe) in step 7. The UI action 'queryMyOrderList' sends a POST request to the order service for high-speed trains to refresh the order list. Therefore, the handler in ts-order-service is the correct choice.",
+        "reasoning": "The step asks to refresh the list of orders. The previous booking (step 7) was for a high-speed train (GaoTie/DongChe, implied by 'high-speed' in step 4 and the use of ts-travel-service which handles G/D trains). The twin handler for refreshing orders for G/D trains is H153 in ts-order-service.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -3448,7 +3462,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user wants to open the details of the new order created in step 7. The scenario involves high-speed trains (GaoTie), so the `ts-order-service` is the correct backend. The handler `OrderController#getOrderById` (H146) retrieves a specific order by its ID, which corresponds to 'opening' the order details.",
+        "reasoning": "The step asks to 'Open the new order', which implies retrieving the details of the specific order created in step 7. Since the booking was for a high-speed train (GaoTie/DongChe), the order resides in the base order service (ts-order-service). The handler `OrderController#getOrderById` (H146) is the correct endpoint to retrieve a single order by its ID, which is the result of the booking in step 7",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -3483,7 +3497,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-order-service:order.controller.OrderController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires checking the price of an existing order. Since the booking was for a high-speed train (GaoTie), the high-speed order service handler is used. H147 is the specific endpoint for retrieving the price of an order by its ID.",
+        "reasoning": "The step asks to check the price of the order created in step 7. The candidate H147 (OrderController#getOrderPrice) is the specific handler for retrieving the price of an order by its ID. Since the scenario involves high-speed trains (GaoTie/DongChe), the base order service (ts-order-service) is the correct side to use, as indicated by the twin selection rule.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -3509,16 +3523,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 11,
         "action": "Pay for the order: the internal balance is empty, so the payment is completed through the external payment channel",
-        "edgeId": "ts-inside-payment-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-inside-payment-service->ts-common:REST_HTTP",
         "source": "ts-inside-payment-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "POST",
         "endpoint": "/api/v1/inside_pay_service/inside_payment",
         "relationType": "REST_HTTP",
         "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires paying for an order using an external payment channel because the internal balance is empty. The UI handler for payment is H113 (InsidePaymentController#pay), which handles the payment logic including external payments when the internal balance is insufficient or not used. The scenario specifies external payment, which is handled by the payment service logic invoked by this UI-ha",
+        "reasoning": "The step requires paying for an order using an external payment channel because the internal balance is empty. H113 (InsidePaymentController#pay) is the UI-handler for paying orders and supports external payment (PaymentType O or E) when internal funds are insufficient, whereas H159 is not called by the UI. The request uses the order ID from the previous steps.",
         "services": [
           "ts-common",
           "ts-inside-payment-service",
@@ -3565,16 +3579,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 12,
         "action": "Ask how much would be refunded if the paid order were cancelled",
-        "edgeId": "ts-cancel-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-cancel-service->ts-common:REST_HTTP",
         "source": "ts-cancel-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "GET",
         "endpoint": "/api/v1/cancelservice/cancel/refound/{orderId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step asks to calculate the refund amount for a cancelled order, which corresponds to the 'calculate' action in the CancelService. Handler H60 is the specific endpoint for calculating the refund amount based on the order ID.",
+        "reasoning": "The step asks to calculate the refund amount for a cancelled order, which corresponds to the 'calculate' action in the cancel service. Handler H60 is explicitly mapped to calculating the refund for a given orderId.",
         "services": [
           "ts-cancel-service",
           "ts-common",
@@ -3606,16 +3620,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 13,
         "action": "Cancel the paid order (the refund goes back to the internal balance)",
-        "edgeId": "ts-cancel-service->ts-inside-payment-service:REST_HTTP",
+        "edgeId": "ts-cancel-service->ts-common:REST_HTTP",
         "source": "ts-cancel-service",
-        "target": "ts-inside-payment-service",
+        "target": "ts-common",
         "httpMethod": "GET",
         "endpoint": "/api/v1/cancelservice/cancel/{orderId}/{loginId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires cancelling a paid order, which corresponds to the 'Cancel' action in the UI. Handler H61 (CancelController#cancelTicket) is the specific endpoint for cancelling a ticket/order, whereas H60 is only for calculating the refund amount (used in step 12). The order was created for a high-speed train in step 7, so the standard order service is used.",
+        "reasoning": "The step asks to cancel the paid order, which corresponds to the `cancelTicket` action in the UI. Handler H61 (`CancelController#cancelTicket`) is the specific endpoint for cancelling a ticket, which handles the order status change and initiates the refund process (drawback money) as described. H60 is only for calculating the refund amount, not performing the cancellation.",
         "services": [
           "ts-cancel-service",
           "ts-common",
@@ -3682,7 +3696,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "state": 4
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires refreshing the list of orders filtered by status. Since the scenario involves high-speed trains (GaoTie/DongChe), the correct service is ts-order-service. The UI action 'queryMyOrderList' sends a POST request to the refresh endpoint, which accepts a 'state' parameter to filter by order status (Cancel=4).",
+        "reasoning": "The step asks to refresh the list of orders filtered by 'Cancel' status. The previous steps (booking a GaoTie/DongChe train) indicate the order is in the base `ts-order-service`. The handler `OrderController#queryOrdersForRefresh` (H153) is the correct twin for G/D trains and accepts a `state` parameter in the body to filter by status (CANCEL=4).",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -3727,7 +3741,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires logging in with username and password, which corresponds to the authentication endpoint. Handler H55 is the specific UI handler for user login that accepts credentials and returns a token.",
+        "reasoning": "The step asks to log in with username and password, which corresponds to the login action in the web UI. Handler H55 is the specific endpoint for user login that returns a token, matching the UI action described.",
         "services": [
           "ts-auth-service",
           "ts-common"
@@ -3756,9 +3770,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 2,
         "action": "Advanced search: the cheapest trips from Shanghai to Nanjing on 1 October 2026",
-        "edgeId": "ts-travel-plan-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-travel-plan-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-plan-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelplanservice/travelPlan/cheapest",
         "relationType": "REST_HTTP",
@@ -3769,7 +3783,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "departureTime": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requests an advanced search for the cheapest trips, which corresponds to the 'cheapest' sort option in the UI's advanced search functionality. Handler H220 (TravelPlanController#getByCheapest) is explicitly marked with UI page 'client_adsearch' and action 'adSearchPath', matching the advanced search context, whereas H234/H247 are for standard route listing based on train type selection.",
+        "reasoning": "The step requests an advanced search for the cheapest trips, which maps directly to the TravelPlanController#getByCheapest handler marked with UI action 'adSearchPath' and condition selectType == 1. The request uses the login token from step 1 for authentication.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -3877,9 +3891,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 3,
         "action": "Advanced search: the quickest trips from Shanghai to Nanjing on 1 October 2026",
-        "edgeId": "ts-travel-plan-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-travel-plan-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-plan-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelplanservice/travelPlan/quickest",
         "relationType": "REST_HTTP",
@@ -3890,7 +3904,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "departureTime": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requests an advanced search for the quickest trips, which corresponds to the 'quickest' sort option in the travel plan service. Handler H222 is the UI-facing endpoint for this specific action (selectType == 2 for quickest).",
+        "reasoning": "The step requests an advanced search for the quickest trips, which maps directly to the TravelPlanController#getByQuickest handler. This handler is the specific UI endpoint for the 'quickest' search type in the advanced search flow, following the same pattern as step 2 (cheapest search).",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -3999,9 +4013,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 4,
         "action": "Advanced search: the trips with the fewest stops from Shanghai to Nanjing on 1 October 2026",
-        "edgeId": "ts-travel-plan-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-travel-plan-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-plan-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelplanservice/travelPlan/minStation",
         "relationType": "REST_HTTP",
@@ -4012,7 +4026,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "departureTime": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requests an advanced search for trips with the fewest stops, which corresponds to the 'minStation' search type in the TravelPlanService. Based on the UI logic described in the candidates, this action triggers the `getByMinStation` handler.",
+        "reasoning": "The step requests an advanced search for trips with the fewest stops, which corresponds to the 'minStation' search type in the TravelPlanService. Handler H221 is the specific endpoint for this operation, as indicated by its UI condition (selectType == 0) and method name.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -4121,9 +4135,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 5,
         "action": "Ask for trips with a transfer at Suzhou (Shanghai — Suzhou — Nanjing) on 1 October 2026",
-        "edgeId": "ts-travel-plan-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-plan-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-plan-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelplanservice/travelPlan/transferResult",
         "relationType": "REST_HTTP",
@@ -4135,7 +4149,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "travelDate": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The step asks for trips with a transfer at Suzhou, which corresponds to the transfer search functionality. Handler H223 (TravelPlanController#getTransferResult) is the specific endpoint for transfer searches, accepting start, via, and end stations.",
+        "reasoning": "The step asks for trips with a transfer at Suzhou, which corresponds to the transfer search functionality. Handler H223 (TravelPlanController#getTransferResult) is the specific endpoint for searching transit/transfer routes, accepting start, via, and end stations.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -4217,9 +4231,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 6,
         "action": "Open the details of the cheapest trip found (a regular, 'Other'-type train)",
-        "edgeId": "ts-travel2-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-travel2-service->ts-price-service:REST_HTTP",
         "source": "ts-travel2-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travel2service/trip_detail",
         "relationType": "REST_HTTP",
@@ -4230,7 +4244,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "to": "Nanjing"
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires opening details for a regular ('Other'-type) train, so the twin service `ts-travel2-service` must be used. The handler `Travel2Controller#getTripAllDetailInfo` (H243) is the specific endpoint for retrieving full trip details including remaining tickets for regular trains.",
+        "reasoning": "The step asks to open details of the cheapest trip, which is identified as a regular 'Other'-type train. According to the twin service rules, 'Other' train types are handled by the ts-travel2-service variant. Therefore, the handler in ts-travel2-service for retrieving trip details is selected.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -4318,7 +4332,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires retrieving the user's contact book to select a contact. The handler H83 is explicitly marked with UI action 'refresh_booking_contacts' on the 'client_ticket_book' page, which matches the action of opening/viewing the contact list for booking purposes.",
+        "reasoning": "The step asks to open the contact book, which corresponds to fetching the contacts associated with the logged-in user's account. Handler H83 is the UI-mapped endpoint for retrieving contacts by account ID, which matches the action of opening the contact list.",
         "services": [
           "ts-contacts-service"
         ],
@@ -4339,15 +4353,18 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 8,
         "action": "Book a first-class seat on the cheapest (regular) trip for this contact, without food, assurance or consignment",
-        "edgeId": "ts-preserve-other-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-preserve-other-service->ts-price-service:REST_HTTP",
         "source": "ts-preserve-other-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/preserveotherservice/preserveOther",
         "relationType": "REST_HTTP",
         "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
         "params": {
           "seatType": 2,
+          "date": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Nanjing",
           "assurance": 0,
           "foodType": 0,
           "foodPrice": 0.0,
@@ -4355,7 +4372,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves booking a ticket for a regular ('Other' type) train, which requires using the twin service ts-preserve-other-service. The UI action for confirming the booking with a selected contact is handled by PreserveOtherController#preserve.",
+        "reasoning": "The step involves booking a ticket for a regular train (non-G/D type), which routes to the 'Other' service variant. The candidate H162 (PreserveOtherController#preserveOther) is the UI handler for booking non-G/D trains, as indicated by its condition `!(tripType == 'G' || tripType == 'D')`. It uses the contact information retrieved in step 7.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -4489,7 +4506,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The user booked a regular train ('Other' type) in step 8, so the order list refresh must target the regular train service. The UI action 'queryMyOrderList' sends a POST request to the refresh endpoint; for regular trains, this is handled by OrderOtherController#queryOrdersForRefresh.",
+        "reasoning": "The step asks to refresh the list of orders. The previous booking (step 8) was for a regular ('Other') train type, which is handled by the ts-order-other-service variant. Therefore, the refresh request must target the variant service (H137) to retrieve orders for non-G/D trains.",
         "services": [
           "ts-common",
           "ts-order-other-service"
@@ -4524,7 +4541,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires paying for an order using the internal account balance. The candidate H113 (InsidePaymentController#pay) is the UI handler for paying orders from the internal account, as indicated by the UI action 'payMyOrder'. Since the order was created for a regular train (Other type) in step 8, the payment logic within the service will handle the specific order type, but the entry point for ",
+        "reasoning": "The step asks to pay for the order using the internal account balance. The candidate H113 (InsidePaymentController#pay) is the UI-handler for paying with the internal account, as indicated by its UI tag 'client_order_list, action payMyOrder'. The order was created in step 8 (a non-G/D train, hence 'Other' service), so the payment request targets that specific order.",
         "services": [
           "ts-common",
           "ts-inside-payment-service",
@@ -4564,16 +4581,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 11,
         "action": "Collect the ticket for the order",
-        "edgeId": "ts-execute-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-execute-service->ts-common:REST_HTTP",
         "source": "ts-execute-service",
-        "target": "ts-order-other-service",
+        "target": "ts-common",
         "httpMethod": "GET",
         "endpoint": "/api/v1/executeservice/execute/collected/{orderId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step is to collect the ticket for the order, which corresponds to the 'collectTicket' action in the UI. The order was created for a regular train ('Other' type) in step 8, but the collect/execute functionality is handled by the execute-service which is not split by train type in the handler index (H88/H89). H88 is the specific handler for collecting tickets.",
+        "reasoning": "The step asks to collect the ticket for the order, which corresponds to the 'collectTicket' action in the UI. The candidate H88 (ExecuteControlller#collectTicket) is the specific handler for this action, taking the orderId as a path variable. The order was created in step 8 and paid in step 10, so the orderId from those steps is used.",
         "services": [
           "ts-common",
           "ts-execute-service",
@@ -4613,16 +4630,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 12,
         "action": "Enter the station (board the train) with the order",
-        "edgeId": "ts-execute-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-execute-service->ts-common:REST_HTTP",
         "source": "ts-execute-service",
-        "target": "ts-order-other-service",
+        "target": "ts-common",
         "httpMethod": "GET",
         "endpoint": "/api/v1/executeservice/execute/execute/{orderId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step 'Enter the station (board the train)' corresponds to the 'enterStation' action in the UI, which maps to the executeTicket handler. Since the order is for a regular train (Other type), the request goes through the execute service which handles the execution logic regardless of train type, but specifically H89 is the handler for entering the station.",
+        "reasoning": "The step asks to enter the station (board the train), which corresponds to the 'executeTicket' action in the execute service. The candidate H89 matches this action exactly, taking the orderId from the order created in previous steps.",
         "services": [
           "ts-common",
           "ts-execute-service",
@@ -4681,7 +4698,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires logging in to the admin console, which corresponds to the login action on the admin login page. Handler H55 is the only candidate that handles user authentication and token generation for both client and admin login pages.",
+        "reasoning": "The step requires logging in to the admin console, which corresponds to the login action on the adminlogin page. Handler H55 is the only candidate that serves the login functionality for both admin and client users, as indicated by its UI mapping to 'adminlogin'.",
         "services": [
           "ts-auth-service",
           "ts-common"
@@ -4722,7 +4739,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "stayTime": 5
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves an administrator adding a new station, which corresponds to the 'addStation' action in the admin console. Handler H4 is the specific UI handler for adding stations in the admin service.",
+        "reasoning": "The step requires adding a new station via the admin console, which maps to the admin basic info service handler for adding stations. Candidate H4 is the correct UI handler for this action.",
         "services": [
           "ts-admin-basic-info-service",
           "ts-station-service"
@@ -4760,7 +4777,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "averageSpeed": 300
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires adding a new train type (GaoTieSix) via the admin console. Handler H5 (AdminBasicInfoController#addTrain) is the UI-bound endpoint for adding train types in the admin service, which matches the context of an administrator performing this action.",
+        "reasoning": "The step requires adding a new train type via the admin console, which maps to the AdminBasicInfoController#addTrain handler. This handler is designed for admin operations on train types and matches the UI action for adding a train.",
         "services": [
           "ts-admin-basic-info-service",
           "ts-train-service"
@@ -4784,9 +4801,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 4,
         "action": "Add a new route Shanghai — Suzhou — Ning Bo with distances 0, 100 and 250",
-        "edgeId": "ts-admin-route-service->ts-station-service:REST_HTTP",
+        "edgeId": "ts-admin-route-service->ts-common:REST_HTTP",
         "source": "ts-admin-route-service",
-        "target": "ts-station-service",
+        "target": "ts-common",
         "httpMethod": "POST",
         "endpoint": "/api/v1/adminrouteservice/adminroute",
         "relationType": "REST_HTTP",
@@ -4798,7 +4815,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "distanceList": "0,100,250"
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires adding a new route, which is an administrative action handled by the admin route service. Handler H27 is the specific UI endpoint for adding a new route in the admin console.",
+        "reasoning": "The step requires adding a new route, which corresponds to the admin route creation endpoint. H27 is the specific admin handler for adding routes, taking the station list and distances as input.",
         "services": [
           "ts-admin-route-service",
           "ts-common",
@@ -4813,7 +4830,8 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         ],
         "rules": [
           "ENTRY",
-          "R10:save_writes_collection(line 63)"
+          "R10:save_writes_collection(line 63)",
+          "route.service.RouteServiceImpl#createAndModify(route.entity.RouteInfo,org.springframework.http.HttpHeaders)@b49:else"
         ],
         "activeNodes": [
           "db-ts-route-service-route",
@@ -4850,7 +4868,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "firstClassPriceRate": 1.2
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves an administrator adding a new price configuration, which corresponds to the admin console action 'addPrice'. The candidate H3 (AdminBasicInfoController#addPrice) is the UI handler for this action in the admin service, matching the requirement to use admin services for administrator steps.",
+        "reasoning": "The step requires an administrator to add a new price configuration, which corresponds to the admin console action for adding prices. Handler H3 is the specific admin UI endpoint for adding a price configuration, matching the context of previous admin setup steps.",
         "services": [
           "ts-admin-basic-info-service",
           "ts-price-service"
@@ -4860,7 +4878,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         ],
         "rules": [
           "ENTRY",
-          "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:then"
+          "price.service.PriceServiceImpl#createNewPriceConfig(price.entity.PriceConfig,org.springframework.http.HttpHeaders)@b33:else"
         ],
         "activeNodes": [
           "db-ts-price-service-price_config",
@@ -4875,9 +4893,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 6,
         "action": "Add a new high-speed trip G9101 of type GaoTieSix on the new route from Shanghai via Suzhou to Ning Bo, departing 09:00 and arriving 12:00",
-        "edgeId": "ts-admin-travel-service->ts-station-service:REST_HTTP",
+        "edgeId": "ts-admin-travel-service->ts-common:REST_HTTP",
         "source": "ts-admin-travel-service",
-        "target": "ts-station-service",
+        "target": "ts-common",
         "httpMethod": "POST",
         "endpoint": "/api/v1/admintravelservice/admintravel",
         "relationType": "REST_HTTP",
@@ -4886,13 +4904,13 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "tripId": "G9101",
           "trainTypeName": "GaoTieSix",
           "startStationName": "Shanghai",
-          "stationsName": "Suzhou",
+          "stationsName": "Shanghai,Suzhou,Ning Bo",
           "terminalStationName": "Ning Bo",
           "startTime": "09:00",
           "endTime": "12:00"
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves an administrator adding a new high-speed trip (G9101). The admin console uses the admin travel service for managing trips, specifically the `addTravel` endpoint which accepts trip details like ID, train type, route, and times. Since the trip is high-speed (GaoTie), the admin travel service is the correct handler among the admin services.",
+        "reasoning": "The step requires adding a new trip, which is an administrative action handled by the admin travel service. The train type is 'GaoTieSix' (G-type), so the base travel service (ts-travel-service) is the correct backend, but the request originates from the admin console, so the admin handler H31 is the correct entry point. The request uses the route ID created in step 4 and the train type ID created",
         "services": [
           "ts-admin-travel-service",
           "ts-common",
@@ -4948,7 +4966,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires a passenger to log in, which corresponds to the standard login endpoint. H55 is the only candidate that handles user authentication for login actions from the client UI.",
+        "reasoning": "The step requires logging in as a passenger, which corresponds to the standard user login endpoint. Handler H55 is the designated UI handler for user login (client_login page).",
         "services": [
           "ts-auth-service",
           "ts-common"
@@ -4977,9 +4995,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 8,
         "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Ning Bo departing on 1 October 2026",
-        "edgeId": "ts-travel-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelservice/trips/left",
         "relationType": "REST_HTTP",
@@ -4990,7 +5008,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "departureTime": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user searches for high-speed trains (GaoTie/DongChe), which corresponds to the 'ts-travel-service' twin. The UI action 'searchRouteList' sends a POST request to /api/v1/travelservice/trips/left when the train type is selected as high-speed (trainTypeSelected == 0 or 1).",
+        "reasoning": "The user searches for high-speed (GaoTie/DongChe) trains, which corresponds to the base travel service side for GaoTie/DongChe train types. The UI action 'searchRouteList' with trainTypeSelected == 0 (high-speed) triggers the query on ts-travel-service.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -5062,16 +5080,20 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 9,
         "action": "Open the details of the new trip found",
-        "edgeId": "ts-travel-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelservice/trip_detail",
         "relationType": "REST_HTTP",
         "handler": "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
-        "params": {},
+        "params": {
+          "travelDate": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Ning Bo"
+        },
         "expectedOutcome": "success",
-        "reasoning": "The step requires opening the details of a specific high-speed trip (G9101) found in the previous search. Handler H230 (POST /api/v1/travelservice/trip_detail) is the correct endpoint for retrieving detailed information about a specific trip in the high-speed service, taking the tripId as input.",
+        "reasoning": "The step asks to open the details of the new trip found in step 8. The trip G9101 is of type 'GaoTieSix' (a G-type high-speed train), which maps to the base travel service (ts-travel-service) according to the twin selection rule. Handler H230 (POST /api/v1/travelservice/trip_detail) is the correct endpoint to retrieve detailed trip information including remaining tickets, and it requires the trip,",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -5152,7 +5174,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires retrieving the passenger's contact list from their address book. The handler H83 is explicitly marked with the UI action 'refresh_booking_contacts' on the 'client_ticket_book' page, which corresponds to opening/viewing the contact book in the passenger UI.",
+        "reasoning": "The step asks to open the contact book for the logged-in passenger, which corresponds to fetching contacts by the current user's account ID. Handler H83 is the UI-facing endpoint for this action, as indicated by its UI mapping to 'refresh_booking_contacts'.",
         "services": [
           "ts-contacts-service"
         ],
@@ -5173,23 +5195,26 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 11,
         "action": "Book a first-class seat on the new trip for this contact, without food, assurance or consignment",
-        "edgeId": "ts-preserve-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-preserve-service->ts-price-service:REST_HTTP",
         "source": "ts-preserve-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/preserveservice/preserve",
         "relationType": "REST_HTTP",
         "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
         "params": {
           "seatType": 2,
+          "date": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Ning Bo",
           "assurance": 0,
           "foodType": 0,
-          "foodPrice": 0.0,
-          "consigneeWeight": 0.0,
+          "foodPrice": 0,
+          "consigneeWeight": 0,
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The step involves booking a ticket for a high-speed train (G9101, type GaoTieSix). The web UI sends a POST request to the preserve service to create the order, specifically using the high-speed twin service. Handler H164 corresponds to the high-speed preserve service and is marked as called by the UI for this action.",
+        "reasoning": "The step involves booking a ticket for a high-speed train (G9101, type GaoTieSix, type G), which requires using the base order service. The UI action 'Select' on the booking page for G/D trains triggers POST /api/v1/preserveservice/preserve. This handler uses the trip ID from step 9, the contact ID from step 10, and the account ID from step 7.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -5314,11 +5339,10 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "travelDateStart": null,
           "travelDateEnd": null,
           "boughtDateStart": null,
-          "boughtDateEnd": null,
-          "state": 0
+          "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires refreshing the list of orders for the passenger who just booked a high-speed train ticket (step 11 used ts-preserve-service for a GaoTie trip). The UI action 'queryMyOrderList' sends a POST request to the order service corresponding to the train kind; since the trip is high-speed, the correct handler is in ts-order-service. H153 is the specific handler for refreshing orders in ts",
+        "reasoning": "The step asks to refresh the list of orders, which corresponds to the 'queryMyOrderList' UI action. Since the order was just created for a high-speed train (G9101, type G), the base order service (ts-order-service) handles G/D trains, so H153 is the correct handler.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -5345,16 +5369,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 13,
         "action": "Pay for the order from the internal account balance",
-        "edgeId": "ts-inside-payment-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-inside-payment-service->ts-common:REST_HTTP",
         "source": "ts-inside-payment-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "POST",
         "endpoint": "/api/v1/inside_pay_service/inside_payment",
         "relationType": "REST_HTTP",
         "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires paying for an order using the internal account balance. Handler H113 (InsidePaymentController#pay) is the specific UI handler for paying orders via the internal payment service, as indicated by the UI action 'payMyOrder'. The order was created in step 11 (high-speed train), so this handler applies.",
+        "reasoning": "The step asks to pay for the order from the internal account balance. Handler H113 (InsidePaymentController#pay) is the UI-mapped handler for paying orders using the internal payment service, which matches the action 'payMyOrder' on the order list page.",
         "services": [
           "ts-common",
           "ts-inside-payment-service",
@@ -5403,7 +5427,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires an administrator to view all orders in the system, which corresponds to the admin order management functionality. Handler H24 is the specific admin endpoint for retrieving all orders, marked with UI support for the admin console.",
+        "reasoning": "The step asks the administrator to open the list of all orders in the system, which corresponds to the admin console action for loading order records. Handler H24 is the specific admin endpoint for retrieving all orders, marked with UI action 'loadRecordList' on the admin page.",
         "services": [
           "ts-admin-order-service",
           "ts-common",
@@ -5455,7 +5479,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires logging in with username and password, which corresponds to the authentication endpoint. Handler H55 is the specific UI handler for user login.",
+        "reasoning": "The step asks to log in with username and password, which corresponds to the login action in the web UI. Handler H55 is the specific endpoint for user login that accepts credentials and returns a token.",
         "services": [
           "ts-auth-service",
           "ts-common"
@@ -5484,9 +5508,9 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 2,
         "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
-        "edgeId": "ts-travel-service->ts-seat-service:REST_HTTP",
+        "edgeId": "ts-travel-service->ts-price-service:REST_HTTP",
         "source": "ts-travel-service",
-        "target": "ts-seat-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/travelservice/trips/left",
         "relationType": "REST_HTTP",
@@ -5497,7 +5521,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "departureTime": "2026-10-01"
         },
         "expectedOutcome": "success",
-        "reasoning": "The user searches for high-speed trains (GaoTie/DongChe), which are served by the 'ts-travel-service' twin. The UI action for searching trips is 'searchRouteList', which maps to the POST /api/v1/travelservice/trips/left endpoint for high-speed trains.",
+        "reasoning": "The user searches for high-speed (GaoTie/DongChe) trains, which corresponds to the base travel service side (ts-travel-service) as specified by the twin selection rule. The action is a standard route search for available trips.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -5580,7 +5604,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires opening the contact book to select a contact, which corresponds to fetching contacts associated with the logged-in user's account. Handler H83 is the specific UI endpoint for refreshing/loading contacts by account ID.",
+        "reasoning": "The step requires opening the contact book for the logged-in user, which corresponds to fetching contacts by the user's account ID. Handler H83 is the specific UI endpoint for refreshing/finding contacts by account ID.",
         "services": [
           "ts-contacts-service"
         ],
@@ -5601,23 +5625,25 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 4,
         "action": "Book a first-class seat on the first trip found for this contact, with a luggage consignment of 3 kg to a consignee, without food or assurance",
-        "edgeId": "ts-preserve-service->ts-order-other-service:REST_HTTP",
+        "edgeId": "ts-preserve-service->ts-price-service:REST_HTTP",
         "source": "ts-preserve-service",
-        "target": "ts-order-other-service",
+        "target": "ts-price-service",
         "httpMethod": "POST",
         "endpoint": "/api/v1/preserveservice/preserve",
         "relationType": "REST_HTTP",
         "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
         "params": {
           "seatType": 2,
+          "date": "2026-10-01",
+          "from": "Shanghai",
+          "to": "Suzhou",
           "assurance": 0,
           "foodType": 0,
-          "foodPrice": 0.0,
           "consigneeWeight": 3.0,
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is booking a high-speed train (GaoTie/DongChe), so the request goes to the high-speed preserve service (ts-preserve-service). The UI action for selecting a contact and confirming the booking sends a POST to /api/v1/preserveservice/preserve for G/D trains, which handles the order creation including optional consignment details in the request body.",
+        "reasoning": "The user is booking a ticket for a high-speed train (G/D type) found in step 2, using the contact from step 3. The UI sends a POST to the preserve service for G/D trains, which handles the order creation, seat dispatch, and consignment setup in one go.",
         "services": [
           "ts-basic-service",
           "ts-common",
@@ -5665,7 +5691,6 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "fdse.microservice.service.BasicServiceImpl#getRouteByRouteId(java.lang.String,org.springframework.http.HttpHeaders)@b433:else",
           "order.service.OrderServiceImpl#getSoldTickets(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b57:then",
           "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b148:then",
-          "preserve.service.PreserveServiceImpl#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)@b218:then",
           "seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b53:then",
           "seat.service.SeatServiceImpl#distributeSeat(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b97:then",
           "seat.service.SeatServiceImpl#getLeftTicketOfInterval(edu.fudan.common.entity.Seat,org.springframework.http.HttpHeaders)@b138:then",
@@ -5759,7 +5784,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The user is refreshing the list of orders after booking a high-speed train ticket (step 2 and 4 involved high-speed trains). The UI action 'queryMyOrderList' sends a POST request to the order service for high-speed trains to refresh the order list based on login ID and optional filters. Since the scenario specifies refreshing the list generally at this stage (before specific date filters in steps ",
+        "reasoning": "The step asks to refresh the list of orders. Since the order was booked on a high-speed train (GaoTie/DongChe) in step 4, the base order service (ts-order-service) handles G/D train orders. The UI action for refreshing orders on the ticket collection page maps to the refresh endpoint in the order service.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -5786,16 +5811,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 6,
         "action": "Pay for the order from the internal account balance",
-        "edgeId": "ts-inside-payment-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-inside-payment-service->ts-common:REST_HTTP",
         "source": "ts-inside-payment-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "POST",
         "endpoint": "/api/v1/inside_pay_service/inside_payment",
         "relationType": "REST_HTTP",
         "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user is paying for an order using their internal account balance. The handler InsidePaymentController#pay (H113) is the UI-facing endpoint for paying orders from the internal account, as indicated by the UI action 'payMyOrder'. Since the order was created for a high-speed train (step 2/4), this handler in ts-inside-payment-service is appropriate.",
+        "reasoning": "The step asks to pay for the order from the internal account balance. Handler H113 (InsidePaymentController#pay) is the UI-mapped endpoint for paying orders using the internal payment service, which matches the action 'payMyOrder' on the order list page.",
         "services": [
           "ts-common",
           "ts-inside-payment-service",
@@ -5835,16 +5860,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 7,
         "action": "Collect the ticket for the order",
-        "edgeId": "ts-execute-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-execute-service->ts-common:REST_HTTP",
         "source": "ts-execute-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "GET",
         "endpoint": "/api/v1/executeservice/execute/collected/{orderId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step requires collecting the ticket for the order, which corresponds to the 'collectTicket' action in the UI. The candidate H88 is the specific handler for this action, serving the high-speed train order context established in previous steps.",
+        "reasoning": "The step asks to collect the ticket for the order, which corresponds to the 'collectTicket' action in the UI. The candidate H88 is the specific handler for collecting tickets, taking the orderId as a path variable. The order was created in step 4 and paid in step 6, so the orderId from the order created in step 4 is used.",
         "services": [
           "ts-common",
           "ts-execute-service",
@@ -5877,16 +5902,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 8,
         "action": "Ask how much would be refunded for the collected order",
-        "edgeId": "ts-cancel-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-cancel-service->ts-common:REST_HTTP",
         "source": "ts-cancel-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "GET",
         "endpoint": "/api/v1/cancelservice/cancel/refound/{orderId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The user asks for the refund amount for the collected order. Handler H60 (CancelController#calculate) is the specific API endpoint designed to calculate the refund amount for a given order ID, which matches the action described in step 8.",
+        "reasoning": "The step asks to calculate the refund amount for the collected order, which maps directly to the cancel service's calculate endpoint. Since the order was booked on a high-speed train (G/D type) in step 4, the order resides in ts-order-service, but the cancellation/refund logic is handled by the dedicated cancel service which queries the order data.",
         "services": [
           "ts-cancel-service",
           "ts-common",
@@ -5917,16 +5942,16 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 9,
         "action": "Try to cancel the collected order (the system refuses)",
-        "edgeId": "ts-cancel-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-cancel-service->ts-common:REST_HTTP",
         "source": "ts-cancel-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "GET",
         "endpoint": "/api/v1/cancelservice/cancel/{orderId}/{loginId}",
         "relationType": "REST_HTTP",
         "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "refused",
-        "reasoning": "The user attempts to cancel an order that has already been collected. The UI action for cancelling a ticket is handled by the cancel service, specifically the cancelTicket endpoint which accepts the orderId and loginId. Since the ticket is already collected, the backend logic will refuse this request, but the request itself is sent to this handler.",
+        "reasoning": "The step asks to cancel the collected order, which corresponds to the cancel ticket action. The candidate H61 is the specific handler for cancelling a ticket by orderId and loginId. Since the ticket has already been collected, the system will refuse the cancellation, but the request is still sent to this handler.",
         "services": [
           "ts-cancel-service",
           "ts-common",
@@ -5957,18 +5982,19 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
       {
         "step": 10,
         "action": "Try to rebook the collected order onto the second high-speed trip found (the system refuses)",
-        "edgeId": "ts-rebook-service->ts-order-service:REST_HTTP",
+        "edgeId": "ts-rebook-service->ts-common:REST_HTTP",
         "source": "ts-rebook-service",
-        "target": "ts-order-service",
+        "target": "ts-common",
         "httpMethod": "POST",
         "endpoint": "/api/v1/rebookservice/rebook",
         "relationType": "REST_HTTP",
         "handler": "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
         "params": {
-          "seatType": 2
+          "seatType": 2,
+          "date": "2026-10-01"
         },
         "expectedOutcome": "refused",
-        "reasoning": "The user attempts to rebook an order, which triggers the rebooking service. Since the order is for a high-speed train (GaoTie), the standard rebook service is used. The system refuses the request because the ticket has already been collected, but the HTTP request is still sent to the rebook handler.",
+        "reasoning": "The user attempts to rebook the collected order, which triggers the rebook service. Since the ticket has already been collected, the system refuses the operation. The correct handler for initiating a rebook is H174.",
         "services": [
           "ts-common",
           "ts-order-service",
@@ -6009,7 +6035,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
         "handler": "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
         "params": {},
         "expectedOutcome": "success",
-        "reasoning": "The step asks to look up the luggage consignment for the specific order created in step 4. The handler ConsignController#findByOrderId is designed to retrieve consignment details by order ID, which matches the requirement.",
+        "reasoning": "The step asks to look up the luggage consignment for the order, which corresponds to finding the consignment record by the order ID. Handler H76 is the specific endpoint for querying consignment by order ID and is marked as a UI action for this purpose.",
         "services": [
           "ts-consign-service"
         ],
@@ -6041,7 +6067,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "isWithin": false
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires updating the consignee's name and phone number for an existing luggage consignment. Handler H79 (PUT /api/v1/consignservice/consigns) is the specific UI handler for updating consign records, matching the action 'consignOrder' on the order list page.",
+        "reasoning": "The step asks to change the consignee's name and phone number in the consignment record associated with the order. Handler H79 (PUT /api/v1/consignservice/consigns) is the specific UI handler for updating a consignment record, which includes fields for consignee and phone. The consignment was looked up in step 11, so the request uses that consignment record.",
         "services": [
           "ts-consign-service"
         ],
@@ -6076,11 +6102,10 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "travelDateStart": "2026-09-01",
           "travelDateEnd": "2026-12-31",
           "boughtDateStart": null,
-          "boughtDateEnd": null,
-          "state": 0
+          "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requests refreshing the order list filtered by travel date for high-speed trains (GaoTie/DongChe), which corresponds to the `queryOrdersForRefresh` endpoint in the high-speed order service. The candidate H153 is the correct handler for this action and train type.",
+        "reasoning": "The step asks to refresh the list of orders filtered by travel date. The scenario involves high-speed (GaoTie/DongChe) trains booked in step 2 and 4, which map to the base order service (ts-order-service). The UI action for refreshing orders with filters is handled by OrderController#queryOrdersForRefresh.",
         "services": [
           "ts-common",
           "ts-order-service"
@@ -6124,7 +6149,7 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = [
           "boughtDateEnd": null
         },
         "expectedOutcome": "success",
-        "reasoning": "The step requires refreshing the order list filtered by purchase date for a high-speed train order (created in step 4 using the high-speed service). The UI action 'queryMyOrderList' sends requests to both order services, but since the scenario focuses on the high-speed train context established in step 2 and the order is from the high-speed service, the primary handler is the one for high-speed (G",
+        "reasoning": "The step asks to refresh the list of orders filtered by purchase date (today). Since the order was booked on a high-speed (G/D) train (step 2 and 4), the base order service (ts-order-service) handles G/D train orders. The UI action for refreshing orders with filters maps to the `queryOrdersForRefresh` endpoint in the order service.",
         "services": [
           "ts-common",
           "ts-order-service"
