@@ -46,6 +46,13 @@ def parse_args() -> argparse.Namespace:
         help="Корень исходников проекта (targets/trainticket)",
     )
     parser.add_argument(
+        "--artifacts-dir",
+        type=Path,
+        default=ROOT_DIR / "data",
+        help="Артефакты проекта: ir/ (IR тел методов), entity_ir.json (archparse), ui_catalog.json (кеш каталога UI, "
+             "создаётся сам). Для другого проекта — отдельная папка: data/ не трогается",
+    )
+    parser.add_argument(
         "--scenarios",
         nargs="*",
         default=None,
@@ -243,6 +250,7 @@ def main() -> None:
     print(f"Archonity Pipeline Runner")
     print(f"Скелет:     {args.skeleton}")
     print(f"Исходники:  {args.targets}")
+    print(f"Артефакты:  {args.artifacts_dir}")
     print(f"Сценариев:  {len(scenarios)} ({', '.join(s.stem for s in scenarios)})")
     print(f"Выход:      {args.out}")
     print("-" * 60)
@@ -265,6 +273,7 @@ def main() -> None:
         pipeline = ArchonityPipeline(
             skeleton_path=args.skeleton,
             targets_root=args.targets,
+            artifacts_dir=args.artifacts_dir,
             constructors=args.ctors,
             collection_tables_on_read=args.collection_tables,
             element_callbacks=args.element_callbacks,

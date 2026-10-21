@@ -41,7 +41,17 @@ $T = "../hackaton/tt-challenge/targets/trainticket"; $K = "../hackaton/tt-challe
 
 Кеш каталога UI `data/ui_catalog.json` пересобирать вручную не нужно: в нём отпечаток (проект и коммит скелета, обработчики, содержимое файлов UI), и при несовпадении каталог строится заново чистым Python. Кеш другого проекта прогон не перезаписывает (каталог живёт только в этом прогоне); принудительная пересборка с записью — `build_catalog(..., force_rebuild=True)`. Закоммиченный кеш Train Ticket после правки скелета или UI пакета обновляется так же (`tests/test_artifacts.py` проверяет, что отпечаток в нём актуален).
 
-Пока папки артефактов в `run_eval.py` нет: для другого проекта IR пишется в `data/ir`, поверх Train Ticket (вернуть: `git checkout -- data`).
+Другой проект — своя папка артефактов (`ir/`, `entity_ir.json`, `ui_catalog.json`), `data/` не трогается. Папка `ui_catalog.json` создаётся сама при первом прогоне, IR и `entity_ir.json` строит archparse:
+```powershell
+$T = "../путь/к/targets"; $K = "../путь/к/skeleton.json.gz"; $A = "../artifacts/мой-проект"
+.\gradlew.bat -q run "--args=--mode bodies --targets-dir $T --skeleton $K -o $A/ir"
+.\gradlew.bat -q run "--args=--mode entities --targets-dir $T --skeleton $K -o $A/entity_ir.json"
+```
+затем из корня репозитория:
+```powershell
+$env:PYTHONUTF8=1; python run_eval.py --skeleton <skeleton> --targets <targets> --scenarios <сценарии> --artifacts-dir artifacts/мой-проект
+```
+Ошибка `ArtifactMismatch` на умолчании (`data/`) сама подсказывает такую папку: `artifacts/<проект скелета>`. Из кода — `PipelineConfig(artifacts_dir=...)`; `method_ir_dir` и `entity_ir_path` переопределяют отдельные пути.
 
 ## 3. Особенности тестов pytest
 

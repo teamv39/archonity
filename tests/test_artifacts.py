@@ -8,6 +8,8 @@ from __future__ import annotations
 import copy
 import json
 import logging
+import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -16,7 +18,7 @@ from typing import Any
 import pytest
 
 from engine.adapters.skeleton import SkeletonIndex
-from engine.artifacts import STALE_SHARE_LIMIT, ArtifactMismatch, check_artifacts
+from engine.artifacts import DEFAULT_ARTIFACTS_DIR, STALE_SHARE_LIMIT, ArtifactMismatch, check_artifacts
 from engine.entities import EntityFacts
 from engine.grounding.ui_catalog import build_catalog, catalog_fingerprint, find_ui_dir
 from engine.pipeline import ArchonityPipeline
@@ -154,8 +156,9 @@ def toy_artifacts(tmp_path: Path) -> tuple[Path, Path]:
     return ir, ent
 
 
-def _check(ix: SkeletonIndex, ir: Path, tmp_path: Path) -> None:
-    check_artifacts(ix, ir, tmp_path / "toy.json", tmp_path / "targets")
+def _check(ix: SkeletonIndex, ir: Path, tmp_path: Path, artifacts: Path | None = None) -> None:
+    """`artifacts` по умолчанию — своя папка прогона (не `data/`): команды пересборки только для несошедшегося."""
+    check_artifacts(ix, ir, tmp_path / "toy.json", tmp_path / "targets", artifacts or tmp_path / "artifacts")
 
 
 class TestCheckArtifacts:
@@ -175,6 +178,17 @@ class TestCheckArtifacts:
         assert "1196 из 1196 (100%)" in msg and "проект toyshop, коммит c0ffee" in msg
         assert "--mode bodies --targets-dir" in msg and "--skeleton" in msg and "environment_guide.md" in msg
         assert "--mode entities" not in msg, "entity_ir в порядке, пересборка не нужна"
+        assert "--artifacts-dir" not in msg, "папка артефактов уже своя"
+
+    def test_default_artifacts_dir_suggests_separate_project_folder(self, toy_artifacts, tmp_path: Path) -> None:
+        _, ent = toy_artifacts
+        with pytest.raises(ArtifactMismatch) as e:
+            _check(SkeletonIndex(_toy_skeleton(), entity_ir_path=ent), ROOT / "data" / "ir", tmp_path,
+                   DEFAULT_ARTIFACTS_DIR)
+        msg = str(e.value)
+        assert "--mode bodies" in msg and "--mode entities" in msg, "в новую папку нужны оба артефакта"
+        assert "artifacts/toyshop/ir" in msg and "artifacts/toyshop/entity_ir.json" in msg
+        assert "--artifacts-dir artifacts/toyshop" in msg and "-o ../data/ir" in msg
 
     def test_missing_ir_dir_is_an_error(self, toy_artifacts, tmp_path: Path) -> None:
         _, ent = toy_artifacts
@@ -241,13 +255,51 @@ class TestPipelineStart:
             ArchonityPipeline(skeleton, targets)  # IR и entity_ir по умолчанию — data/, построены по другому проекту
         assert "--mode bodies" in str(e.value) and "--mode entities" in str(e.value)
 
-    def test_run_eval_prints_the_error_and_exits(self, tmp_path: Path) -> None:
+    def test_pipeline_takes_artifacts_from_their_dir(self, toy_artifacts, tmp_path: Path, monkeypatch) -> None:
+        """IR, entity_ir и кеш каталога UI — из `artifacts_dir`, а не из `data/` (артефакты другого проекта)."""
+        ir, ent = toy_artifacts
+        art = tmp_path / "project_artifacts"
+        art.mkdir()
+        ir.rename(art / "ir")
+        ent.rename(art / "entity_ir.json")
         skeleton, targets = self._toy_files(tmp_path)
-        res = subprocess.run(
+        seen: dict[str, Any] = {}
+
+        class StubGrounder:  # M1 на проекте без сущностей не строится (prompts.example_kinds): проверяем проводку
+            def __init__(self, ix, root, **kw) -> None:
+                seen.update(kw)
+
+        monkeypatch.setattr("engine.pipeline.StepGrounder", StubGrounder)
+        pipe = ArchonityPipeline(skeleton, targets, artifacts_dir=art)
+        assert pipe.m4.it.ir.keys() == {PING} and pipe.index.entities.source == art / "entity_ir.json"
+        assert seen["ir_dir"] == art / "ir" and seen["ui_cache"] == art / "ui_catalog.json"
+
+    def test_copy_of_data_as_artifacts_dir_passes_the_check(self, shared_pipeline, tmp_path: Path, monkeypatch) -> None:
+        """Копия `data/` в другой папке читается так же, как `data/`: та же сверка, тот же IR у M4."""
+        shutil.copytree(ROOT / "data", tmp_path / "project")
+        monkeypatch.setattr("engine.pipeline.StepGrounder", lambda *a, **kw: None)
+        pipe = ArchonityPipeline(TT / "skeleton" / "trainticket.json.gz", TT / "targets" / "trainticket",
+                                 artifacts_dir=tmp_path / "project")
+        assert pipe.m4.it.ir.keys() == shared_pipeline.m4.it.ir.keys()
+        assert pipe.index.entities.source == tmp_path / "project" / "entity_ir.json"
+
+    def _run_eval(self, tmp_path: Path, *extra: str) -> subprocess.CompletedProcess:
+        skeleton, targets = self._toy_files(tmp_path)
+        return subprocess.run(
             [sys.executable, str(ROOT / "run_eval.py"), "--skeleton", str(skeleton), "--targets", str(targets),
-             "--no-llm", "--no-embed", "--no-eval", "-o", str(tmp_path / "out" / "submission.json")],
-            capture_output=True, text=True, encoding="utf-8", cwd=ROOT, env={**__import__("os").environ, "PYTHONUTF8": "1"})
+             "--no-llm", "--no-embed", "--no-eval", "-o", str(tmp_path / "out" / "submission.json"), *extra],
+            capture_output=True, text=True, encoding="utf-8", cwd=ROOT, env={**os.environ, "PYTHONUTF8": "1"})
+
+    def test_run_eval_prints_the_error_and_exits(self, tmp_path: Path) -> None:
+        res = self._run_eval(tmp_path)
         assert res.returncode == 1
         assert "Ошибка: Артефакты не соответствуют скелету" in res.stderr and "--mode bodies" in res.stderr
+        assert "--artifacts-dir artifacts/toyshop" in res.stderr, "по умолчанию подсказывает отдельную папку"
         assert "Traceback" not in res.stderr
         assert not (tmp_path / "out" / "submission.json").exists()
+
+    def test_run_eval_artifacts_dir_without_artifacts(self, tmp_path: Path) -> None:
+        res = self._run_eval(tmp_path, "--artifacts-dir", str(tmp_path / "empty"))
+        assert res.returncode == 1 and "Артефакты:  " + str(tmp_path / "empty") in res.stdout
+        assert "нет ни одного" in res.stderr and "не загружен" in res.stderr
+        assert "--mode bodies" in res.stderr and "--mode entities" in res.stderr and "--artifacts-dir" not in res.stderr

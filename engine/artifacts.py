@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -24,7 +25,10 @@ if TYPE_CHECKING:
 
 LOGGER = logging.getLogger(__name__)
 
-ARCHPARSE_DIR = Path(__file__).resolve().parent.parent / "archparse"
+ROOT = Path(__file__).resolve().parent.parent
+ARCHPARSE_DIR = ROOT / "archparse"
+# Артефакты проекта по умолчанию: ir/, entity_ir.json, ui_catalog.json; другой проект — `--artifacts-dir`
+DEFAULT_ARTIFACTS_DIR = ROOT / "data"
 STALE_SHARE_LIMIT = 0.05
 EXAMPLES = 2
 EXAMPLE_WIDTH = 100
@@ -66,26 +70,29 @@ def _problem(what: str, bad: int, whole: int, kind: str, examples: list[str]) ->
     return f"{what}: {bad} из {whole} ({_share(bad, whole):.0%}) {kind}{tail}"
 
 
-def check_artifacts(index: SkeletonIndex, ir_dir: Path, skeleton_path: Path, targets_root: Path) -> None:
+def check_artifacts(index: SkeletonIndex, ir_dir: Path, skeleton_path: Path, targets_root: Path,
+                    artifacts_dir: Path = DEFAULT_ARTIFACTS_DIR) -> None:
     """Сверка IR тел методов и `entity_ir.json` со скелетом; несовпадение — `ArtifactMismatch`.
 
-    Вызывать до M1 и M4: ошибка должна прийти раньше, чем начнётся долгая работа над чужим проектом."""
+    Вызывать до M1 и M4: ошибка должна прийти раньше, чем начнётся долгая работа над чужим проектом.
+    `artifacts_dir` — папка артефактов прогона: если это не `data/` по умолчанию, команды пересборки пишут в неё
+    только то, что не сошлось; иначе — в новую папку проекта `artifacts/<проект>`, чтобы не затереть `data/`."""
     problems: list[str] = []
-    rebuild: list[str] = []
+    bad_ir = False
     ir_dir = Path(ir_dir)
     base = f"--targets-dir {_arg(targets_root)} --skeleton {_arg(skeleton_path)}"
 
     ir_ids, files = method_ir_ids(ir_dir)
     if not files:
+        bad_ir = True
         problems.append(f"IR тел методов ({ir_dir}): нет ни одного <module>.json")
-        rebuild.append(f"--mode bodies {base} -o {_arg(ir_dir)}")
     else:
         stale = sorted(ir_ids - set(index.N))
         share = _share(len(stale), len(ir_ids))
         if share >= STALE_SHARE_LIMIT:
+            bad_ir = True
             problems.append(_problem(f"IR тел методов ({ir_dir})", len(stale), len(ir_ids),
                                      "ID методов нет в скелете", stale))
-            rebuild.append(f"--mode bodies {base} -o {_arg(ir_dir)}")
         elif stale:
             LOGGER.warning("IR тел методов (%s): %d из %d ID методов нет в скелете (%s), например %s: возможно, IR "
                            "другого коммита", ir_dir, len(stale), len(ir_ids), f"{share:.1%}", _examples(stale))
@@ -110,14 +117,24 @@ def check_artifacts(index: SkeletonIndex, ir_dir: Path, skeleton_path: Path, tar
             elif bad:
                 LOGGER.warning("entity_ir.json (%s), %s: %d из %d (%s) %s: возможно, факты другого коммита",
                                entity_ir, what, bad, whole, f"{share:.1%}", kind)
-    if entity_bad:
-        rebuild.append(f"--mode entities {base} -o {_arg(entity_ir) if entity_ir else 'entity_ir.json'}")
-
     if not problems:
         return
-    cmds = "\n".join(f'  gradlew -q run "--args={r}"' for r in dict.fromkeys(rebuild))
+    own = Path(artifacts_dir).resolve() != DEFAULT_ARTIFACTS_DIR.resolve()
+    if own:
+        out_ir, out_entity = ir_dir, entity_ir or Path("entity_ir.json")
+        modes = [(m, o) for ok, m, o in ((bad_ir, "bodies", out_ir), (entity_bad, "entities", out_entity)) if ok]
+        hint = ""
+    else:
+        slug = re.sub(r"[^\w.-]+", "-", index.project).strip("-") or "project"
+        out = ROOT / "artifacts" / slug
+        modes = [("bodies", out / "ir"), ("entities", out / "entity_ir.json")]
+        hint = (f"\nАртефакты другого проекта держите в отдельной папке, не в {DEFAULT_ARTIFACTS_DIR.name}/: "
+                f"после пересборки запускайте run_eval.py --artifacts-dir {out.relative_to(ROOT).as_posix()}. "
+                f"Тот же проект, новый коммит: те же команды с -o ../{DEFAULT_ARTIFACTS_DIR.name}/ir и "
+                f"-o ../{DEFAULT_ARTIFACTS_DIR.name}/entity_ir.json.")
+    cmds = "\n".join(f'  gradlew -q run "--args=--mode {m} {base} -o {_arg(o)}"' for m, o in modes)
     raise ArtifactMismatch(
         f"Артефакты не соответствуют скелету {skeleton_path} (проект {index.project or '?'}, коммит "
         f"{str(index.sk.get('commit') or '?')[:12]}):\n  - " + "\n  - ".join(problems)
         + "\nВероятно, они построены по другому проекту или коммиту. Пересоберите archparse (JDK 17+, из папки "
-        "archparse/; Windows: gradlew.bat, docs/environment_guide.md, раздел 2):\n" + cmds)
+        "archparse/; Windows: gradlew.bat, docs/environment_guide.md, раздел 2):\n" + cmds + hint)

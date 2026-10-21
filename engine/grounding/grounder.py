@@ -99,7 +99,7 @@ class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
                  top_k: int = TOP_K, votes: int = SELECT_VOTES, index: bool = True, reasoning: bool = True,
-                 ir_dir: str | Path | None = None) -> None:
+                 ir_dir: str | Path | None = None, ui_cache: str | Path | None = None) -> None:
         """Промпт ADR-007: общий шаблон, домен и правила близнецов из профиля проекта, виды refs из манифеста.
 
         Режим CPU (docs/researches/gpu_dependence_and_cpu_fallback_study.md, раздел 7.5): `votes` — выборок
@@ -107,12 +107,13 @@ class StepGrounder:
         промпте выбора, выбор только из кандидатов (контекст ~3 тыс. токенов вместо ~10); `reasoning=False` — ответ
         выбора без рассуждения. Умолчания — промпт и ключи кеша рекорда.
 
-        `ir_dir` — IR тел методов проекта (по нему `answer_guards` видит условия возвратов); по умолчанию `data/ir`."""
+        `ir_dir` — IR тел методов проекта (по нему `answer_guards` видит условия возвратов), `ui_cache` — кеш каталога
+        UI; по умолчанию `data/ir` и `data/ui_catalog.json`."""
         self.ix = ix
         self.root = Path(targets_root)
         self.version = P.PROMPT_VERSION
         self.ui_dir = find_ui_dir(self.root, ix)
-        self.ui = build_catalog(self.root, ix, self.ui_dir)
+        self.ui = build_catalog(self.root, ix, self.ui_dir, cache_path=ui_cache)
         self.cat = HandlerCatalog(ix, self.root, self.ui, Path(ir_dir) if ir_dir else ROOT / "data" / "ir")
         emb = None
         if embedder:
