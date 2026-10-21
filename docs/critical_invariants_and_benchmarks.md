@@ -4,6 +4,7 @@
 **Статус:** Утверждено техническим комитетом  
 **Целевой скор калибровки S0:** $1.00000$ (инженерный: $1.0$, платформенный: $1.00000$, предельный: $1.00000000$, абсолютный: $1.000000000000$)  
 **Область действия:** `tests/`, `engine/state.py`, `engine/pipeline.py`, `tests/test_contract_and_quality.py`  
+**Устарело частично (21.10):** модель состояния `engine/state.py` и `tests/test_state.py` удалены вместе с legacy-контуром (PR #110); изоляцию сценария даёт `DatabaseState.fork()` в M4, его задержку проверяют `tests/test_db.py` и `tests/test_db_stress.py`.  
 **Связанные спецификации:** [ADR-005](adr/adr-005_scenario_execution_pipeline.md), [environment_guide.md](environment_guide.md), [testing_system.md](testing_system.md)
 
 ---

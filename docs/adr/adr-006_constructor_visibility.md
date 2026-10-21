@@ -105,7 +105,7 @@ RuntimeRules(constructors=...)        run_eval.py --ctors ...
 ## Реализация
 
 - `engine/projection.py` (M5), функция `project_constructors`. На каждом шаге убирает рёбра `calls` в конструктор, затем `executes` конструкторов, которые не стоят источником ни одного ребра шага. Каждое удаление пишется в журнал решений как `discard` на том же шаге (`FRAMEWORK_RULE`, `R7:ctor_visibility:no_calls_into_ctor` или `R7:ctor_visibility:no_project_call`), поэтому `decisions.json` совпадает с ответом. Конструктор виден в сценарии, если виден хотя бы на одном шаге.
-- Вызов — в `engine/pipeline.py` сразу после исполнителя шага, одинаково для M4 и `legacy`, до R19.
+- Вызов — в `engine/pipeline.py` сразу после исполнителя шага и правила Spring Security, до R19 (с 21.10 исполнитель один — M4; legacy удалён).
 - При загрузке Hibernate в режиме `caller_only` исполнитель запускает все конструкторы с непустым телом (`EntityFacts.allowed_ctors`), в ответ их отбирает проекция. В режиме `all` — статический список, как до ADR.
 
 ## Критерии приёмки

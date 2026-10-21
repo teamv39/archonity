@@ -2,6 +2,16 @@
 
 Статус: рабочий план на 16.10, пишется перед кодом по требованию [ADR-005](../docs/adr/adr-005_scenario_execution_pipeline.md) ("Точные поля фиксируются в archparse/README.md до начала реализации M4"). Отвечает только за **M2: разбор тел методов**. Не трогает M1 (заземление шагов), M3 (состояние), M4 (исполнитель) — это Миша/Денис.
 
+**Действует с 21.10:** контракты разделов 3.5 (`data/entity_ir.json`) и 3.6 (`data/ir/<module>.json`). Разделы 0–3.4 и план — история: пул IR (`data/pool_ir.json`) и legacy-контур, для которого он делался (`rules.py`, `graph/builder.py`), удалены 21.10 (PR #110). Запуск — пути обязательны, умолчаний под Train Ticket нет (из `archparse/`, JDK 17+):
+
+```powershell
+$T = "../hackaton/tt-challenge/targets/trainticket"; $K = "../hackaton/tt-challenge/skeleton/trainticket.json.gz"
+.\gradlew.bat -q run "--args=--mode bodies --targets-dir $T --skeleton $K -o ../data/ir"
+.\gradlew.bat -q run "--args=--mode entities --targets-dir $T --skeleton $K -o ../data/entity_ir.json"
+```
+
+Тип по простому имени после своего модуля ищется в модулях, от которых тот зависит (рёбра `depends_on` скелета; без зависимостей — общие библиотеки проекта).
+
 ## 0. Контекст: от чего отталкиваемся
 
 Сейчас `engine/` (Денис) даёт **0.879** на платформе. Это не академический closure, а обход скелета (`engine/graph/builder.py`) с ручными правилами отсева (`engine/rules.py`): флаги сценария (`ScenarioProfile.train_mode`, `has_food`, `has_assurance`, `has_refused_cancel`...) вычисляются regex'ом по тексту сценария и дальше вручную выключают целые методы/рёбра по подстроке в ID (`"CancelServiceImpl" in method_id and "cancelFromOrder" in method_id`).
@@ -130,7 +140,7 @@ if (orderResult.getStatus() == 1) {
 
 ### 3.5. Сущности и вызовы репозиториев: `data/entity_ir.json`
 
-Второй артефакт archparse, режим `--mode entities` (`EntityScanner`), запуск: `& .\gradlew.bat run --args="--mode entities"`. Нужен правилам R7 и R10 в движке ([annotation_rules.md](../docs/annotation_rules.md)): когда Hibernate создаёт экземпляр сущности, исполняется её конструктор без аргументов; таблица ленивой коллекции идёт в ответ, только если метод загрузил коллекцию сам. Хардкода `Order` в `builder.py` больше нет, все такие решения идут через этот файл. Сканируются все `src/main/java` проекта, а не пул.
+Второй артефакт archparse, режим `--mode entities` (`EntityScanner`), запуск — в начале файла. Нужен правилам R7 и R10 в движке ([annotation_rules.md](../docs/annotation_rules.md)): когда Hibernate создаёт экземпляр сущности, исполняется её конструктор без аргументов; таблица ленивой коллекции идёт в ответ, только если метод загрузил коллекцию сам. Хардкода `Order` в `builder.py` больше нет, все такие решения идут через этот файл. Сканируются все `src/main/java` проекта, а не пул.
 
 ```json
 {
@@ -177,7 +187,7 @@ if (orderResult.getStatus() == 1) {
 
 ### 3.6. IR тел всех методов (M2): `data/ir/<module>.json`
 
-Контракт M2 из ADR-005 для исполнителя M4. Режим `--mode bodies` (по умолчанию), запуск: `& .\gradlew.bat run`. Покрывает все методы скелета с телом (1196 из 1538: остальные абстрактные), включая конструкторы (`#<init>`) и методы анонимных классов (`Foo$1#bar`). Устаревший `TargetPool` и дублирующий `AstAnalyzer` удалены, общие утилиты AST вынесены в `AstUtils`, а резолюция перечислений в `EnumResolver` обобщена на все `enum` проекта. Режим `--mode entities` формирует `data/entity_ir.json`.
+Контракт M2 из ADR-005 для исполнителя M4. Режим `--mode bodies` (по умолчанию), запуск — в начале файла. Покрывает все методы скелета с телом (1196 из 1538: остальные абстрактные), включая конструкторы (`#<init>`) и методы анонимных классов (`Foo$1#bar`). Устаревший `TargetPool` и дублирующий `AstAnalyzer` удалены, общие утилиты AST вынесены в `AstUtils`, а резолюция перечислений в `EnumResolver` обобщена на все `enum` проекта. Режим `--mode entities` формирует `data/entity_ir.json`.
 
 Файл на модуль:
 
