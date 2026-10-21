@@ -7,6 +7,7 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from engine import attention
 from engine.adapters.skeleton import SkeletonIndex, default_db_dump, load_json
 from engine.adapters.submission import SubmissionAdapter
 from engine.decisions import DecisionLedger
@@ -101,6 +102,8 @@ class ArchonityPipeline:
         self.evidence_logger = EvidenceLogger(self.index, targets_root=self.targets_root)
         self.ledger = DecisionLedger()
         self.step_requests: dict[str, list[dict[str, Any]]] = {}
+        # Р2: исключение на шаге или в сценарии не роняет прогон, а пишется сюда (engine/attention.py)
+        self.failures: list[dict[str, Any]] = []
 
         self.m1 = StepGrounder(self.index, self.targets_root, **(cfg.m1_options or {}))
         ir_dir = Path(cfg.method_ir_dir) if cfg.method_ir_dir else ROOT / "data" / "ir"
@@ -125,17 +128,24 @@ class ArchonityPipeline:
 
         for st in scenario_dict.get("steps") or []:
             self.ledger.begin_step(st.get("n"))
-            step_req = session.ground(st)
-            # R20: обработчик, который Spring вызвать не может, — шаг через рабочий обработчик того же
-            # контроллера. Замена после заземления: история шагов в промпте M1 и кеш LLM не меняются.
-            if self.rules.unbound_handlers == "rebind":
-                step_req = self.m1.rebind(step_req) or step_req
-            self.step_requests[sid].append(step_req.to_dict())
+            stage = "M1"
+            try:
+                step_req = session.ground(st)
+                # R20: обработчик, который Spring вызвать не может, — шаг через рабочий обработчик того же
+                # контроллера. Замена после заземления: история шагов в промпте M1 и кеш LLM не меняются.
+                if self.rules.unbound_handlers == "rebind":
+                    step_req = self.m1.rebind(step_req) or step_req
+                self.step_requests[sid].append(step_req.to_dict())
 
-            m, c, r, d = self.m4.run_step(step_req, passenger, ledger=self.ledger)
-            apply_spring_security(self.index, m, c, d, self.ledger)
-            # M5: конструктор в ответе, только если из него исполнился вызов проекта (R7, ADR-006)
-            project_constructors(m, c, r, d, self.rules.constructors, self.ledger)
+                stage = "M4"
+                m, c, r, d = self.m4.run_step(step_req, passenger, ledger=self.ledger)
+                stage = "M5"
+                apply_spring_security(self.index, m, c, d, self.ledger)
+                # M5: конструктор в ответе, только если из него исполнился вызов проекта (R7, ADR-006)
+                project_constructors(m, c, r, d, self.rules.constructors, self.ledger)
+            except Exception as e:  # noqa: BLE001 — Р2: шаг со сбоем не даёт рёбер, остальные шаги идут дальше
+                self._fail(sid, st.get("n"), stage, e)
+                continue
             all_methods |= m
             all_calls |= c
             all_remote |= r
@@ -161,16 +171,27 @@ class ArchonityPipeline:
         )
 
         for sp in sorted(scenario_paths, key=lambda p: str(p)):
-            s_dict = load_json(sp)
-            sid = s_dict["id"]
-            methods, calls, remote, data = self.run_scenario(s_dict)
-            adapter.add_scenario_edges(
-                scenario_id=sid,
-                methods=methods,
-                calls=calls,
-                remote=remote,
-                data=data,
-            )
+            sid = Path(sp).stem
+            try:
+                s_dict = load_json(sp)
+                sid = s_dict["id"]
+                methods, calls, remote, data = self.run_scenario(s_dict)
+                adapter.add_scenario_edges(
+                    scenario_id=sid,
+                    methods=methods,
+                    calls=calls,
+                    remote=remote,
+                    data=data,
+                )
+            except Exception as e:  # noqa: BLE001 — Р2: блок сценария со сбоем пустой, остальные сценарии идут дальше
+                self._fail(sid, None, "сценарий", e)
+                # Пустой блок лучше отсутствующего: вид рёбер, которого нет и в эталоне, даёт 1 (README организаторов)
+                adapter.scenarios.setdefault(sid, [])
 
         adapter.save(output_path)
         return adapter
+
+    def _fail(self, sid: str | None, step: Any, stage: str, exc: Exception) -> None:
+        f = attention.failure(sid, step, stage, exc)
+        self.failures.append(f)
+        LOGGER.error("сбой %s, шаг %s (%s): %s", sid, step, stage, f["error"], exc_info=exc)

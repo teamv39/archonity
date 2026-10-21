@@ -12,7 +12,9 @@ import glob
 import json
 import subprocess
 import sys
+import traceback
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 # Добавляем корень проекта в путь поиска модулей
 ROOT_DIR = Path(__file__).resolve().parent
@@ -24,7 +26,10 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
-from engine.pipeline import ArchonityPipeline
+from engine import attention  # только стандартная библиотека: рамка Р2 работает, даже если конвейер не импортируется
+
+if TYPE_CHECKING:
+    from engine.pipeline import ArchonityPipeline
 
 
 def parse_args() -> argparse.Namespace:
@@ -231,36 +236,10 @@ def print_evaluation_summary(eval_res: dict) -> None:
     print("=" * 65 + "\n")
 
 
-def main() -> None:
-    args = parse_args()
+def build_pipeline(args: argparse.Namespace, m1_options: dict) -> ArchonityPipeline:
+    from engine.pipeline import ArchonityPipeline
 
-    scenarios = resolve_scenario_paths(args.scenarios)
-    if not scenarios:
-        print("Ошибка: не найдено ни одного файла сценариев!", file=sys.stderr)
-        sys.exit(1)
-
-    print(f"Archonity Pipeline Runner")
-    print(f"Скелет:     {args.skeleton}")
-    print(f"Исходники:  {args.targets}")
-    print(f"Сценариев:  {len(scenarios)} ({', '.join(s.stem for s in scenarios)})")
-    print(f"Выход:      {args.out}")
-    print("-" * 60)
-
-    from engine.grounding.llm import LLMClient
-
-    m1_options = {
-        "embedder": None if args.no_embed else "qwen3-4b",
-        "allow_embed_model": args.embed_model == "on" and not args.require_cache,
-        "llm": None if args.no_llm else LLMClient(use_server=not (args.no_server or args.require_cache),
-                                                  refresh=args.no_cache and not args.require_cache,
-                                                  timeout=args.llm_timeout,
-                                                  **({"cache_dir": args.llm_cache} if args.llm_cache else {})),
-        "votes": args.select_votes,
-        "top_k": args.m1_top_k,
-        "index": args.m1_index == "on",
-        "reasoning": args.select_reasoning == "on",
-    }
-    pipeline = ArchonityPipeline(
+    return ArchonityPipeline(
         skeleton_path=args.skeleton,
         targets_root=args.targets,
         constructors=args.ctors,
@@ -275,18 +254,25 @@ def main() -> None:
         m4_success_retry=args.m4_success_retry,
     )
 
-    print("Генерация графов для сценариев...")
-    adapter = pipeline.run_all(scenarios, output_path=args.out)
-    print(f"Сабмишн успешно сохранен в: {args.out}")
-    from engine.grounding.report import format_m1_report, m1_report as make_m1_report
 
-    llm = m1_options["llm"]
-    emb = pipeline.m1.retriever.embedder
-    m1_report = make_m1_report(pipeline.step_requests, llm.stats if llm is not None else None,
-                               getattr(emb, "misses", 0), llm.requested if llm is not None else ())
-    with open(args.out.parent / "m1_report.json", "w", encoding="utf-8") as f:
-        json.dump(m1_report, f, ensure_ascii=False, indent=1)
-    print(format_m1_report(m1_report))
+def write_empty_submission(scenarios: list[Path], out: Path) -> None:
+    """Последний рубеж Р2: конвейер не собрался — блок `{"edges": []}` на каждый сценарий, проект — из файлов."""
+    project, ids = "", []
+    for sp in scenarios:
+        try:
+            sc = json.loads(sp.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            sc = {}
+        project = project or sc.get("project", "")
+        ids.append(sc.get("id") or sp.stem)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with open(out, "w", encoding="utf-8", newline="\n") as f:
+        json.dump({"project": project, "scenarios": {sid: {"edges": []} for sid in sorted(ids)}}, f,
+                  ensure_ascii=False, indent=1)
+
+
+def write_artifacts(args: argparse.Namespace, pipeline: ArchonityPipeline, adapter) -> None:
+    """Отчёты рядом с выдачей и синхронизация visualizer/. Выдачу не трогают: она уже записана."""
     print_m4_stats(pipeline.m4.stats())
 
     canonical_out = args.out.parent / "canonical_graph.json"
@@ -325,37 +311,139 @@ def main() -> None:
             shutil.copy(args.out, vis_data_dir / "submission.json")
             print(f"Файлы базово синхронизированы с {vis_data_dir} (export_all: {e})")
 
-    # Оценка через evaluate_golden.py
-    if not args.no_eval and args.gold.is_file():
-        eval_script = ROOT_DIR / "hackaton" / "tt-challenge" / "platform" / "evaluate_golden.py"
-        if eval_script.is_file():
-            print("\nЗапуск официального валидатора evaluate_golden.py...")
-            cmd = [
-                sys.executable,
-                str(eval_script),
-                str(args.gold),
-                str(args.out),
-                "--json",
-            ]
-            res = subprocess.run(cmd, capture_output=True, text=True)
-            if res.returncode in (0, 3):
-                try:
-                    eval_data = json.loads(res.stdout)
-                    print_evaluation_summary(eval_data)
-                except json.JSONDecodeError:
-                    print(res.stdout)
-            else:
-                print("Ошибка при запуске evaluate_golden.py:", file=sys.stderr)
-                print(res.stderr, file=sys.stderr)
-                print(res.stdout)
 
+def evaluate(args: argparse.Namespace) -> None:
+    """Локальная оценка evaluate_golden.py. Он принимает только сценарии эталона (`scenarios_all`), поэтому на
+    других (закрытые сценарии, eval/own) оценка пропускается, а не печатает ошибку."""
+    eval_script = ROOT_DIR / "hackaton" / "tt-challenge" / "platform" / "evaluate_golden.py"
+    if args.no_eval or not args.gold.is_file() or not eval_script.is_file():
+        return
+    gold = json.loads(args.gold.read_text(encoding="utf-8"))
+    known = set(gold.get("scenarios_all") or []) | set(gold.get("scenarios") or {})
+    ids = set(json.loads(args.out.read_text(encoding="utf-8")).get("scenarios") or {})
+    if unknown := sorted(ids - known):
+        print(f"\nЛокальная оценка пропущена: сценариев {', '.join(unknown)} нет в эталоне {args.gold.name}")
+        return
+    print("\nЗапуск официального валидатора evaluate_golden.py...")
+    cmd = [sys.executable, str(eval_script), str(args.gold), str(args.out), "--json"]
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    if res.returncode in (0, 3):
+        try:
+            print_evaluation_summary(json.loads(res.stdout))
+        except json.JSONDecodeError:
+            print(res.stdout)
+    else:
+        print("Ошибка при запуске evaluate_golden.py:", file=sys.stderr)
+        print(res.stderr, file=sys.stderr)
+        print(res.stdout)
+
+
+def main() -> None:
+    args = parse_args()
+
+    scenarios = resolve_scenario_paths(args.scenarios)
+    if not scenarios:
+        print("Ошибка: не найдено ни одного файла сценариев!", file=sys.stderr)
+        sys.exit(1)
+
+    print(f"Archonity Pipeline Runner")
+    print(f"Скелет:     {args.skeleton}")
+    print(f"Исходники:  {args.targets}")
+    print(f"Сценариев:  {len(scenarios)} ({', '.join(s.stem for s in scenarios)})")
+    print(f"Выход:      {args.out}")
+    print("-" * 60)
+
+    # Р2: выдача строится всегда, сбой виден в рамке последней строкой и в ATTENTION.txt, код выхода 0
+    attention.clear(args.out)
+    failures: list[dict] = []
+    m1_options: dict = {}
+    pipeline = adapter = None
+    try:
+        from engine.grounding.llm import LLMClient
+
+        m1_options = {
+            "embedder": None if args.no_embed else "qwen3-4b",
+            "allow_embed_model": args.embed_model == "on" and not args.require_cache,
+            "llm": None if args.no_llm else LLMClient(use_server=not (args.no_server or args.require_cache),
+                                                      refresh=args.no_cache and not args.require_cache,
+                                                      timeout=args.llm_timeout,
+                                                      **({"cache_dir": args.llm_cache} if args.llm_cache else {})),
+            "votes": args.select_votes,
+            "top_k": args.m1_top_k,
+            "index": args.m1_index == "on",
+            "reasoning": args.select_reasoning == "on",
+        }
+        pipeline = build_pipeline(args, m1_options)
+    except Exception as e:  # noqa: BLE001
+        traceback.print_exc()
+        failures.append(attention.failure(None, None, "сборка конвейера", e))
+        print("Повтор сборки в аварийном режиме: M1 без LLM и эмбеддера", file=sys.stderr)
+        m1_options = {**m1_options, "llm": None, "embedder": None, "allow_embed_model": False}
+        try:
+            pipeline = build_pipeline(args, m1_options)
+        except Exception as e2:  # noqa: BLE001
+            traceback.print_exc()
+            failures.append(attention.failure(None, None, "сборка конвейера без LLM", e2))
+
+    if pipeline is not None:
+        print("Генерация графов для сценариев...")
+        try:
+            adapter = pipeline.run_all(scenarios, output_path=args.out)
+            print(f"Сабмишн успешно сохранен в: {args.out}")
+        except Exception as e:  # noqa: BLE001
+            traceback.print_exc()
+            failures.append(attention.failure(None, None, "прогон сценариев", e))
+        failures[:0] = pipeline.failures
+    empty_fallback = adapter is None
+    if empty_fallback:
+        write_empty_submission(scenarios, args.out)
+        print(f"Записан аварийный сабмишн с пустыми блоками: {args.out}", file=sys.stderr)
+
+    m1_report = None
+    if pipeline is not None:
+        try:
+            from engine.grounding.report import format_m1_report, m1_report as make_m1_report
+
+            llm = m1_options.get("llm")
+            emb = pipeline.m1.retriever.embedder
+            m1_report = make_m1_report(pipeline.step_requests, llm.stats if llm is not None else None,
+                                       getattr(emb, "misses", 0), llm.requested if llm is not None else ())
+            print(format_m1_report(m1_report))
+        except Exception as e:  # noqa: BLE001
+            traceback.print_exc()
+            failures.append(attention.failure(None, None, "отчёт M1", e))
+        if adapter is not None:
+            try:
+                write_artifacts(args, pipeline, adapter)
+            except Exception as e:  # noqa: BLE001
+                traceback.print_exc()
+                failures.append(attention.failure(None, None, "отчёты прогона", e))
+    try:
+        evaluate(args)
+    except Exception as e:  # noqa: BLE001
+        print(f"Локальная оценка не выполнена: {type(e).__name__}: {e}", file=sys.stderr)
+
+    if m1_report is not None:
+        with open(args.out.parent / "m1_report.json", "w", encoding="utf-8") as f:
+            json.dump({**m1_report, "failures": failures}, f, ensure_ascii=False, indent=1)
+
+    code = 0
     if args.require_cache:
         from engine.grounding.report import cache_only
 
-        if not cache_only(m1_report):
+        if m1_report is None or not cache_only(m1_report):
             print("--require-cache: выдача построена не целиком из кеша LLM (m1_report.json) — код выхода 2",
                   file=sys.stderr)
-            sys.exit(2)
+            code = 2
+
+    if empty_fallback or attention.needed(failures, m1_report):
+        attention.write(failures, m1_report, args.out, empty_fallback=empty_fallback)
+        text = "\n".join(attention.lines(failures, m1_report, args.out, empty_fallback=empty_fallback))
+        sys.stdout.flush()
+        print(text, file=sys.stderr)
+        sys.stderr.flush()
+        print(text)
+    sys.exit(code)
 
 
 if __name__ == "__main__":
