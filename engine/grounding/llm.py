@@ -168,6 +168,7 @@ class LLMStats:
     seconds: float = 0.0
     prompt_tokens: int = 0
     completion_tokens: int = 0
+    server_start_seconds: float = 0.0  # от запуска llama-server до /health (ресурсы прогона)
 
     def __str__(self) -> str:
         return (f"кеш {self.hits}, вызовов {self.calls} за {self.seconds:.0f} с "
@@ -290,6 +291,7 @@ class LLMClient:
                       file=sys.stderr)
                 return False
             if _health(self.url):
+                self.stats.server_start_seconds += time.time() - t0
                 print(f"[llm] сервер готов за {time.time() - t0:.0f} с", file=sys.stderr)
                 return True
             time.sleep(2)
