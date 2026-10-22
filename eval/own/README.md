@@ -77,3 +77,28 @@ python run_eval.py --scenarios "eval/own/scenarios/*.json" --no-eval -o output/o
 | X5–X8 (`X[5-8].json`) | `f1a12b5ee91a42b5cf9c44b61331dcd1b3220cb321b29c32c584bce0eb99650d` |
 
 Выдачи X1–X4 и X5–X8 из кеша совпали с прогонами с сервером LLM.
+
+## Проверка M4
+
+Исход каждого шага у M4 против поля `outcome` разметки. Прогон — сам `run_eval.py` с теми же ключами, выдача та же (sha256 выше):
+
+```bash
+python scripts/check_own_outcomes.py -o output/own-outcomes [--show all] -- --require-cache
+```
+
+Исход M4 — статус обёртки ответа обработчика шага: `success`, `failure`, `unknown` (статус не вычислен), `null`, `value` (ответ не обёртка). Шаг с неверным обработчиком M1 считается ошибкой M1. Построчно — `outcomes.json` в папке прогона.
+
+Замер 22.10 (X1–X8, 83 шага): совпало 65, ошибки M1 — 5, исход M4 другой — 6, исход M4 неизвестен — 7. После правки X6.8 совпало 66, после правки поля дубликата через remote_call (X7.4) — 67.
+
+| Шаг | Разметка | M4 | Причина |
+|---|---|---|---|
+| X4.7, X8.13 | success | failure | расхождения нет: «пусто» в сервисе — статус 0 `No Content…`, ветка та же |
+| X6.8 | success | failure | исправлено 22.10: разбор имён производных запросов Spring Data не понимал слово между глаголом и `By` (`removeRouteById`), удаления в мире не было, `findById` находил маршрут. Разбор теперь как `PartTree` (`world.derived_props`, Rust `world.rs`), новых имён 4: ещё `deleteFoodOrderByOrderId` (2 сервиса), `removeAssuranceByOrderId`. Рёбра X1–X8, S0–S7 и `handler_sweep` не изменились: после удаления обе ветки `deleteRoute` дают одни рёбра, меняется только ответ |
+| X5.4, X7.4 | refused | unknown | X7.4 исправлено 22.10, X5.4 — по рёбрам: поле дубликата (ADR-007, решение 6) искалось только в своём сервисе, а консоль администратора пересылает тело запроса сервису, который ищет дубликат. В X5.3 пользователь сохранялся с неизвестным именем, и в X5.4 `findByUserName` не мог решить, есть ли совпадение: исполнялись оба плеча. Теперь `_dedupe_fields` идёт и через remote_call. В X5.4 `saveUser` отвечает `USER HAS ALREADY EXISTS`, но статус ответа `addUser` всё ещё неизвестен: `ResponseEntity.status(..).body(..)` в `registerUser` не разобран (2 места в проекте, рёбер не меняет) |
+| X6.3 | success | failure | ссылка `trip: first_of_step_2` берёт первый рейс списка, а не G9998 из `tripId`: станции и маршрут чужие |
+| X4.1 | refused | success | неверный пароль: отказ бросает `AuthenticationManager.authenticate` (библиотека), M4 его не видит |
+| X1.7 | other | success | «доплатите разницу» (status 2): у M1 нет такого исхода, M4 идёт по успеху, лишний каскад перебронирования |
+| X1.9 | refused | unknown | расчёт возврата для заказа в статусе CHANGE: статус заказа после `rebook`/`payDifference` неизвестен |
+| X1.13 | success | unknown | следствие ошибки M1 в X1.11 (`createNewOrder`) и `expected_outcome=refused` у M1 |
+| X4.2, X4.3, X5.3 | — | unknown | рёбра по разметке, статус ответа `registerUser` не вычислен (`ResponseEntity` без обёртки) |
+| X7.4 | refused | unknown | дубликат ищет нативный SQL, условие неизвестно |

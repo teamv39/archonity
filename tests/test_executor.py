@@ -62,6 +62,12 @@ class TestStructure:
     def test_derived_query_and_native_sql(self) -> None:
         assert derived_props("findByAccountIdAndStatus") == ("find", ["accountId", "status"])
         assert derived_props("save") is None
+        # Слово между глаголом и By, как в PartTree Spring Data
+        assert derived_props("removeRouteById") == ("remove", ["id"])
+        assert derived_props("deleteFoodOrderByOrderId") == ("delete", ["orderId"])
+        assert derived_props("findAllByAccountId") == ("find", ["accountId"])
+        assert derived_props("findFirst10ByStatusOrderByCreatedAsc") == ("find", ["status"])
+        assert derived_props("findAll") is None
         assert native_query_conds("SELECT * FROM t WHERE route_id IN ?1 AND train_type IN ?2") == [
             ("route_id", 0), ("train_type", 1)]
 
