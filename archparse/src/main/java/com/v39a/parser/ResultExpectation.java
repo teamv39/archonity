@@ -6,7 +6,6 @@ import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.stmt.*;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Чего ждёт успешный путь метода от результата чтения репозитория.
@@ -14,7 +13,8 @@ import java.util.Optional;
  * Результат проверяется условием (== null, isPresent(), isEmpty(), size()). Если плечо «строка найдена»
  * всегда заканчивается ошибкой, а плечо «не найдена» нет, успешный путь ждёт пустой результат (EMPTY):
  * так устроены проверки «уже существует» перед созданием. Обратный случай даёт ROWS.
- * Ошибка плеча: throw, return new Response<>(0, ...) или LOGGER.error/warn перед return.
+ * Ошибка плеча: throw или LOGGER.error/warn перед return. Код статуса обёртки ответа разбор не знает (его выводит M4
+ * из UI и кода, envelope): return без лога плечо ошибкой не делает.
  * Всё остальное — UNKNOWN, тогда решает состояние БД на стороне движка.
  */
 final class ResultExpectation {
@@ -200,9 +200,9 @@ final class ResultExpectation {
     }
 
     /**
-     * Последовательность операторов — путь отказа: throw, return new Response<>(0, ...) или LOGGER.error/warn
-     * на верхнем уровне. Лог ошибки считается отказом и при return new Response<>(1, ...) («Trip already exists»)
-     * и без return. Допущение о соглашении проекта: путь отказа пишет error/warn (так во всех сервисах Train Ticket).
+     * Последовательность операторов — путь отказа: throw или LOGGER.error/warn на верхнем уровне, в том числе
+     * перед return с любым значением и без return. Допущение о соглашении проекта: путь отказа пишет error/warn.
+     * До 22.10 отказом считался и return new Response<>(0, ...) — имя класса и код статуса Train Ticket.
      */
     static boolean listError(List<Statement> stmts) {
         for (Statement s : stmts) {
@@ -210,8 +210,8 @@ final class ResultExpectation {
             if (s instanceof ExpressionStmt es && es.getExpression() instanceof MethodCallExpr mc && isErrorLog(mc)) {
                 return true;
             }
-            if (s instanceof ReturnStmt r) {
-                return isErrorReturn(r);
+            if (s instanceof ReturnStmt) {
+                return false;
             }
             if (s instanceof IfStmt i && i.getElseStmt().isPresent()
                     && endsAbruptly(i.getThenStmt()) && endsAbruptly(i.getElseStmt().get())) {
@@ -225,19 +225,6 @@ final class ResultExpectation {
         String name = mc.getNameAsString();
         return (name.equals("error") || name.equals("warn"))
                 && mc.getScope().map(sc -> sc.toString().toLowerCase().contains("log")).orElse(false);
-    }
-
-    private static Optional<Integer> responseStatus(ReturnStmt r) {
-        if (r.getExpression().isPresent() && r.getExpression().get() instanceof ObjectCreationExpr oce
-                && oce.getType().getNameAsString().equals("Response") && !oce.getArguments().isEmpty()
-                && oce.getArgument(0) instanceof IntegerLiteralExpr lit) {
-            return Optional.of(lit.asNumber().intValue());
-        }
-        return Optional.empty();
-    }
-
-    private static boolean isErrorReturn(ReturnStmt r) {
-        return responseStatus(r).map(v -> v == 0).orElse(false);
     }
 
     static boolean endsAbruptly(Statement s) {

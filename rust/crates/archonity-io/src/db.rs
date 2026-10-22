@@ -296,52 +296,13 @@ pub fn load_db_dump(gz_path: &Path) -> Result<DatabaseState> {
         Ok(DatabaseState { tables, table_aliases: aliases, table_columns: table_cols })
 }
 
-/// Поле `context` скелета (или `context/README.md`): пассажир, даты, баланс (`parse_context`).
+/// Поле `context` скелета (или `context/README.md`): пассажир до шага входа (`parse_context`). Даты и баланс разбирались
+/// здесь до 22.10, но их никто не читал.
 pub fn parse_context(text: &str) -> IndexMap<String, Json> {
     let mut info = IndexMap::new();
-    let month = |name: &str| -> Option<&'static str> {
-        Some(match name {
-            "january" => "01",
-            "february" => "02",
-            "march" => "03",
-            "april" => "04",
-            "may" => "05",
-            "june" => "06",
-            "july" => "07",
-            "august" => "08",
-            "september" => "09",
-            "october" => "10",
-            "november" => "11",
-            "december" => "12",
-            _ => return None,
-        })
-    };
-    for (key, lead) in [("travel_date", "booked for"), ("system_date", "system clock is")] {
-        let re_text = Regex::new(&format!(r"(?i){lead}\s+([0-9]{{1,2}})\s+([A-Za-z]+)\s+([0-9]{{4}})")).unwrap();
-        if let Some(m) = re_text.captures(text) {
-            let day: i64 = m[1].parse().unwrap_or(0);
-            if let Some(mo) = month(&m[2].to_lowercase()) {
-                info.insert(key.to_string(), Json::String(format!("{}-{}-{:02}", &m[3], mo, day)));
-            }
-        } else {
-            let re_iso = Regex::new(&format!(r"(?i){lead}\s+([0-9]{{4}}-[0-9]{{2}}-[0-9]{{2}})")).unwrap();
-            if let Some(m) = re_iso.captures(text) {
-                info.insert(key.to_string(), Json::String(m[1].to_string()));
-            }
-        }
-    }
     let user = Regex::new(r"(?i)pre-registered user\s+([a-zA-Z0-9_-]+)").unwrap();
     if let Some(m) = user.captures(text) {
         info.insert("user_name".to_string(), Json::String(m[1].to_string()));
-    }
-    let bal = Regex::new(r"(?i)(?:account balance|balance)\s+([0-9]+(?:[\s,][0-9]{3})*(?:\.[0-9]+)?)").unwrap();
-    if let Some(m) = bal.captures(text) {
-        let t = m[1].replace([' ', ','], "");
-        if let Ok(f) = t.parse::<f64>() {
-            if let Some(n) = serde_json::Number::from_f64(f) {
-                info.insert("balance".to_string(), Json::Number(n));
-            }
-        }
     }
     info
 }

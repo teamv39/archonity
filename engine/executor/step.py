@@ -132,8 +132,6 @@ class StepExecutor:
         if not isinstance(ent, Obj) or depth > 2:
             return UNKNOWN
         names = list(self.schema.id_fields(kind)) + ["id"]
-        if kind == "user":
-            names = ["userId", "accountId", "id"]
         for name in names:
             v = ent.fields.get(name, UNKNOWN)
             if v is UNKNOWN or v is None:

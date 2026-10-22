@@ -546,9 +546,6 @@ impl StepCore {
         }
         let mut names: Vec<String> = self.schema.id_fields(kind);
         names.push("id".to_string());
-        if kind == "user" {
-            names = vec!["userId".into(), "accountId".into(), "id".into()];
-        }
         for name in &names {
             let v = o.borrow().fields.get(name).cloned().unwrap_or(Value::Unknown);
             if v.is_unknown() || v.is_null() {

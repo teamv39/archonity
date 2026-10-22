@@ -1083,8 +1083,8 @@
     "repository" : "FoodOrderRepository",
     "entity" : "foodsearch.entity.FoodOrder",
     "operation" : "READ",
-    "expects" : "ROWS",
-    "expects_reason" : "line 182: if (fo == null): absent arm fails"
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 182: if (fo == null): no failing arm"
   }, {
     "file" : "ts-food-service/src/main/java/foodsearch/service/FoodServiceImpl.java",
     "line" : 193,
@@ -2439,8 +2439,8 @@
     "repository" : "TrainFoodRepository",
     "entity" : "trainFood.entity.TrainFood",
     "operation" : "READ",
-    "expects" : "ROWS",
-    "expects_reason" : "line 55: if (tf == null): absent arm fails",
+    "expects" : "UNKNOWN",
+    "expects_reason" : "line 55: if (tf == null): no failing arm",
     "collections_loaded" : [ ],
     "collections_loaded_reason" : [ ]
   }, {
