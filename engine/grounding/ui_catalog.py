@@ -25,6 +25,7 @@ import tree_sitter as ts
 import tree_sitter_javascript as tsj
 
 from engine.adapters.skeleton import SkeletonIndex, path_segs
+from engine.grounding.request import canon_value
 
 logger = logging.getLogger(__name__)
 
@@ -78,6 +79,19 @@ class UIRequest:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+    def body_groups(self) -> list[dict[str, Any]]:
+        """Поля только под условием (`body_opt`), сгруппированные по общему условию, и литералы, которые UI ставит,
+        только когда это условие верно (`body_cond`): `foodType = 2` внутри «еда выбрана»."""
+        by_guard: dict[tuple[str, ...], list[str]] = {}
+        for o in self.body_opt:
+            by_guard.setdefault(tuple(o["guards"]), []).append(o["field"])
+        out = []
+        for guards, fields in by_guard.items():
+            on = [[c["field"], v] for c in self.body_cond
+                  if all(g in c["guards"] for g in guards) and (v := canon_value(c["value"])) is not None]
+            out.append({"fields": fields, "on": on})
+        return out
 
 
 # ---------------------------------------------------------------- узлы AST

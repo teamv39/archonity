@@ -17,9 +17,10 @@ from pathlib import Path
 from typing import Any
 
 from engine.executor.envelope import Envelope
-from engine.executor.interpreter import Interpreter, Sink
+from engine.executor.interpreter import Interpreter, Sink, default_value
 from engine.executor.schema import EntitySchema, simple_name
 from engine.executor.values import UNKNOWN, EnumV, ListV, Obj, OptionalV, Wrapper
+from engine.grounding.request import group_sent
 
 _REF = re.compile(r"^(first|second|new)_of_step_(\d+)$")
 _WORDY = re.compile(r"^[A-Za-z][A-Za-z ,.'-]*$")
@@ -35,6 +36,7 @@ class StepExecutor:
         self.schema = EntitySchema(index)
         self.it = Interpreter(index, rules, Path(ir_dir), Path(targets_root) if targets_root else None)
         self._body_src: dict[str, str] = {}
+        self._body_groups: list[dict[str, Any]] = []
         self.results: dict[int, Any] = {}
         self.current_user: str | None = None
         self.written: dict[str, Any] = {}
@@ -277,15 +279,19 @@ class StepExecutor:
                     defaults[name] = ""
                 elif _norm(name) == "username" and getattr(self, "_user_name", None):
                     defaults[name] = self._user_name
-        if "consigneeName" in names:
-            # UI (client_ticket_book.js) шлёт имя, телефон и вес получателя багажа одной группой, только при отмеченном
-            # «need consign». Вес 0 в тексте шага — багажа нет, полей группы в запросе нет (null). Имени и телефона в
-            # тексте нет: при весе больше 0 они неизвестны. Группу полей каталог UI пока не отдаёт (annotation_rules).
-            w = params.get("consigneeWeight")
-            if isinstance(w, (int, float)) and not isinstance(w, bool) and w <= 0:
-                defaults["consigneeName"] = defaults["consigneePhone"] = None
+        unsent: set[str] = set()
+        if getattr(self.it.rules, "ui_optional_groups", "on") != "off":
+            # Группа полей, которую UI шлёт только под общим условием (каталог UI: флажок, заполненный раздел формы).
+            # Шаг не дал ни поля группы, ни литерала её условия со значением не по умолчанию — условие ложно, полей
+            # в запросе нет, Jackson оставит умолчание поля (annotation_rules.md, «Поля под условием UI»)
+            for g in self._body_groups:
+                if not group_sent(g, params):
+                    unsent |= {n for n in g.get("fields") or () if n in names and n not in params}
         for f in fields:
             name = f["name"]
+            if name in unsent:
+                obj.fields[name] = default_value(f)
+                continue
             v = self.field_value(name, params, ents, None if name in own_ids else user, f.get("type"))
             if v is UNKNOWN and name == "id":
                 # DTO того же вида, что сущность ссылки (Consign и запись багажа): id — ID этой сущности
@@ -382,6 +388,7 @@ class StepExecutor:
         self._user_name = getattr(state, "user_name", None)
         self._verb = (getattr(step_req, "http", None) or {}).get("method")
         self._body_src = dict(getattr(step_req, "body_src", None) or {})
+        self._body_groups = list(getattr(step_req, "body_groups", None) or [])
         refs = getattr(step_req, "refs", None) or {}
         expected = getattr(step_req, "expected_outcome", "success")
         before = len(self.it.world.saved)

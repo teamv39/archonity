@@ -10,5 +10,5 @@ pub mod values;
 
 pub use edges::StepEdges;
 pub use flags::RuleFlags;
-pub use request::{ScenarioContext, StepRequest};
+pub use request::{canon_value, group_sent, BodyGroup, ScenarioContext, StepRequest};
 pub use values::Value;

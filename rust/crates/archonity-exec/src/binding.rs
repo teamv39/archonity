@@ -59,6 +59,7 @@ pub fn rebind(index: &SkeletonIndex, catalog: &HandlerCatalog, req: &StepRequest
     out.params = IndexMap::new();
     out.ui_source = None;
     out.body_src = IndexMap::new();
+    out.body_groups = Vec::new();
     out.grounding = grounding;
     Some(out)
 }
