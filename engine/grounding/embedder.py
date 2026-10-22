@@ -110,6 +110,14 @@ class STEmbedder:
         из `StepGrounder.prepare` и из `begin` — один и тот же промах."""
         return len(self._missed)
 
+    @property
+    def failure(self) -> str | None:
+        """Почему у промахов нет векторов: отказ модели (нет torch, не хватило памяти рядом с `llama server`) или
+        загрузка запрещена; None — модель не отказывала. В рамку ATTENTION (engine/attention.py) вместе с `misses`."""
+        if self._broken:
+            return self._broken
+        return None if self.allow_model else "загрузка модели выключена (--embed-model off)"
+
     def key(self, kind: str, text: str) -> str:
         raw = f"{self.spec.name}|{self.spec.fmt_version}|{kind}|{text}"
         return hashlib.sha256(raw.encode("utf-8")).hexdigest()

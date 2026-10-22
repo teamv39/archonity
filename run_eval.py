@@ -518,7 +518,8 @@ def main() -> None:
             llm = m1_options.get("llm")
             emb = pipeline.m1.retriever.embedder
             m1_report = make_m1_report(pipeline.step_requests, llm.stats if llm is not None else None,
-                                       getattr(emb, "misses", 0), llm.requested if llm is not None else ())
+                                       getattr(emb, "misses", 0), llm.requested if llm is not None else (),
+                                       getattr(emb, "failure", None))
             print(format_m1_report(m1_report))
         except Exception as e:  # noqa: BLE001
             traceback.print_exc()
