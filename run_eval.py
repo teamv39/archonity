@@ -203,8 +203,7 @@ def parse_args() -> argparse.Namespace:
         choices=("on", "off"),
         default="off",
         help="M4: ссылка first/second_of_step_N без слова позиции в тексте шага, когда запись этого вида создал шаг "
-             "раньше, чем читался список N, — ссылка на созданную запись (R22). Только --engine python (off по "
-             "умолчанию, пока нет порта в Rust)",
+             "раньше, чем читался список N, — ссылка на созданную запись (R22); Python и Rust (off по умолчанию)",
     )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
@@ -242,10 +241,7 @@ def parse_args() -> argparse.Namespace:
                         help="M1 v8: рассуждение в ответе выбора; off — ответ вдвое короче")
     parser.add_argument("--llm-cache", type=Path, default=None,
                         help="M1: папка кеша ответов LLM (по умолчанию cache/llm); для прогона другой модели")
-    args = parser.parse_args()
-    if args.ref_unpositioned == "on" and args.engine == "rust":
-        parser.error("--ref-unpositioned on пока только с --engine python: правила R22 нет в Rust-движке")
-    return args
+    return parser.parse_args()
 
 
 def resolve_scenario_paths(args_scenarios: list[str] | None, missing: list[str] | None = None) -> list[Path]:
@@ -377,6 +373,7 @@ def rust_rule_args(args: argparse.Namespace) -> list[str]:
         "ref_explicit_id": args.ref_explicit_id,
         "ref_idless_result": args.ref_idless_result,
         "ui_optional_groups": args.ui_optional_groups,
+        "ref_unpositioned": args.ref_unpositioned,
     }
     out: list[str] = []
     for name, value in rules.items():
