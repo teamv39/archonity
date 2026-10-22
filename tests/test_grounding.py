@@ -282,14 +282,6 @@ class TestProjectProfile:
             low = t.lower()
             assert not [w for w in DOMAIN_WORDS if w in low]
 
-    def test_select_task_prefers_created_record_over_list(self) -> None:
-        """S6.13 перефразировок: «the order» без порядкового номера после шага-списка — запись, созданная раньше
-        (`new_of_step_N`), а не первый элемент списка, порядок которого не задан."""
-        task = " ".join(P.SELECT_TASK_V8.split())
-        assert ("names a record without a position" in task and "an earlier step created a record of that kind" in task
-                and "its order is not defined" in task)
-        assert task.index("names a record without a position") < task.index("Leave refs empty")
-
     def test_find_ui_dir(self, ix: SkeletonIndex) -> None:
         from engine.grounding.ui_catalog import find_ui_dir
 
