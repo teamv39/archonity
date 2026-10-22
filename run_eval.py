@@ -209,6 +209,10 @@ def parse_args() -> argparse.Namespace:
                              "умолчанию: выдача та же, вызовов выбора на S0–S7 316 вместо 618); off — все выборки "
                              "(полное распределение голосов в step_requests.json)")
     parser.add_argument("--m1-top-k", type=int, default=10, help="M1: кандидатов поиска в промпте выбора")
+    parser.add_argument("--m1-verb-synonyms", choices=("on", "off"), default="on",
+                        help="M1: BM25 с синонимами частых глаголов сверх исходного словаря (VERB_SYN_EXTRA в "
+                             "engine/grounding/text.py: find, reload, retrieve…); S0–S7 и X1–X8 не меняются. off — "
+                             "только исходный словарь")
     parser.add_argument("--m1-index", choices=("on", "off"), default="on",
                         help="M1 v8: индекс всех обработчиков в системном промпте выбора; off — выбор только из "
                              "кандидатов, контекст ~3 тыс. токенов вместо ~10 (на CPU ответ быстрее в разы)")
@@ -508,6 +512,7 @@ def main() -> None:
             "votes": args.select_votes,
             "early_stop": args.select_early_stop == "on",
             "top_k": args.m1_top_k,
+            "verb_synonyms": args.m1_verb_synonyms == "on",
             "index": args.m1_index == "on",
             "reasoning": args.select_reasoning == "on",
         }

@@ -127,7 +127,7 @@ class StepGrounder:
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
                  top_k: int = TOP_K, votes: int = SELECT_VOTES, index: bool = True, reasoning: bool = True,
                  ir_dir: str | Path | None = None, ui_cache: str | Path | None = None,
-                 early_stop: bool = True) -> None:
+                 early_stop: bool = True, verb_synonyms: bool = True) -> None:
         """Промпт ADR-007: общий шаблон, домен и правила близнецов из профиля проекта, виды refs из манифеста.
 
         Режим CPU (docs/researches/gpu_dependence_and_cpu_fallback_study.md, раздел 7.5): `votes` — выборок
@@ -135,6 +135,7 @@ class StepGrounder:
         промпте выбора, выбор только из кандидатов (контекст ~3 тыс. токенов вместо ~10); `reasoning=False` — ответ
         выбора без рассуждения. Умолчания — промпт и ключи кеша рекорда. `early_stop=False` — все выборки
         голосования, даже когда исход уже ясен (полное распределение голосов для разбора шагов; выдача та же).
+        `verb_synonyms=False` — BM25 без `VERB_SYN_EXTRA` (`engine/grounding/text.py`), только с исходным `VERB_SYN`.
 
         `ir_dir` — IR тел методов проекта (по нему `answer_guards` видит условия возвратов), `ui_cache` — кеш каталога
         UI; по умолчанию `data/ir` и `data/ui_catalog.json`."""
@@ -149,7 +150,7 @@ class StepGrounder:
             from engine.grounding.embedder import QUERY_TASK, make_embedder
 
             emb = make_embedder(embedder, allow_model=allow_embed_model, task=QUERY_TASK)
-        self.retriever = Retriever(self.cat, render, emb)
+        self.retriever = Retriever(self.cat, render, emb, verb_synonyms=verb_synonyms)
         self.llm = llm
         self.top_k = top_k
         self.votes = votes

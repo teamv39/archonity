@@ -107,9 +107,11 @@ class Ranked:
 
 
 class Retriever:
-    def __init__(self, cat: HandlerCatalog, mode: str = "code_ui", embedder: Embedder | None = None) -> None:
+    def __init__(self, cat: HandlerCatalog, mode: str = "code_ui", embedder: Embedder | None = None,
+                 verb_synonyms: bool = True) -> None:
         self.cat = cat
         self.mode = mode
+        self.verb_synonyms = verb_synonyms  # VERB_SYN_EXTRA в BM25 (`run_eval.py --m1-verb-synonyms`)
         self.ids = sorted(cat.handlers)
         self.bm25 = BM25({nid: cat.bm25_tokens(nid, mode) for nid in self.ids})
         self.twins = twin_groups(cat)
@@ -119,7 +121,7 @@ class Retriever:
             self.doc_vecs = embedder.embed_docs([(cat.handlers[nid].signature, cat.render(nid, mode)) for nid in self.ids])
 
     def rank_bm25(self, query: str) -> list[str]:
-        ranked = [h for _, h in self.bm25.rank(expand_query(query_toks(query)))]
+        ranked = [h for _, h in self.bm25.rank(expand_query(query_toks(query), self.verb_synonyms))]
         return ranked + [h for h in self.ids if h not in set(ranked)]
 
     def warm_loads_model(self, queries: list[str]) -> bool:
