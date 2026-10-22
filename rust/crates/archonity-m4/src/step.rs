@@ -74,7 +74,8 @@ pub struct StepCore {
     pub sid: String,
     login_ids: IndexMap<String, Vec<String>>,
     login_blanks: BTreeSet<String>,
-    reach: HashMap<String, BTreeSet<String>>,
+    reach: HashMap<(String, bool), BTreeSet<String>>,
+    remote_of: Option<HashMap<String, BTreeSet<String>>>, // метод -> обработчики его межсервисных вызовов
     dedupe: HashMap<(String, Option<String>), Vec<String>>,
     verb: Option<String>,
     user_name: Option<String>,
@@ -110,6 +111,7 @@ impl StepExecutor {
                 login_ids,
                 login_blanks,
                 reach: HashMap::new(),
+                remote_of: None,
                 dedupe: HashMap::new(),
                 verb: None,
                 user_name: None,
@@ -832,50 +834,65 @@ impl StepCore {
         Ok(it.jackson_fill(Value::Obj(obj), module.as_deref()))
     }
 
-    /// Методы проекта, достижимые из обработчика по рёбрам calls скелета (с реализациями интерфейсов).
-    fn reachable(&mut self, handler: &str) -> BTreeSet<String> {
-        if let Some(r) = self.reach.get(handler) {
+    /// Методы проекта, достижимые из обработчика по рёбрам calls скелета (с реализациями интерфейсов);
+    /// `remote` — ещё и через межсервисные вызовы (remote_call скелета) в обработчики других сервисов.
+    fn reachable(&mut self, handler: &str, remote: Option<&Interpreter>) -> BTreeSet<String> {
+        let key = (handler.to_string(), remote.is_some());
+        if let Some(r) = self.reach.get(&key) {
             return r.clone();
         }
+        if let (Some(it), None) = (remote, &self.remote_of) {
+            let mut of: HashMap<String, BTreeSet<String>> = HashMap::new();
+            for (cs, hs) in &it.cs_remote {
+                if let Some(m) = self.index.n.get(cs).and_then(|n| jx::str_(n, "method")).filter(|m| !m.is_empty()) {
+                    of.entry(m.to_string()).or_default().extend(hs.iter().cloned());
+                }
+            }
+            self.remote_of = Some(of);
+        }
+        let remote_of = if remote.is_some() { self.remote_of.as_ref() } else { None };
         let mut seen: BTreeSet<String> = BTreeSet::from([handler.to_string()]);
         let mut frontier = vec![handler.to_string()];
         for _ in 0..4 {
             let mut next = Vec::new();
             for m in &frontier {
-                if let Some(ts) = self.index.calls.get(m) {
-                    for t in ts {
-                        let mut xs = vec![t.clone()];
-                        if let Some(o) = self.index.over.get(t) {
-                            xs.extend(o.iter().cloned());
-                        }
-                        for x in xs {
-                            if seen.insert(x.clone()) {
-                                next.push(x);
-                            }
+                let mut targets: Vec<String> = self.index.calls.get(m).map(|ts| ts.iter().cloned().collect()).unwrap_or_default();
+                if let Some(hs) = remote_of.and_then(|of| of.get(m)) {
+                    targets.extend(hs.iter().cloned());
+                }
+                for t in &targets {
+                    let mut xs = vec![t.clone()];
+                    if let Some(o) = self.index.over.get(t) {
+                        xs.extend(o.iter().cloned());
+                    }
+                    for x in xs {
+                        if seen.insert(x.clone()) {
+                            next.push(x);
                         }
                     }
                 }
             }
             frontier = next;
         }
-        self.reach.insert(handler.to_string(), seen.clone());
+        self.reach.insert(key, seen.clone());
         seen
     }
 
     /// Обработчик входа: из него достижим метод с вызовом `AuthenticationManager.authenticate`.
     fn is_login(&mut self, handler: &str) -> bool {
-        let r = self.reachable(handler);
+        let r = self.reachable(handler, None);
         self.login_ids.keys().any(|k| r.contains(k))
     }
 
-    /// Поля DTO, по которым метод, достижимый из обработчика, ищет дубликат.
+    /// Поля DTO, по которым метод, достижимый из обработчика, ищет дубликат. Достижимость — и через межсервисный
+    /// вызов: консоль администратора пересылает тело запроса сервису, который ищет дубликат.
     fn dedupe_fields(&mut self, it: &Interpreter, handler: &str, ftype: Option<&str>) -> Vec<String> {
         let key = (handler.to_string(), ftype.map(str::to_string));
         if let Some(d) = self.dedupe.get(&key) {
             return d.clone();
         }
         let mut out: Vec<String> = Vec::new();
-        let reach = self.reachable(handler);
+        let reach = self.reachable(handler, Some(it));
         for m in &reach {
             let saves: Vec<i64> = self
                 .index
