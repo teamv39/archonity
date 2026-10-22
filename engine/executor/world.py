@@ -451,21 +451,21 @@ class World:
 
 # --- разбор имён производных запросов Spring Data ---------------------------
 
-_PREFIXES = ("findAllBy", "findBy", "getBy", "readBy", "queryBy", "existsBy", "countBy", "deleteAllBy",
-             "deleteBy", "removeBy", "findFirstBy", "findTopBy")
+# Глагол, необязательное слово между глаголом и `By` и условия — как `PartTree` Spring Data: `findAllBy`, `findFirst10By`,
+# `removeRouteById`, `deleteFoodOrderByOrderId`. Слово ленивое: сначала пробуется пустое, `findByX` разбирается как раньше.
+_DERIVED = re.compile(r"^(find|read|get|query|search|stream|count|exists|delete|remove)((?:[A-Z]\w*?)??)By(.+)$")
 
 
 def derived_props(name: str) -> tuple[str, list[str]] | None:
     """`findByAccountIdAndStatus` -> ("find", ["accountId", "status"]); None — не производный запрос."""
-    for p in _PREFIXES:
-        if name.startswith(p) and len(name) > len(p):
-            rest = name[len(p):]
-            rest = re.sub(r"OrderBy\w+$", "", rest)
-            parts = re.split(r"And(?=[A-Z])", rest)
-            props = [x[:1].lower() + x[1:] for x in parts if x]
-            props = [re.sub(r"(In|IsNull|IsNotNull|Containing|Like)$", "", x) for x in props]
-            return p.replace("By", "").replace("All", "").replace("First", "").replace("Top", ""), props
-    return None
+    m = _DERIVED.match(name)
+    if m is None:
+        return None
+    rest = re.sub(r"OrderBy\w+$", "", m.group(3))
+    parts = re.split(r"And(?=[A-Z])", rest)
+    props = [x[:1].lower() + x[1:] for x in parts if x]
+    props = [re.sub(r"(In|IsNull|IsNotNull|Containing|Like)$", "", x) for x in props]
+    return m.group(1), props
 
 
 _SQL_WHERE = re.compile(r"\bwhere\b(.*)$", re.IGNORECASE | re.DOTALL)

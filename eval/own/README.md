@@ -88,12 +88,12 @@ python scripts/check_own_outcomes.py -o output/own-outcomes [--show all] -- --re
 
 Исход M4 — статус обёртки ответа обработчика шага: `success`, `failure`, `unknown` (статус не вычислен), `null`, `value` (ответ не обёртка). Шаг с неверным обработчиком M1 считается ошибкой M1. Построчно — `outcomes.json` в папке прогона.
 
-Замер 22.10 (X1–X8, 83 шага): совпало 65, ошибки M1 — 5, исход M4 другой — 6, исход M4 неизвестен — 7.
+Замер 22.10 (X1–X8, 83 шага): совпало 65, ошибки M1 — 5, исход M4 другой — 6, исход M4 неизвестен — 7. После правки X6.8 совпало 66.
 
 | Шаг | Разметка | M4 | Причина |
 |---|---|---|---|
 | X4.7, X8.13 | success | failure | расхождения нет: «пусто» в сервисе — статус 0 `No Content…`, ветка та же |
-| X6.8 | success | failure | `removeRouteById` не разобран как производный запрос Spring Data (слово между глаголом и `By`): удаления в мире нет, `findById` находит маршрут. Так же `deleteFoodOrderByOrderId` (2 сервиса), `removeAssuranceByOrderId` |
+| X6.8 | success | failure | исправлено 22.10: разбор имён производных запросов Spring Data не понимал слово между глаголом и `By` (`removeRouteById`), удаления в мире не было, `findById` находил маршрут. Разбор теперь как `PartTree` (`world.derived_props`, Rust `world.rs`), новых имён 4: ещё `deleteFoodOrderByOrderId` (2 сервиса), `removeAssuranceByOrderId`. Рёбра X1–X8, S0–S7 и `handler_sweep` не изменились: после удаления обе ветки `deleteRoute` дают одни рёбра, меняется только ответ |
 | X5.4 | refused | unknown | через `AdminUserServiceImpl#addUser` условие `user1 == null` в `saveUser` неизвестно, исполнены оба плеча; напрямую (X4.2) пользователь находится |
 | X6.3 | success | failure | ссылка `trip: first_of_step_2` берёт первый рейс списка, а не G9998 из `tripId`: станции и маршрут чужие |
 | X4.1 | refused | success | неверный пароль: отказ бросает `AuthenticationManager.authenticate` (библиотека), M4 его не видит |
