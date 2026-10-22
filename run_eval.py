@@ -205,7 +205,7 @@ def parse_args() -> argparse.Namespace:
         "--require-cache",
         action="store_true",
         help="M1: только кеш (как --no-server); код выхода 2, если хоть одного ответа LLM нет в cache/llm — "
-             "выдача тогда построена не моделью (m1_report.json, README «Проверка без кеша»)",
+             "выдача тогда построена не моделью (m1_report.json, README «Кеш простыми словами»)",
     )
     parser.add_argument("--no-embed", action="store_true", help="M1 без dense-ретривера (только BM25)")
     parser.add_argument("--embed-model", choices=("on", "off"), default="on",
