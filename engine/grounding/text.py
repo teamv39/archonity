@@ -26,6 +26,8 @@ VERB_SYN = {
 # и X1–X8, поэтому их кандидаты и ключи кеша LLM не меняются (tests/test_verb_synonyms.py). Отобраны по перефразированным
 # S0–S7 (eval/paraphrase): «Find … trains» без `search` не находил поиск рейсов, «Reload my orders» — обновление
 # заказов. Это словарь английского языка, а не проекта; отключение — `run_eval.py --m1-verb-synonyms off`.
+# Оговорка (аудит 22.10): `reload -> refresh` и `sign -> log, login` — синонимы английского, но выбраны потому, что так
+# называются обработчики проекта (`queryOrdersForRefresh`, `login`). Это подбор словаря по замеру перефразировок.
 VERB_SYN_EXTRA = {
     **{v: ["get", "find", "query", "search"]
        for v in ("find", "retrieve", "fetch", "inspect", "review", "locate", "explore", "examine")},

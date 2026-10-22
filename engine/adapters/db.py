@@ -354,49 +354,12 @@ def parse_context_readme(readme_path: str | Path) -> dict[str, Any]:
 def parse_context(text: str) -> dict[str, Any]:
     """Extracts the scenario context: the `context` field of the skeleton or context/README.md of the task package.
 
-    Parses:
-      - travel_date ('booked for 1 October 2026' or '... 2026-10-01')
-      - system_date ('system clock is 15 September 2026')
-      - user_name ('pre-registered user <name>')
-      - balance ('account balance 10 000')
+    Parses user_name ('pre-registered user <name>') — the passenger before a login step. Dates and the balance were
+    parsed here until 22.10, but nothing read them.
     """
     info: dict[str, Any] = {}
-
-    months = {
-        "january": "01", "february": "02", "march": "03", "april": "04",
-        "may": "05", "june": "06", "july": "07", "august": "08",
-        "september": "09", "october": "10", "november": "11", "december": "12",
-    }
-
-    # Travel date (e.g. "booked for 1 October 2026")
-    m_travel = re.search(r"booked for\s+([0-9]{1,2})\s+([A-Za-z]+)\s+([0-9]{4})", text, re.IGNORECASE)
-    if m_travel:
-        day, month_name, year = m_travel.group(1), m_travel.group(2).lower(), m_travel.group(3)
-        month = months.get(month_name)
-        if month:
-            info["travel_date"] = f"{year}-{month}-{int(day):02d}"
-    elif m_iso := re.search(r"booked for\s+([0-9]{4}-[0-9]{2}-[0-9]{2})", text, re.IGNORECASE):
-        info["travel_date"] = m_iso.group(1)
-
-    # System clock date (e.g. "system clock is 15 September 2026")
-    m_sys = re.search(r"system clock is\s+([0-9]{1,2})\s+([A-Za-z]+)\s+([0-9]{4})", text, re.IGNORECASE)
-    if m_sys:
-        day, month_name, year = m_sys.group(1), m_sys.group(2).lower(), m_sys.group(3)
-        month = months.get(month_name)
-        if month:
-            info["system_date"] = f"{year}-{month}-{int(day):02d}"
-    elif m_iso := re.search(r"system clock is\s+([0-9]{4}-[0-9]{2}-[0-9]{2})", text, re.IGNORECASE):
-        info["system_date"] = m_iso.group(1)
-
-    # Pre-registered account
     m_user = re.search(r"pre-registered user\s+([a-zA-Z0-9_-]+)", text, re.IGNORECASE)
     if m_user:
         info["user_name"] = m_user.group(1)
-
-    # Balance (e.g. "internal account balance 10 000")
-    m_bal = re.search(r"(?:account balance|balance)\s+([0-9]+(?:[\s,][0-9]{3})*(?:\.[0-9]+)?)", text, re.IGNORECASE)
-    if m_bal:
-        info["balance"] = float(m_bal.group(1).replace(" ", "").replace(",", ""))
-
     return info
 

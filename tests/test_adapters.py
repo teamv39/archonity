@@ -162,10 +162,7 @@ class TestContextAndDbState:
         assert context_readme.is_file()
 
         info = parse_context_readme(context_readme)
-        assert info.get("travel_date") == "2026-10-01"
-        assert info.get("system_date") == "2026-09-15"
-        assert info.get("user_name") == "fdse_microservice"
-        assert info.get("balance") == 10000.0
+        assert info == {"user_name": "fdse_microservice"}
 
     def test_database_state_user_and_balance(self) -> None:
         from engine.adapters.db import load_db_dump
@@ -181,7 +178,5 @@ class TestContextAndDbState:
 
     def test_skeleton_index_context(self, skeleton_index: SkeletonIndex) -> None:
         assert hasattr(skeleton_index, "context")
-        assert skeleton_index.context.get("travel_date") == "2026-10-01"
-        assert skeleton_index.context.get("system_date") == "2026-09-15"
         assert skeleton_index.context.get("user_name") == "fdse_microservice"
 

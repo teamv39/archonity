@@ -35,7 +35,9 @@ def _java_literals(path: Path) -> list[str]:
     s = path.read_text(encoding="utf-8")
     s = re.sub(r"/\*.*?\*/", "", s, flags=re.S)
     s = re.sub(r"//[^\n]*", "", s)
-    return re.findall(r'"(?:[^"\\n]|\.)*"', s)
+    # До 22.10 здесь было `[^"\\n]` — в raw-строке это «не кавычка, не обратная косая, не буква n»: литерал с буквой n
+    # (`"Response"`, `"edu.fudan.common"`) не находился, сторож archparse был слепым (test_java_guard_catches_literals)
+    return [m[1:-1] for m in re.findall(r'"(?:[^"\\\n]|\\.)*"', s)]
 
 
 def test_python_code_has_no_project_literals() -> None:
@@ -57,6 +59,13 @@ def test_guard_catches_literals(tmp_path: Path) -> None:
     p.write_text('"""Пример: ts-order-service."""\nNAME = "ts-common"  # ts-common в комментарии\n', encoding="utf-8")
     hits = [v for _, v in _python_literals(p) if MARKERS.search(v)]
     assert hits == ["ts-common"]
+
+
+def test_java_guard_catches_literals(tmp_path: Path) -> None:
+    p = tmp_path / "X.java"
+    p.write_text('// "ts-order-service" в комментарии\nif (t.equals("Response") && p.startsWith("edu.fudan.common")) '
+                 '{ s = "a\\"b"; }\n', encoding="utf-8")
+    assert _java_literals(p) == ["Response", "edu.fudan.common", 'a\\"b']
 
 
 def _rust_literals(path: Path) -> list[str]:
@@ -94,7 +103,7 @@ KNOWN = {
     "userId": "то же, что accountId",
     "loginId": "то же, что accountId",
     "username": "контракт Spring Security UserDetails#getUsername, а не проекта",
-    "balance": "свой ключ контекста пассажира из текста сценария (adapters/db.py), совпадает с полем проекта случайно",
+    "StringUtils": "модель библиотечного org.springframework.util.StringUtils (library), не класса проекта",
 }
 
 
@@ -109,11 +118,13 @@ def _project_names() -> set[str] | None:
     nodes = nodes.values() if isinstance(nodes, dict) else nodes
     out = set()
     for n in nodes:
-        nm = n.get("name") or ""
-        if n.get("kind") == "field" and nm:
-            out.add(nm)
-        elif n.get("kind") == "type" and nm:
-            out.add(nm.split(".")[-1])
+        if n.get("kind") == "field" and n.get("name"):
+            out.add(n["name"])
+        elif n.get("kind") == "type" and n.get("fqn"):
+            # У типа в скелете нет `name`, только `fqn` (до 22.10 имена классов не собирались); `X$1` — анонимный класс
+            simple = n["fqn"].split(".")[-1].split("$")[-1]
+            if not simple.isdigit():
+                out.add(simple)
     return out
 
 
@@ -141,6 +152,10 @@ def _name_hits(names: set[str]) -> dict[str, list[str]]:
         for ln, v in _rust_code_literals(p):
             if v in names:
                 hits.setdefault(v, []).append(f"{p.relative_to(ROOT)}:{ln}")
+    for p in sorted(ROOT.joinpath("archparse", "src", "main").rglob("*.java")):
+        for v in _java_literals(p):
+            if v in names:
+                hits.setdefault(v, []).append(str(p.relative_to(ROOT)))
     return hits
 
 

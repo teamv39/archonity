@@ -29,11 +29,10 @@ from engine.grounding.request import canon_value
 
 logger = logging.getLogger(__name__)
 
-VENDOR = re.compile(
-    r"(\.min\.|^(vue|angular|jquery|bootstrap|echarts|amazeui|iscroll|cropper|aliyun|react|lodash|moment|d3|three|npm)\b"
-    r"|^vue-upload)",
-    re.I,
-)
+# Сторонние библиотеки в папке UI: сборки `.min.` и общеизвестные фреймворки по имени файла (`vue-upload…` — тоже
+# `^vue`). До 22.10 список включал библиотеки из UI Train Ticket (amazeui, iscroll, cropper, aliyun); на каталог и
+# обёртку ответа они не влияли
+VENDOR = re.compile(r"(\.min\.|^(vue|angular|jquery|bootstrap|echarts|react|lodash|moment|d3|three|npm)\b)", re.I)
 SKIP_DIR = {"node_modules", "target", "build", "dist", ".git", "bower_components"}
 
 FUNC_TYPES = {"function_declaration", "function_expression", "function", "arrow_function", "method_definition",
