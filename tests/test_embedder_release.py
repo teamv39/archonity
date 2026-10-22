@@ -169,6 +169,15 @@ class TestRunAll:
         shared_pipeline.run_all([SCENARIOS / "S1.json", SCENARIOS / "S0.json"], tmp_path / "s.json")
         assert calls == [("prepare", ["S0", "S1"]), ("begin", "S0"), ("begin", "S1")]
 
+    def test_ground_all_prepares_too(self, shared_pipeline, monkeypatch) -> None:
+        """`--engine rust` (`ground_all`): тот же порядок — векторы всех сценариев до первого `begin`."""
+        calls: list = []
+        prepare, begin = shared_pipeline.m1.prepare, shared_pipeline.m1.begin
+        monkeypatch.setattr(shared_pipeline.m1, "prepare", lambda scs: calls.append(("prepare", [s["id"] for s in scs])) or prepare(scs))
+        monkeypatch.setattr(shared_pipeline.m1, "begin", lambda sc: calls.append(("begin", sc["id"])) or begin(sc))
+        shared_pipeline.ground_all([SCENARIOS / "S1.json", SCENARIOS / "S0.json"])
+        assert calls == [("prepare", ["S0", "S1"]), ("begin", "S0"), ("begin", "S1")]
+
     def test_prepare_failure_does_not_stop_run(self, shared_pipeline, monkeypatch, tmp_path) -> None:
         """Р2: сбой при подготовке векторов виден в `failures`, сценарии строятся как раньше."""
         full = shared_pipeline.run_all([SCENARIOS / "S0.json"], tmp_path / "full.json")
