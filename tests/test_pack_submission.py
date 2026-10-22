@@ -104,3 +104,11 @@ def test_readme_links_are_in_archive() -> None:
     links = {l for l in links if l and "://" not in l}
     missing = sorted(l for l in links if l.rstrip("/") not in files and not any(f.startswith(l) for f in files))
     assert not missing, f"README ссылается на файлы вне архива: {missing}"
+    # Пути в коде README (`engine/`, `docs/adr/`): только то, что есть в архиве. Вне архива — выходы прогона и пакет
+    # организаторов
+    outside = ("output", "hackaton/", "rust/target", "cache/llm/<")
+    paths = {p.rstrip("/") for p in re.findall(r"`([^`\s]+/[^`\s]*)`", (ps.ROOT / "README.md").read_text(encoding="utf-8"))}
+    # `adr/`, `llm/` — папки внутри названной рядом (`docs/`, `cache/`), их не проверяем
+    absent = sorted(p for p in paths if "/" in p and not p.startswith(outside) and "://" not in p
+                    and p not in files and not any(f.startswith(p + "/") for f in files))
+    assert not absent, f"README называет пути вне архива: {absent}"

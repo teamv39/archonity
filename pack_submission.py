@@ -31,6 +31,7 @@ ZIP_OUT = OUTPUT_DIR / "submission.zip"
 # Файлы кода, данных, зависимостей и запуска (пути от корня репозитория; в архиве — под code/)
 CODE_FILES = (
     "run_eval.py",
+    "pack_submission.py",  # сборка этого архива (README, «Архив для NSUTS»)
     "README.md",
     "pyproject.toml",
     "uv.lock",
