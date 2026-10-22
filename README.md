@@ -155,7 +155,7 @@ python run_eval.py --m1-index off --m1-top-k 5 --select-votes 0 --llm-timeout 90
 
 | Флаг | Что делает |
 |---|---|
-| `--engine rust` | M4 и M5 в бинарнике Rust; по умолчанию `python` |
+| `--engine rust\|python` | чем исполнять шаги и строить ответ (M4 и M5): `rust` — бинарник `archonity-exec`, `python` — тот же движок на Python, выдача та же байт в байт. Без флага — `python`; `scripts/run_final.sh` запускает `rust` |
 | `--parse-sources` | перед прогоном заново построить IR из исходников бинарником `archonity-parse` |
 | `--rust-bin`, `--parse-bin` | пути к бинарникам, если они собраны не в `rust/target/release/` |
 
