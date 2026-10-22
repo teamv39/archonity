@@ -17,7 +17,19 @@ $env:PYTHONUTF8=1; python run_eval.py
 ```
 Без ключей `run_eval.py` даёт выдачу кода — конфигурацию рекорда ([AGENTS.md](../AGENTS.md), «Выдача кода и рекорд»). Других исполнителей нет: legacy-контур удалён 21.10.
 
-## 2. Сборка Java и модуль archparse
+## 2. Разбор исходников: archonity-parse (Rust) и archparse (Java, эталон)
+
+### Основной путь: Rust ([ADR-009](adr/adr-009_archparse_rust.md))
+Сборка: `cd rust && cargo build --release --locked` (JDK не нужен). Пересборка IR и `entity_ir.json` из корня репозитория, пути любые, в том числе с пробелами:
+```bash
+T=hackaton/tt-challenge/targets/trainticket; K=hackaton/tt-challenge/skeleton/trainticket.json.gz
+rust/target/release/archonity-parse --mode all      --targets-dir $T --skeleton $K -o data          # ir/ + entity_ir.json, ~1 с
+rust/target/release/archonity-parse --mode bodies   --targets-dir $T --skeleton $K -o data/ir
+rust/target/release/archonity-parse --mode entities --targets-dir $T --skeleton $K -o data/entity_ir.json
+```
+Проверка: `git diff --stat data/` пуст (Rust воспроизводит закоммиченные артефакты байт в байт), `pytest tests/test_rust_parse.py`. В прогоне: `python run_eval.py --engine rust --parse-sources [--artifacts-dir <папка>]` сам пересобирает артефакты в папку перед M1; `scripts/run_final.sh` делает это по умолчанию.
+
+### Эталон: Java и Gradle
 
 ### JDK и Gradle под Windows
 Нужен JDK 17+ (на машине Миши — `%USERPROFILE%\.jdks\openjdk-24.0.1`, системный `java` в PATH — Java 8, им Gradle не запустить). Wrapper при первом запуске качает Gradle 9.0 и зависимости (javaparser, jackson) в `%USERPROFILE%\.gradle`. Скрипт `gradlew` — bash, под Windows запускать `.bat` из `archparse/`:
@@ -45,15 +57,14 @@ $T = "../hackaton/tt-challenge/targets/trainticket"; $K = "../hackaton/tt-challe
 
 Кеш каталога UI `data/ui_catalog.json` пересобирать вручную не нужно: в нём отпечаток (проект и коммит скелета, обработчики, содержимое файлов UI), и при несовпадении каталог строится заново чистым Python. Кеш другого проекта прогон не перезаписывает (каталог живёт только в этом прогоне); принудительная пересборка с записью — `build_catalog(..., force_rebuild=True)`. Закоммиченный кеш Train Ticket после правки скелета или UI пакета обновляется так же (`tests/test_artifacts.py` проверяет, что отпечаток в нём актуален).
 
-Другой проект — своя папка артефактов (`ir/`, `entity_ir.json`, `ui_catalog.json`), `data/` не трогается. Папка `ui_catalog.json` создаётся сама при первом прогоне, IR и `entity_ir.json` строит archparse:
-```powershell
-$T = "../путь/к/targets"; $K = "../путь/к/skeleton.json.gz"; $A = "../artifacts/мой-проект"
-.\gradlew.bat -q run "--args=--mode bodies --targets-dir $T --skeleton $K -o $A/ir"
-.\gradlew.bat -q run "--args=--mode entities --targets-dir $T --skeleton $K -o $A/entity_ir.json"
+Другой проект — своя папка артефактов (`ir/`, `entity_ir.json`, `ui_catalog.json`), `data/` не трогается. Папка `ui_catalog.json` создаётся сама при первом прогоне, IR и `entity_ir.json` строит `archonity-parse` (`--parse-sources` делает это в том же запуске):
+```bash
+A=artifacts/мой-проект
+rust/target/release/archonity-parse --mode all --targets-dir <targets> --skeleton <skeleton.json.gz> -o $A
 ```
 затем из корня репозитория:
-```powershell
-$env:PYTHONUTF8=1; python run_eval.py --skeleton <skeleton> --targets <targets> --scenarios <сценарии> --artifacts-dir artifacts/мой-проект
+```bash
+PYTHONUTF8=1 python run_eval.py --engine rust --skeleton <skeleton> --targets <targets> --scenarios <сценарии> --artifacts-dir $A
 ```
 Ошибка `ArtifactMismatch` на умолчании (`data/`) сама подсказывает такую папку: `artifacts/<проект скелета>`. Из кода — `PipelineConfig(artifacts_dir=...)`; `method_ir_dir` и `entity_ir_path` переопределяют отдельные пути.
 

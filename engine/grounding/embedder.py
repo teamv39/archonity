@@ -7,11 +7,15 @@
 
 Эмбеддер из `models/manifest.json` (qwen3-4b) грузится из `models/<dir>` с ревизией манифеста; нет файлов — качает их
 туда же (проверка sha256 — scripts/fetch_models.py). Остальные эмбеддеры (bakeoff) — из кеша Hugging Face (`HF_HOME`).
-Устройство — `ARCHONITY_EMBED_DEVICE` (`cuda`, `cpu`), по умолчанию GPU, если есть. LLM и эмбеддер вместе в 16 ГБ VRAM
-не помещаются: рядом с `llama server` эмбеддер — на `cpu`. На A100 40 ГБ оба на GPU.
+Устройство — `ARCHONITY_EMBED_DEVICE` (`cuda`, `cpu`), по умолчанию GPU, если есть.
+
+Модель живёт только пока считает: после каждой порции промахов её выгружает `release()`, векторы остаются в кеше
+процесса. Так эмбеддер (около 8 ГБ) и `llama server` (около 20 ГБ на A100) не бывают в памяти одновременно, где бы
+ни стоял вызов; пачку на весь прогон собирает `StepGrounder.prepare`, чтобы модель не грузилась по сценарию.
 """
 from __future__ import annotations
 
+import gc
 import hashlib
 import json
 import os
@@ -84,7 +88,7 @@ class VectorCache:
 
 
 class STEmbedder:
-    """Эмбеддер на sentence-transformers; модель грузится лениво, только на промахе кеша."""
+    """Эмбеддер на sentence-transformers; модель грузится лениво, только на промахе кеша, и выгружается после него."""
 
     def __init__(self, spec: EmbedSpec, allow_model: bool = True, batch_size: int = 8,
                  task: str = QUERY_TASK) -> None:
@@ -97,11 +101,30 @@ class STEmbedder:
         self._model: Any = None
         self._revision: str | None = None
         self._broken: str | None = None  # причина отказа модели: после первой ошибки модель больше не трогаем
-        self.misses = 0  # векторы, которых не было в кеше и не было модели (итог M1, engine/grounding/report.py)
+        self._missed: set[str] = set()  # ключи векторов, которых не было в кеше и не было модели
+
+    @property
+    def misses(self) -> int:
+        """Векторов без кеша и без модели (итог M1, engine/grounding/report.py). Считаются разные ключи: вектор шага
+        из `StepGrounder.prepare` и из `begin` — один и тот же промах."""
+        return len(self._missed)
 
     def key(self, kind: str, text: str) -> str:
         raw = f"{self.spec.name}|{self.spec.fmt_version}|{kind}|{text}"
         return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+    def release(self) -> None:
+        """Выгружает модель из памяти: память и видеопамять нужны `llama server` (LLM рядом с эмбеддером в 16 ГБ
+        VRAM и в лимит выделенной памяти Windows не помещается). Векторы остаются в `self.cache`; следующий промах
+        загрузит модель заново. Вызывающий не должен держать ссылку на модель."""
+        loaded = self._model is not None
+        self._model = None
+        gc.collect()
+        torch = sys.modules.get("torch")  # без torch (прогон из кеша) ничего не грузим
+        if torch is not None and torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        if loaded:
+            print(f"[embed] {self.name}: модель выгружена", file=sys.stderr)
 
     def _load(self) -> Any:
         if self._model is None:
@@ -127,23 +150,27 @@ class STEmbedder:
         miss = [i for i, k in enumerate(keys) if k not in self.cache.vecs]
         if miss:
             if not self.allow_model:
-                self.misses += len(miss)
+                self._missed.update(keys[i] for i in miss)
                 print(f"[embed] {self.name}: {len(miss)} промахов кеша, модель запрещена — dense выключен", file=sys.stderr)
                 return None
             if self._broken:
-                self.misses += len(miss)
+                self._missed.update(keys[i] for i in miss)
                 print(f"[embed] {self.name}: {len(miss)} промахов кеша, модель недоступна ({self._broken}) — "
                       f"dense выключен", file=sys.stderr)
                 return None
+            model, vecs = None, None
             try:
                 model = self._load()
                 vecs = model.encode([texts[i] for i in miss], batch_size=self.batch_size, normalize_embeddings=True,
                                     convert_to_numpy=True, show_progress_bar=False)
             except Exception as e:  # noqa: BLE001 — нет torch/модели, не хватило памяти: работаем без dense
-                self.misses += len(miss)
                 self._broken = f"{type(e).__name__}: {e}"
-                self._model = None
                 print(f"[embed] {self.name}: модель недоступна ({self._broken}) — dense выключен", file=sys.stderr)
+            finally:
+                del model  # последняя ссылка вызывающего: без неё release() не освободит веса
+                self.release()
+            if vecs is None:
+                self._missed.update(keys[i] for i in miss)
                 return None
             for i, v in zip(miss, vecs):
                 self.cache.vecs[keys[i]] = np.asarray(v, dtype=np.float32)

@@ -1,0 +1,20 @@
+[package]
+name = "archonity-parse"
+description = "Бинарник: разбор исходников проекта в IR тел методов и entity_ir.json (перенос archparse, ADR-009)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[[bin]]
+name = "archonity-parse"
+path = "src/main.rs"
+
+[dependencies]
+anyhow.workspace = true
+clap.workspace = true
+flate2.workspace = true
+indexmap.workspace = true
+serde_json.workspace = true
+tree-sitter = "0.25"
+tree-sitter-java = "0.23"

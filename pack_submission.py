@@ -4,13 +4,15 @@
 
 В корне архива: submission.json, evidence.json и RUN.md с командами воспроизведения. В code/ — всё, чтобы из этого
 каталога получить тот же submission.json и прогнать новые сценарии (docs/run_on_a100.md): код (run_eval.py, engine/,
-archparse/ — источник data/), артефакты M2 (data/), кеши M1 (cache/), зависимости (pyproject.toml, uv.lock,
+archparse/ и rust/ — источник data/ и Rust-движок, ADR-008), артефакты M2 (data/), кеши M1 (cache/), зависимости (pyproject.toml, uv.lock,
 requirements.txt), манифест моделей и скрипты запуска.
 
 Гарантирует:
 1. Переводы строк в текстовых файлах — Unix LF, как в индексе git.
 2. POSIX-атрибуты: файлы 0o644, скрипты *.sh и gradlew 0o755, каталоги 0o755, create_system = 3 (Unix).
-3. Только перечисленное ниже: без node_modules, __pycache__, hackaton/ и моделей. Нет файла из списка — ошибка.
+3. Только перечисленное ниже: без node_modules, __pycache__, rust/target, hackaton/ и моделей. Нет файла из списка — ошибка.
+4. Исходники Rust (rust/**/*.rs, Cargo.toml, Cargo.lock, README) в архиве: надбавку за Rust дают за исходный код, а
+   scripts/run_final.sh собирает бинарники оттуда (`cargo build --release --locked`).
 """
 from __future__ import annotations
 
@@ -59,8 +61,11 @@ CODE_TREES = (
     ("archparse/src", "*.java"),
 )
 
+# Rust-движок: исходники и манифесты, без rust/target
+RUST_SUFFIXES = {".rs", ".toml", ".lock", ".md"}
+
 TEXT_SUFFIXES = {".py", ".json", ".md", ".txt", ".toml", ".lock", ".sh", ".ps1", ".bat", ".gradle", ".properties",
-                 ".java", ""}
+                 ".java", ".rs", ""}
 EXECUTABLE = {"scripts/run_final.sh", "scripts/start_llm.sh", "archparse/gradlew"}
 
 RUN_CMD = "python run_eval.py -o output/submission.json"
@@ -74,6 +79,11 @@ def code_files() -> list[str]:
         if not found:
             raise FileNotFoundError(f"В {ROOT / top} нет файлов {pattern}")
         files.update(p.relative_to(ROOT).as_posix() for p in found)
+    rust = [p for p in (ROOT / "rust").rglob("*") if p.is_file() and "target" not in p.relative_to(ROOT / "rust").parts
+            and p.suffix in RUST_SUFFIXES]
+    if not any(p.name == "Cargo.lock" for p in rust) or not any(p.suffix == ".rs" for p in rust):
+        raise FileNotFoundError(f"В {ROOT / 'rust'} нет Cargo.lock или исходников .rs")
+    files.update(p.relative_to(ROOT).as_posix() for p in rust)
     missing = [f for f in files if not (ROOT / f).is_file()]
     if missing:
         raise FileNotFoundError(f"Нет файлов для архива: {', '.join(sorted(missing))}")
@@ -89,6 +99,12 @@ def run_md(run_cmd: str) -> str:
 Зависимости (Python 3.11+):
 
     pip install -r requirements.txt        # или: uv sync --locked
+
+Rust-движок (`rust/`, ADR-008): `scripts/run_final.sh` собирает его сам (`cd rust && cargo build --release --locked`,
+нужен доступ к crates.io; нет `cargo` — ставит через `rustup`). Вручную:
+
+    cd rust && cargo build --release --locked && cd ..
+    python run_eval.py --engine rust -o output/submission.json
 
 `submission.json` этого архива (S0–S7) из кешей `cache/`, без GPU и сети:
 

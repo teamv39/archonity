@@ -126,6 +126,33 @@ def parse_args() -> argparse.Namespace:
              "входом (по умолчанию, посылка 27: 1.00000), keep — как выбрал M1",
     )
     parser.add_argument(
+        "--engine",
+        choices=("python", "rust"),
+        default="python",
+        help="Исполнение шагов (ADR-008): python — весь конвейер в Python (умолчание, рекорд); rust — M1 в Python, "
+             "дальше M4, правила и запись выдачи в бинарнике archonity-exec. Без отката: нет бинарника или он "
+             "упал — пустая выдача и рамка Р2",
+    )
+    parser.add_argument(
+        "--rust-bin",
+        type=Path,
+        default=ROOT_DIR / "rust" / "target" / "release" / "archonity-exec",
+        help="Бинарник archonity-exec (сборка: cd rust && cargo build --release --locked)",
+    )
+    parser.add_argument(
+        "--parse-sources",
+        action="store_true",
+        help="Перед прогоном пересобрать артефакты проекта (ir/, entity_ir.json) бинарником archonity-parse из "
+             "исходников и скелета в --artifacts-dir (ADR-009). По умолчанию выключено: берутся готовые файлы "
+             "из data/. Без отката на Java: нет бинарника или он упал — сбой в рамке Р2",
+    )
+    parser.add_argument(
+        "--parse-bin",
+        type=Path,
+        default=ROOT_DIR / "rust" / "target" / "release" / "archonity-parse",
+        help="Бинарник archonity-parse (сборка: cd rust && cargo build --release --locked)",
+    )
+    parser.add_argument(
         "--no-eval",
         action="store_true",
         help="Пропустить автоматический вызов evaluate_golden.py",
@@ -261,6 +288,7 @@ def build_pipeline(args: argparse.Namespace, m1_options: dict) -> ArchonityPipel
         m1_options=m1_options,
         unresolved_receiver_calls=args.m4_unresolved_calls,
         m4_success_retry=args.m4_success_retry,
+        build_m4=args.engine == "python",
     )
 
 
@@ -278,6 +306,58 @@ def write_empty_submission(scenarios: list[Path], out: Path) -> None:
     with open(out, "w", encoding="utf-8", newline="\n") as f:
         json.dump({"project": project, "scenarios": {sid: {"edges": []} for sid in sorted(ids)}}, f,
                   ensure_ascii=False, indent=1)
+
+
+def rust_rule_args(args: argparse.Namespace) -> list[str]:
+    """Режимы правил для `archonity-exec`: имена `RuntimeRules`, значения как у флагов CLI."""
+    rules = {
+        "constructors": args.ctors,
+        "collection_tables_on_read": args.collection_tables,
+        "element_callbacks": args.element_callbacks,
+        "rabbitmq_delivery": args.rabbitmq_delivery,
+        "jackson_ctor": args.jackson_ctor,
+        "lombok_tostring": args.lombok_tostring,
+        "unbound_handlers": args.unbound_handlers,
+        "unresolved_receiver_calls": args.m4_unresolved_calls,
+        "m4_success_retry": args.m4_success_retry,
+    }
+    out: list[str] = []
+    for name, value in rules.items():
+        out += ["--rule", f"{name}={value}"]
+    return out
+
+
+def run_rust(args: argparse.Namespace, pipeline: ArchonityPipeline, scenarios: list[Path]) -> list[dict]:
+    """`--engine rust` (ADR-008): M1 в Python пишет `step_requests_raw.json`, `archonity-exec` строит выдачу.
+    Возвращает сбои Rust-части; исключение — если бинарник не отработал (откат на Python не делаем)."""
+    raw = pipeline.ground_all(scenarios)
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    raw_path = args.out.parent / "step_requests_raw.json"
+    with open(raw_path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(raw, f, ensure_ascii=False, indent=1)
+    if not args.rust_bin.is_file():
+        raise FileNotFoundError(f"нет бинарника {args.rust_bin}: cd rust && cargo build --release --locked")
+    cmd = [str(args.rust_bin), "--step-requests", str(raw_path), "--skeleton", str(args.skeleton),
+           "--targets", str(args.targets), "--ir-dir", str(Path(args.artifacts_dir) / "ir"),
+           "--entity-ir", str(Path(args.artifacts_dir) / "entity_ir.json"),
+           "--configs-topology", str(ROOT_DIR / "facts" / "configs_topology.json"),
+           "-o", str(args.out), *rust_rule_args(args)]
+    res = subprocess.run(cmd)
+    if res.returncode != 0:
+        raise RuntimeError(f"archonity-exec завершился с кодом {res.returncode}")
+    failures_path = args.out.parent / "exec_failures.json"
+    return json.loads(failures_path.read_text(encoding="utf-8")) if failures_path.is_file() else []
+
+
+def run_parse(args: argparse.Namespace) -> None:
+    """`--parse-sources` (ADR-009): IR тел методов и `entity_ir.json` строит Rust-разбор исходников, не Java."""
+    if not args.parse_bin.is_file():
+        raise FileNotFoundError(f"нет бинарника {args.parse_bin}: cd rust && cargo build --release --locked")
+    cmd = [str(args.parse_bin), "--mode", "all", "--targets-dir", str(args.targets), "--skeleton", str(args.skeleton),
+           "-o", str(args.artifacts_dir)]
+    res = subprocess.run(cmd)
+    if res.returncode != 0:
+        raise RuntimeError(f"archonity-parse завершился с кодом {res.returncode}")
 
 
 def write_artifacts(args: argparse.Namespace, pipeline: ArchonityPipeline, adapter) -> None:
@@ -368,6 +448,14 @@ def main() -> None:
     failures: list[dict] = []
     m1_options: dict = {}
     pipeline = adapter = None
+    rust_done = False
+    if args.parse_sources:
+        print("Разбор исходников: archonity-parse...")
+        try:
+            run_parse(args)
+        except Exception as e:  # noqa: BLE001
+            traceback.print_exc()
+            failures.append(attention.failure(None, None, "разбор исходников (archonity-parse)", e))
     try:
         from engine.grounding.llm import LLMClient
 
@@ -401,13 +489,18 @@ def main() -> None:
     if pipeline is not None:
         print("Генерация графов для сценариев...")
         try:
-            adapter = pipeline.run_all(scenarios, output_path=args.out)
+            if args.engine == "rust":
+                rust_failures = run_rust(args, pipeline, scenarios)
+                rust_done = True
+                failures.extend(rust_failures)
+            else:
+                adapter = pipeline.run_all(scenarios, output_path=args.out)
             print(f"Сабмишн успешно сохранен в: {args.out}")
         except Exception as e:  # noqa: BLE001
             traceback.print_exc()
             failures.append(attention.failure(None, None, "прогон сценариев", e))
         failures[:0] = pipeline.failures
-    empty_fallback = adapter is None
+    empty_fallback = adapter is None and not rust_done
     if empty_fallback:
         write_empty_submission(scenarios, args.out)
         print(f"Записан аварийный сабмишн с пустыми блоками: {args.out}", file=sys.stderr)

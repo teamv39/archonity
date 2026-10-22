@@ -156,9 +156,22 @@ class StepGrounder:
         return dataclasses.replace(req, handler=handler, http={"method": verb, "path": path}, params={},
                                    ui_source=None, body_src={}, grounding=dict(req.grounding, rebound=why))
 
+    @staticmethod
+    def _queries(sc: dict[str, Any]) -> list[str]:
+        return [s.get("action") or "" for s in sc.get("steps") or []]
+
+    def prepare(self, scenarios: list[dict[str, Any]]) -> None:
+        """Векторы шагов всех сценариев прогона одной пачкой, до первого ответа LLM по ним.
+
+        Эмбеддер грузится один раз и сразу выгружается (`STEmbedder.release`), `llama server` потом поднимается
+        без него в памяти: на 16 ГБ эмбеддер рядом с сервером не помещается, на A100 это лишние 8 ГБ. `begin` берёт
+        векторы из кеша эмбеддера; тексты и ключи те же, что и без `prepare`. Сбой модели не бросает исключение:
+        эмбеддер отключает dense, поиск идёт по одному BM25."""
+        self.retriever.warm([q for sc in scenarios for q in self._queries(sc)])
+
     def begin(self, sc: dict[str, Any]) -> ScenarioSession:
         steps = sc.get("steps") or []
-        ranked = self.retriever.search([s.get("action") or "" for s in steps])
+        ranked = self.retriever.search(self._queries(sc))
         return ScenarioSession(self, sc, {s["n"]: r for s, r in zip(steps, ranked)})
 
     def ground_scenario(self, sc: dict[str, Any]) -> list[StepRequest]:
@@ -371,8 +384,9 @@ def main() -> None:
                      allow_embed_model=a.embed_model, llm=llm, top_k=a.top_k)
     a.out.mkdir(parents=True, exist_ok=True)
     results: dict[str, list[StepRequest]] = {}
-    for p in paths:
-        sc = load_json(p)
+    scenarios = [load_json(p) for p in paths]
+    g.prepare(scenarios)
+    for sc in scenarios:
         reqs = g.ground_scenario(sc)
         results[sc["id"]] = reqs
         (a.out / f"{sc['id']}.json").write_text(

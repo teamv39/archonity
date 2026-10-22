@@ -1,5 +1,5 @@
 """Привязка артефактов к проекту (аудит универсальности, раздел 12): кеш каталога UI пересобирается при чужом
-отпечатке, IR и `entity_ir.json` чужого проекта останавливают конвейер понятной ошибкой с командой archparse.
+отпечатке, IR и `entity_ir.json` чужого проекта останавливают конвейер понятной ошибкой с командой разбора исходников (archonity-parse).
 
 Игрушечный проект `toyshop`: один обработчик `GET /api/ping`, UI из двух файлов, IR и entity_ir во временных папках.
 """
@@ -189,7 +189,7 @@ class TestCheckArtifacts:
         msg = str(e.value)
         assert "--mode bodies" in msg and "--mode entities" in msg, "в новую папку нужны оба артефакта"
         assert "artifacts/toyshop/ir" in msg and "artifacts/toyshop/entity_ir.json" in msg
-        assert "--artifacts-dir artifacts/toyshop" in msg and "-o ../data/ir" in msg
+        assert "--artifacts-dir artifacts/toyshop" in msg and "-o data/ir" in msg
 
     def test_missing_ir_dir_is_an_error(self, toy_artifacts, tmp_path: Path) -> None:
         _, ent = toy_artifacts

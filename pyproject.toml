@@ -8,8 +8,10 @@ requires-python = ">=3.11"
 # векторы шагов. Прогон из кеша cache/emb/ грузит его лениво и без него обходится.
 # torch — сборка CUDA 12.8 с download.pytorch.org (A100 и RTX 50 / SM120), не CUDA 13 с PyPI: та требует драйвер 580+.
 # EmbeddingGemma 2 в sentence-transformers 6.1 требует torchvision даже в текстовом режиме.
+# jsonschema — для scripts/verify_llm_cache.py: без него ответы кеша LLM не сверяются со схемой запроса.
 dependencies = [
     "huggingface-hub==1.33.0",
+    "jsonschema==4.26.0",
     "networkx==3.6.1",
     "numpy==2.4.4",
     "sentence-transformers==6.1.0",

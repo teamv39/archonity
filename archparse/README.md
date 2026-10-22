@@ -1,5 +1,7 @@
 # archparse — скоуп и контракт IR
 
+> **С 22.10 основная реализация — Rust: `rust/crates/archonity-parse`** ([ADR-009](../docs/adr/adr-009_archparse_rust.md), бинарник `archonity-parse`, те же аргументы `--targets-dir --skeleton --mode bodies|entities|all -o`). Она воспроизводит `data/ir/` и `data/entity_ir.json` байт в байт и используется в `scripts/run_final.sh`. Эта Java-версия остаётся эталоном и оракулом (пересобирать артефакты ею нужно только для сверки); контракт IR ниже общий для обеих.
+
 Статус: рабочий план на 16.10, пишется перед кодом по требованию [ADR-005](../docs/adr/adr-005_scenario_execution_pipeline.md) ("Точные поля фиксируются в archparse/README.md до начала реализации M4"). Отвечает только за **M2: разбор тел методов**. Не трогает M1 (заземление шагов), M3 (состояние), M4 (исполнитель) — это Миша/Денис.
 
 **Действует с 21.10:** контракты разделов 3.5 (`data/entity_ir.json`) и 3.6 (`data/ir/<module>.json`). Разделы 0–3.4 и план — история: пул IR (`data/pool_ir.json`) и legacy-контур, для которого он делался (`rules.py`, `graph/builder.py`), удалены 21.10 (PR #110). Запуск — пути обязательны, умолчаний под Train Ticket нет (из `archparse/`, JDK 17+):
