@@ -1,0 +1,57 @@
+{
+ "project": "trainticket",
+ "id": "X12",
+ "title": "An administrator goes through users, train types and routes, creates and removes a train type and creates an order for the passenger, who then finds the order after reloading the list, looks at it and pays for it",
+ "description": "An administrator signs in to the admin console with the administrator's username and password and shows all registered users and all train types. They create a train type TestExpress (80 second-class and 20 first-class seats, average speed 200) and remove it, then show all routes. They create an order for the passenger fdse_microservice and the contact Contacts_One on the high-speed train D1345 from shanghai to suzhou for 1 October 2026 with every field of the order form filled in and the price 50. Then the passenger signs in, reloads the orders, shows the order that the administrator created and pays for it with the money on the internal account. Finally the administrator shows all orders in the system.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Sign in to the admin console as the administrator with the username and password"
+  },
+  {
+   "n": 2,
+   "action": "Show all registered users"
+  },
+  {
+   "n": 3,
+   "action": "Show all train types"
+  },
+  {
+   "n": 4,
+   "action": "Create a train type TestExpress with 80 second-class and 20 first-class seats and an average speed of 200"
+  },
+  {
+   "n": 5,
+   "action": "Remove the train type TestExpress"
+  },
+  {
+   "n": 6,
+   "action": "Show all routes"
+  },
+  {
+   "n": 7,
+   "action": "Create an order for the passenger fdse_microservice and the contact Contacts_One on the high-speed train D1345 from shanghai to suzhou on 1 October 2026 (every field of the order form is filled in, the price is 50)"
+  },
+  {
+   "n": 8,
+   "action": "Sign in as a passenger with a username and a password"
+  },
+  {
+   "n": 9,
+   "action": "Reload my orders"
+  },
+  {
+   "n": 10,
+   "action": "Show the order the administrator created"
+  },
+  {
+   "n": 11,
+   "action": "Pay for this order using the money on the internal account"
+  },
+  {
+   "n": 12,
+   "action": "Back in the admin console as the administrator, show all orders in the system"
+  }
+ ]
+}

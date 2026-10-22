@@ -1,0 +1,61 @@
+{
+ "project": "trainticket",
+ "id": "X11",
+ "title": "Doing things out of order with a high-speed ticket: the system refuses to hand out an unpaid ticket, to let in before the ticket is picked up, to take a second payment, to cancel twice, and to hand out or change a cancelled order",
+ "description": "A registered passenger signs in, finds high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou for 1 October 2026, picks the first contact, reserves a first-class seat on the first trip found with no food, insurance or luggage and reloads the orders. They try to pick up the ticket before paying and the system refuses. They pay with the money on the internal account, try to go through the station entrance before picking up the ticket and try to pay for the same order a second time; the system refuses both. They cancel the order, then try to cancel it once more, to pick up the ticket and to move the order to a second-class seat on the same trip; the system refuses all three.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Sign in with my username and password"
+  },
+  {
+   "n": 2,
+   "action": "Find high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou for 1 October 2026"
+  },
+  {
+   "n": 3,
+   "action": "Go to my contacts and pick the first one"
+  },
+  {
+   "n": 4,
+   "action": "Reserve a first-class seat on the first trip found for this contact, with no food, insurance or luggage"
+  },
+  {
+   "n": 5,
+   "action": "Reload my orders"
+  },
+  {
+   "n": 6,
+   "action": "Try to pick up the ticket for the order before paying (the system refuses)"
+  },
+  {
+   "n": 7,
+   "action": "Pay for the order using the money on the internal account"
+  },
+  {
+   "n": 8,
+   "action": "Try to go through the station entrance with the order before picking up the ticket (the system refuses)"
+  },
+  {
+   "n": 9,
+   "action": "Try to pay for the same order a second time (the system refuses)"
+  },
+  {
+   "n": 10,
+   "action": "Cancel the order (the money goes back to the internal account)"
+  },
+  {
+   "n": 11,
+   "action": "Try to cancel the cancelled order once more (the system refuses)"
+  },
+  {
+   "n": 12,
+   "action": "Try to pick up the ticket for the cancelled order (the system refuses)"
+  },
+  {
+   "n": 13,
+   "action": "Try to move the cancelled order to a second-class seat on the same trip (the system refuses)"
+  }
+ ]
+}
