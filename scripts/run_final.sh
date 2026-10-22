@@ -17,7 +17,8 @@
 #    archonity-parse (Rust, ADR-009) по исходникам и скелету в папку артефактов — каждый раз, около секунды, байт в байт
 #    как закоммиченные в data/. Java-archparse в финальном запуске не участвует.
 # 3. run_eval.py: ответы из кеша; на промахе клиент сам поднимает llama-server и гасит его при выходе.
-# 4. Итог: sha256 выдачи, режим M1 (m1_report.json рядом с выдачей) и последней — рамка ATTENTION.txt, если она есть.
+# 4. Итог: sha256 выдачи, режим M1 (m1_report.json рядом с выдачей), время шагов и пик памяти (resources.json, П3) и
+#    последней — рамка ATTENTION.txt, если она есть.
 # Сбой моделей прогон не останавливает: выдача строится всегда (roadmap, Р2), но с заметным предупреждением.
 set -uo pipefail
 
@@ -33,6 +34,7 @@ else
     PY=python3
 fi
 
+T_START=$(date +%s)
 FETCH=()
 if [[ -z "${ARCHONITY_LLAMA_SERVER:-}" ]] && ! command -v llama-server >/dev/null 2>&1; then
     FETCH+=(--llama-cpp)
@@ -41,6 +43,7 @@ echo "== 1/4 модели: $PY scripts/fetch_models.py ${FETCH[*]-}"
 if ! "$PY" scripts/fetch_models.py ${FETCH[@]+"${FETCH[@]}"}; then
     echo "!! ВНИМАНИЕ: модели не прошли проверку — новые сценарии пойдут без LLM, качество ниже. Свяжитесь с командой Archonity." >&2
 fi
+T_MODELS=$(date +%s)
 
 ENGINE="${ENGINE:-rust}"
 PARSE_SOURCES="${PARSE_SOURCES:-1}"
@@ -74,6 +77,7 @@ if [[ "$ENGINE" == rust ]]; then
         PARSE_SOURCES=0
     fi
 fi
+T_BUILD=$(date +%s)
 
 ARGS=(-o "$OUT" --engine "$ENGINE")
 if [[ "$ENGINE" == rust && "$PARSE_SOURCES" != 0 ]]; then
@@ -87,9 +91,10 @@ if (($#)); then
 fi
 echo "== 3/4 прогон: $PY run_eval.py ${ARGS[*]}"
 # Выдача, отчёт M1 и рамка прошлого прогона в той же папке не должны выдать себя за этот, если run_eval.py упадёт
-rm -f "$OUT" "$(dirname "$OUT")/m1_report.json" "$(dirname "$OUT")/ATTENTION.txt"
+rm -f "$OUT" "$(dirname "$OUT")/m1_report.json" "$(dirname "$OUT")/ATTENTION.txt" "$(dirname "$OUT")/resources.json"
 "$PY" run_eval.py "${ARGS[@]}"
 RC=$?
+T_END=$(date +%s)
 
 echo "== 4/4 итог"
 if [[ ! -f "$OUT" ]]; then
@@ -108,6 +113,32 @@ except (OSError, ValueError):
 llm = r["llm"]
 print(f"M1: режим {r['mode']}, шагов {r['steps']}, выбрано моделью {r['steps_by_llm']}; ответы LLM: из кеша "
       f"{llm['from_cache']}, от сервера {llm['from_server']}, без ответа {llm['missing']}, ошибок {llm['errors']}")
+EOF
+# Ресурсы (П3): время шагов скрипта дописывается в resources.json прогона, итог — одной строкой
+"$PY" - "$(dirname "$OUT")/resources.json" "$T_START" "$T_MODELS" "$T_BUILD" "$T_END" <<'EOF'
+import json
+import sys
+
+path, t0, t_models, t_build, t_end = sys.argv[1], *map(int, sys.argv[2:])
+script = {"models_seconds": t_models - t0, "rust_build_seconds": t_build - t_models, "run_seconds": t_end - t_build,
+          "total_seconds": t_end - t0}
+try:
+    r = json.load(open(path, encoding="utf-8"))
+except (OSError, ValueError):
+    r = None
+line = (f"Время команды: всего {script['total_seconds']} с (модели {script['models_seconds']}, сборка Rust "
+        f"{script['rust_build_seconds']}, прогон {script['run_seconds']})")
+if r is not None:
+    r["run_final"] = script
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        json.dump(r, f, ensure_ascii=False, indent=1)
+        f.write("\n")
+    mem, gpu = r["memory"], r["gpu"]
+    ram = mem["peak_rss_tree_mib"] if mem["peak_rss_tree_mib"] is not None else mem["peak_rss_self_mib"]
+    line += f"; пик памяти {ram} МиБ"
+    if gpu["devices"]:
+        line += f", пик видеопамяти наших процессов {gpu['peak_ours_mib']} МиБ"
+print(line + f" — подробно {path}")
 EOF
 # Рамка ошибки (Р2) — последней: run_eval.py пишет ATTENTION.txt, если M1 не в режиме full или были сбои
 ATT="$(dirname "$OUT")/ATTENTION.txt"
