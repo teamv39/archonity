@@ -202,9 +202,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--ref-unpositioned",
         choices=("on", "off"),
-        default="off",
+        default="on",
         help="M4: ссылка first/second_of_step_N без слова позиции в тексте шага, когда запись этого вида создал шаг "
-             "раньше, чем читался список N, — ссылка на созданную запись (R22); Python и Rust (off по умолчанию)",
+             "раньше, чем читался список N, — ссылка на созданную запись (R22); Python и Rust (on по умолчанию)",
     )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")

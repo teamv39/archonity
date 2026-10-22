@@ -61,7 +61,7 @@ impl Default for RuleFlags {
             ref_explicit_id: true,
             ref_idless_result: true,
             ui_optional_groups: true,
-            ref_unpositioned: false,
+            ref_unpositioned: true,
         }
     }
 }
@@ -110,7 +110,7 @@ mod tests {
         let f = RuleFlags::default();
         assert_eq!(f.constructors, Constructors::CallerOnly);
         assert!(f.m4_success_retry && f.jackson_ctor && f.ref_explicit_id && f.ref_idless_result
-            && f.ui_optional_groups);
+            && f.ui_optional_groups && f.ref_unpositioned);
     }
 
     #[test]
