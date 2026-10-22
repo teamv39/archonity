@@ -101,11 +101,24 @@ class ScenarioSession:
     requests: list[StepRequest] = field(default_factory=list)
 
     def ground(self, st: dict[str, Any]) -> StepRequest:
+        stats = getattr(self.grounder.llm, "stats", None)
+        before = dataclasses.replace(stats) if stats is not None else None
         req = self.grounder.ground_step(self.scenario, st, self.ranked[st["n"]], self.history)
         h = self.grounder.cat.handlers[req.handler]
         self.history.append(P.history_line(st["n"], req.http["method"], req.http["path"], h, req.expected_outcome))
         self.requests.append(req)
+        if before is not None and (stats.calls, stats.errors) != (before.calls, before.errors):
+            self._progress(st, req, stats, before)
         return req
+
+    def _progress(self, st: dict[str, Any], req: StepRequest, s: Any, before: Any) -> None:
+        """Строка прогресса после шага, которому понадобился сервер LLM: прогон из кеша молчит, живой (минуты на
+        сценарий) показывает, что идёт и сколько уже заняло. `s`, `before` — `LLMStats` после шага и до него."""
+        err = f", ошибок {s.errors - before.errors}" if s.errors > before.errors else ""
+        print(f"[m1] {self.scenario.get('id')} шаг {st['n']} из {len(self.scenario.get('steps') or [])}: "
+              f"вызовов LLM {s.calls - before.calls} за {s.seconds - before.seconds:.0f} с{err} -> "
+              f"{req.http['method']} {req.http['path']}; всего {s.calls} вызовов, {s.seconds / 60:.1f} мин",
+              file=sys.stderr, flush=True)
 
 
 class StepGrounder:
