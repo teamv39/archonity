@@ -22,7 +22,7 @@
 
 BM25 не знает синонимов: Reserve не находит `preserve`, Reload — `queryOrdersForRefresh`, Find … trains — `queryInfo`. Сколько из этого закрывают векторы и LLM — вопрос прогона на GPU.
 
-## Прогон с моделями (22.10)
+## Прогон с моделями (22.10, до #147)
 
 RTX 5070 Ti 16 ГБ, `ARCHONITY_LLAMA_ARGS="-ncmoe 7 -dev Vulkan1"`, ветка слита с `dev` (код M4 как в `dev`). Кеша для этих текстов не было: 405 ответов LLM от сервера (1 из кеша), векторов шагов докачано 72 (в `cache/emb` было 520, стало 592). Прогон 1103 с, из них сервер LLM 1063 с, пик видеопамяти 15.8 ГБ, ошибок и шагов без ответа нет, режим M1 `full`, все 103 шага выбраны моделью.
 
@@ -60,3 +60,29 @@ python -m engine.grounding.grounder eval/paraphrase/scenarios/S*.json --eval eva
 
 - Выдача S0–S7 оригиналов прежняя: `python run_eval.py --require-cache` даёт sha256 `94463c41a72c244fc548cbb52d009cff7c65f44ad5e682b7176a156cb66a5a08`.
 - В `cache/` добавлены 405 файлов `cache/llm/*.json` (читаются, поле `key` на месте) и обновлён `cache/emb/qwen3-4b/vectors.npz` (592 вектора, NaN нет). Повтор M1 на перефразировках идёт целиком из кеша: grounder сообщил «кеш 406, вызовов 0».
+
+## Повтор на `dev` после #133 и #147 (22.10)
+
+Тот же прогон на `dev` с синонимами глаголов в BM25 (#147, `VERB_SYN_EXTRA`). RTX 5070 Ti 16 ГБ, `ARCHONITY_LLAMA_ARGS="-ncmoe 7 -dev Vulkan1"`. Синонимы поменяли кандидатов M1, поэтому часть ключей кеша новая: 270 ответов LLM от сервера, 112 из кеша; векторов шагов промахов нет (`cache/emb` не менялся). Прогон 756 с (сервер LLM 735 с), пик видеопамяти 15.6 ГБ, ошибок и шагов без ответа нет.
+
+| Сценарий | S0 | S1 | S2 | S3 | S4 | S5 | S6 | S7 | среднее |
+|---|---|---|---|---|---|---|---|---|---|
+| до #147 | 1.000 | 0.852 | 0.973 | 0.852 | 0.880 | 0.965 | 0.827 | 0.840 | 0.899 |
+| после #147 | 1.000 | 1.000 | 1.000 | 1.000 | 0.987 | 0.965 | 0.963 | 1.000 | **0.989** |
+
+Виды рёбер (среднее): `executes` 0.992, `calls` 0.994, `remote` 0.988, `data` 0.983.
+
+M1: top-1 102/103 = 0.990 (было 92/103), верный среди кандидатов 97/103 (было 82/103), параметры 47/47. Единственная ошибка M1 — S4.1 «Create a new passenger account …»: `AdminUserController#addUser` вместо `UserController#registerUser`, верного нет среди кандидатов. Она даёт все лишние рёбра S4: 3 `executes` и 2 `calls` в `admin-user-service` и один `remote` из `AdminUserServiceImpl#addUser` в `UserController#registerUser`; пропусков в S4 нет.
+
+Остаток S5 и S6 не от M1: шаги выбраны верно, параметры 47/47. По рёбрам против эталона:
+
+- S5 (0.965): только лишние рёбра, полнота 1.00. Исполнитель заходит в `ConsignController#insertConsign`, `ConsignPriceController#getPriceByWeightAndRegion` и `PreserveOtherServiceImpl#createConsign` (с их `data` в `consign_record` и `consign_price`), а эталон их не содержит. Результат совпал с прогоном до #147, то есть от синонимов не зависит.
+- S6 (0.963): только пропуски, точность 1.00. Нет `OrderController#modifyOrder` → `OrderServiceImpl#modifyOrder` (и `data` в `orders`), `InsidePaymentServiceImpl#setOrderStatus` с `remote` в заказ, `data` из `pay` в `inside_money` и `inside_payment`.
+
+Причину S5 и S6 не разбирали: нужно смотреть `decisions.json` по этим шагам (кандидаты в roadmap, не в этот PR).
+
+### Проверки
+
+- Выдача S0–S7 оригиналов прежняя: `python run_eval.py --require-cache` — sha256 `94463c41a72c244fc548cbb52d009cff7c65f44ad5e682b7176a156cb66a5a08`.
+- Добавлены 270 файлов `cache/llm/*.json`, все читаются. Повтор M1 на перефразировках идёт из кеша: «кеш 382, вызовов 0».
+
