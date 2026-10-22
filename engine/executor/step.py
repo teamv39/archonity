@@ -89,6 +89,14 @@ class StepExecutor:
                 merged = Obj(ent.type, dict(row_ent.fields), open=True)
                 merged.fields.update({k: v for k, v in ent.fields.items() if v is not UNKNOWN and v is not None})
                 return merged
+            # Ответ шага без ID — не сущность, а сводка («доплатите разницу»: `new Order()` с одной суммой): сущность —
+            # та, над которой работал шаг n (его собственная ссылка того же вида), если у неё ID известен
+            if getattr(self.it.rules, "ref_idless_result", "on") != "off":  # RuntimeRules.ref_idless_result
+                prev = self.step_refs.get(n, {}).get(kind)
+                if prev and prev != ref and depth < 4:
+                    alt = self.resolve_ref(kind, prev, state, depth + 1)
+                    if alt is not None and self.entity_id(alt, kind) is not UNKNOWN:
+                        return alt
             return ent
         saved_c = [(fqn, o) for fqn, o in self.saved.get(n, []) if self.schema.is_kind(fqn, kind)]
         top = max((self.schema.kind_rank(fqn, kind) for fqn, _ in saved_c), default=0)

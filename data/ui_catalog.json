@@ -1895,7 +1895,10 @@
    "body_consts": {},
    "body_cond": [],
    "body_opt": [],
-   "body_src": {},
+   "body_src": {
+    "orderId": "id",
+    "oldTripId": "trainNumber"
+   },
    "messages": [
     "unKnow payDifference error!"
    ],
