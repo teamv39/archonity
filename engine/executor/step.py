@@ -46,7 +46,8 @@ class StepExecutor:
         self.sid = "S?"
         self._login_ids = _login_principal_ids(index.N)
         self._login_blanks = _context_login_blanks(getattr(index, "sk", {}).get("context"))
-        self._reach: dict[str, set[str]] = {}
+        self._reach: dict[tuple[str, bool], set[str]] = {}
+        self._remote_of: dict[str, set[str]] | None = None  # метод -> обработчики его межсервисных вызовов
         self._dedupe: dict[tuple[str, str | None], tuple[str, ...]] = {}
 
     def begin_scenario(self, sid: str) -> None:
@@ -277,21 +278,32 @@ class StepExecutor:
                 obj.fields[name] = v
         return self.it.jackson_fill(obj, module)
 
-    def _reachable(self, handler: str, depth: int = 4) -> set[str]:
-        """Методы проекта, достижимые из обработчика по рёбрам calls скелета (с реализациями интерфейсов)."""
-        if handler not in self._reach:
+    def _reachable(self, handler: str, depth: int = 4, remote: bool = False) -> set[str]:
+        """Методы проекта, достижимые из обработчика по рёбрам calls скелета (с реализациями интерфейсов);
+        `remote` — ещё и через межсервисные вызовы (remote_call скелета) в обработчики других сервисов."""
+        key = (handler, remote)
+        if key not in self._reach:
+            if remote and self._remote_of is None:
+                self._remote_of = {}
+                for cs, hs in self.it.cs_remote.items():
+                    m = self.index.N.get(cs, {}).get("method")
+                    if m:
+                        self._remote_of.setdefault(m, set()).update(hs)
             seen, frontier = {handler}, [handler]
             for _ in range(depth):
                 nxt = []
                 for m in frontier:
-                    for t in self.index.calls.get(m, ()):
+                    targets = list(self.index.calls.get(m, ()))
+                    if remote:
+                        targets += sorted(self._remote_of.get(m, ()))
+                    for t in targets:
                         for x in (t, *self.index.over.get(t, ())):
                             if x not in seen:
                                 seen.add(x)
                                 nxt.append(x)
                 frontier = nxt
-            self._reach[handler] = seen
-        return self._reach[handler]
+            self._reach[key] = seen
+        return self._reach[key]
 
     def _is_login(self, handler: str) -> bool:
         """Обработчик входа: из него достижим метод с вызовом AuthenticationManager.authenticate."""
@@ -299,11 +311,15 @@ class StepExecutor:
 
     def _dedupe_fields(self, handler: str, ftype: str | None) -> tuple[str, ...]:
         """Поля DTO, по которым метод, достижимый из обработчика, ищет дубликат: геттеры параметра этого типа в
-        аргументах чтения репозитория, после которого тот же метод сохраняет сущность (факты archparse)."""
+        аргументах чтения репозитория, после которого тот же метод сохраняет сущность (факты archparse).
+
+        Достижимость — и через межсервисный вызов: консоль администратора пересылает тело запроса сервису, который
+        ищет дубликат (`AdminUserServiceImpl.addUser` -> `POST /users/register` -> `UserServiceImpl.saveUser`).
+        Тип сравнивается по простому имени: тело уходит JSON, DTO двух сервисов — разные классы с одним именем."""
         key = (handler, ftype)
         if key not in self._dedupe:
             out: list[str] = []
-            for m in sorted(self._reachable(handler)):
+            for m in sorted(self._reachable(handler, remote=True)):
                 saves = [c.line for c in self.index.entities.calls_by_method.get(m, ()) if c.operation == "SAVE"]
                 body = self.it.ir.get(m)
                 if not saves or not body:
