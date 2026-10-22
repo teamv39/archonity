@@ -1,0 +1,57 @@
+{
+  "project": "trainticket",
+  "id": "S5",
+  "title": "Advanced search: cheapest, fastest and fewest-stops trips, a change of trains at Suzhou; reserving the cheapest trip, picking up the ticket and entering the station",
+  "description": "A passenger with an account signs in and runs the advanced search from Shanghai to Nanjing on 1 October 2026 three times: for the cheapest trips, for the fastest trips and for the trips with the smallest number of stops. They also search for trips with a change of trains at Suzhou (Shanghai — Suzhou — Nanjing) on the same day. The cheapest option is an ordinary train (train type 'Other', not high-speed): they show its details, pick the first contact from the contact book and reserve a first-class seat on it with no meal, no assurance and no consignment. They reload their orders, pay for the order with the internal account balance, pick up the ticket and go through the station entrance (board the train) with it.",
+  "input": "text",
+  "steps": [
+    {
+      "n": 1,
+      "action": "Sign in with a username and a password"
+    },
+    {
+      "n": 2,
+      "action": "Advanced search for the cheapest trips from Shanghai to Nanjing on 1 October 2026"
+    },
+    {
+      "n": 3,
+      "action": "Advanced search for the fastest trips from Shanghai to Nanjing on 1 October 2026"
+    },
+    {
+      "n": 4,
+      "action": "Advanced search for the trips with the smallest number of stops from Shanghai to Nanjing on 1 October 2026"
+    },
+    {
+      "n": 5,
+      "action": "Search for trips from Shanghai to Nanjing with a change of trains at Suzhou (Shanghai — Suzhou — Nanjing) on 1 October 2026"
+    },
+    {
+      "n": 6,
+      "action": "Show the details of the cheapest trip found (an ordinary train of the 'Other' type)"
+    },
+    {
+      "n": 7,
+      "action": "Go to the contact book and pick the first contact"
+    },
+    {
+      "n": 8,
+      "action": "Reserve a first-class seat on the cheapest (ordinary) trip for the chosen contact, with no meal, no assurance and no consignment"
+    },
+    {
+      "n": 9,
+      "action": "Reload my orders"
+    },
+    {
+      "n": 10,
+      "action": "Pay for the order with the internal account balance"
+    },
+    {
+      "n": 11,
+      "action": "Pick up the ticket for this order"
+    },
+    {
+      "n": 12,
+      "action": "Go through the station entrance (board the train) using this order"
+    }
+  ]
+}

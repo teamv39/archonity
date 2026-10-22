@@ -1,0 +1,33 @@
+{
+  "project": "trainticket",
+  "id": "S0",
+  "title": "Account overview: contacts, both kinds of orders, paid orders and luggage",
+  "description": "A passenger who already has an account signs in and looks through their saved contacts. They reload their orders twice — once for the GaoTie/DongChe (high-speed) trains and once for ordinary trains of the 'Other' type, which the system keeps apart — and then reload them again showing only the orders with the 'Paid' status. Last, they check which luggage consignments are registered on their account. They do not search, book or pay for anything.",
+  "input": "text",
+  "steps": [
+    {
+      "n": 1,
+      "action": "Sign in with a username and a password"
+    },
+    {
+      "n": 2,
+      "action": "Go to the list of saved contacts"
+    },
+    {
+      "n": 3,
+      "action": "Reload my orders for GaoTie/DongChe (high-speed) trains"
+    },
+    {
+      "n": 4,
+      "action": "Reload my orders for ordinary trains of the 'Other' type"
+    },
+    {
+      "n": 5,
+      "action": "Reload the orders again, showing only those with the 'Paid' status"
+    },
+    {
+      "n": 6,
+      "action": "Check which luggage consignments are registered on my account"
+    }
+  ]
+}

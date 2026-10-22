@@ -1,0 +1,65 @@
+{
+  "project": "trainticket",
+  "id": "S6",
+  "title": "The administrator sets up a new high-speed trip and a passenger buys the first ticket on it",
+  "description": "The administrator signs in to the admin console. They create a station Ning Bo (trains stop there for 5 minutes), a train type GaoTieSix (100 second-class and 30 first-class seats, average speed 300), a route Shanghai — Suzhou — Ning Bo (distances 0, 100 and 250), pricing for GaoTieSix on this route (basic rate 0.5, first-class rate 1.2) and a high-speed trip G9101 of type GaoTieSix on this route from Shanghai via Suzhou to Ning Bo (leaving at 09:00, arriving at 12:00). Then a passenger with an account signs in, looks for GaoTie/DongChe (high-speed) trains from Shanghai to Ning Bo on 1 October 2026, shows the details of the new trip, picks the first contact from the contact book, reserves a first-class seat on it with no meal, no assurance and no consignment, reloads the orders and pays for the order with the internal account balance. Last, the administrator shows every order in the system.",
+  "input": "text",
+  "steps": [
+    {
+      "n": 1,
+      "action": "Sign in to the admin console as the administrator (username and password)"
+    },
+    {
+      "n": 2,
+      "action": "Create a station Ning Bo where trains stop for 5 minutes"
+    },
+    {
+      "n": 3,
+      "action": "Create a train type GaoTieSix: 100 second-class seats, 30 first-class seats, average speed 300"
+    },
+    {
+      "n": 4,
+      "action": "Create a route Shanghai — Suzhou — Ning Bo with distances 0, 100 and 250"
+    },
+    {
+      "n": 5,
+      "action": "Set up pricing for train type GaoTieSix on the new route: basic rate 0.5 and first-class rate 1.2"
+    },
+    {
+      "n": 6,
+      "action": "Create a high-speed trip G9101 of train type GaoTieSix on the new route, Shanghai via Suzhou to Ning Bo, leaving at 09:00 and arriving at 12:00"
+    },
+    {
+      "n": 7,
+      "action": "Sign in as a passenger with a username and a password"
+    },
+    {
+      "n": 8,
+      "action": "Find GaoTie/DongChe (high-speed) trains from Shanghai to Ning Bo on 1 October 2026"
+    },
+    {
+      "n": 9,
+      "action": "Show the details of the newly created trip in the results"
+    },
+    {
+      "n": 10,
+      "action": "Go to the contact book and pick the first contact"
+    },
+    {
+      "n": 11,
+      "action": "Reserve a first-class seat on the new trip for the chosen contact, with no meal, no assurance and no consignment"
+    },
+    {
+      "n": 12,
+      "action": "Reload my orders"
+    },
+    {
+      "n": 13,
+      "action": "Pay for the order with the internal account balance"
+    },
+    {
+      "n": 14,
+      "action": "Back in the admin console as the administrator, show every order in the system"
+    }
+  ]
+}

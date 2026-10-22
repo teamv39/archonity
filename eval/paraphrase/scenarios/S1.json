@@ -1,0 +1,65 @@
+{
+  "project": "trainticket",
+  "id": "S1",
+  "title": "A high-speed ticket with a meal on board, insurance and a checked bag; paying from the account balance, picking up the ticket and boarding",
+  "description": "A passenger with an account signs in with a username and a password. They look for GaoTie/DongChe (high-speed) trains going from Shanghai to Suzhou on 1 October 2026 and show the details of the first trip in the results. They see which meals are served on board this trip. They go to the contact book and pick the first contact as the traveller. They reserve a single first-class seat on that trip for this contact, adding an on-board meal (the first dish of the menu), the first kind of assurance (insurance) and a 2 kg luggage consignment sent to a consignee. They reload their orders, open the order that was just created and see how much it costs. They pay for it with the money on their internal account. They pick up the ticket for the order and then go through the station entrance (board the train) with it. Last, they check the luggage consignment record and the assurance record of the order.",
+  "input": "text",
+  "steps": [
+    {
+      "n": 1,
+      "action": "Sign in using a username and a password"
+    },
+    {
+      "n": 2,
+      "action": "Find GaoTie/DongChe (high-speed) trains going from Shanghai to Suzhou on 1 October 2026"
+    },
+    {
+      "n": 3,
+      "action": "Show the details of the first trip in the search results"
+    },
+    {
+      "n": 4,
+      "action": "See which meals are served on board this trip"
+    },
+    {
+      "n": 5,
+      "action": "Go to the contact book and pick the first contact"
+    },
+    {
+      "n": 6,
+      "action": "Reserve a single first-class seat on that trip for the chosen contact, including an on-board meal, the first kind of assurance (insurance) and a 2 kg luggage consignment sent to a consignee"
+    },
+    {
+      "n": 7,
+      "action": "Reload my orders"
+    },
+    {
+      "n": 8,
+      "action": "Open the order that was just created"
+    },
+    {
+      "n": 9,
+      "action": "See how much the order costs"
+    },
+    {
+      "n": 10,
+      "action": "Pay for the order using the money on the internal account"
+    },
+    {
+      "n": 11,
+      "action": "Pick up the ticket for this order"
+    },
+    {
+      "n": 12,
+      "action": "Go through the station entrance (board the train) using this order"
+    },
+    {
+      "n": 13,
+      "action": "Check the luggage consignment record for this order"
+    },
+    {
+      "n": 14,
+      "action": "Check the assurance (insurance) record for this order"
+    }
+  ]
+}
