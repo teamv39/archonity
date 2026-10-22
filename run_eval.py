@@ -219,12 +219,15 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def resolve_scenario_paths(args_scenarios: list[str] | None) -> list[Path]:
+def resolve_scenario_paths(args_scenarios: list[str] | None, missing: list[str] | None = None) -> list[Path]:
+    """Файлы и маски; каталог — его `*.json`. Ничего не нашлось по аргументу — он в `missing` (сбой в рамке)."""
     if args_scenarios:
         paths: list[Path] = []
         for s in args_scenarios:
-            for p in glob.glob(s):
-                paths.append(Path(p))
+            found = sorted(Path(s).glob("*.json")) if Path(s).is_dir() else [Path(p) for p in glob.glob(s)]
+            if not found and missing is not None:
+                missing.append(s)
+            paths += found
         return sorted(paths, key=lambda x: x.name)
 
     default_pattern = str(ROOT_DIR / "hackaton" / "tt-challenge" / "scenarios" / "*.json")
@@ -462,7 +465,8 @@ def evaluate(args: argparse.Namespace) -> None:
 def main() -> None:
     args = parse_args()
 
-    scenarios = resolve_scenario_paths(args.scenarios)
+    missing: list[str] = []
+    scenarios = resolve_scenario_paths(args.scenarios, missing)
     if not scenarios:
         print("Ошибка: не найдено ни одного файла сценариев!", file=sys.stderr)
         sys.exit(1)
@@ -478,7 +482,8 @@ def main() -> None:
     # Р2: выдача строится всегда, сбой виден в рамке последней строкой и в ATTENTION.txt, код выхода 0
     attention.clear(args.out)
     meter = resources.Resources().start()
-    failures: list[dict] = []
+    failures: list[dict] = [attention.failure(None, None, "сценарии", FileNotFoundError(f"не найден: {m}"))
+                            for m in missing]
     m1_options: dict = {}
     pipeline = adapter = None
     rust_done = False
