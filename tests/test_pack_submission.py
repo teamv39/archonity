@@ -47,7 +47,7 @@ def test_pack_submission_creates_valid_archive(tmp_path: Path):
         # 2a. Команда запуска, зависимости, модели, данные прогона (docs/run_on_a100.md)
         for f in ("RUN.md", "code/requirements.txt", "code/uv.lock", "code/pyproject.toml", "code/models/manifest.json",
                   "code/facts/configs_topology.json", "code/data/entity_ir.json", "code/scripts/fetch_models.py",
-                  "code/docs/annotation_rules.md"):
+                  "code/docs/run_on_a100.md"):
             assert f in names, f"Нет {f} в архиве"
         # Java-оракул разбора в посылку не входит: data/ строит archonity-parse
         assert not any(n.startswith("code/archparse") for n in names)

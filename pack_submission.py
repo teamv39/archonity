@@ -4,9 +4,9 @@
 
 В корне архива: submission.json, evidence.json, RUN.md с командами воспроизведения и report.html — отчёт прогона (scripts/report.py). В code/ — всё, чтобы из этого
 каталога получить тот же submission.json и прогнать новые сценарии (docs/run_on_a100.md): код (run_eval.py, engine/,
-rust/ — Rust-движок и разбор исходников, ADR-008 и ADR-009), артефакты M2 (data/), кеши M1 (cache/), зависимости
-(pyproject.toml, uv.lock, requirements.txt), манифест моделей, скрипты запуска и доки, на которые ссылается README
-(ADR и правила разметки). Java-оракул archparse/ в архив не входит: data/ строит archonity-parse.
+rust/ — Rust-движок и разбор исходников), артефакты M2 (data/), кеши M1 (cache/), зависимости (pyproject.toml,
+uv.lock, requirements.txt), манифест моделей, скрипты запуска и доки (README.md, rust/README.md, docs/run_on_a100.md).
+Java-версия разбора в архив не входит: data/ строит archonity-parse.
 
 Гарантирует:
 1. Переводы строк в текстовых файлах — Unix LF, как в индексе git.
@@ -54,20 +54,13 @@ CODE_FILES = (
     "scripts/report.py",
     "eval/records/README.md",
     "eval/records/submission_p27_1.00000.json",  # рекорд: оракул теста паритета archonity-exec (cargo test)
-    # Доки, на которые ссылается README: устройство конвейера и правила, по которым считаются рёбра
-    "docs/adr/adr-005_scenario_execution_pipeline.md",
-    "docs/adr/adr-006_constructor_visibility.md",
-    "docs/adr/adr-007_project_profile.md",
-    "docs/adr/adr-008_rust_engine_boundary.md",
-    "docs/adr/adr-009_archparse_rust.md",
-    "docs/annotation_rules.md",
 )
 
 # Каталоги целиком: (каталог, шаблон rglob)
 CODE_TREES = (
     ("engine", "*.py"),
     ("data/ir", "*.json"),  # IR тел методов (M2, archonity-parse)
-    ("cache/llm", "*.json"),  # ответы LLM: S1–S7 без GPU (ADR-005, «Кеш LLM»)
+    ("cache/llm", "*.json"),  # ответы LLM: S1–S7 без GPU
     ("cache/emb/qwen3-4b", "*"),  # векторы эмбеддера
 )
 
@@ -111,7 +104,7 @@ def run_md(run_cmd: str) -> str:
 
     pip install -r requirements.txt        # или: uv sync --locked
 
-Анализ кода и построение ответа — Rust (`rust/`, ADR-008, ADR-009): Rust 1.99.1 из `rust/rust-toolchain.toml` и
+Анализ кода и построение ответа — Rust (`rust/`, обзор — `rust/README.md`): Rust 1.99.1 из `rust/rust-toolchain.toml` и
 компилятор C (`cc`/`gcc`) для tree-sitter, зависимости с crates.io. На Python — только M1 (сопоставление шагов
 с обработчиками через локальные модели) и кеш ответов моделей.
 
