@@ -2,7 +2,7 @@
 
 Формат — hackaton/sample/README.md: zip-архив с кодом и обязательным submission.json в корне.
 
-В корне архива: submission.json, evidence.json и RUN.md с командами воспроизведения. В code/ — всё, чтобы из этого
+В корне архива: submission.json, evidence.json, RUN.md с командами воспроизведения и report.html — отчёт прогона (scripts/report.py). В code/ — всё, чтобы из этого
 каталога получить тот же submission.json и прогнать новые сценарии (docs/run_on_a100.md): код (run_eval.py, engine/,
 archparse/ и rust/ — источник data/ и Rust-движок, ADR-008), артефакты M2 (data/), кеши M1 (cache/), зависимости (pyproject.toml, uv.lock,
 requirements.txt), манифест моделей и скрипты запуска.
@@ -17,6 +17,7 @@ requirements.txt), манифест моделей и скрипты запус�
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path, PurePosixPath
 import zipfile
 
@@ -43,6 +44,7 @@ CODE_FILES = (
     "scripts/start_llm.sh",
     "scripts/start_llm.ps1",
     "scripts/verify_llm_cache.py",
+    "scripts/report.py",
     "archparse/README.md",
     "archparse/build.gradle",
     "archparse/settings.gradle",
@@ -68,7 +70,9 @@ TEXT_SUFFIXES = {".py", ".json", ".md", ".txt", ".toml", ".lock", ".sh", ".ps1",
                  ".java", ".rs", ""}
 EXECUTABLE = {"scripts/run_final.sh", "scripts/start_llm.sh", "archparse/gradlew"}
 
-RUN_CMD = "python run_eval.py -o output/submission.json"
+BUILD_CMD = "cd rust && cargo build --release --locked && cd .."
+RUN_CMD = "python run_eval.py --engine rust --parse-sources -o output/submission.json"
+PYTHON_CMD = "python run_eval.py -o output/submission.json"
 
 
 def code_files() -> list[str]:
@@ -100,15 +104,18 @@ def run_md(run_cmd: str) -> str:
 
     pip install -r requirements.txt        # или: uv sync --locked
 
-Rust-движок (`rust/`, ADR-008): `scripts/run_final.sh` собирает его сам (`cd rust && cargo build --release --locked`,
-нужен доступ к crates.io; нет `cargo` — ставит через `rustup`). Вручную:
+Анализ кода и построение ответа — Rust (`rust/`, ADR-008, ADR-009): Rust 1.99.1 из `rust/rust-toolchain.toml` и
+компилятор C (`cc`/`gcc`) для tree-sitter, зависимости с crates.io. На Python — только M1 (сопоставление шагов
+с обработчиками через локальные модели) и кеш ответов моделей.
 
-    cd rust && cargo build --release --locked && cd ..
-    python run_eval.py --engine rust -o output/submission.json
+`submission.json` этого архива (S0–S7) из кешей `cache/`, без GPU и сервера LLM: сборка Rust, затем прогон.
+`archonity-parse` строит IR тел методов из исходников, `archonity-exec` исполняет шаги и пишет выдачу:
 
-`submission.json` этого архива (S0–S7) из кешей `cache/`, без GPU и сети:
-
+    {BUILD_CMD}
     {run_cmd}
+
+Если `archonity-exec` нет или он упал, тот же прогон идёт на Python-исполнителе: выдача та же байт в байт, сбой —
+в рамке и `ATTENTION.txt`. Целиком на Python, без Rust: `{PYTHON_CMD}`.
 
 Новые сценарии на Linux с A100 40 ГБ — одна команда, она докачивает модели по `models/manifest.json` (версии и sha256)
 и поднимает `llama-server` сама:
@@ -116,6 +123,9 @@ Rust-движок (`rust/`, ADR-008): `scripts/run_final.sh` собирает е
     scripts/run_final.sh <файлы сценариев>
 
 Подробно — `docs/run_on_a100.md`.
+
+`report.html` рядом — отчёт этого прогона: качество по эталону, шаги, обработчики и рёбра с правилом и местом
+в коде. Пересобрать по любому прогону: `python scripts/report.py output/`.
 """
 
 
@@ -141,11 +151,25 @@ def _read(path: Path) -> bytes:
     return data
 
 
+def report_html() -> str | None:
+    """Отчёт прогона output/ (scripts/report.py) для корня архива: ссылки на код — в code/hackaton/, куда организаторы
+    кладут свой пакет. Нет файлов прогона рядом с выдачей — отчёта нет."""
+    if not all((OUTPUT_DIR / f).is_file() for f in ("decisions.json", "step_requests.json")):
+        print("Отчёт не добавлен: в output/ нет decisions.json или step_requests.json")
+        return None
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import report
+
+    args = report.parse_args([str(OUTPUT_DIR), "-o", "report.html",
+                              "--targets", "code/hackaton/tt-challenge/targets/trainticket"])
+    return report.render(OUTPUT_DIR, args)
+
+
 def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
     """Архив сдачи. run_cmd — команда, которой получен submission.json (в RUN.md архива)."""
     if not SUBMISSION_JSON.is_file():
         raise FileNotFoundError(
-            f"Файл {SUBMISSION_JSON} не найден. Сначала выполните: {RUN_CMD}"
+            f"Файл {SUBMISSION_JSON} не найден. Сначала выполните: {BUILD_CMD} && {RUN_CMD}"
         )
     files = code_files()
     dirs = sorted({"code"} | {f"code/{p}" for f in files for p in PurePosixPath(f).parents if str(p) != "."})
@@ -156,6 +180,8 @@ def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
         if EVIDENCE_JSON.is_file():
             _add_file(z, "evidence.json", _read(EVIDENCE_JSON))
         _add_file(z, "RUN.md", run_md(run_cmd or RUN_CMD).encode("utf-8"))
+        if page := report_html():
+            _add_file(z, "report.html", page.encode("utf-8"))
         for d in dirs:
             _add_dir(z, d)
         for f in files:

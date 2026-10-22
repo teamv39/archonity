@@ -79,7 +79,17 @@ def test_attention_lines_end_with_contacts_and_cut_long_list(tmp_path: Path) -> 
 
 def test_no_attention_on_clean_full_run() -> None:
     assert not attention.needed([], {"mode": "full", "steps": 3, "steps_by_retrieval": 0})
+    assert not attention.needed([], {"mode": "full", "steps": 3, "steps_by_retrieval": 0, "embedding_misses": 0})
     assert attention.needed([], None)
+
+
+def test_attention_on_embedder_failure(tmp_path: Path) -> None:
+    """Эмбеддер отказал (например, не хватило видеопамяти рядом с сервером LLM): режим full, но поиск только BM25."""
+    report = {"mode": "full", "steps": 3, "steps_by_retrieval": 0, "embedding_misses": 2,
+              "embedding_failure": "OutOfMemoryError: CUDA out of memory"}
+    assert attention.needed([], report)
+    text = "\n".join(attention.lines([], report, tmp_path / "submission.json"))
+    assert "только BM25" in text and "OutOfMemoryError" in text
 
 
 def test_broken_pipeline_writes_empty_submission_and_frame_last(tmp_path: Path) -> None:
@@ -101,6 +111,29 @@ def test_broken_pipeline_writes_empty_submission_and_frame_last(tmp_path: Path) 
         assert tail[-1] == attention.RULE
         assert attention.CONTACTS in "\n".join(tail[-4:])
         assert "аварийный submission.json" in "\n".join(tail[-12:])
+
+
+def test_rust_failure_falls_back_to_python(tmp_path: Path) -> None:
+    """`archonity-exec` нет: выдача та же, что у `--engine python`, сбой Rust в рамке, отчёт M1 без двойного счёта."""
+    def run(out: Path, *extra: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, str(ROOT / "run_eval.py"), "--scenarios", str(SCENARIOS / "S0.json"),
+             "--require-cache", "--no-eval", "-o", str(out), *extra],
+            capture_output=True, text=True, encoding="utf-8", cwd=ROOT, timeout=300)
+
+    py, rs = tmp_path / "py" / "submission.json", tmp_path / "rs" / "submission.json"
+    res_py = run(py, "--engine", "python")
+    if res_py.returncode == 2:
+        pytest.skip("нет кеша LLM")
+    res = run(rs, "--engine", "rust", "--rust-bin", str(tmp_path / "missing-exec"))
+
+    assert res.returncode == 0, res.stderr[-2000:]
+    assert rs.read_bytes() == py.read_bytes()
+    assert "откат на Python" in (rs.parent / attention.FILE_NAME).read_text(encoding="utf-8")
+    report_py = json.loads((py.parent / "m1_report.json").read_text(encoding="utf-8"))
+    report_rs = json.loads((rs.parent / "m1_report.json").read_text(encoding="utf-8"))
+    assert report_rs["llm"] == report_py["llm"]
+    assert [f["stage"] for f in report_rs["failures"]] == ["движок Rust (откат на Python)"]
 
 
 @pytest.mark.skipif(not GOLD.is_file(), reason="нет эталона S0")

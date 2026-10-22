@@ -32,21 +32,26 @@ def _where(f: dict[str, Any]) -> str:
     return f["scenario"] if f["step"] is None else f"{f['scenario']}.{f['step']}"
 
 
-def _m1_line(report: dict[str, Any] | None) -> str | None:
+def _m1_lines(report: dict[str, Any] | None) -> list[str]:
+    """Что не так с M1: режим без части ответов LLM и векторы шагов без эмбеддера (поиск тогда только BM25)."""
     if report is None:
-        return "M1: отчёт не построен"
-    if report["mode"] == "full":
-        return None
-    if not report.get("llm_enabled", True):
-        why = "LLM выключена (--no-llm)"
-    else:
-        why = "нет ответов в cache/llm и сервер LLM не ответил"
-    return (f"M1: режим {report['mode']}, шагов без модели {report['steps_by_retrieval']} "
-            f"из {report['steps']} ({why})")
+        return ["M1: отчёт не построен"]
+    out = []
+    if report["mode"] != "full":
+        if not report.get("llm_enabled", True):
+            why = "LLM выключена (--no-llm)"
+        else:
+            why = "нет ответов в cache/llm и сервер LLM не ответил"
+        out.append(f"M1: режим {report['mode']}, шагов без модели {report['steps_by_retrieval']} "
+                   f"из {report['steps']} ({why})")
+    if report.get("embedding_misses"):
+        out.append(f"M1: векторов без эмбеддера {report['embedding_misses']}, поиск кандидатов у этих шагов только BM25 "
+                   f"({report.get('embedding_failure') or 'эмбеддер недоступен'})")
+    return out
 
 
 def needed(failures: list[dict[str, Any]], report: dict[str, Any] | None) -> bool:
-    return bool(failures) or _m1_line(report) is not None
+    return bool(failures) or bool(_m1_lines(report))
 
 
 def lines(failures: list[dict[str, Any]], report: dict[str, Any] | None, out: Path, *,
@@ -55,8 +60,7 @@ def lines(failures: list[dict[str, Any]], report: dict[str, Any] | None, out: Pa
     head = (f"аварийный submission.json с пустыми блоками: {out}" if empty_fallback
             else f"submission.json записан: {out}")
     body = ["ARCHONITY: ВЫДАЧА ПОСТРОЕНА С ОШИБКАМИ", head]
-    if (m1 := _m1_line(report)) is not None:
-        body.append(m1)
+    body += _m1_lines(report)
     if failures:
         steps = sum(f["scenario"] is not None and f["step"] is not None for f in failures)
         scenarios = sum(f["scenario"] is not None and f["step"] is None for f in failures)
