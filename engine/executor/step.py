@@ -153,8 +153,29 @@ class StepExecutor:
 
     # --- аргументы обработчика ------------------------------------------------
 
+    def _named_entity(self, kind: str, ref: str, want: str) -> Obj | None:
+        """Сущность вида `kind` с ID `want` среди ответов шагов: сначала шаг ссылки `ref`, потом прежние шаги с конца."""
+        m = _REF.match(ref or "")
+        first = [int(m.group(2))] if m else []
+        for n in first + sorted((k for k in self.results if k not in first), reverse=True):
+            for ent in _find_kind(_payload(self.results.get(n), self.it.envelope), kind, schema=self.schema):
+                if str(self.entity_id(ent, kind)) == want:
+                    return ent
+        return None
+
     def handler_args(self, handler: str, params: dict[str, Any], refs: dict[str, Any], state: Any) -> list[Any]:
         ents: dict[str, Any] = {k: self.resolve_ref(k, v, state) for k, v in (refs or {}).items()}
+        # Шаг назвал сущность по ID («рейс G9998»), а ссылка M1 — по месту в списке («первый рейс шага 2»): поля
+        # тела запроса — от названной сущности, иначе тело собирается из ID одной сущности и полей другой.
+        for kind, ent in list(ents.items()):
+            have = self.entity_id(ent, kind) if ent is not None else UNKNOWN
+            for f in self.schema.id_fields(kind) if kind in self.schema.known_kinds else ():
+                want = params.get(f)
+                if f != "id" and isinstance(want, str) and have is not UNKNOWN and str(have) != want:
+                    named = self._named_entity(kind, refs[kind], want)
+                    if named is not None:
+                        ents[kind] = named
+                    break
         # Последний слой: параметры запросов шагов, на которые ссылается шаг (UI переносит дату и станции поиска)
         for v in (refs or {}).values():
             m = _REF.match(v or "")
