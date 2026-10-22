@@ -76,7 +76,7 @@ python run_eval.py --scenarios "eval/own/scenarios/*.json" --no-eval -o output/o
 | X1–X4 (`X[1-4].json`) | `561bc45c60a5ecae208dc4be5d2e3383ad0b74c55194ba7a5adfd705f7c95312` |
 | X5–X8 (`X[5-8].json`) | `878d7a50c3ef771c58d62b6fda16de435c1ddaa565af3d5bd24591e4fd175c1e` |
 
-Выдачи X1–X4 и X5–X8 из кеша совпали с прогонами с сервером LLM. 22.10 правило «сущность, названная явно» (`--ref-explicit-id`, annotation_rules.md, R21) добавило X6 10 рёбер шага 3; прежние sha256 X1–X8 и X5–X8 (`7053de3d…`, `f1a12b5e…`) даёт `--ref-explicit-id off`. 22.10 правило «получатель багажа без полей группы» (`--consign-absent-group`, annotation_rules.md) убрало из X8.4 «…without food, assurance or consignment» 4 ребра consign-ветки; прежние sha256 X1–X8 и X5–X8 (`c8742790…`, `9cd5d733…`) даёт `--consign-absent-group off`.
+Выдачи X1–X4 и X5–X8 из кеша совпали с прогонами с сервером LLM. 22.10 правило «сущность, названная явно» (`--ref-explicit-id`, annotation_rules.md, R21) добавило X6 10 рёбер шага 3; прежние sha256 X1–X8 и X5–X8 (`7053de3d…`, `f1a12b5e…`) даёт `--ref-explicit-id off`. 22.10 правило «поля под условием UI» (`--ui-optional-groups`, annotation_rules.md) убрало из X8.4 «…without food, assurance or consignment» 4 ребра consign-ветки; прежние sha256 X1–X8 и X5–X8 — `c8742790…`, `9cd5d733…` (с `--ui-optional-groups off` выдача другая: правила нет вовсе).
 
 ## Проверка M4
 

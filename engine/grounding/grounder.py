@@ -185,7 +185,7 @@ class StepGrounder:
         handler, why = got
         verb, path = self.cat.handlers[handler].routes[0]
         return dataclasses.replace(req, handler=handler, http={"method": verb, "path": path}, params={},
-                                   ui_source=None, body_src={}, grounding=dict(req.grounding, rebound=why))
+                                   ui_source=None, body_src={}, body_groups=[], grounding=dict(req.grounding, rebound=why))
 
     @staticmethod
     def _queries(sc: dict[str, Any]) -> list[str]:
@@ -346,6 +346,7 @@ class StepGrounder:
             http={"method": verb, "path": path}, params=params, expected_outcome=outcome, refs=refs,
             ui_source={"file": ui_req.file, "line": ui_req.line} if ui_req is not None else None,
             body_src=dict(ui_req.body_src) if ui_req is not None else {},
+            body_groups=ui_req.body_groups() if ui_req is not None else [],
             grounding=grounding,
         )
 

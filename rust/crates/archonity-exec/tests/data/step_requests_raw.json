@@ -17,6 +17,7 @@
     "line": 9
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
@@ -74,6 +75,7 @@
     "line": 56
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
@@ -138,6 +140,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -212,6 +215,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",
@@ -290,6 +294,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",
@@ -358,6 +363,7 @@
     "line": 10
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-consign-service:consign.controller.ConsignController#findByAccountId(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -414,6 +420,7 @@
     "line": 9
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
@@ -476,6 +483,7 @@
     "startPlace": "from",
     "endPlace": "to"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
@@ -538,6 +546,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
@@ -600,6 +609,7 @@
     "line": 192
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
@@ -657,6 +667,7 @@
     "line": 56
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
@@ -727,6 +738,36 @@
     "line": 518
    },
    "body_src": {},
+   "body_groups": [
+    {
+     "fields": [
+      "foodName",
+      "foodPrice",
+      "stationName",
+      "storeName"
+     ],
+     "on": [
+      [
+       "foodType",
+       "1"
+      ],
+      [
+       "foodType",
+       "2"
+      ]
+     ]
+    },
+    {
+     "fields": [
+      "handleDate",
+      "consigneeName",
+      "consigneePhone",
+      "consigneeWeight",
+      "isWithin"
+     ],
+     "on": []
+    }
+   ],
    "grounding": {
     "candidates": [
      "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
@@ -805,6 +846,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -868,6 +910,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#findAllOrder(org.springframework.http.HttpHeaders)",
@@ -921,6 +964,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-price-service:price.controller.PriceController#queryAll(org.springframework.http.HttpHeaders)",
@@ -981,6 +1025,7 @@
     "orderId": "id",
     "tripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
@@ -1039,6 +1084,7 @@
     "line": 104
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -1096,6 +1142,7 @@
     "line": 98
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -1154,6 +1201,7 @@
     "line": 397
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -1209,6 +1257,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-assurance-service:assurance.controller.AssuranceController#findAssuranceByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -1266,6 +1315,7 @@
     "line": 9
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
@@ -1328,6 +1378,7 @@
     "startPlace": "from",
     "endPlace": "to"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#calculateSoldTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
@@ -1391,6 +1442,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
@@ -1450,6 +1502,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -1506,6 +1559,7 @@
     "line": 56
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
@@ -1574,6 +1628,36 @@
     "line": 518
    },
    "body_src": {},
+   "body_groups": [
+    {
+     "fields": [
+      "foodName",
+      "foodPrice",
+      "stationName",
+      "storeName"
+     ],
+     "on": [
+      [
+       "foodType",
+       "1"
+      ],
+      [
+       "foodType",
+       "2"
+      ]
+     ]
+    },
+    {
+     "fields": [
+      "handleDate",
+      "consigneeName",
+      "consigneePhone",
+      "consigneeWeight",
+      "isWithin"
+     ],
+     "on": []
+    }
+   ],
    "grounding": {
     "candidates": [
      "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
@@ -1650,6 +1734,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -1718,6 +1803,7 @@
     "orderId": "id",
     "tripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
@@ -1776,6 +1862,7 @@
     "line": 170
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -1832,6 +1919,7 @@
     "line": 287
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-food-service:foodsearch.controller.FoodController#deleteFoodOrder(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -1903,6 +1991,36 @@
     "line": 518
    },
    "body_src": {},
+   "body_groups": [
+    {
+     "fields": [
+      "foodName",
+      "foodPrice",
+      "stationName",
+      "storeName"
+     ],
+     "on": [
+      [
+       "foodType",
+       "1"
+      ],
+      [
+       "foodType",
+       "2"
+      ]
+     ]
+    },
+    {
+     "fields": [
+      "handleDate",
+      "consigneeName",
+      "consigneePhone",
+      "consigneeWeight",
+      "isWithin"
+     ],
+     "on": []
+    }
+   ],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#createNewOrder(other.entity.Order,org.springframework.http.HttpHeaders)",
@@ -1979,6 +2097,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -2047,6 +2166,7 @@
     "orderId": "id",
     "tripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
@@ -2110,6 +2230,7 @@
     "orderId": "id",
     "oldTripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-rebook-service:rebook.controller.RebookController#payDifference(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
@@ -2175,6 +2296,7 @@
     "line": 9
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
@@ -2237,6 +2359,7 @@
     "startPlace": "from",
     "endPlace": "to"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
@@ -2299,6 +2422,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
@@ -2358,6 +2482,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -2414,6 +2539,7 @@
     "line": 56
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
@@ -2472,6 +2598,7 @@
     "line": 572
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)",
@@ -2544,6 +2671,36 @@
     "line": 518
    },
    "body_src": {},
+   "body_groups": [
+    {
+     "fields": [
+      "foodName",
+      "foodPrice",
+      "stationName",
+      "storeName"
+     ],
+     "on": [
+      [
+       "foodType",
+       "1"
+      ],
+      [
+       "foodType",
+       "2"
+      ]
+     ]
+    },
+    {
+     "fields": [
+      "handleDate",
+      "consigneeName",
+      "consigneePhone",
+      "consigneeWeight",
+      "isWithin"
+     ],
+     "on": []
+    }
+   ],
    "grounding": {
     "candidates": [
      "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
@@ -2623,6 +2780,36 @@
     "line": 518
    },
    "body_src": {},
+   "body_groups": [
+    {
+     "fields": [
+      "foodName",
+      "foodPrice",
+      "stationName",
+      "storeName"
+     ],
+     "on": [
+      [
+       "foodType",
+       "1"
+      ],
+      [
+       "foodType",
+       "2"
+      ]
+     ]
+    },
+    {
+     "fields": [
+      "handleDate",
+      "consigneeName",
+      "consigneePhone",
+      "consigneeWeight",
+      "isWithin"
+     ],
+     "on": []
+    }
+   ],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#createNewOrder(other.entity.Order,org.springframework.http.HttpHeaders)",
@@ -2699,6 +2886,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -2761,6 +2949,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#findAllOrder(org.springframework.http.HttpHeaders)",
@@ -2815,6 +3004,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#findAllOrder(org.springframework.http.HttpHeaders)",
@@ -2874,6 +3064,7 @@
     "orderId": "id",
     "tripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
@@ -2935,6 +3126,7 @@
     "orderId": "id",
     "tripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
@@ -2988,6 +3180,7 @@
    "refs": {},
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-consign-price-service:consignprice.controller.ConsignPriceController#getPriceByWeightAndRegion(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
@@ -3042,6 +3235,7 @@
     "line": 115
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-assurance-service:assurance.controller.AssuranceController#getAllAssuranceType(org.springframework.http.HttpHeaders)",
@@ -3098,6 +3292,7 @@
    "refs": {},
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-admin-user-service:adminuser.controller.AdminUserController#addUser(adminuser.dto.UserDto,org.springframework.http.HttpHeaders)",
@@ -3158,6 +3353,7 @@
     "line": 9
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
@@ -3219,6 +3415,7 @@
     "line": 572
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-contacts-service:contacts.controller.ContactsController#createNewContacts(contacts.entity.Contacts,?HttpHeaders)",
@@ -3284,6 +3481,7 @@
     "startPlace": "from",
     "endPlace": "to"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
@@ -3346,6 +3544,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
@@ -3408,6 +3607,7 @@
     "line": 192
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
@@ -3479,6 +3679,36 @@
     "line": 518
    },
    "body_src": {},
+   "body_groups": [
+    {
+     "fields": [
+      "foodName",
+      "foodPrice",
+      "stationName",
+      "storeName"
+     ],
+     "on": [
+      [
+       "foodType",
+       "1"
+      ],
+      [
+       "foodType",
+       "2"
+      ]
+     ]
+    },
+    {
+     "fields": [
+      "handleDate",
+      "consigneeName",
+      "consigneePhone",
+      "consigneeWeight",
+      "isWithin"
+     ],
+     "on": []
+    }
+   ],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#createNewOrder(order.entity.Order,org.springframework.http.HttpHeaders)",
@@ -3557,6 +3787,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -3620,6 +3851,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#findAllOrder(org.springframework.http.HttpHeaders)",
@@ -3673,6 +3905,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-price-service:price.controller.PriceController#queryAll(org.springframework.http.HttpHeaders)",
@@ -3733,6 +3966,7 @@
     "orderId": "id",
     "tripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
@@ -3790,6 +4024,7 @@
     "line": 170
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -3848,6 +4083,7 @@
     "line": 287
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -3913,6 +4149,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",
@@ -3979,6 +4216,7 @@
     "line": 9
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
@@ -4040,6 +4278,7 @@
     "line": 102
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByCheapest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
@@ -4103,6 +4342,7 @@
     "line": 138
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
@@ -4166,6 +4406,7 @@
     "line": 61
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-route-plan-service:plan.controller.RoutePlanController#getMinStopStations(edu.fudan.common.entity.RoutePlanInfo,org.springframework.http.HttpHeaders)",
@@ -4227,6 +4468,7 @@
    "refs": {},
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getTransferResult(travelplan.entity.TransferTravelInfo,org.springframework.http.HttpHeaders)",
@@ -4292,6 +4534,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel2-service:travel2.controller.Travel2Controller#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
@@ -4353,6 +4596,7 @@
     "line": 56
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
@@ -4420,6 +4664,36 @@
     "line": 518
    },
    "body_src": {},
+   "body_groups": [
+    {
+     "fields": [
+      "foodName",
+      "foodPrice",
+      "stationName",
+      "storeName"
+     ],
+     "on": [
+      [
+       "foodType",
+       "1"
+      ],
+      [
+       "foodType",
+       "2"
+      ]
+     ]
+    },
+    {
+     "fields": [
+      "handleDate",
+      "consigneeName",
+      "consigneePhone",
+      "consigneeWeight",
+      "isWithin"
+     ],
+     "on": []
+    }
+   ],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#createNewOrder(other.entity.Order,org.springframework.http.HttpHeaders)",
@@ -4495,6 +4769,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -4563,6 +4838,7 @@
     "orderId": "id",
     "tripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
@@ -4621,6 +4897,7 @@
     "line": 104
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -4678,6 +4955,7 @@
     "line": 98
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -4736,6 +5014,7 @@
     "line": 9
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
@@ -4794,6 +5073,7 @@
     "line": 124
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addStation(edu.fudan.common.entity.Station,org.springframework.http.HttpHeaders)",
@@ -4857,6 +5137,7 @@
     "line": 129
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)",
@@ -4924,6 +5205,7 @@
     "line": 135
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-admin-route-service:adminroute.controller.AdminRouteController#addRoute(edu.fudan.common.entity.RouteInfo,org.springframework.http.HttpHeaders)",
@@ -4991,6 +5273,7 @@
     "line": 131
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-price-service:price.controller.PriceController#create(price.entity.PriceConfig,org.springframework.http.HttpHeaders)",
@@ -5061,6 +5344,7 @@
     "line": 99
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-admin-travel-service:admintravel.controller.AdminTravelController#addTravel(edu.fudan.common.entity.TravelInfo,org.springframework.http.HttpHeaders)",
@@ -5124,6 +5408,7 @@
     "line": 9
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
@@ -5188,6 +5473,7 @@
     "startPlace": "from",
     "endPlace": "to"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
@@ -5253,6 +5539,7 @@
    },
    "ui_source": null,
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-service:travel.controller.TravelController#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
@@ -5314,6 +5601,7 @@
     "line": 56
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
@@ -5382,6 +5670,36 @@
     "line": 518
    },
    "body_src": {},
+   "body_groups": [
+    {
+     "fields": [
+      "foodName",
+      "foodPrice",
+      "stationName",
+      "storeName"
+     ],
+     "on": [
+      [
+       "foodType",
+       "1"
+      ],
+      [
+       "foodType",
+       "2"
+      ]
+     ]
+    },
+    {
+     "fields": [
+      "handleDate",
+      "consigneeName",
+      "consigneePhone",
+      "consigneeWeight",
+      "isWithin"
+     ],
+     "on": []
+    }
+   ],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#createNewOrder(order.entity.Order,org.springframework.http.HttpHeaders)",
@@ -5457,6 +5775,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -5526,6 +5845,7 @@
     "orderId": "id",
     "tripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
@@ -5582,6 +5902,7 @@
     "line": 41
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)",
@@ -5638,6 +5959,7 @@
     "line": 9
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
@@ -5700,6 +6022,7 @@
     "startPlace": "from",
     "endPlace": "to"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-travel-plan-service:travelplan.controller.TravelPlanController#getByQuickest(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
@@ -5761,6 +6084,7 @@
     "line": 56
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
@@ -5827,6 +6151,36 @@
     "line": 518
    },
    "body_src": {},
+   "body_groups": [
+    {
+     "fields": [
+      "foodName",
+      "foodPrice",
+      "stationName",
+      "storeName"
+     ],
+     "on": [
+      [
+       "foodType",
+       "1"
+      ],
+      [
+       "foodType",
+       "2"
+      ]
+     ]
+    },
+    {
+     "fields": [
+      "handleDate",
+      "consigneeName",
+      "consigneePhone",
+      "consigneeWeight",
+      "isWithin"
+     ],
+     "on": []
+    }
+   ],
    "grounding": {
     "candidates": [
      "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
@@ -5901,6 +6255,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -5969,6 +6324,7 @@
     "orderId": "id",
     "tripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
@@ -6027,6 +6383,7 @@
     "line": 104
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -6084,6 +6441,7 @@
     "line": 170
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -6143,6 +6501,7 @@
     "line": 287
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
@@ -6209,6 +6568,7 @@
     "orderId": "id",
     "oldTripId": "trainNumber"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
@@ -6270,6 +6630,7 @@
     "line": 397
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
@@ -6332,6 +6693,7 @@
     "targetDate": "boughtDate",
     "orderId": "id"
    },
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#modifyContacts(edu.fudan.common.entity.Contacts,org.springframework.http.HttpHeaders)",
@@ -6399,6 +6761,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
@@ -6474,6 +6837,7 @@
     "line": 44
    },
    "body_src": {},
+   "body_groups": [],
    "grounding": {
     "candidates": [
      "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",

@@ -40,9 +40,9 @@ class RuntimeRules:
     # Ссылка на шаг, чей ответ — объект нужного вида без ID (сводка «доплатите разницу»): сущность — та, на которую
     # ссылался сам этот шаг
     ref_idless_result: str = "on"
-    # Получатель багажа: ни имени, ни телефона, ни веса в параметрах шага — группа не отправлялась (null), а не
-    # неизвестна
-    consign_absent_group: str = "on"
+    # Группа полей, которую UI шлёт только под общим условием (каталог UI): шаг не дал ни поля группы, ни литерала
+    # условия со значением не по умолчанию — полей в запросе нет, у DTO умолчания полей
+    ui_optional_groups: str = "on"
 
     MODES: ClassVar[dict[str, tuple[str, ...]]] = {
         "constructors": ("caller_only", "all", "off"),
@@ -56,7 +56,7 @@ class RuntimeRules:
         "m4_success_retry": ("on", "off"),
         "ref_explicit_id": ("on", "off"),
         "ref_idless_result": ("on", "off"),
-        "consign_absent_group": ("on", "off"),
+        "ui_optional_groups": ("on", "off"),
     }
 
     def __post_init__(self) -> None:
