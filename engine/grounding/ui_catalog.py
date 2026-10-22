@@ -569,6 +569,9 @@ class _FileParser:
         for _, v in assigns:
             if v is not None and v.type == "call_expression" and _callee(v) == "JSON.stringify" and name not in seen:
                 return self.body_sources(v, ctx, seen | {name})
+            if v is not None and v.type == "identifier" and name not in seen:
+                # Тело — то же, что у другого запроса: `var rebookPayInfoData = data` (доплата шлёт тело перебронирования)
+                return self.body_sources(v, ctx, seen | {name})
             if v is not None and v.type == "object":
                 out.update(self.body_sources(v, ctx, seen))
         if scope is not None:

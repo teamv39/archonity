@@ -467,6 +467,18 @@ impl StepCore {
                 }
                 return Ok(Some(Value::Obj(merged)));
             }
+            // Ответ шага без ID — не сущность, а сводка («доплатите разницу»: `new Order()` с одной суммой): сущность —
+            // та, над которой работал шаг n (его собственная ссылка того же вида), если у неё ID известен
+            if it.flags.ref_idless_result {
+                let prev = self.step_refs.get(&n).and_then(|m| m.get(kind)).cloned();
+                if let Some(prev) = prev.filter(|p| !p.is_empty() && p != r && depth < 4) {
+                    if let Some(alt) = self.resolve_ref(it, kind, &prev, depth + 1)? {
+                        if !self.entity_id(it, &alt, kind, 0)?.is_unknown() {
+                            return Ok(Some(alt));
+                        }
+                    }
+                }
+            }
             return Ok(Some(ent));
         }
         let saved_c: Vec<&(String, Shared<Obj>)> = saved_n.iter().filter(|(fqn, _)| self.schema.is_kind(Some(fqn), kind)).collect();
