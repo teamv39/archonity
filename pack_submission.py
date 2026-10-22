@@ -152,36 +152,39 @@ def _read(path: Path) -> bytes:
     return data
 
 
-def report_html() -> str | None:
-    """Отчёт прогона output/ (scripts/report.py) для корня архива: ссылки на код — в code/hackaton/, куда организаторы
+def report_html(run_dir: Path = OUTPUT_DIR) -> str | None:
+    """Отчёт прогона (scripts/report.py) для корня архива: ссылки на код — в code/hackaton/, куда организаторы
     кладут свой пакет. Нет файлов прогона рядом с выдачей — отчёта нет."""
-    if not all((OUTPUT_DIR / f).is_file() for f in ("decisions.json", "step_requests.json")):
-        print("Отчёт не добавлен: в output/ нет decisions.json или step_requests.json")
+    if not all((run_dir / f).is_file() for f in ("decisions.json", "step_requests.json")):
+        print(f"Отчёт не добавлен: в {run_dir} нет decisions.json или step_requests.json")
         return None
     sys.path.insert(0, str(ROOT / "scripts"))
     import report
 
-    args = report.parse_args([str(OUTPUT_DIR), "-o", "report.html",
+    args = report.parse_args([str(run_dir), "-o", "report.html",
                               "--targets", "code/hackaton/tt-challenge/targets/trainticket"])
-    return report.render(OUTPUT_DIR, args)
+    return report.render(run_dir, args)
 
 
-def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
-    """Архив сдачи. run_cmd — команда, которой получен submission.json (в RUN.md архива)."""
-    if not SUBMISSION_JSON.is_file():
+def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None, run_dir: Path = OUTPUT_DIR,
+         submission: Path | None = None) -> Path:
+    """Архив сдачи из прогона в run_dir (по умолчанию output/). run_cmd — команда, которой получен submission.json
+    (в RUN.md архива); submission — другая выдача вместо run_dir/submission.json (зонды scripts/probe_cells.py)."""
+    submission, evidence = submission or run_dir / SUBMISSION_JSON.name, run_dir / EVIDENCE_JSON.name
+    if not submission.is_file():
         raise FileNotFoundError(
-            f"Файл {SUBMISSION_JSON} не найден. Сначала выполните: {BUILD_CMD} && {RUN_CMD}"
+            f"Файл {submission} не найден. Сначала выполните: {BUILD_CMD} && {RUN_CMD}"
         )
     files = code_files()
     dirs = sorted({"code"} | {f"code/{p}" for f in files for p in PurePosixPath(f).parents if str(p) != "."})
 
     zip_out.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(zip_out, "w") as z:
-        _add_file(z, "submission.json", _read(SUBMISSION_JSON))
-        if EVIDENCE_JSON.is_file():
-            _add_file(z, "evidence.json", _read(EVIDENCE_JSON))
+        _add_file(z, "submission.json", _read(submission))
+        if evidence.is_file():
+            _add_file(z, "evidence.json", _read(evidence))
         _add_file(z, "RUN.md", run_md(run_cmd or RUN_CMD).encode("utf-8"))
-        if page := report_html():
+        if page := report_html(run_dir):
             _add_file(z, "report.html", page.encode("utf-8"))
         for d in dirs:
             _add_dir(z, d)

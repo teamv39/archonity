@@ -173,7 +173,7 @@ def lines(data: dict[str, Any]) -> list[str]:
         out.append(f"  память: пик {mem['peak_rss_tree_mib']} МиБ (процесс с дочерними: Rust, llama-server)")
     elif mem["peak_rss_self_mib"] is not None:
         out.append(f"  память: пик Python {mem['peak_rss_self_mib']} МиБ"
-                   + (f", дочерних процессов (Rust) {mem['peak_rss_child_mib']} МиБ"
+                   + (f", дочерних процессов {mem['peak_rss_child_mib']} МиБ"
                       if mem["peak_rss_child_mib"] else ""))
     gpu = data["gpu"]
     if gpu["devices"]:
