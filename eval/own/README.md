@@ -72,9 +72,9 @@ python run_eval.py --scenarios "eval/own/scenarios/*.json" --no-eval -o output/o
 
 | Сценарии | sha256 `submission.json` |
 |---|---|
-| X1–X8 (`*.json`) | `c87427909acec41d7043865221f31dcbe5d36d8472ae4f877b0686aa65d04beb` (до правки X6.3 22.10 — `7053de3d…`) |
+| X1–X8 (`*.json`) | `7053de3d5cc0946f6dd6fb7a68b97eaa51069596d5c924f7c6efa7545b067edc` |
 | X1–X4 (`X[1-4].json`) | `561bc45c60a5ecae208dc4be5d2e3383ad0b74c55194ba7a5adfd705f7c95312` |
-| X5–X8 (`X[5-8].json`) | `9cd5d733b7d27575ab1c0143acad0ea7d8e178d9fa85ff73bf2d7361ff93fc93` (до правки X6.3 — `f1a12b5e…`) |
+| X5–X8 (`X[5-8].json`) | `f1a12b5ee91a42b5cf9c44b61331dcd1b3220cb321b29c32c584bce0eb99650d` |
 
 Выдачи X1–X4 и X5–X8 из кеша совпали с прогонами с сервером LLM.
 
@@ -88,14 +88,14 @@ python scripts/check_own_outcomes.py -o output/own-outcomes [--show all] -- --re
 
 Исход M4 — статус обёртки ответа обработчика шага: `success`, `failure`, `unknown` (статус не вычислен), `null`, `value` (ответ не обёртка). Шаг с неверным обработчиком M1 считается ошибкой M1. Построчно — `outcomes.json` в папке прогона.
 
-Замер 22.10 (X1–X8, 83 шага): совпало 65, ошибки M1 — 5, исход M4 другой — 6, исход M4 неизвестен — 7. После правки X6.8 совпало 66, после правки поля дубликата через remote_call (X7.4) — 67, после явного ID в параметрах (X6.3) — 68.
+Замер 22.10 (X1–X8, 83 шага): совпало 65, ошибки M1 — 5, исход M4 другой — 6, исход M4 неизвестен — 7. После правки X6.8 совпало 66, после правки поля дубликата через remote_call (X7.4) — 67.
 
 | Шаг | Разметка | M4 | Причина |
 |---|---|---|---|
 | X4.7, X8.13 | success | failure | расхождения нет: «пусто» в сервисе — статус 0 `No Content…`, ветка та же |
 | X6.8 | success | failure | исправлено 22.10: разбор имён производных запросов Spring Data не понимал слово между глаголом и `By` (`removeRouteById`), удаления в мире не было, `findById` находил маршрут. Разбор теперь как `PartTree` (`world.derived_props`, Rust `world.rs`), новых имён 4: ещё `deleteFoodOrderByOrderId` (2 сервиса), `removeAssuranceByOrderId`. Рёбра X1–X8, S0–S7 и `handler_sweep` не изменились: после удаления обе ветки `deleteRoute` дают одни рёбра, меняется только ответ |
 | X5.4, X7.4 | refused | unknown | X7.4 исправлено 22.10, X5.4 — по рёбрам: поле дубликата (ADR-007, решение 6) искалось только в своём сервисе, а консоль администратора пересылает тело запроса сервису, который ищет дубликат. В X5.3 пользователь сохранялся с неизвестным именем, и в X5.4 `findByUserName` не мог решить, есть ли совпадение: исполнялись оба плеча. Теперь `_dedupe_fields` идёт и через remote_call. В X5.4 `saveUser` отвечает `USER HAS ALREADY EXISTS`, но статус ответа `addUser` всё ещё неизвестен: `ResponseEntity.status(..).body(..)` в `registerUser` не разобран (2 места в проекте, рёбер не меняет) |
-| X6.3 | success | failure | исправлено 22.10: шаг называет рейс по ID (`tripId=G9998`), а ссылка M1 `trip: first_of_step_2` — первый рейс списка; тело запроса собиралось из ID одного рейса и маршрута другого. Теперь явный ID в параметрах выбирает сущность из ответов шагов (ADR-007, раздел 2). В X6 +10 рёбер — ветка разметки: `PUT /travelservice/trips`, `TravelServiceImpl#update`, `findByTripId`, `save` |
+| X6.3 | success | failure | ссылка `trip: first_of_step_2` берёт первый рейс списка, а не G9998 из `tripId`: станции и маршрут чужие |
 | X4.1 | refused | success | неверный пароль: отказ бросает `AuthenticationManager.authenticate` (библиотека), M4 его не видит |
 | X1.7 | other | success | «доплатите разницу» (status 2): у M1 нет такого исхода, M4 идёт по успеху, лишний каскад перебронирования |
 | X1.9 | refused | unknown | расчёт возврата для заказа в статусе CHANGE: статус заказа после `rebook`/`payDifference` неизвестен |

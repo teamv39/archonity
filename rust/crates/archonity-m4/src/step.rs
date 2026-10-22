@@ -44,15 +44,6 @@ fn canon(s: &str) -> String {
     s.to_lowercase().chars().filter(|c| c.is_ascii_lowercase() || c.is_ascii_digit()).collect()
 }
 
-/// ID сущности строкой, как `str(...)` в Python: строки и целые; у прочих значений строкового ID нет.
-fn id_text(v: &Value) -> Option<String> {
-    match v {
-        Value::Str(s) => Some(s.to_string()),
-        Value::Int(i) => Some(i.to_string()),
-        _ => None,
-    }
-}
-
 fn parse_ref(r: &str) -> Option<(&str, i64)> {
     thread_local! { static R: Regex = Regex::new(r"^(first|second|new)_of_step_(\d+)$").unwrap(); }
     R.with(|re| {
@@ -495,22 +486,6 @@ impl StepCore {
         Ok(None)
     }
 
-    /// Сущность вида `kind` с ID `want` среди ответов шагов: сначала шаг ссылки `r`, потом прежние шаги с конца.
-    fn named_entity(&mut self, it: &mut Interpreter, kind: &str, r: &str, want: &str) -> R<Option<Value>> {
-        let first: Vec<i64> = parse_ref(r).map(|(_, n)| vec![n]).unwrap_or_default();
-        let mut rest: Vec<i64> = self.results.keys().copied().filter(|k| !first.contains(k)).collect();
-        rest.sort_unstable_by(|a, b| b.cmp(a));
-        for n in first.into_iter().chain(rest) {
-            let found = find_kind(&payload(self.results.get(&n).unwrap_or(&Value::Null), it.envelope.as_ref()), kind, 0, &self.schema);
-            for ent in found {
-                if id_text(&self.entity_id(it, &ent, kind, 0)?).as_deref() == Some(want) {
-                    return Ok(Some(ent));
-                }
-            }
-        }
-        Ok(None)
-    }
-
     fn table_entity(&self, it: &mut Interpreter, n: i64, kind: &str, idx: usize) -> R<Option<Shared<Obj>>> {
         let handler = self.handlers.get(&n).cloned().unwrap_or_default();
         let module = self.index.n.get(&handler).and_then(|x| jx::str_(x, "module")).map(str::to_string);
@@ -611,26 +586,6 @@ impl StepCore {
         for (k, v) in refs {
             let e = self.resolve_ref(it, k, v, 0)?;
             ents.insert(k.clone(), e);
-        }
-        // Шаг назвал сущность по ID («рейс G9998»), а ссылка M1 — по месту в списке («первый рейс шага 2»): поля тела
-        // запроса — от названной сущности, иначе тело собирается из ID одной сущности и полей другой.
-        let kinds: Vec<String> = ents.keys().cloned().collect();
-        for kind in kinds {
-            let have = match ents.get(&kind).cloned().flatten() {
-                Some(ent) => self.entity_id(it, &ent, &kind, 0)?,
-                None => Value::Unknown,
-            };
-            let fields = if self.schema.is_known(&kind) { self.schema.id_fields(&kind) } else { Vec::new() };
-            for f in fields {
-                let Some(Json::String(want)) = params.get(&f) else { continue };
-                if f == "id" || have.is_unknown() || id_text(&have).as_deref() == Some(want.as_str()) {
-                    continue;
-                }
-                if let Some(named) = self.named_entity(it, &kind, &refs[&kind], want)? {
-                    ents.insert(kind.clone(), Some(named));
-                }
-                break;
-            }
         }
         // Последний слой: параметры запросов шагов, на которые ссылается шаг
         for v in refs.values() {
