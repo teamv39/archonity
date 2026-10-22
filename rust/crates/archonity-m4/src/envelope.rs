@@ -107,9 +107,9 @@ struct Counter(IndexMap<i64, usize>);
 
 fn is_vendor(name: &str) -> bool {
     thread_local! {
-        static V: Regex = Regex::new(
-            r"(?i)(\.min\.|^(vue|angular|jquery|bootstrap|echarts|amazeui|iscroll|cropper|aliyun|react|lodash|moment|d3|three|npm)\b|^vue-upload)"
-        ).unwrap();
+        // Сборки `.min.` и общеизвестные фреймворки (`VENDOR`, ui_catalog.py)
+        static V: Regex =
+            Regex::new(r"(?i)(\.min\.|^(vue|angular|jquery|bootstrap|echarts|react|lodash|moment|d3|three|npm)\b)").unwrap();
     }
     V.with(|re| re.is_match(name))
 }

@@ -3,7 +3,8 @@
 //! Результат проверяется условием (`== null`, `isPresent()`, `isEmpty()`, `size()`). Если плечо «строка найдена»
 //! всегда заканчивается ошибкой, а плечо «не найдена» нет, успешный путь ждёт пустой результат (`EMPTY`):
 //! так устроены проверки «уже существует» перед созданием. Обратный случай даёт `ROWS`.
-//! Ошибка плеча: `throw`, `return new Response<>(0, ...)` или `LOGGER.error/warn` перед `return`.
+//! Ошибка плеча: `throw` или `LOGGER.error/warn` перед `return`. Код статуса обёртки ответа разбор не знает (его выводит
+//! M4 из UI и кода, `envelope`): `return` без лога плечо ошибкой не делает.
 //! Всё остальное — `UNKNOWN`, тогда решает состояние БД на стороне движка.
 
 use tree_sitter::Node;
@@ -260,8 +261,9 @@ pub fn arm_error(doc: &Doc, s: Node) -> bool {
     list_error(doc, &[s])
 }
 
-/// Последовательность операторов — путь отказа: `throw`, `return new Response<>(0, ...)` или `LOGGER.error/warn`
-/// на верхнем уровне. Лог ошибки считается отказом и при `return new Response<>(1, ...)` («Trip already exists») и без `return`.
+/// Последовательность операторов — путь отказа: `throw` или `LOGGER.error/warn` на верхнем уровне, в том числе перед
+/// `return` с любым значением и без `return`. До 22.10 отказом считался и `return new Response<>(0, ...)` — имя класса и
+/// код статуса Train Ticket.
 /// Допущение о соглашении проекта: путь отказа пишет error/warn.
 fn list_error(doc: &Doc, stmts: &[Node]) -> bool {
     for &s in stmts {
@@ -274,7 +276,7 @@ fn list_error(doc: &Doc, stmts: &[Node]) -> bool {
                     }
                 }
             }
-            "return_statement" => return is_error_return(doc, s),
+            "return_statement" => return false,
             "if_statement" => {
                 if let Some(alt) = field(s, "alternative") {
                     if ends_abruptly(field(s, "consequence").unwrap()) && ends_abruptly(alt) {
@@ -292,13 +294,6 @@ fn is_error_log(doc: &Doc, mc: Node) -> bool {
     let name = doc.ftext(mc, "name");
     (name == "error" || name == "warn")
         && field(mc, "object").is_some_and(|sc| expr_str(doc, sc).to_lowercase().contains("log"))
-}
-
-fn is_error_return(doc: &Doc, r: Node) -> bool {
-    let Some(e) = kids(r).into_iter().next().filter(|e| e.kind() == "object_creation_expression") else { return false };
-    let is_response = field(e, "type").is_some_and(|t| ast::type_simple_name(doc, t) == "Response");
-    let args = ast::argument_nodes(e);
-    is_response && args.first().is_some_and(|a| a.kind() == "decimal_integer_literal" && ast::parse_integer(doc.text(*a)).is_some_and(|(v, long)| !long && v == 0))
 }
 
 pub fn ends_abruptly(s: Node) -> bool {
