@@ -44,9 +44,16 @@ pub fn build(sk: &Skeleton, docs: &[Doc]) -> Bodies {
                 r.unmatched_declarations.push(format!("{}:{} {}", doc.rel, line(decl), doc.ftext(decl, "name")));
                 continue;
             };
+            let built = ast::guarded(
+                || format!("{}:{} {}", doc.rel, line(decl), node.id),
+                || {
+                    let mut b = BodyBuilder::new(sk, &project, doc, node, decl);
+                    let ir = b.build(decl, body);
+                    (b, ir)
+                },
+            );
+            let Some((b, ir)) = built else { continue }; // метод уйдёт в missing
             matched.insert(node.id.clone());
-            let mut b = BodyBuilder::new(sk, &project, doc, node, decl);
-            let ir = b.build(decl, body);
             by_module.entry(node.module.clone()).or_default().insert(node.id.clone(), ir);
             r.methods += 1;
             r.ir_calls += b.ir_calls;

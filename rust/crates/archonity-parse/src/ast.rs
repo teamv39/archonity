@@ -23,6 +23,18 @@ pub struct Doc {
     pub imports: Vec<Import>,
 }
 
+/// Единица разбора (метод, класс) под защитой: паника на непривычном синтаксисе (узлы ERROR/MISSING tree-sitter)
+/// пропускает только её, с сообщением, а не роняет весь разбор и с ним IR всего проекта.
+pub fn guarded<T>(what: impl FnOnce() -> String, f: impl FnOnce() -> T) -> Option<T> {
+    match std::panic::catch_unwind(std::panic::AssertUnwindSafe(f)) {
+        Ok(v) => Some(v),
+        Err(_) => {
+            eprintln!("archonity-parse: пропущено после ошибки разбора: {}", what());
+            None
+        }
+    }
+}
+
 pub fn new_parser() -> Parser {
     let mut p = Parser::new();
     p.set_language(&tree_sitter_java::LANGUAGE.into()).expect("грамматика Java");

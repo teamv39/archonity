@@ -5,6 +5,7 @@ import collections
 import gzip
 import json
 import re
+import zlib
 from pathlib import Path
 from typing import Any
 
@@ -87,16 +88,22 @@ class SkeletonIndex:
             nid: n for nid, n in self.N.items() if nid.startswith("res:table:")
         }
 
-        # Состояние БД перед сценарием (дамп пакета задачи)
+        # Состояние БД перед сценарием (дамп пакета задачи). Дампа нет или он битый — мир БД пуст, а причина в
+        # `db_error`: run_eval.py выносит её в рамку ATTENTION (Р2), иначе M4 молча теряет рёбра чтения
+        self.db_error: Exception | None = None
         if db_state is not None:
             self.db_state: DatabaseState = db_state
         elif resolved_db_path is not None:
             try:
                 self.db_state = load_db_dump(resolved_db_path)
-            except (FileNotFoundError, OSError, ValueError):
+            except (OSError, ValueError, EOFError, zlib.error) as e:  # обрезанный gzip — EOFError или zlib.error
                 self.db_state = DatabaseState()
+                self.db_error = e
         else:
             self.db_state = DatabaseState()
+            if isinstance(skeleton_source, (str, Path)):
+                expected = Path(skeleton_source).resolve().parent.parent / "context" / DB_DUMP_NAME
+                self.db_error = FileNotFoundError(f"дамп БД не найден: {expected}")
 
         # Контекст сценариев (поле `context` скелета): пассажир, даты, баланс
         ctx = skeleton_dict.get("context")
