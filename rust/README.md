@@ -1,6 +1,6 @@
 # rust/
 
-Перенос engine на Rust ([ADR-008](../docs/adr/adr-008_rust_engine_boundary.md)). Python-движок остаётся отдельным запасным вариантом (`run_eval.py --engine python`), переключения на него при сбое Rust нет.
+Перенос engine на Rust ([ADR-008](../docs/adr/adr-008_rust_engine_boundary.md)). Python-движок остаётся запасным вариантом: `run_eval.py --engine python` или откат в том же прогоне, если `archonity-exec` нет или он упал (выдача та же, сбой в рамке `ATTENTION.txt`). Версия Rust закреплена в `rust-toolchain.toml` (1.99.1).
 
 ```
 cd rust && cargo build --release --locked

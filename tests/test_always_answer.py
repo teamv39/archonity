@@ -113,6 +113,29 @@ def test_broken_pipeline_writes_empty_submission_and_frame_last(tmp_path: Path) 
         assert "аварийный submission.json" in "\n".join(tail[-12:])
 
 
+def test_rust_failure_falls_back_to_python(tmp_path: Path) -> None:
+    """`archonity-exec` нет: выдача та же, что у `--engine python`, сбой Rust в рамке, отчёт M1 без двойного счёта."""
+    def run(out: Path, *extra: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, str(ROOT / "run_eval.py"), "--scenarios", str(SCENARIOS / "S0.json"),
+             "--require-cache", "--no-eval", "-o", str(out), *extra],
+            capture_output=True, text=True, encoding="utf-8", cwd=ROOT, timeout=300)
+
+    py, rs = tmp_path / "py" / "submission.json", tmp_path / "rs" / "submission.json"
+    res_py = run(py, "--engine", "python")
+    if res_py.returncode == 2:
+        pytest.skip("нет кеша LLM")
+    res = run(rs, "--engine", "rust", "--rust-bin", str(tmp_path / "missing-exec"))
+
+    assert res.returncode == 0, res.stderr[-2000:]
+    assert rs.read_bytes() == py.read_bytes()
+    assert "откат на Python" in (rs.parent / attention.FILE_NAME).read_text(encoding="utf-8")
+    report_py = json.loads((py.parent / "m1_report.json").read_text(encoding="utf-8"))
+    report_rs = json.loads((rs.parent / "m1_report.json").read_text(encoding="utf-8"))
+    assert report_rs["llm"] == report_py["llm"]
+    assert [f["stage"] for f in report_rs["failures"]] == ["движок Rust (откат на Python)"]
+
+
 @pytest.mark.skipif(not GOLD.is_file(), reason="нет эталона S0")
 def test_evaluate_skips_scenarios_outside_gold(tmp_path: Path, capsys) -> None:
     sys.path.insert(0, str(ROOT))

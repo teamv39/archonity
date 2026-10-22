@@ -101,7 +101,8 @@ def run_md(run_cmd: str) -> str:
     pip install -r requirements.txt        # или: uv sync --locked
 
 Rust-движок (`rust/`, ADR-008): `scripts/run_final.sh` собирает его сам (`cd rust && cargo build --release --locked`,
-нужен доступ к crates.io; нет `cargo` — ставит через `rustup`). Вручную:
+Rust 1.99.1 из `rust/rust-toolchain.toml`, нужен доступ к crates.io; нет `cargo` — ставит через `rustup`). Не собрался —
+тот же прогон идёт на Python с той же выдачей и рамкой `ATTENTION.txt`. Вручную:
 
     cd rust && cargo build --release --locked && cd ..
     python run_eval.py --engine rust -o output/submission.json
