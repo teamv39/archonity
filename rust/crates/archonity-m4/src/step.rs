@@ -17,7 +17,7 @@ use archonity_io::decisions::detail;
 use archonity_io::{jx, DecisionLedger, SkeletonIndex};
 use archonity_model::names::simple_name;
 use archonity_model::values::*;
-use archonity_model::{RuleFlags, ScenarioContext, StepEdges, StepRequest};
+use archonity_model::{group_sent, BodyGroup, RuleFlags, ScenarioContext, StepEdges, StepRequest};
 use indexmap::IndexMap;
 use regex::Regex;
 use serde_json::Value as Json;
@@ -80,6 +80,7 @@ pub struct StepCore {
     verb: Option<String>,
     user_name: Option<String>,
     body_src: IndexMap<String, String>,
+    body_groups: Vec<BodyGroup>,
 }
 
 pub struct StepExecutor {
@@ -116,6 +117,7 @@ impl StepExecutor {
                 verb: None,
                 user_name: None,
                 body_src: IndexMap::new(),
+                body_groups: Vec::new(),
             },
         })
     }
@@ -144,6 +146,7 @@ impl StepExecutor {
         core.user_name = ctx.user_name.clone();
         core.verb = req.http.get("method").cloned();
         core.body_src = req.body_src.clone();
+        core.body_groups = req.body_groups.clone();
         let refs = req.refs.clone();
         let expected = req.expected_outcome.clone();
         let before = it.world.as_ref().map(|w| w.saved.len()).unwrap_or(0);
@@ -799,17 +802,22 @@ impl StepCore {
                 }
             }
         }
-        if names.contains("consigneeName") {
-            // Вес 0 в тексте шага — багажа нет, полей группы в запросе нет (null).
-            if let Some(w) = params.get("consigneeWeight").and_then(Json::as_f64) {
-                if w <= 0.0 {
-                    defaults.insert("consigneeName".into(), None);
-                    defaults.insert("consigneePhone".into(), None);
+        let mut unsent: BTreeSet<String> = BTreeSet::new();
+        if it.flags.ui_optional_groups {
+            // Группа полей, которую UI шлёт только под общим условием (каталог UI): шаг не дал ни поля группы, ни
+            // литерала её условия со значением не по умолчанию — полей в запросе нет, у DTO умолчания полей
+            for g in &self.body_groups {
+                if !group_sent(g, params) {
+                    unsent.extend(g.fields.iter().filter(|n| names.contains(n.as_str()) && !params.contains_key(n.as_str())).cloned());
                 }
             }
         }
         for f in fields.iter() {
             let name = jx::str_(f, "name").unwrap_or("").to_string();
+            if unsent.contains(&name) {
+                obj.borrow_mut().fields.insert(name, crate::interpreter::default_value_pub(f));
+                continue;
+            }
             let u = if own_ids.contains(&name) { None } else { user };
             let mut v = self.field_value(it, &name, params, ents, u, jx::str_(f, "type"))?;
             if v.is_unknown() && name == "id" {

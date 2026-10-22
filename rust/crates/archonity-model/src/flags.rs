@@ -41,6 +41,7 @@ pub struct RuleFlags {
     pub m4_success_retry: bool,
     pub ref_explicit_id: bool,
     pub ref_idless_result: bool,
+    pub ui_optional_groups: bool,
 }
 
 impl Default for RuleFlags {
@@ -57,6 +58,7 @@ impl Default for RuleFlags {
             m4_success_retry: true,
             ref_explicit_id: true,
             ref_idless_result: true,
+            ui_optional_groups: true,
         }
     }
 }
@@ -88,6 +90,7 @@ impl RuleFlags {
             ("m4_success_retry", v) => self.m4_success_retry = on_off(v)?,
             ("ref_explicit_id", v) => self.ref_explicit_id = on_off(v)?,
             ("ref_idless_result", v) => self.ref_idless_result = on_off(v)?,
+            ("ui_optional_groups", v) => self.ui_optional_groups = on_off(v)?,
             _ => bail!("неизвестный флаг или значение: {name}={value}"),
         }
         Ok(())
@@ -102,7 +105,8 @@ mod tests {
     fn defaults_are_the_record() {
         let f = RuleFlags::default();
         assert_eq!(f.constructors, Constructors::CallerOnly);
-        assert!(f.m4_success_retry && f.jackson_ctor && f.ref_explicit_id && f.ref_idless_result);
+        assert!(f.m4_success_retry && f.jackson_ctor && f.ref_explicit_id && f.ref_idless_result
+            && f.ui_optional_groups);
     }
 
     #[test]
