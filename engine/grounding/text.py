@@ -45,6 +45,14 @@ VERB_SYN_EXTRA = {
 # и X1–X8 под это не подходит (tests/test_verb_synonyms.py). Выключается вместе с `VERB_SYN_EXTRA`.
 VERB_OBJECT_SYN = {"account": ({"create", "make", "open", "set"}, ["register"])}
 
+# Фразовый глагол в начале шага (22.10): «Look for ordinary trains …» — поиск, а `look` в `VERB_SYN` разворачивается в get,
+# find, query без `search`, и BM25 не видел слова, которым в UI подписаны кнопки поиска (перефразированные X10.2 и S2.2:
+# верный обработчик на 66-м и 104-м месте BM25, слитый 26-й и 28-й, в кандидаты не попадал). Первые два слова заменяются
+# синонимом, дальше он расширяется как обычный глагол. «Look up» и «Look at» не трогаем: они есть в S0–S7 и X1–X12, а
+# их кандидаты менять нельзя (tests/test_verb_synonyms.py). Это словарь английского, подобранный по перефразировкам, как
+# `VERB_SYN_EXTRA`; выключается вместе с ним (`--m1-verb-synonyms off`).
+PHRASAL_VERBS = {("look", "for"): "search"}
+
 
 def stem(w: str) -> str:
     """Стеммер: окончания множественного числа, -ing, -ed. Синонимов нет: синонимы — работа эмбеддера (ADR-007)."""
@@ -73,11 +81,13 @@ def query_toks(text: str) -> list[str]:
 
 
 def expand_query(q: list[str], extra: bool = True) -> list[str]:
-    """Токены запроса и синонимы его первого слова; `extra` — с `VERB_SYN_EXTRA` (он перекрывает `VERB_SYN`)
-    и `VERB_OBJECT_SYN`."""
+    """Токены запроса и синонимы его первого слова; `extra` — с `VERB_SYN_EXTRA` (он перекрывает `VERB_SYN`),
+    `VERB_OBJECT_SYN` и `PHRASAL_VERBS` (фраза в начале шага заменяется синонимом до расширения)."""
     if not q:
         return []
-    out = q + ((VERB_SYN_EXTRA.get(q[0]) if extra else None) or VERB_SYN.get(q[0], []))
+    if extra and tuple(q[:2]) in PHRASAL_VERBS:
+        q = [PHRASAL_VERBS[tuple(q[:2])], *q[2:]]
+    out = q +((VERB_SYN_EXTRA.get(q[0]) if extra else None) or VERB_SYN.get(q[0], []))
     if extra:
         for obj, (verbs, syn) in VERB_OBJECT_SYN.items():
             if q[0] in verbs and obj in q[1:]:
