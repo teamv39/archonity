@@ -1,0 +1,57 @@
+{
+ "project": "trainticket",
+ "id": "X12",
+ "title": "An administrator reviews users, train types and routes, adds and deletes a train type and adds an order for the passenger, who then finds that order in the refreshed list, opens it and pays for it",
+ "description": "An administrator logs in to the admin console with the administrator's username and password and opens the list of all users and the list of train types. They add a new train type TestExpress (80 second-class and 20 first-class seats, average speed 200) and delete it, then open the list of routes. They add a new order for the passenger fdse_microservice and the contact Contacts_One on the high-speed train D1345 from shanghai to suzhou on 1 October 2026 with all fields of the order form filled in, the price being 50. Then the passenger logs in, refreshes the list of orders, opens the order that the administrator added and pays for it from the internal account balance. Finally the administrator opens the list of all orders in the system.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in to the admin console with the administrator's username and password"
+  },
+  {
+   "n": 2,
+   "action": "Open the list of all users"
+  },
+  {
+   "n": 3,
+   "action": "Open the list of train types"
+  },
+  {
+   "n": 4,
+   "action": "Add a new train type TestExpress with 80 second-class and 20 first-class seats and an average speed of 200"
+  },
+  {
+   "n": 5,
+   "action": "Delete the train type TestExpress"
+  },
+  {
+   "n": 6,
+   "action": "Open the list of routes"
+  },
+  {
+   "n": 7,
+   "action": "Add a new order for the passenger fdse_microservice and the contact Contacts_One on the high-speed train D1345 from shanghai to suzhou on 1 October 2026 (all fields of the order form are filled in, the price is 50)"
+  },
+  {
+   "n": 8,
+   "action": "Log in as a passenger with username and password"
+  },
+  {
+   "n": 9,
+   "action": "Refresh the list of orders"
+  },
+  {
+   "n": 10,
+   "action": "Open the order that the administrator added"
+  },
+  {
+   "n": 11,
+   "action": "Pay for this order from the internal account balance"
+  },
+  {
+   "n": 12,
+   "action": "Back in the admin console as the administrator, open the list of all orders in the system"
+  }
+ ]
+}

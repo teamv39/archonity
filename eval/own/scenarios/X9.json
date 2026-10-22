@@ -1,0 +1,65 @@
+{
+ "project": "trainticket",
+ "id": "X9",
+ "title": "A new order found only through the refreshed list: price, payment, refund quote and cancellation; then a second booking, payment, collecting the ticket and entering the station",
+ "description": "A registered passenger logs in, searches for high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026, opens the contact book and takes the first contact. They book a first-class seat on the first trip found for this contact, without food, insurance or luggage, and refresh the list of orders, which also holds older orders of the passenger. For the new order they check the price, pay from the internal account balance, ask how much would be refunded and cancel it. Then they book another first-class seat on the same trip for the same contact, refresh the list of orders again, pay for the new order from the internal account balance, collect the ticket and enter the station.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in with username and password"
+  },
+  {
+   "n": 2,
+   "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026"
+  },
+  {
+   "n": 3,
+   "action": "Open the contact book and take the first contact"
+  },
+  {
+   "n": 4,
+   "action": "Book a first-class seat on the first trip found for this contact, without food, insurance or luggage"
+  },
+  {
+   "n": 5,
+   "action": "Refresh the list of orders"
+  },
+  {
+   "n": 6,
+   "action": "Check the price of the order"
+  },
+  {
+   "n": 7,
+   "action": "Pay for the order from the internal account balance"
+  },
+  {
+   "n": 8,
+   "action": "Ask how much would be refunded if the order were cancelled"
+  },
+  {
+   "n": 9,
+   "action": "Cancel the order"
+  },
+  {
+   "n": 10,
+   "action": "Book another first-class seat on the same trip for the same contact, without food, insurance or luggage"
+  },
+  {
+   "n": 11,
+   "action": "Refresh the list of orders"
+  },
+  {
+   "n": 12,
+   "action": "Pay for the new order from the internal account balance"
+  },
+  {
+   "n": 13,
+   "action": "Collect the ticket for the new order"
+  },
+  {
+   "n": 14,
+   "action": "Enter the station with the new order"
+  }
+ ]
+}

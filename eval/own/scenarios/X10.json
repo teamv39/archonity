@@ -1,0 +1,65 @@
+{
+ "project": "trainticket",
+ "id": "X10",
+ "title": "A regular-train journey: booking with station food and luggage, payment, ticket collection and entering the station; then the system refuses the refund quote, the cancellation and the rebooking of the used ticket",
+ "description": "A registered passenger logs in, searches for regular trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing departing on 1 October 2026 and opens the details of the first trip found. They look at the food stores at Suzhou station, open the contact book and take the first contact. They book a second-class seat on the regular train for this contact with food from a station store and a luggage consignment of 2 kg to a consignee, without insurance. They refresh the list of orders, pay from the internal account balance, look up the luggage consignment of the order, collect the ticket and enter the station. Then they ask how much would be refunded for the used order, try to cancel it and try to rebook it onto a first-class seat on the same train; the system refuses all three because the ticket has already been used.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in with username and password"
+  },
+  {
+   "n": 2,
+   "action": "Search regular trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing departing on 1 October 2026"
+  },
+  {
+   "n": 3,
+   "action": "Open the details of the first trip found"
+  },
+  {
+   "n": 4,
+   "action": "Look at the food stores at Suzhou station"
+  },
+  {
+   "n": 5,
+   "action": "Open the contact book and take the first contact"
+  },
+  {
+   "n": 6,
+   "action": "Book a second-class seat on the regular train for this contact, with food from a station store and a luggage consignment of 2 kg to a consignee, without insurance"
+  },
+  {
+   "n": 7,
+   "action": "Refresh the list of orders"
+  },
+  {
+   "n": 8,
+   "action": "Pay for the order from the internal account balance"
+  },
+  {
+   "n": 9,
+   "action": "Look up the luggage consignment record of the order"
+  },
+  {
+   "n": 10,
+   "action": "Collect the ticket for the order"
+  },
+  {
+   "n": 11,
+   "action": "Enter the station with the order"
+  },
+  {
+   "n": 12,
+   "action": "Ask how much would be refunded for the used order (the system refuses)"
+  },
+  {
+   "n": 13,
+   "action": "Try to cancel the used order (the system refuses)"
+  },
+  {
+   "n": 14,
+   "action": "Try to rebook the used order onto a first-class seat on the same regular train (the system refuses)"
+  }
+ ]
+}
