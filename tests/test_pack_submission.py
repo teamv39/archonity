@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+import pack_submission as ps
 from pack_submission import pack
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -46,8 +47,10 @@ def test_pack_submission_creates_valid_archive(tmp_path: Path):
         # 2a. Команда запуска, зависимости, модели, данные прогона (docs/run_on_a100.md)
         for f in ("RUN.md", "code/requirements.txt", "code/uv.lock", "code/pyproject.toml", "code/models/manifest.json",
                   "code/facts/configs_topology.json", "code/data/entity_ir.json", "code/scripts/fetch_models.py",
-                  "code/archparse/src/main/java/com/v39a/Main.java"):
+                  "code/docs/annotation_rules.md"):
             assert f in names, f"Нет {f} в архиве"
+        # Java-оракул разбора в посылку не входит: data/ строит archonity-parse
+        assert not any(n.startswith("code/archparse") for n in names)
         # 2b. Исходники Rust-движка (надбавка ×1.10 за исходный код), без rust/target
         for f in ("code/rust/Cargo.toml", "code/rust/Cargo.lock", "code/rust/README.md",
                   "code/rust/crates/archonity-exec/tests/parity.rs",
@@ -90,3 +93,14 @@ def test_pack_submission_creates_valid_archive(tmp_path: Path):
         )
         eval_res = json.loads(res.stdout)
         assert eval_res.get("score") == 1.0, f"S0 score должен быть 1.0, получен {eval_res.get('score')}"
+
+
+def test_readme_links_are_in_archive() -> None:
+    """Каждая ссылка README на файл репозитория ведёт в архив: репозиторий закрыт, у жюри есть только посылка."""
+    import re
+
+    files = set(ps.code_files())
+    links = {m.split("#")[0] for m in re.findall(r"\]\(([^)\s]+)\)", (ps.ROOT / "README.md").read_text(encoding="utf-8"))}
+    links = {l for l in links if l and "://" not in l}
+    missing = sorted(l for l in links if l.rstrip("/") not in files and not any(f.startswith(l) for f in files))
+    assert not missing, f"README ссылается на файлы вне архива: {missing}"

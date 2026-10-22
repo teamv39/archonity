@@ -4,12 +4,13 @@
 
 В корне архива: submission.json, evidence.json, RUN.md с командами воспроизведения и report.html — отчёт прогона (scripts/report.py). В code/ — всё, чтобы из этого
 каталога получить тот же submission.json и прогнать новые сценарии (docs/run_on_a100.md): код (run_eval.py, engine/,
-archparse/ и rust/ — источник data/ и Rust-движок, ADR-008), артефакты M2 (data/), кеши M1 (cache/), зависимости (pyproject.toml, uv.lock,
-requirements.txt), манифест моделей и скрипты запуска.
+rust/ — Rust-движок и разбор исходников, ADR-008 и ADR-009), артефакты M2 (data/), кеши M1 (cache/), зависимости
+(pyproject.toml, uv.lock, requirements.txt), манифест моделей, скрипты запуска и доки, на которые ссылается README
+(ADR и правила разметки). Java-оракул archparse/ в архив не входит: data/ строит archonity-parse.
 
 Гарантирует:
 1. Переводы строк в текстовых файлах — Unix LF, как в индексе git.
-2. POSIX-атрибуты: файлы 0o644, скрипты *.sh и gradlew 0o755, каталоги 0o755, create_system = 3 (Unix).
+2. POSIX-атрибуты: файлы 0o644, скрипты *.sh 0o755, каталоги 0o755, create_system = 3 (Unix).
 3. Только перечисленное ниже: без node_modules, __pycache__, rust/target, hackaton/ и моделей. Нет файла из списка — ошибка.
 4. Исходники Rust (rust/**/*.rs, Cargo.toml, Cargo.lock, README, входы тестов *.json) в архиве: надбавку за Rust
    дают за исходный код, а scripts/run_final.sh собирает бинарники оттуда (`cargo build --release --locked`).
@@ -47,30 +48,28 @@ CODE_FILES = (
     "scripts/report.py",
     "eval/records/README.md",
     "eval/records/submission_p27_1.00000.json",  # рекорд: оракул теста паритета archonity-exec (cargo test)
-    "archparse/README.md",
-    "archparse/build.gradle",
-    "archparse/settings.gradle",
-    "archparse/gradlew",
-    "archparse/gradlew.bat",
-    "archparse/gradle/wrapper/gradle-wrapper.jar",
-    "archparse/gradle/wrapper/gradle-wrapper.properties",
+    # Доки, на которые ссылается README: устройство конвейера и правила, по которым считаются рёбра
+    "docs/adr/adr-005_scenario_execution_pipeline.md",
+    "docs/adr/adr-006_constructor_visibility.md",
+    "docs/adr/adr-007_project_profile.md",
+    "docs/adr/adr-008_rust_engine_boundary.md",
+    "docs/adr/adr-009_archparse_rust.md",
+    "docs/annotation_rules.md",
 )
 
 # Каталоги целиком: (каталог, шаблон rglob)
 CODE_TREES = (
     ("engine", "*.py"),
-    ("data/ir", "*.json"),  # IR тел методов (M2, archparse/README.md)
+    ("data/ir", "*.json"),  # IR тел методов (M2, archonity-parse)
     ("cache/llm", "*.json"),  # ответы LLM: S1–S7 без GPU (ADR-005, «Кеш LLM»)
     ("cache/emb/qwen3-4b", "*"),  # векторы эмбеддера
-    ("archparse/src", "*.java"),
 )
 
 # Rust-движок: исходники и манифесты, без rust/target
 RUST_SUFFIXES = {".rs", ".toml", ".lock", ".md", ".json"}
 
-TEXT_SUFFIXES = {".py", ".json", ".md", ".txt", ".toml", ".lock", ".sh", ".ps1", ".bat", ".gradle", ".properties",
-                 ".java", ".rs", ""}
-EXECUTABLE = {"scripts/run_final.sh", "scripts/start_llm.sh", "archparse/gradlew"}
+TEXT_SUFFIXES = {".py", ".json", ".md", ".txt", ".toml", ".lock", ".sh", ".ps1", ".rs", ""}
+EXECUTABLE = {"scripts/run_final.sh", "scripts/start_llm.sh"}
 
 BUILD_CMD = "cd rust && cargo build --release --locked && cd .."
 RUN_CMD = "python run_eval.py --engine rust --parse-sources -o output/submission.json"

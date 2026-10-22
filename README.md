@@ -35,7 +35,7 @@ flowchart LR
 
 - **LLM только читает текст.** Модель решает одно: какой обработчик имел в виду пользователь и с какими данными. Что выполнится дальше, считает детерминированный код по исходникам. Поэтому каждое ребро можно объяснить, а ошибка модели ограничена выбором обработчика и параметров.
 - **Исполнение, а не всё достижимое.** В ответ попадает только то, что выполнилось при данных этого сценария. Лишнее ребро стоит столько же, сколько пропущенное, а «всё достижимое из обработчика» даёт много лишнего.
-- **Никаких знаний о Train Ticket в коде.** Описание домена модель строит сама по README проекта, скелету и коду UI ([ADR-007](docs/adr/adr-007_project_profile.md)). Литералы проекта в коде движка запрещены, и это проверяет тест `tests/test_no_project_literals.py`. Разбор подгонок — [universality_audit_after_1_0.md](docs/researches/universality_audit_after_1_0.md).
+- **Никаких знаний о Train Ticket в коде.** Описание домена модель строит сама по README проекта, скелету и коду UI ([ADR-007](docs/adr/adr-007_project_profile.md)). Литералы проекта в коде движка запрещены, и это проверяет тест `tests/test_no_project_literals.py`.
 - **Rust основной, Python запасной.** Разбор исходников, M4 и M5 написаны на Rust ([ADR-008](docs/adr/adr-008_rust_engine_boundary.md), [ADR-009](docs/adr/adr-009_archparse_rust.md)). Та же логика есть на Python, и выдачи совпадают байт в байт. Python-движок служит эталоном для тестов и запасным путём.
 
 Подробно — [ADR-005](docs/adr/adr-005_scenario_execution_pipeline.md) (конвейер) и [ADR-006](docs/adr/adr-006_constructor_visibility.md) (конструкторы).
@@ -48,7 +48,6 @@ flowchart LR
 
 - Python 3.11+ (рекомендуем 3.13): `pip install -r requirements.txt` или `uv sync --locked`.
 - Rust 1.99.1 (`rust/rust-toolchain.toml`) и компилятор C (`cc` или `gcc`, его требует tree-sitter). `scripts/run_final.sh` ставит Rust через `rustup` сам.
-- Java 17+ нужна только для тестов `archparse/`, в запуске она не участвует.
 - Под Windows перед командами нужно задать `$env:PYTHONUTF8=1`, иначе вывод сломается на кириллице.
 
 ### У организаторов: одна команда
@@ -126,7 +125,7 @@ python run_eval.py --llm-cache output/llm_fresh -o output/fresh/submission.json
 | нет видеокарты | малая модель на CPU, команда ниже | 0.614, около 2 часов на 4 ядрах (замер 21.10) |
 | сценарий не той формы: BOM, UTF-16, нет `id` или `action`, каталог вместо файла | сценарий читается, проблема описана в рамке | ответ строится |
 
-Режим `emergency` теряет в основном на выборе обработчика. Верный обработчик есть среди кандидатов поиска в 99 шагах из 103, но выбрать его без модели не получается ([исследование](docs/researches/gpu_dependence_and_cpu_fallback_study.md), раздел 7).
+Режим `emergency` теряет в основном на выборе обработчика. Верный обработчик есть среди кандидатов поиска в 99 шагах из 103, но выбрать его без модели не получается.
 
 Режим CPU показывает, что код работает без видеокарты, но рекорд он не воспроизводит. Пример для Qwen3-4B Q4_K_M, требуется около 7 ГБ свободной памяти:
 
@@ -195,7 +194,7 @@ python run_eval.py --m1-index off --m1-top-k 5 --select-votes 0 --llm-timeout 90
 | `--m4-unresolved-calls emit\|mute` | вызов метода проекта, которого нет в рёбрах скелета |
 | `--m4-success-retry` | шаг ждёт успеха, а по параметрам M1 получен отказ: повтор с нормализованными значениями |
 | `--ref-explicit-id`, `--ref-idless-result` | как найти сущность по ссылке на прошлый шаг |
-| `--ui-optional-groups` | поля, которые UI шлёт только по условию, без значения в шаге не отправляются ([ui_optional_groups.md](docs/researches/ui_optional_groups.md)) |
+| `--ui-optional-groups` | поля, которые UI шлёт только по условию, без значения в шаге не отправляются |
 
 Правила `on|off`, если не указано иное. Подробнее — [annotation_rules.md](docs/annotation_rules.md).
 
@@ -207,8 +206,8 @@ python run_eval.py --m1-index off --m1-top-k 5 --select-votes 0 --llm-timeout 90
 
 | Проверка | Что | Итог |
 |---|---|---|
-| [Перефразированные S0–S7](eval/paraphrase/README.md) | те же сценарии другими словами, эталон — рекорд | **0.994** против 1.0 на исходных текстах (замер 22.10). Потери: S4.1, выбран не тот обработчик, и S6.13, неверная ссылка на прошлый шаг |
-| [Свои сценарии X1–X8](eval/own/README.md) | 83 шага на обработчики, которых нет в S1–S7, разметка по коду | M1 выбрал верный обработчик в 78 шагах из 83 |
+| Перефразированные S0–S7 (`eval/paraphrase/`) | те же сценарии другими словами, эталон — рекорд | **0.994** против 1.0 на исходных текстах (замер 22.10). Потери: S4.1, выбран не тот обработчик, и S6.13, неверная ссылка на прошлый шаг |
+| Свои сценарии X1–X8 (`eval/own/`) | 83 шага на обработчики, которых нет в S1–S7, разметка по коду | M1 выбрал верный обработчик в 78 шагах из 83 |
 | Перебор обработчиков | каждый из 262 обработчиков как сценарий из одного шага | исключений 0; Rust и Python совпадают ребро в ребро ([rust/README.md](rust/README.md)) |
 | Нестандартный ввод | BOM, UTF-16, нет `id` или `action`, каталог вместо файла | ответ строится, сбой описан в `ATTENTION.txt` |
 
@@ -233,7 +232,7 @@ python scripts/report.py output/ --compare output-py/  # сверить с др�
   LLM: из кеша 385, вызовов сервера 0 за 0.0 с, токенов 0 + 0
 ```
 
-**Архив для NSUTS.** `python pack_submission.py` собирает `output/submission.zip` из прогона в `output/`. В корне архива лежат `submission.json`, `evidence.json`, `report.html` и `RUN.md` с командами. В `code/` — всё для запуска: код, `data/`, кеши, зависимости, манифест моделей, скрипты и рекорд. Модели и пакет организаторов в архив не входят.
+**Архив для NSUTS.** `python pack_submission.py` собирает `output/submission.zip` из прогона в `output/`. В корне архива лежат `submission.json`, `evidence.json`, `report.html` и `RUN.md` с командами. В `code/` — всё для запуска: код, `data/`, кеши, зависимости, манифест моделей, скрипты, рекорд и доки, на которые ссылается этот README (ADR и правила разметки). Модели, пакет организаторов и Java-оракул `archparse/` в архив не входят.
 
 ---
 
@@ -243,10 +242,9 @@ python scripts/report.py output/ --compare output-py/  # сверить с др�
 pytest tests/
 cd rust && cargo test --release --locked && cargo build --release --locked && cd ..
 pytest tests/test_rust_engine.py tests/test_rust_parse.py   # паритет Rust и Python; без бинарников пропускаются
-cd archparse && ./gradlew test                              # Java-оракул разбора; Windows: cmd /c gradlew.bat test
 ```
 
-`cargo test` сверяет Rust с закоммиченными оракулами: `archonity-parse` — с `data/ir/` и `data/entity_ir.json`, `archonity-exec` — с рекордом из `eval/records/` ([rust/README.md](rust/README.md)).
+В архиве посылки из тестов — только `cargo test`: тесты Python, `eval/` и исследования остаются в репозитории команды. `cargo test` сверяет Rust с закоммиченными оракулами: `archonity-parse` — с `data/ir/` и `data/entity_ir.json`, `archonity-exec` — с рекордом из `eval/records/` ([rust/README.md](rust/README.md)).
 
 ---
 
@@ -256,11 +254,10 @@ cd archparse && ./gradlew test                              # Java-оракул 
 - `engine/grounding/` — M1: поиск, эмбеддер, LLM, каталог UI, профиль проекта.
 - `rust/` — разбор исходников (`archonity-parse`), интерпретатор (`archonity-m4`), сборка ответа (`archonity-exec`), общие типы и ввод-вывод (`archonity-model`, `archonity-io`).
 - `engine/executor/`, `engine/spring_security.py`, `engine/projection.py` — те же M4, правило Spring Security и M5 на Python.
-- `archparse/` — Java-оракул разбора (JavaParser): по нему построены `data/ir/` и `data/entity_ir.json`.
-- `data/` — IR тел методов, факты JPA, каталог UI.
+- `data/` — IR тел методов и факты JPA (их же строит `archonity-parse` при каждом прогоне), каталог UI.
 - `cache/` — ответы LLM (`llm/`) и векторы эмбеддера (`emb/`).
 - `models/manifest.json` — версии и sha256 моделей и `llama.cpp`.
 - `scripts/` — `run_final.sh`, `fetch_models.py`, `report.py`, `verify_llm_cache.py`, `start_llm.*`.
 - `eval/` — рекорд, перефразированные и свои сценарии, разметка M1.
-- `docs/` — [roadmap.md](docs/roadmap.md) (статус и посылки), [annotation_rules.md](docs/annotation_rules.md), [environment_guide.md](docs/environment_guide.md), `adr/`, `researches/`.
+- `docs/` — решения (`adr/`), правила разметки ([annotation_rules.md](docs/annotation_rules.md)), запуск на A100 ([run_on_a100.md](docs/run_on_a100.md)).
 - `tests/` — тесты движка, паритета и сторож литералов.
