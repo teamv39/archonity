@@ -79,7 +79,17 @@ def test_attention_lines_end_with_contacts_and_cut_long_list(tmp_path: Path) -> 
 
 def test_no_attention_on_clean_full_run() -> None:
     assert not attention.needed([], {"mode": "full", "steps": 3, "steps_by_retrieval": 0})
+    assert not attention.needed([], {"mode": "full", "steps": 3, "steps_by_retrieval": 0, "embedding_misses": 0})
     assert attention.needed([], None)
+
+
+def test_attention_on_embedder_failure(tmp_path: Path) -> None:
+    """Эмбеддер отказал (например, не хватило видеопамяти рядом с сервером LLM): режим full, но поиск только BM25."""
+    report = {"mode": "full", "steps": 3, "steps_by_retrieval": 0, "embedding_misses": 2,
+              "embedding_failure": "OutOfMemoryError: CUDA out of memory"}
+    assert attention.needed([], report)
+    text = "\n".join(attention.lines([], report, tmp_path / "submission.json"))
+    assert "только BM25" in text and "OutOfMemoryError" in text
 
 
 def test_broken_pipeline_writes_empty_submission_and_frame_last(tmp_path: Path) -> None:

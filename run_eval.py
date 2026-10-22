@@ -191,6 +191,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--select-votes", type=int, default=5,
                         help="M1 v8: выборок голосования сверх жадного ответа (0 — только жадный, в 6 раз меньше "
                              "вызовов выбора; рекорд — 5)")
+    parser.add_argument("--select-early-stop", choices=("on", "off"), default="on",
+                        help="M1 v8: закончить голосование, как только победу жадного ответа уже не отнять (on, по "
+                             "умолчанию: выдача та же, вызовов выбора на S0–S7 316 вместо 618); off — все выборки "
+                             "(полное распределение голосов в step_requests.json)")
     parser.add_argument("--m1-top-k", type=int, default=10, help="M1: кандидатов поиска в промпте выбора")
     parser.add_argument("--m1-index", choices=("on", "off"), default="on",
                         help="M1 v8: индекс всех обработчиков в системном промпте выбора; off — выбор только из "
@@ -467,6 +471,7 @@ def main() -> None:
                                                       timeout=args.llm_timeout,
                                                       **({"cache_dir": args.llm_cache} if args.llm_cache else {})),
             "votes": args.select_votes,
+            "early_stop": args.select_early_stop == "on",
             "top_k": args.m1_top_k,
             "index": args.m1_index == "on",
             "reasoning": args.select_reasoning == "on",
@@ -513,7 +518,8 @@ def main() -> None:
             llm = m1_options.get("llm")
             emb = pipeline.m1.retriever.embedder
             m1_report = make_m1_report(pipeline.step_requests, llm.stats if llm is not None else None,
-                                       getattr(emb, "misses", 0), llm.requested if llm is not None else ())
+                                       getattr(emb, "misses", 0), llm.requested if llm is not None else (),
+                                       getattr(emb, "failure", None))
             print(format_m1_report(m1_report))
         except Exception as e:  # noqa: BLE001
             traceback.print_exc()

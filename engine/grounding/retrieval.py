@@ -122,6 +122,11 @@ class Retriever:
         ranked = [h for _, h in self.bm25.rank(expand_query(query_toks(query)))]
         return ranked + [h for h in self.ids if h not in set(ranked)]
 
+    def warm_loads_model(self, queries: list[str]) -> bool:
+        """Загрузит ли `warm(queries)` модель эмбеддера: у шагов новые тексты (`StepGrounder.prepare`)."""
+        check = getattr(self.embedder, "loads_model_for_queries", None)
+        return self.doc_vecs is not None and check is not None and bool(queries) and check(list(dict.fromkeys(queries)))
+
     def warm(self, queries: list[str]) -> None:
         """Векторы запросов одной пачкой, с повторами один раз: `search` потом берёт их из кеша эмбеддера, модель
         второй раз не нужна. Без dense (нет эмбеддера, векторов обработчиков) ничего не делает."""
