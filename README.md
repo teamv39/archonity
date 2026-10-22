@@ -82,13 +82,22 @@ M1: режим full. Шагов 103: выбрано моделью 103, перв
 
   Замер 21.10 на Ryzen 3 4300U (4 ядра): 2 часа, итог 0.614 против 1.0 из кеша и 0.575 без модели — малая модель выбирает обработчик хуже большой. Режим показывает, что код работает без GPU, но рекорд не воспроизводит ([исследование](docs/researches/gpu_dependence_and_cpu_fallback_study.md), разделы 7.5–7.6). `-fa off` на CPU вдвое ускоряет ответ модели; `NO_PROXY` нужен, если в системе задан прокси.
 
+### Отчёт прогона
+
+```bash
+python scripts/report.py output/                         # output/report.html
+python scripts/report.py output/ --compare output-py/    # и сверка файлов с другим прогоном (Rust и Python)
+```
+
+Один статический `report.html` без сервера: sha256 выдачи и совпадение с рекордом, режим M1, ответы и время LLM, сбои; IoU по видам рёбер против эталона S0 и рекорда платформы 1.0 на S1–S7 (формула `evaluate_golden.py`); точность выбора обработчика на своих сценариях по разметке `eval/own/steps.json`; по каждому шагу — текст, обработчик, голоса и объяснение модели, параметры и рёбра шага с правилом из `decisions.json` и ссылкой на строку кода. Выдачу не меняет.
+
 ### Сборка архива для тестирующей системы (NSUTS)
 
 ```bash
 python pack_submission.py
 ```
 
-Скрипт соберёт `output/submission.zip`. В корне — `submission.json`, `evidence.json` и `RUN.md` с командами воспроизведения. В `code/` — всё для запуска из этого каталога: код (`run_eval.py`, `engine/`, исходники `rust/` без `target/` и `archparse/`), артефакты M2 (`data/`), кеши M1 (`cache/`), зависимости (`pyproject.toml`, `uv.lock`, `requirements.txt`), манифест моделей (`models/manifest.json`), скрипты запуска (`scripts/run_final.sh`, `scripts/fetch_models.py`) и `docs/run_on_a100.md`. Модели и пакет организаторов в архив не входят. Текст — с LF, скрипты `.sh` — исполняемые.
+Скрипт соберёт `output/submission.zip`. В корне — `submission.json`, `evidence.json`, `RUN.md` с командами воспроизведения и `report.html` — отчёт прогона `output/` (ссылки на код ведут в `code/hackaton/`). В `code/` — всё для запуска из этого каталога: код (`run_eval.py`, `engine/`, исходники `rust/` без `target/` и `archparse/`), артефакты M2 (`data/`), кеши M1 (`cache/`), зависимости (`pyproject.toml`, `uv.lock`, `requirements.txt`), манифест моделей (`models/manifest.json`), скрипты запуска (`scripts/run_final.sh`, `scripts/fetch_models.py`) и `docs/run_on_a100.md`. Модели и пакет организаторов в архив не входят. Текст — с LF, скрипты `.sh` — исполняемые.
 
 ---
 
