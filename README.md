@@ -196,7 +196,7 @@ Python-движок (`engine/executor/`, `engine/spring_security.py`, `engine/pr
 pytest tests/
 ```
 
-Тесты Rust и паритет с Python (`tests/test_rust_engine.py` — выдача `--engine rust` = Python байт в байт на S0–S7, `tests/test_rust_parse.py` — `archonity-parse` = `data/ir/` и `data/entity_ir.json`; без собранных бинарников пропускаются):
+Тесты Rust. `cargo test` сам проверяет паритет с закоммиченными оракулами: `archonity-parse` = `data/ir/` и `data/entity_ir.json`, `archonity-exec` по шагам M1 S0–S7 = рекорд `eval/records/` байт в байт ([rust/README.md](rust/README.md), «Тесты Rust»). Паритет с Python — в pytest: `tests/test_rust_engine.py` (выдача `--engine rust` = Python на S0–S7) и `tests/test_rust_parse.py`, без собранных бинарников они пропускаются:
 ```bash
 cd rust && cargo test --release --locked && cargo build --release --locked && cd ..
 pytest tests/test_rust_engine.py tests/test_rust_parse.py
