@@ -18,6 +18,7 @@ from engine.executor.step import _POSITION
 
 ROOT = Path(__file__).resolve().parent.parent
 X10 = ROOT / "eval" / "own" / "scenarios" / "X10.json"
+EXEC = ROOT / "rust" / "target" / "release" / "archonity-exec"
 SET_STATUS = "InsidePaymentServiceImpl#setOrderStatus("
 
 
@@ -67,7 +68,16 @@ def test_no_position_word_prefers_the_created_record(text: str) -> None:
     assert not _POSITION.search(text)
 
 
-def test_rust_engine_refuses_the_flag() -> None:
-    res = subprocess.run([sys.executable, str(ROOT / "run_eval.py"), "--engine", "rust", "--ref-unpositioned", "on"],
-                         capture_output=True, text=True, encoding="utf-8", cwd=ROOT, timeout=60)
-    assert res.returncode == 2 and "только с --engine python" in res.stderr
+@pytest.mark.skipif(not X10.is_file(), reason="нет сценария X10")
+@pytest.mark.skipif(not EXEC.is_file(), reason="нет archonity-exec: cd rust && cargo build --release --locked")
+def test_rust_engine_matches_python(tmp_path: Path) -> None:
+    """R22 в Rust (`StepCore::prefer_created`): с правилом выдача X10 та же, что у Python-движка, байт в байт."""
+    py, rs = tmp_path / "py" / "submission.json", tmp_path / "rs" / "submission.json"
+    res = _run(py, "--ref-unpositioned", "on", "--engine", "python")
+    if res.returncode == 2 and "--require-cache" in res.stdout + res.stderr:
+        pytest.skip("нет кеша LLM для X10")
+    assert res.returncode == 0, res.stderr[-2000:]
+    res = _run(rs, "--ref-unpositioned", "on", "--engine", "rust")
+    assert res.returncode == 0, res.stderr[-2000:]
+    assert not (rs.parent / "ATTENTION.txt").exists(), "Rust не отработал, выдача — отката на Python"
+    assert rs.read_bytes() == py.read_bytes()

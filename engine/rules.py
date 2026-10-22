@@ -44,7 +44,7 @@ class RuntimeRules:
     # условия со значением не по умолчанию — полей в запросе нет, у DTO умолчания полей
     ui_optional_groups: str = "on"
     # Ссылка first/second_of_step_N без слова позиции в тексте шага, а запись этого вида создал шаг раньше, чем читался
-    # список N: ссылка на созданную запись (R22). Пока только в Python-движке, умолчание off до порта в Rust
+    # список N: ссылка на созданную запись (R22). Rust — StepCore::prefer_created
     ref_unpositioned: str = "off"
 
     MODES: ClassVar[dict[str, tuple[str, ...]]] = {
