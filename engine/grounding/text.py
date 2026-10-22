@@ -36,6 +36,14 @@ VERB_SYN_EXTRA = {
     "sign": ["log", "login"],
 }
 
+# Глагол создания + объект (22.10): «Create a new passenger account» — это регистрация, а BM25 без слова register не
+# находил `registerUser` (перефразированный S4.1: векторы ставят его первым, BM25 — 28-м, в кандидаты не попадал).
+# Синоним самого `account` не годится: «internal account balance» и «registered on the account» в S0–S7 и X1–X8 сменили
+# бы кандидатов. Срабатывает, только если шаг начинается с глагола из набора и дальше есть объект; ни один шаг S0–S7
+# и X1–X8 под это не подходит (tests/test_verb_synonyms.py). Выключается вместе с `VERB_SYN_EXTRA`.
+VERB_OBJECT_SYN = {"account": ({"create", "make", "open", "set"}, ["register"])}
+
+
 def stem(w: str) -> str:
     """Стеммер: окончания множественного числа, -ing, -ed. Синонимов нет: синонимы — работа эмбеддера (ADR-007)."""
     if len(w) >= 5 and w.endswith("ies"):
@@ -63,10 +71,16 @@ def query_toks(text: str) -> list[str]:
 
 
 def expand_query(q: list[str], extra: bool = True) -> list[str]:
-    """Токены запроса и синонимы его первого слова; `extra` — с `VERB_SYN_EXTRA` (он перекрывает `VERB_SYN`)."""
+    """Токены запроса и синонимы его первого слова; `extra` — с `VERB_SYN_EXTRA` (он перекрывает `VERB_SYN`)
+    и `VERB_OBJECT_SYN`."""
     if not q:
         return []
-    return q + ((VERB_SYN_EXTRA.get(q[0]) if extra else None) or VERB_SYN.get(q[0], []))
+    out = q + ((VERB_SYN_EXTRA.get(q[0]) if extra else None) or VERB_SYN.get(q[0], []))
+    if extra:
+        for obj, (verbs, syn) in VERB_OBJECT_SYN.items():
+            if q[0] in verbs and obj in q[1:]:
+                out += syn
+    return out
 
 
 class BM25:
