@@ -121,11 +121,11 @@ def run_md(run_cmd: str) -> str:
     {BUILD_CMD}
     {run_cmd}
 
-Если `archonity-exec` нет или он упал, тот же прогон идёт на Python-исполнителе: выдача та же байт в байт, сбой —
-в рамке и `ATTENTION.txt`. Целиком на Python, без Rust: `{PYTHON_CMD}`.
+Если `archonity-exec` нет или он упал, тот же прогон идёт на Python-движке: выдача та же байт в байт, что
+сломалось — в `ATTENTION.txt`. Целиком на Python, без Rust: `{PYTHON_CMD}`.
 
-Тесты Rust, включая паритет с закоммиченными оракулами: IR и `entity_ir.json` = `data/`, выдача S0–S7 = рекорд
-`eval/records/` байт в байт (около 10 с после сборки):
+Тесты Rust, около 10 с после сборки. Кроме модульных они проверяют, что разбор даёт закоммиченные `data/ir/`
+и `data/entity_ir.json`, а выдача S0–S7 совпадает с рекордом из `eval/records/` байт в байт:
 
     cd rust && cargo test --release --locked
 

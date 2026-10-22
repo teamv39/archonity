@@ -1,20 +1,6 @@
-# Рекорды платформы
+# Рекорд платформы
 
-Лучшая посылка NSUTS — эталон для сравнения перед каждой новой посылкой ([agent_lessons.md](../../docs/agent_lessons.md), раздел 4):
-
-```powershell
-$env:PYTHONUTF8=1; python scripts/compare_submissions.py eval/records/submission_p27_1.00000.json <ваш>/submission.json --show 20
-```
-
-Не изменилось ни одного ребра — посылка ничего не проверит.
-
-## Текущий рекорд
-
-`submission_p27_1.00000.json` — **1.00000**, 19.10. Это выдача кода (`python run_eval.py` без ключей, ветка `feature/82-unbound-path-variable`); по множествам рёбер она совпадает с посылкой 27 (ручной зонд, итог 1.00000). Отправка самой выдачи — посылка 28.
-
-- По сценариям: все 1.000.
-- sha256 `94463c41a72c244fc548cbb52d009cff7c65f44ad5e682b7176a156cb66a5a08` — эталон воспроизводимости.
-- Путь: [code_record_drift.md](../../docs/researches/code_record_drift.md), [reaching_1_0.md](../../docs/researches/reaching_1_0.md).
+`submission_p27_1.00000.json` — лучшая посылка на платформе: **1.00000**, все сценарии S0–S7 по 1.000. Это выдача кода: `python run_eval.py` без ключей даёт этот файл байт в байт, sha256 `94463c41a72c244fc548cbb52d009cff7c65f44ad5e682b7176a156cb66a5a08`. С ним сверяется `cargo test` (тест паритета `archonity-exec`).
 
 | Сценарий | Всего | executes | calls | remote | data |
 |---|---|---|---|---|---|
@@ -27,8 +13,12 @@ $env:PYTHONUTF8=1; python scripts/compare_submissions.py eval/records/submission
 | S6 | 413 | 163 | 178 | 36 | 36 |
 | S7 | 392 | 156 | 174 | 31 | 31 |
 
-Прежние рекорды в истории git: посылка 17 (0.99457, ручная, `submission_p17_0.99457.json`), посылка 20 (0.99457, выдача кода, sha256 `3c329a55…4151`).
+## Для команды
 
-## Как обновлять
+Любую правку перед посылкой сравнивать с рекордом ребро в ребро ([agent_lessons.md](../../docs/agent_lessons.md), раздел 4):
 
-Новый рекорд — новый файл `submission_p<номер посылки>_<балл>.json` и строка здесь. Старый файл удалить: он остаётся в истории git. Таблица посылок — в [roadmap.md](../../docs/roadmap.md).
+```bash
+python scripts/compare_submissions.py eval/records/submission_p27_1.00000.json <ваш>/submission.json --show 20
+```
+
+Новый рекорд — новый файл `submission_p<номер посылки>_<балл>.json` и правка этого README, старый файл удаляется (остаётся в истории git). Таблица посылок и путь к 1.0 — [roadmap.md](../../docs/roadmap.md), [reaching_1_0.md](../../docs/researches/reaching_1_0.md).

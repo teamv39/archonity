@@ -242,7 +242,7 @@ python scripts/report.py output/ --compare output-py/  # сверить с др�
 cd rust && cargo test --release --locked && cd ..
 ```
 
-`cargo test` сверяет Rust с закоммиченными оракулами: `archonity-parse` — с `data/ir/` и `data/entity_ir.json`, `archonity-exec` — с рекордом из `eval/records/` ([rust/README.md](rust/README.md)). Тесты Python (движок, паритет Rust и Python, сторож литералов) и наборы сценариев для проверки обобщения остаются в репозитории команды и в посылку не входят.
+Кроме модульных тестов `cargo test` проверяет, что `archonity-parse` строит закоммиченные `data/ir/` и `data/entity_ir.json`, а `archonity-exec` выдаёт рекорд из `eval/records/` байт в байт ([rust/README.md](rust/README.md)). Тесты Python (движок, паритет Rust и Python, сторож литералов) и наборы сценариев для проверки обобщения остаются в репозитории команды и в посылку не входят.
 
 ---
 
@@ -256,5 +256,5 @@ cd rust && cargo test --release --locked && cd ..
 - `cache/` — ответы LLM (`llm/`) и векторы эмбеддера (`emb/`).
 - `models/manifest.json` — версии и sha256 моделей и `llama.cpp`.
 - `scripts/` — `run_final.sh`, `fetch_models.py`, `report.py`, `verify_llm_cache.py`, `start_llm.*`.
-- `eval/records/` — рекорд, оракул `cargo test`.
+- `eval/records/` — лучшая посылка платформы, с ней сверяется `cargo test`.
 - `docs/` — решения (`adr/`), правила разметки ([annotation_rules.md](docs/annotation_rules.md)), запуск на A100 ([run_on_a100.md](docs/run_on_a100.md)).
