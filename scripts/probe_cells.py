@@ -44,9 +44,8 @@ def make(base_p: str, out_p: str, cells: list[str]) -> None:
         js = out / f"{name}.json"
         js.write_text(json.dumps(probe, ensure_ascii=False, indent=2), encoding="utf-8")
         manifest[name] = {"scenario": sid, "kind": kind, "P": sum(1 for e in edges if e["relation"] == kind)}
-        ps.SUBMISSION_JSON = js
         ps.pack(out / f"{name}.zip", f"ЗОНД {name}: из {base_p} убраны все рёбра {kind} сценария {sid}. "
-                                    f"Замер, не решение: после зондов перезалить выдачу кода.")
+                                    f"Замер, не решение: после зондов перезалить выдачу кода.", submission=js)
     (out / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=1), encoding="utf-8")
     for n, m in manifest.items():
         print(f"  {n}.zip  P={m['P']}")

@@ -159,6 +159,11 @@ def parse_args() -> argparse.Namespace:
         help="Пропустить автоматический вызов evaluate_golden.py",
     )
     parser.add_argument(
+        "--sync-visualizer",
+        action="store_true",
+        help="Обновить данные visualizer/ (public/data, src/data) по этому прогону",
+    )
+    parser.add_argument(
         "--m4-unresolved-calls",
         choices=("mute", "emit"),
         default="emit",
@@ -241,7 +246,7 @@ def print_m4_stats(stats: dict) -> None:
 def print_evaluation_summary(eval_res: dict) -> None:
     score = eval_res.get("score", 0.0)
     print("\n" + "=" * 65)
-    print(f"📊 РЕЗУЛЬТАТЫ ОЦЕНКИ (evaluate_golden.py): ИТОГОВЫЙ СКОР: {score:.4f}")
+    print(f"РЕЗУЛЬТАТЫ ОЦЕНКИ (evaluate_golden.py): ИТОГОВЫЙ СКОР: {score:.4f}")
     print("=" * 65)
 
     scenarios = eval_res.get("scenarios", {})
@@ -254,12 +259,13 @@ def print_evaluation_summary(eval_res: dict) -> None:
         for rel in ("executes", "calls", "remote", "data"):
             data = sets.get(rel, {})
             iou = data.get("iou", 0.0)
-            prec = data.get("precision", 0.0)
-            rec = data.get("recall", 0.0)
             tp = data.get("tp", 0)
             pred = data.get("pred", 0)
             gold = data.get("gold", 0)
-            print(f"{rel:<12} | {iou:<8.3f} | {prec:<10.3f} | {rec:<8.3f} | {tp:<5} | {pred:<5} | {gold:<5}")
+            # Пустое множество: precision или recall не определены, валидатор пишет 0 — печатаем прочерк
+            prec = f"{data.get('precision', 0.0):.3f}" if pred else "—"
+            rec = f"{data.get('recall', 0.0):.3f}" if gold else "—"
+            print(f"{rel:<12} | {iou:<8.3f} | {prec:<10} | {rec:<8} | {tp:<5} | {pred:<5} | {gold:<5}")
 
     print("\nСтатус валидации формата остальных сценариев:")
     for sid, sdata in sorted(scenarios.items()):
@@ -273,12 +279,12 @@ def print_evaluation_summary(eval_res: dict) -> None:
     if errors := eval_res.get("errors"):
         print("\nОШИБКИ:")
         for err in errors:
-            print(f"  ❌ {err}")
+            print(f"  - {err}")
 
     if warnings := eval_res.get("warnings"):
         print("\nПРЕДУПРЕЖДЕНИЯ:")
         for w in warnings:
-            print(f"  ⚠️  {w}")
+            print(f"  - {w}")
 
     print("=" * 65 + "\n")
 
@@ -395,7 +401,7 @@ def run_parse(args: argparse.Namespace) -> None:
 
 
 def write_artifacts(args: argparse.Namespace, pipeline: ArchonityPipeline, adapter) -> None:
-    """Отчёты рядом с выдачей и синхронизация visualizer/. Выдачу не трогают: она уже записана."""
+    """Отчёты рядом с выдачей и (по --sync-visualizer) данные visualizer/. Выдачу не трогают: она уже записана."""
     print_m4_stats(pipeline.m4.stats())
 
     canonical_out = args.out.parent / "canonical_graph.json"
@@ -421,18 +427,10 @@ def write_artifacts(args: argparse.Namespace, pipeline: ArchonityPipeline, adapt
         json.dump(pipeline.ledger.to_dict(), f, ensure_ascii=False, indent=1)
     print(f"Журнал решений (evidence v2) сохранен в: {decisions_out}")
 
-    # Синхронизация с visualizer/
-    vis_data_dir = ROOT_DIR / "visualizer" / "public" / "data"
-    if vis_data_dir.is_dir():
-        try:
-            from scripts.export_visualizer_data import export_all
-            export_all()
-        except Exception as e:
-            import shutil
-            shutil.copy(canonical_out, vis_data_dir / "canonical_graph.json")
-            shutil.copy(evidence_out, vis_data_dir / "evidence.json")
-            shutil.copy(args.out, vis_data_dir / "submission.json")
-            print(f"Файлы базово синхронизированы с {vis_data_dir} (export_all: {e})")
+    # Данные visualizer/ лежат в репозитории: обычный прогон их не трогает, обновление — по флагу
+    if args.sync_visualizer:
+        from scripts.export_visualizer_data import export_all
+        export_all(args.out.parent)
 
 
 def evaluate(args: argparse.Namespace) -> None:

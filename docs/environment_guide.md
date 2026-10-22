@@ -164,7 +164,7 @@ cache/** linguist-generated=true -diff -merge
 
 ### Прогон и выдача
 
-- `run_eval.py -o <папка>/x.json` кладёт **все** артефакты прогона рядом с `x.json`: `decisions.json`, `m4_unknowns.json`, `evidence.json`, `step_requests.json`, `m1_report.json` (режим M1: сколько ответов LLM из кеша, от сервера, без ответа; README, «Проверка без кеша»). Без `-o` — в `output/`. Каждый прогон ещё синхронизирует `visualizer/public/data`.
+- `run_eval.py -o <папка>/x.json` кладёт **все** артефакты прогона рядом с `x.json`: `decisions.json`, `m4_unknowns.json`, `evidence.json`, `step_requests.json`, `m1_report.json` (режим M1: сколько ответов LLM из кеша, от сервера, без ответа; README, «Проверка без кеша»). Без `-o` — в `output/`. Данные `visualizer/` (`public/data`, `src/data`) прогон не трогает: обновить их по этому прогону — флаг `--sync-visualizer` или `python scripts/export_visualizer_data.py <папка прогона>`.
 - Для экспериментов писать в отдельную папку (scratchpad), чтобы не затереть `output/` и не перепутать прогоны.
 - Чужую посылку воспроизводить так: `git archive <sha> | tar -x -C <папка>`, туда скопировать `hackaton/`, запустить команду из её отчёта и сверить `sha256` у `submission.json`.
 - В Python под Windows пути вида `/c/Users/...` не работают внутри строк кода. Передавать путь аргументом (Git Bash сам переведёт) или через `cygpath -w`.

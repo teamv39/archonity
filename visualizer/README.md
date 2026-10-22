@@ -1,6 +1,6 @@
 # Archonity Visualizer
 
-> **Устарело.** Описывает визуализатор графа сервисов по ADR-001. `run_eval.py` по-прежнему пишет данные в `public/data/`, но под трассу сценария визуализатор не переделан ([ADR-002](../docs/adr/adr-002_react_flow_visualizer.md), [roadmap.md](../docs/roadmap.md)).
+> **Устарело.** Описывает визуализатор графа сервисов по ADR-001. `run_eval.py --sync-visualizer` по-прежнему пишет данные в `public/data/`, но под трассу сценария визуализатор не переделан ([ADR-002](../docs/adr/adr-002_react_flow_visualizer.md), [roadmap.md](../docs/roadmap.md)).
 
 Интерактивный Single Page Application (SPA) визуализатор архитектурного графа микросервисов для проекта **Archonity** (бенчмарк Train Ticket, 40+ сервисов).
 
