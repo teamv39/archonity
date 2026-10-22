@@ -2,7 +2,7 @@
 
 Формат — hackaton/sample/README.md: zip-архив с кодом и обязательным submission.json в корне.
 
-В корне архива: submission.json, evidence.json и RUN.md с командами воспроизведения. В code/ — всё, чтобы из этого
+В корне архива: submission.json, evidence.json, RUN.md с командами воспроизведения и report.html — отчёт прогона (scripts/report.py). В code/ — всё, чтобы из этого
 каталога получить тот же submission.json и прогнать новые сценарии (docs/run_on_a100.md): код (run_eval.py, engine/,
 archparse/ и rust/ — источник data/ и Rust-движок, ADR-008), артефакты M2 (data/), кеши M1 (cache/), зависимости (pyproject.toml, uv.lock,
 requirements.txt), манифест моделей и скрипты запуска.
@@ -17,6 +17,7 @@ requirements.txt), манифест моделей и скрипты запус�
 from __future__ import annotations
 
 import argparse
+import sys
 from pathlib import Path, PurePosixPath
 import zipfile
 
@@ -43,6 +44,7 @@ CODE_FILES = (
     "scripts/start_llm.sh",
     "scripts/start_llm.ps1",
     "scripts/verify_llm_cache.py",
+    "scripts/report.py",
     "archparse/README.md",
     "archparse/build.gradle",
     "archparse/settings.gradle",
@@ -121,6 +123,10 @@ def run_md(run_cmd: str) -> str:
     scripts/run_final.sh <файлы сценариев>
 
 Подробно — `docs/run_on_a100.md`.
+
+`report.html` рядом — отчёт этого прогона: качество по эталону, шаги, обработчики и рёбра с правилом и местом
+в коде. Пересобрать по любому прогону: `python scripts/report.py output/`. Ресурсы прогона (время этапов, пик памяти
+и видеопамяти, вызовы LLM) — `output/resources.json` после запуска и раздел «Ресурсы» в отчёте.
 """
 
 
@@ -146,6 +152,20 @@ def _read(path: Path) -> bytes:
     return data
 
 
+def report_html() -> str | None:
+    """Отчёт прогона output/ (scripts/report.py) для корня архива: ссылки на код — в code/hackaton/, куда организаторы
+    кладут свой пакет. Нет файлов прогона рядом с выдачей — отчёта нет."""
+    if not all((OUTPUT_DIR / f).is_file() for f in ("decisions.json", "step_requests.json")):
+        print("Отчёт не добавлен: в output/ нет decisions.json или step_requests.json")
+        return None
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import report
+
+    args = report.parse_args([str(OUTPUT_DIR), "-o", "report.html",
+                              "--targets", "code/hackaton/tt-challenge/targets/trainticket"])
+    return report.render(OUTPUT_DIR, args)
+
+
 def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
     """Архив сдачи. run_cmd — команда, которой получен submission.json (в RUN.md архива)."""
     if not SUBMISSION_JSON.is_file():
@@ -161,6 +181,8 @@ def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
         if EVIDENCE_JSON.is_file():
             _add_file(z, "evidence.json", _read(EVIDENCE_JSON))
         _add_file(z, "RUN.md", run_md(run_cmd or RUN_CMD).encode("utf-8"))
+        if page := report_html():
+            _add_file(z, "report.html", page.encode("utf-8"))
         for d in dirs:
             _add_dir(z, d)
         for f in files:

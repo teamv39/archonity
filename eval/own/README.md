@@ -38,17 +38,67 @@
 python -m engine.grounding.grounder eval/own/scenarios/*.json --eval eval/own/steps.json --embed-model
 ```
 
-Ответов LLM для этих сценариев в `cache/` нет: нужен сервер LLM (`scripts/run_final.sh` или `scripts/start_llm.*`). С `--no-llm` и без эмбеддера (только BM25, 21.10) — нижняя граница поиска, а не точность M1:
+Ответы LLM и векторы шагов X1–X8 лежат в `cache/` с 21.10: проверка M1 и прогон всего пайплайна идут без GPU и сервера LLM.
 
-| Сценарии | top-1 | верный среди кандидатов |
-|---|---|---|
-| X1–X4 | 20/41 | 36/41 |
-| X5–X8 | 17/42 | 34/42 |
+Замер 21.10: RTX 5070 Ti 16 ГБ, сервер с `-ncmoe 7 -dev Vulkan1` (раздел «Видеокарта 16 ГБ» в [run_on_a100.md](../../docs/run_on_a100.md)). Ответов на эти сценарии в кеше тогда не было; векторы шагов считал эмбеддер на CUDA отдельным прогоном до прогона с LLM.
 
-В X5–X8 шесть из восьми промахов мимо кандидатов — шаги консоли администратора: в кандидаты попадают сервисные близнецы (`OrderController#findAllOrder`, `Travel2Controller#queryAll`), а не `Admin*Controller`.
+| M1 | X1–X4: top-1 | среди кандидатов | X5–X8: top-1 | среди кандидатов |
+|---|---|---|---|---|
+| только BM25 (`--no-llm --no-embed`) | 20/41 | 36/41 | 17/42 | 34/42 |
+| BM25 и векторы (`--no-llm`) | 24/41 | 41/41 | 24/42 | 40/42 |
+| целиком: BM25, векторы, LLM | **39/41** | 41/41 | **39/42** | 40/42 |
 
-Прогон всего пайплайна:
+Только BM25 — нижняя граница поиска, а не точность M1. В X5–X8 шесть из восьми промахов BM25 мимо кандидатов — шаги консоли администратора: в кандидаты попадают сервисные близнецы (`OrderController#findAllOrder`, `Travel2Controller#queryAll`), а не `Admin*Controller`.
+
+Ошибки M1 целиком:
+
+- X1.4 и X1.11 — `OrderController#createNewOrder` вместо `PreserveController#preserve`. Параметры X1–X4 7/13: шесть промахов — параметры брони (`seatType`, `assurance`, `foodType`) этих двух шагов, они ушли вместе с обработчиком.
+- X5.9 «Change the status of the new order to 'Paid'» — `OrderController#modifyOrder` вместо `AdminOrderController#updateOrder`; с ним ушёл параметр `status`, параметры X5–X8 3/4.
+- X6.2 «Open the list of all trips» — `TravelController#adminQueryAll` вместо `AdminTravelController#getAllTravels`, верного нет среди кандидатов.
+- X8.8 «Add a luggage consignment of 5 kg…» — `ConsignController#insertConsign` вместо `updateConsign`, верного нет среди кандидатов.
+
+Ресурсы:
+
+- LLM: X1–X4 — 271 ответ за 638 с, X5–X8 — 274 ответа за 630 с; сервер поднимался за 17 с (файл модели уже был в кеше ОС).
+- Пик видеопамяти: сервер LLM — 15 418 МиБ (часть экспертов MoE в RAM, `-ncmoe 7`), эмбеддер на CUDA — 8 124–8 250 МиБ. Векторы CPU и CUDA совпадают с косинусом 0.9998–0.9999, в кеше — векторы CUDA.
+
+Прогон всего пайплайна (`--no-eval`: эталона своих сценариев у платформы нет):
 
 ```bash
-python run_eval.py --scenarios "eval/own/scenarios/*.json" -o output/own/submission.json
+python run_eval.py --scenarios "eval/own/scenarios/*.json" --no-eval -o output/own/submission.json
 ```
+
+Из кеша: режим M1 `full`, 546 ответов LLM (271 на X1–X4, 274 на X5–X8 и профиль проекта), промахов векторов 0, `--require-cache` проходит без GPU. sha256 выдачи — оракул для правок:
+
+| Сценарии | sha256 `submission.json` |
+|---|---|
+| X1–X8 (`*.json`) | `c87427909acec41d7043865221f31dcbe5d36d8472ae4f877b0686aa65d04beb` |
+| X1–X4 (`X[1-4].json`) | `561bc45c60a5ecae208dc4be5d2e3383ad0b74c55194ba7a5adfd705f7c95312` |
+| X5–X8 (`X[5-8].json`) | `9cd5d733b7d27575ab1c0143acad0ea7d8e178d9fa85ff73bf2d7361ff93fc93` |
+
+Выдачи X1–X4 и X5–X8 из кеша совпали с прогонами с сервером LLM. 22.10 правило «сущность, названная явно» (`--ref-explicit-id`, annotation_rules.md, R21) добавило X6 10 рёбер шага 3; прежние sha256 X1–X8 и X5–X8 (`7053de3d…`, `f1a12b5e…`) даёт `--ref-explicit-id off`.
+
+## Проверка M4
+
+Исход каждого шага у M4 против поля `outcome` разметки. Прогон — сам `run_eval.py` с теми же ключами, выдача та же (sha256 выше):
+
+```bash
+python scripts/check_own_outcomes.py -o output/own-outcomes [--show all] -- --require-cache
+```
+
+Исход M4 — статус обёртки ответа обработчика шага: `success`, `failure`, `unknown` (статус не вычислен), `null`, `value` (ответ не обёртка). Шаг с неверным обработчиком M1 считается ошибкой M1. Построчно — `outcomes.json` в папке прогона.
+
+Замер 22.10 (X1–X8, 83 шага): совпало 65, ошибки M1 — 5, исход M4 другой — 6, исход M4 неизвестен — 7. После правки X6.8 совпало 66, после правки поля дубликата через remote_call (X7.4) — 67, после правила «сущность, названная явно» (X6.3) — 68.
+
+| Шаг | Разметка | M4 | Причина |
+|---|---|---|---|
+| X4.7, X8.13 | success | failure | расхождения нет: «пусто» в сервисе — статус 0 `No Content…`, ветка та же |
+| X6.8 | success | failure | исправлено 22.10: разбор имён производных запросов Spring Data не понимал слово между глаголом и `By` (`removeRouteById`), удаления в мире не было, `findById` находил маршрут. Разбор теперь как `PartTree` (`world.derived_props`, Rust `world.rs`), новых имён 4: ещё `deleteFoodOrderByOrderId` (2 сервиса), `removeAssuranceByOrderId`. Рёбра X1–X8, S0–S7 и `handler_sweep` не изменились: после удаления обе ветки `deleteRoute` дают одни рёбра, меняется только ответ |
+| X5.4, X7.4 | refused | unknown | X7.4 исправлено 22.10, X5.4 — по рёбрам: поле дубликата (ADR-007, решение 6) искалось только в своём сервисе, а консоль администратора пересылает тело запроса сервису, который ищет дубликат. В X5.3 пользователь сохранялся с неизвестным именем, и в X5.4 `findByUserName` не мог решить, есть ли совпадение: исполнялись оба плеча. Теперь `_dedupe_fields` идёт и через remote_call. В X5.4 `saveUser` отвечает `USER HAS ALREADY EXISTS`, но статус ответа `addUser` всё ещё неизвестен: `ResponseEntity.status(..).body(..)` в `registerUser` не разобран (2 места в проекте, рёбер не меняет) |
+| X6.3 | success | failure | исправлено 22.10: ссылка `trip: first_of_step_2` брала первый рейс списка, а не G9998 из `tripId`, станции и маршрут чужие. Правило «сущность, названная явно» (annotation_rules.md, R21, `--ref-explicit-id`): сущность с ID из параметров шага, X6 +10 рёбер успешного пути |
+| X4.1 | refused | success | неверный пароль: отказ бросает `AuthenticationManager.authenticate` (библиотека), M4 его не видит |
+| X1.7 | other | success | «доплатите разницу» (status 2): у M1 нет такого исхода, M4 идёт по успеху, лишний каскад перебронирования |
+| X1.9 | refused | unknown | расчёт возврата для заказа в статусе CHANGE: статус заказа после `rebook`/`payDifference` неизвестен |
+| X1.13 | success | unknown | следствие ошибки M1 в X1.11 (`createNewOrder`) и `expected_outcome=refused` у M1 |
+| X4.2, X4.3, X5.3 | — | unknown | рёбра по разметке, статус ответа `registerUser` не вычислен (`ResponseEntity` без обёртки) |
+| X7.4 | refused | unknown | дубликат ищет нативный SQL, условие неизвестно |

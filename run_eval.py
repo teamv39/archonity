@@ -27,7 +27,7 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
-from engine import attention  # только стандартная библиотека: рамка Р2 работает, даже если конвейер не импортируется
+from engine import attention, resources  # только стандартная библиотека: рамка Р2 и замер работают, даже если конвейер не импортируется
 from engine.artifacts import ArtifactMismatch  # тоже только стандартная библиотека
 
 if TYPE_CHECKING:
@@ -172,6 +172,13 @@ def parse_args() -> argparse.Namespace:
         help="M4: шаг ожидает успех, а по значениям M1 отказал — повтор с нормализованными, затем неизвестными "
              "строковыми параметрами (on по умолчанию)",
     )
+    parser.add_argument(
+        "--ref-explicit-id",
+        choices=("on", "off"),
+        default="on",
+        help="M4: ссылка first/second_of_step_N и строковый ID сущности в параметрах шага — из результатов шага N "
+             "сущность с этим ID, а не первая по порядку (on по умолчанию)",
+    )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
@@ -293,6 +300,7 @@ def build_pipeline(args: argparse.Namespace, m1_options: dict) -> ArchonityPipel
         m1_options=m1_options,
         unresolved_receiver_calls=args.m4_unresolved_calls,
         m4_success_retry=args.m4_success_retry,
+        ref_explicit_id=args.ref_explicit_id,
         build_m4=args.engine == "python",
     )
 
@@ -325,6 +333,7 @@ def rust_rule_args(args: argparse.Namespace) -> list[str]:
         "unbound_handlers": args.unbound_handlers,
         "unresolved_receiver_calls": args.m4_unresolved_calls,
         "m4_success_retry": args.m4_success_retry,
+        "ref_explicit_id": args.ref_explicit_id,
     }
     out: list[str] = []
     for name, value in rules.items():
@@ -332,10 +341,12 @@ def rust_rule_args(args: argparse.Namespace) -> list[str]:
     return out
 
 
-def run_rust(args: argparse.Namespace, pipeline: ArchonityPipeline, scenarios: list[Path]) -> list[dict]:
+def run_rust(args: argparse.Namespace, pipeline: ArchonityPipeline, scenarios: list[Path],
+             meter: resources.Resources) -> list[dict]:
     """`--engine rust` (ADR-008): M1 в Python пишет `step_requests_raw.json`, `archonity-exec` строит выдачу.
     Возвращает сбои Rust-части; исключение — если бинарник не отработал (откат на Python делает `run_python_fallback`)."""
-    raw = pipeline.ground_all(scenarios)
+    with meter.stage("M1"):
+        raw = pipeline.ground_all(scenarios)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     raw_path = args.out.parent / "step_requests_raw.json"
     with open(raw_path, "w", encoding="utf-8", newline="\n") as f:
@@ -347,7 +358,8 @@ def run_rust(args: argparse.Namespace, pipeline: ArchonityPipeline, scenarios: l
            "--entity-ir", str(Path(args.artifacts_dir) / "entity_ir.json"),
            "--configs-topology", str(ROOT_DIR / "facts" / "configs_topology.json"),
            "-o", str(args.out), *rust_rule_args(args)]
-    res = subprocess.run(cmd)
+    with meter.stage("исполнение Rust"):
+        res = subprocess.run(cmd)
     if res.returncode != 0:
         raise RuntimeError(f"archonity-exec завершился с кодом {res.returncode}")
     failures_path = args.out.parent / "exec_failures.json"
@@ -467,6 +479,7 @@ def main() -> None:
 
     # Р2: выдача строится всегда, сбой виден в рамке последней строкой и в ATTENTION.txt, код выхода 0
     attention.clear(args.out)
+    meter = resources.Resources().start()
     failures: list[dict] = []
     m1_options: dict = {}
     pipeline = adapter = None
@@ -474,7 +487,8 @@ def main() -> None:
     if args.parse_sources:
         print("Разбор исходников: archonity-parse...")
         try:
-            run_parse(args)
+            with meter.stage("разбор исходников"):
+                run_parse(args)
         except Exception as e:  # noqa: BLE001
             traceback.print_exc()
             failures.append(attention.failure(None, None, "разбор исходников (archonity-parse)", e))
@@ -494,7 +508,8 @@ def main() -> None:
             "index": args.m1_index == "on",
             "reasoning": args.select_reasoning == "on",
         }
-        pipeline = build_pipeline(args, m1_options)
+        with meter.stage("сборка конвейера"):
+            pipeline = build_pipeline(args, m1_options)
     except Exception as e:  # noqa: BLE001
         failures.append(attention.failure(None, None, "сборка конвейера", e))
         # Чужие артефакты (IR, entity_ir): LLM и эмбеддер ни при чём, повтор не поможет; текст с командой пересборки
@@ -514,15 +529,17 @@ def main() -> None:
         try:
             if args.engine == "rust":
                 try:
-                    failures.extend(run_rust(args, pipeline, scenarios))
+                    failures.extend(run_rust(args, pipeline, scenarios, meter))
                     rust_done = True
                 except Exception as e:  # noqa: BLE001 — откат на Python: выдача та же, теряется только надбавка за Rust
                     traceback.print_exc()
                     failures.append(attention.failure(None, None, "движок Rust (откат на Python)", e))
                     print("archonity-exec не отработал: прогон на Python-исполнителе", file=sys.stderr)
-                    adapter = run_python_fallback(args, pipeline, scenarios)
+                    with meter.stage("M1 и исполнение Python (откат)"):
+                        adapter = run_python_fallback(args, pipeline, scenarios)
             else:
-                adapter = pipeline.run_all(scenarios, output_path=args.out)
+                with meter.stage("M1 и исполнение Python"):
+                    adapter = pipeline.run_all(scenarios, output_path=args.out)
             print(f"Сабмишн успешно сохранен в: {args.out}")
         except Exception as e:  # noqa: BLE001
             traceback.print_exc()
@@ -549,14 +566,28 @@ def main() -> None:
             failures.append(attention.failure(None, None, "отчёт M1", e))
         if adapter is not None:
             try:
-                write_artifacts(args, pipeline, adapter)
+                with meter.stage("отчёты"):
+                    write_artifacts(args, pipeline, adapter)
             except Exception as e:  # noqa: BLE001
                 traceback.print_exc()
                 failures.append(attention.failure(None, None, "отчёты прогона", e))
     try:
-        evaluate(args)
+        if args.no_eval:
+            evaluate(args)
+        else:
+            with meter.stage("локальная оценка"):
+                evaluate(args)
     except Exception as e:  # noqa: BLE001
         print(f"Локальная оценка не выполнена: {type(e).__name__}: {e}", file=sys.stderr)
+
+    # Ресурсы прогона (П3): при равном балле организаторы сравнивают их; сбой замера прогон не роняет
+    try:
+        emb = pipeline.m1.retriever.embedder if pipeline is not None else None
+        usage = meter.finish(m1_options.get("llm"), getattr(emb, "misses", 0))
+        resources.write(usage, args.out)
+        print("\n".join(resources.lines(usage)))
+    except Exception as e:  # noqa: BLE001
+        print(f"Замер ресурсов не записан: {type(e).__name__}: {e}", file=sys.stderr)
 
     if m1_report is not None:
         with open(args.out.parent / "m1_report.json", "w", encoding="utf-8") as f:
