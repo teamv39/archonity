@@ -115,7 +115,7 @@
 
 ### П4. Rust (если Р1 = да)
 
-- Отдельная папка `rust/` ([README](../rust/README.md)); Python правим только оракулами (`scripts/rust_oracles.py`, трасса `ARCHONITY_TRACE`). Порядок:
+- Отдельная папка `rust/` ([README](../rust/README.md), разработка — [rust_dev.md](rust_dev.md)); Python правим только оракулами (`scripts/rust_oracles.py`, трасса `ARCHONITY_TRACE`). Порядок:
   1. M4, R20, Spring Security, R19 и M5 по готовому IR (`data/ir/`) и `step_requests_raw.json` (шаги M1 до R20);
   2. разбор Java в IR на Rust (`tree-sitter-java`) вместо `archparse` ([ADR-009](adr/adr-009_archparse_rust.md)); решение Дениса 21.10: делаем полный анализ кода на Rust; ADR-009 принят 22.10, PR #126 влит, платформа дала 1.0 на Rust-архиве.
 - Оракул:

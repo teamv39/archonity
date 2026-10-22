@@ -4,19 +4,25 @@
 
 В корне архива: submission.json, evidence.json, RUN.md с командами воспроизведения и report.html — отчёт прогона (scripts/report.py). В code/ — всё, чтобы из этого
 каталога получить тот же submission.json и прогнать новые сценарии (docs/run_on_a100.md): код (run_eval.py, engine/,
-archparse/ и rust/ — источник data/ и Rust-движок, ADR-008), артефакты M2 (data/), кеши M1 (cache/), зависимости (pyproject.toml, uv.lock,
-requirements.txt), манифест моделей и скрипты запуска.
+rust/ — Rust-движок и разбор исходников), артефакты M2 (data/), кеши M1 (cache/), зависимости (pyproject.toml,
+uv.lock, requirements.txt), манифест моделей, скрипты запуска и доки (README.md, rust/README.md, docs/run_on_a100.md).
+Java-версия разбора в архив не входит: data/ строит archonity-parse.
 
 Гарантирует:
 1. Переводы строк в текстовых файлах — Unix LF, как в индексе git.
-2. POSIX-атрибуты: файлы 0o644, скрипты *.sh и gradlew 0o755, каталоги 0o755, create_system = 3 (Unix).
+2. POSIX-атрибуты: файлы 0o644, скрипты *.sh 0o755, каталоги 0o755, create_system = 3 (Unix).
 3. Только перечисленное ниже: без node_modules, __pycache__, rust/target, hackaton/ и моделей. Нет файла из списка — ошибка.
 4. Исходники Rust (rust/**/*.rs, Cargo.toml, Cargo.lock, README, входы тестов *.json) в архиве: надбавку за Rust
    дают за исходный код, а scripts/run_final.sh собирает бинарники оттуда (`cargo build --release --locked`).
+5. Ссылки доков .md на файлы вне архива (исследования, roadmap) в копии для архива становятся текстом: репозиторий
+   закрыт, у жюри только посылка. В репозитории ссылки остаются. Ссылки в пакет организаторов (hackaton/) остаются:
+   по RUN.md он лежит в code/hackaton/.
 """
 from __future__ import annotations
 
 import argparse
+import posixpath
+import re
 import sys
 from pathlib import Path, PurePosixPath
 import zipfile
@@ -30,6 +36,7 @@ ZIP_OUT = OUTPUT_DIR / "submission.zip"
 # Файлы кода, данных, зависимостей и запуска (пути от корня репозитория; в архиве — под code/)
 CODE_FILES = (
     "run_eval.py",
+    "pack_submission.py",  # сборка этого архива (README, «Архив для NSUTS»)
     "README.md",
     "pyproject.toml",
     "uv.lock",
@@ -47,30 +54,21 @@ CODE_FILES = (
     "scripts/report.py",
     "eval/records/README.md",
     "eval/records/submission_p27_1.00000.json",  # рекорд: оракул теста паритета archonity-exec (cargo test)
-    "archparse/README.md",
-    "archparse/build.gradle",
-    "archparse/settings.gradle",
-    "archparse/gradlew",
-    "archparse/gradlew.bat",
-    "archparse/gradle/wrapper/gradle-wrapper.jar",
-    "archparse/gradle/wrapper/gradle-wrapper.properties",
 )
 
 # Каталоги целиком: (каталог, шаблон rglob)
 CODE_TREES = (
     ("engine", "*.py"),
-    ("data/ir", "*.json"),  # IR тел методов (M2, archparse/README.md)
-    ("cache/llm", "*.json"),  # ответы LLM: S1–S7 без GPU (ADR-005, «Кеш LLM»)
+    ("data/ir", "*.json"),  # IR тел методов (M2, archonity-parse)
+    ("cache/llm", "*.json"),  # ответы LLM: S1–S7 без GPU
     ("cache/emb/qwen3-4b", "*"),  # векторы эмбеддера
-    ("archparse/src", "*.java"),
 )
 
 # Rust-движок: исходники и манифесты, без rust/target
 RUST_SUFFIXES = {".rs", ".toml", ".lock", ".md", ".json"}
 
-TEXT_SUFFIXES = {".py", ".json", ".md", ".txt", ".toml", ".lock", ".sh", ".ps1", ".bat", ".gradle", ".properties",
-                 ".java", ".rs", ""}
-EXECUTABLE = {"scripts/run_final.sh", "scripts/start_llm.sh", "archparse/gradlew"}
+TEXT_SUFFIXES = {".py", ".json", ".md", ".txt", ".toml", ".lock", ".sh", ".ps1", ".rs", ""}
+EXECUTABLE = {"scripts/run_final.sh", "scripts/start_llm.sh"}
 
 BUILD_CMD = "cd rust && cargo build --release --locked && cd .."
 RUN_CMD = "python run_eval.py --engine rust --parse-sources -o output/submission.json"
@@ -106,7 +104,7 @@ def run_md(run_cmd: str) -> str:
 
     pip install -r requirements.txt        # или: uv sync --locked
 
-Анализ кода и построение ответа — Rust (`rust/`, ADR-008, ADR-009): Rust 1.99.1 из `rust/rust-toolchain.toml` и
+Анализ кода и построение ответа — Rust (`rust/`, обзор — `rust/README.md`): Rust 1.99.1 из `rust/rust-toolchain.toml` и
 компилятор C (`cc`/`gcc`) для tree-sitter, зависимости с crates.io. На Python — только M1 (сопоставление шагов
 с обработчиками через локальные модели) и кеш ответов моделей.
 
@@ -116,11 +114,11 @@ def run_md(run_cmd: str) -> str:
     {BUILD_CMD}
     {run_cmd}
 
-Если `archonity-exec` нет или он упал, тот же прогон идёт на Python-исполнителе: выдача та же байт в байт, сбой —
-в рамке и `ATTENTION.txt`. Целиком на Python, без Rust: `{PYTHON_CMD}`.
+Если `archonity-exec` нет или он упал, тот же прогон идёт на Python-движке: выдача та же байт в байт, что
+сломалось — в `ATTENTION.txt`. Целиком на Python, без Rust: `{PYTHON_CMD}`.
 
-Тесты Rust, включая паритет с закоммиченными оракулами: IR и `entity_ir.json` = `data/`, выдача S0–S7 = рекорд
-`eval/records/` байт в байт (около 10 с после сборки):
+Тесты Rust, около 10 с после сборки. Кроме модульных они проверяют, что разбор даёт закоммиченные `data/ir/`
+и `data/entity_ir.json`, а выдача S0–S7 совпадает с рекордом из `eval/records/` байт в байт:
 
     cd rust && cargo test --release --locked
 
@@ -150,6 +148,22 @@ def _add_dir(zf: zipfile.ZipFile, arcname: str) -> None:
     zinfo.create_system = 3  # Unix
     zinfo.external_attr = 0o40755 << 16  # drwxr-xr-x
     zf.writestr(zinfo, b"")
+
+
+_MD_LINK = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
+
+
+def unlink_outside(text: str, doc: str, files: set[str]) -> str:
+    """Ссылка `[текст](путь)` дока `doc` на файл вне архива — просто `текст` (пункт 5 выше)."""
+    base = posixpath.dirname(doc)
+
+    def keep(target: str) -> bool:
+        if "://" in target or target.startswith("#"):
+            return True
+        t = posixpath.normpath(posixpath.join(base, target.split("#")[0])).rstrip("/")
+        return t.startswith("hackaton/") or t in files or any(f.startswith(t + "/") for f in files)
+
+    return _MD_LINK.sub(lambda m: m.group(0) if keep(m.group(2)) else m.group(1), text)
 
 
 def _read(path: Path) -> bytes:
@@ -195,8 +209,12 @@ def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None, run_dir: Path = OU
             _add_file(z, "report.html", page.encode("utf-8"))
         for d in dirs:
             _add_dir(z, d)
+        shipped = set(files)
         for f in files:
-            _add_file(z, f"code/{f}", _read(ROOT / f), 0o755 if f in EXECUTABLE else 0o644)
+            data = _read(ROOT / f)
+            if f.endswith(".md"):
+                data = unlink_outside(data.decode("utf-8"), f, shipped).encode("utf-8")
+            _add_file(z, f"code/{f}", data, 0o755 if f in EXECUTABLE else 0o644)
 
     file_count = len(zipfile.ZipFile(zip_out).infolist())
     size_kb = zip_out.stat().st_size / 1024
