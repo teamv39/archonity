@@ -10,8 +10,9 @@
 Устройство — `ARCHONITY_EMBED_DEVICE` (`cuda`, `cpu`), по умолчанию GPU, если есть.
 
 Модель живёт только пока считает: после каждой порции промахов её выгружает `release()`, векторы остаются в кеше
-процесса. Так эмбеддер (около 8 ГБ) и `llama server` (около 20 ГБ на A100) не бывают в памяти одновременно, где бы
-ни стоял вызов; пачку на весь прогон собирает `StepGrounder.prepare`, чтобы модель не грузилась по сценарию.
+процесса. Так эмбеддер (около 8 ГБ) не держит память, которая нужна `llama server` (около 20 ГБ на A100), где бы ни
+стоял вызов; пачку на весь прогон собирает `StepGrounder.prepare`, чтобы модель не грузилась по сценарию. Рядом с
+сервером эмбеддер работает только там, где обе модели помещаются в видеопамять (`LLMClient.prestart`).
 """
 from __future__ import annotations
 
@@ -109,6 +110,14 @@ class STEmbedder:
         из `StepGrounder.prepare` и из `begin` — один и тот же промах."""
         return len(self._missed)
 
+    @property
+    def failure(self) -> str | None:
+        """Почему у промахов нет векторов: отказ модели (нет torch, не хватило памяти рядом с `llama server`) или
+        загрузка запрещена; None — модель не отказывала. В рамку ATTENTION (engine/attention.py) вместе с `misses`."""
+        if self._broken:
+            return self._broken
+        return None if self.allow_model else "загрузка модели выключена (--embed-model off)"
+
     def key(self, kind: str, text: str) -> str:
         raw = f"{self.spec.name}|{self.spec.fmt_version}|{kind}|{text}"
         return hashlib.sha256(raw.encode("utf-8")).hexdigest()
@@ -179,6 +188,13 @@ class STEmbedder:
                              "query_fmt": self.spec.query_fmt, "doc_fmt": self.spec.doc_fmt,
                              "fmt_version": self.spec.fmt_version, "dtype": self.spec.dtype})
         return np.stack([self.cache.vecs[k] for k in keys])
+
+    def loads_model_for_queries(self, texts: list[str]) -> bool:
+        """Пойдёт ли `embed_queries(texts)` в модель: есть промахи кеша, модель разрешена и не отказала раньше."""
+        if not self.allow_model or self._broken:
+            return False
+        return any(self.key("query", self.spec.query_fmt.format(q=t, task=self.task)) not in self.cache.vecs
+                   for t in texts)
 
     def embed_queries(self, texts: list[str]) -> np.ndarray | None:
         return self._embed("query", [self.spec.query_fmt.format(q=t, task=self.task) for t in texts])

@@ -8,6 +8,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import glob
 import json
 import subprocess
@@ -130,8 +131,8 @@ def parse_args() -> argparse.Namespace:
         choices=("python", "rust"),
         default="python",
         help="Исполнение шагов (ADR-008): python — весь конвейер в Python (умолчание, рекорд); rust — M1 в Python, "
-             "дальше M4, правила и запись выдачи в бинарнике archonity-exec. Без отката: нет бинарника или он "
-             "упал — пустая выдача и рамка Р2",
+             "дальше M4, правила и запись выдачи в бинарнике archonity-exec. Нет бинарника или он упал — откат "
+             "на Python-исполнитель в том же прогоне и рамка Р2",
     )
     parser.add_argument(
         "--rust-bin",
@@ -191,6 +192,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--select-votes", type=int, default=5,
                         help="M1 v8: выборок голосования сверх жадного ответа (0 — только жадный, в 6 раз меньше "
                              "вызовов выбора; рекорд — 5)")
+    parser.add_argument("--select-early-stop", choices=("on", "off"), default="on",
+                        help="M1 v8: закончить голосование, как только победу жадного ответа уже не отнять (on, по "
+                             "умолчанию: выдача та же, вызовов выбора на S0–S7 316 вместо 618); off — все выборки "
+                             "(полное распределение голосов в step_requests.json)")
     parser.add_argument("--m1-top-k", type=int, default=10, help="M1: кандидатов поиска в промпте выбора")
     parser.add_argument("--m1-index", choices=("on", "off"), default="on",
                         help="M1 v8: индекс всех обработчиков в системном промпте выбора; off — выбор только из "
@@ -329,7 +334,7 @@ def rust_rule_args(args: argparse.Namespace) -> list[str]:
 
 def run_rust(args: argparse.Namespace, pipeline: ArchonityPipeline, scenarios: list[Path]) -> list[dict]:
     """`--engine rust` (ADR-008): M1 в Python пишет `step_requests_raw.json`, `archonity-exec` строит выдачу.
-    Возвращает сбои Rust-части; исключение — если бинарник не отработал (откат на Python не делаем)."""
+    Возвращает сбои Rust-части; исключение — если бинарник не отработал (откат на Python делает `run_python_fallback`)."""
     raw = pipeline.ground_all(scenarios)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     raw_path = args.out.parent / "step_requests_raw.json"
@@ -347,6 +352,23 @@ def run_rust(args: argparse.Namespace, pipeline: ArchonityPipeline, scenarios: l
         raise RuntimeError(f"archonity-exec завершился с кодом {res.returncode}")
     failures_path = args.out.parent / "exec_failures.json"
     return json.loads(failures_path.read_text(encoding="utf-8")) if failures_path.is_file() else []
+
+
+def run_python_fallback(args: argparse.Namespace, pipeline: ArchonityPipeline, scenarios: list[Path]):
+    """`archonity-exec` не отработал: тот же прогон на Python-исполнителе (рёбра те же, ADR-008). M1 заземляет шаги
+    заново из кеша: ответы LLM первого прохода уже записаны, поэтому с `--no-cache` кеш на этот проход включается.
+    Счётчики LLM — от первого прохода, чтобы отчёт M1 не считал ответы дважды; сбои — второго, он повторяет M1."""
+    pipeline.enable_m4()
+    llm = pipeline.m1.llm
+    saved = (llm.refresh, copy.copy(llm.stats), list(llm.requested)) if llm is not None else None
+    if llm is not None:
+        llm.refresh = False
+    pipeline.failures = []
+    try:
+        return pipeline.run_all(scenarios, output_path=args.out)
+    finally:
+        if llm is not None:
+            llm.refresh, llm.stats, llm.requested = saved
 
 
 def run_parse(args: argparse.Namespace) -> None:
@@ -467,6 +489,7 @@ def main() -> None:
                                                       timeout=args.llm_timeout,
                                                       **({"cache_dir": args.llm_cache} if args.llm_cache else {})),
             "votes": args.select_votes,
+            "early_stop": args.select_early_stop == "on",
             "top_k": args.m1_top_k,
             "index": args.m1_index == "on",
             "reasoning": args.select_reasoning == "on",
@@ -490,9 +513,14 @@ def main() -> None:
         print("Генерация графов для сценариев...")
         try:
             if args.engine == "rust":
-                rust_failures = run_rust(args, pipeline, scenarios)
-                rust_done = True
-                failures.extend(rust_failures)
+                try:
+                    failures.extend(run_rust(args, pipeline, scenarios))
+                    rust_done = True
+                except Exception as e:  # noqa: BLE001 — откат на Python: выдача та же, теряется только надбавка за Rust
+                    traceback.print_exc()
+                    failures.append(attention.failure(None, None, "движок Rust (откат на Python)", e))
+                    print("archonity-exec не отработал: прогон на Python-исполнителе", file=sys.stderr)
+                    adapter = run_python_fallback(args, pipeline, scenarios)
             else:
                 adapter = pipeline.run_all(scenarios, output_path=args.out)
             print(f"Сабмишн успешно сохранен в: {args.out}")
@@ -513,7 +541,8 @@ def main() -> None:
             llm = m1_options.get("llm")
             emb = pipeline.m1.retriever.embedder
             m1_report = make_m1_report(pipeline.step_requests, llm.stats if llm is not None else None,
-                                       getattr(emb, "misses", 0), llm.requested if llm is not None else ())
+                                       getattr(emb, "misses", 0), llm.requested if llm is not None else (),
+                                       getattr(emb, "failure", None))
             print(format_m1_report(m1_report))
         except Exception as e:  # noqa: BLE001
             traceback.print_exc()

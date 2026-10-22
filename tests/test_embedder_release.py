@@ -129,6 +129,29 @@ class TestPrepare:
         for a, b in zip(r1, r2):
             assert {n: r.fused for n, r in a.ranked.items()} == {n: r.fused for n, r in b.ranked.items()}
 
+    def test_server_prestart_only_before_model_load(self, ix, monkeypatch, tmp_path) -> None:
+        """Новые тексты шагов — сервер LLM поднимается до загрузки эмбеддера; векторы в кеше или модель
+        запрещена — эмбеддер не грузится, и сервер заранее не нужен."""
+        scenarios = [load_json(SCENARIOS / "S0.json")]
+        emb, loads = _embedder(monkeypatch, tmp_path)
+        g = _grounder(ix, emb)
+
+        class LLM:
+            at: list[int] = []
+
+            def prestart(self) -> bool:
+                self.at.append(len(loads))
+                return True
+
+        g.llm = LLM()
+        g.prepare(scenarios)
+        assert g.llm.at == [0] and len(loads) == 1  # сервер — до первой загрузки эмбеддера
+        g.prepare(scenarios)
+        assert g.llm.at == [0]
+        g.retriever.embedder, _ = _embedder(monkeypatch, tmp_path / "off", allow_model=False)
+        g.prepare(scenarios)
+        assert g.llm.at == [0]
+
     def test_no_dense_without_embedder_or_steps(self, ix) -> None:
         g = StepGrounder(ix, TARGETS, embedder=None, llm=None)
         g.prepare([load_json(SCENARIOS / "S0.json")])  # без эмбеддера — ничего не делает

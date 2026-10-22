@@ -19,9 +19,13 @@ STUDY = "docs/researches/gpu_dependence_and_cpu_fallback_study.md"
 
 
 def m1_report(step_requests: dict[str, list[dict[str, Any]]], llm_stats: Any = None,
-              embed_misses: int = 0, llm_keys: Any = ()) -> dict[str, Any]:
+              embed_misses: int = 0, llm_keys: Any = (), embed_failure: str | None = None) -> dict[str, Any]:
     """Сводка M1: шаги по источнику выбора, ответы LLM (кеш, сервер, без ответа, ошибки), промахи векторов, режим;
-    `llm_keys` — ключи всех запросов к LLM за прогон (по ним `scripts/verify_llm_cache.py` сверяет кеш)."""
+    `llm_keys` — ключи всех запросов к LLM за прогон (по ним `scripts/verify_llm_cache.py` сверяет кеш);
+    `embed_failure` — почему у промахов векторов нет модели (`STEmbedder.failure`).
+
+    Режим считается только по LLM. Промах векторов режим не меняет, но у таких шагов поиск кандидатов идёт по одному
+    BM25 (на X1–X8 верный обработчик среди кандидатов 70/83 вместо 81/83), поэтому он тоже идёт в рамку ATTENTION."""
     steps = [r for reqs in step_requests.values() for r in reqs]
     by_llm = sum((r.get("grounding") or {}).get("source") == "LLM" for r in steps)
     llm = {
@@ -37,7 +41,8 @@ def m1_report(step_requests: dict[str, list[dict[str, Any]]], llm_stats: Any = N
     else:
         mode = "partial"
     return {"mode": mode, "steps": len(steps), "steps_by_llm": by_llm, "steps_by_retrieval": len(steps) - by_llm,
-            "llm": llm, "embedding_misses": embed_misses, "llm_enabled": llm_stats is not None,
+            "llm": llm, "embedding_misses": embed_misses, "embedding_failure": embed_failure if embed_misses else None,
+            "llm_enabled": llm_stats is not None,
             "llm_keys": sorted(set(llm_keys))}
 
 
@@ -64,6 +69,9 @@ def format_m1_report(report: dict[str, Any]) -> str:
             "    Воспроизвести рекорд: запуск из репозитория с cache/ (без GPU и сети) или сервер LLM — README,",
             "    раздел «Проверка без кеша».",
         ]
+    if report.get("embedding_misses"):
+        lines.append(f"    ВНИМАНИЕ: векторов без кеша и без модели {report['embedding_misses']} — поиск кандидатов у этих "
+                     f"шагов только BM25 ({report.get('embedding_failure') or 'эмбеддер недоступен'}).")
     lines.append("=" * 65)
     return "\n".join(lines)
 

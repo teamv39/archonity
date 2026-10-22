@@ -17,6 +17,11 @@ Strict Local-First: адрес вне loopback и частной сети кли
 Параметры по умолчанию — под A100 40 ГБ (`SERVER_ARGS`); дополнительные — `ARCHONITY_LLAMA_ARGS`, они идут после
 умолчаний и перекрывают их (на 16 ГБ — `-ncmoe 7`). Лог сервера — `output/llama-server.log`. Прогон из кеша сервер
 не поднимает.
+
+Запуск заранее (`prestart`): у шагов новые тексты (промах кеша векторов) — значит, будут и промахи кеша LLM, и
+`StepGrounder.prepare` поднимает сервер до эмбеддера, а не после: модели грузятся одновременно. Только если обе
+помещаются в видеопамять (`ARCHONITY_LLM_PRESTART=auto|on|off`, `prestart_need_mib`); сервер не поднялся — обычный
+автозапуск на первом промахе.
 """
 from __future__ import annotations
 
@@ -47,6 +52,7 @@ TIMEOUT_S = 300
 # Автозапуск под A100 40 ГБ: все слои на GPU, без -ncmoe; контекст и KV — как в scripts/start_llm.ps1
 SERVER_ARGS = ["--fit", "off", "-ngl", "999", "-fa", "1", "-ctk", "q8_0", "-ctv", "q8_0", "-c", "32768"]
 START_TIMEOUT_S = 1800  # ожидание /health: чтение 17.7 ГБ с диска; ARCHONITY_LLAMA_START_TIMEOUT
+PRESTART_SPARE_MIB = 5120  # сверх файлов моделей: KV q8_0 на 32K и буферы сервера, активации эмбеддера (пик 7.7 ГиБ)
 SERVER_LOG = ROOT / "output" / "llama-server.log"
 _OPENER = urllib.request.build_opener(urllib.request.ProxyHandler({}))  # сервер локальный: системный прокси мимо
 
@@ -82,6 +88,30 @@ def model_path(manifest: dict[str, Any]) -> Path | None:
     llm = manifest.get("llm") or {}
     files = list(llm.get("files") or {})
     return MODELS_DIR / llm.get("dir", ".") / files[0] if files else None
+
+
+def prestart_need_mib(manifest: dict[str, Any] | None = None) -> int | None:
+    """Видеопамять, МиБ, под сервер и эмбеддер разом: файлы обеих моделей манифеста и запас (`PRESTART_SPARE_MIB`:
+    KV-кеш и буферы сервера, активации эмбеддера). На A100 40 ГБ — около 29.7 тыс. из 40 тыс.; нет манифеста — None."""
+    manifest = read_manifest() if manifest is None else manifest
+    sizes = [f.get("size") or 0 for k in ("llm", "embedder")
+             for f in ((manifest.get(k) or {}).get("files") or {}).values()]
+    if not manifest.get("llm") or not all(sizes):
+        return None
+    return sum(sizes) // 2**20 + PRESTART_SPARE_MIB
+
+
+def gpu_free_mib() -> int | None:
+    """Свободная видеопамять GPU 0 по `nvidia-smi`, МиБ; нет NVIDIA или утилиты — None."""
+    exe = shutil.which("nvidia-smi")
+    if exe is None:
+        return None
+    try:
+        out = subprocess.run([exe, "--query-gpu=memory.free", "--format=csv,noheader,nounits"],
+                             capture_output=True, text=True, timeout=10).stdout
+        return int(out.split()[0])
+    except (OSError, subprocess.SubprocessError, ValueError, IndexError):
+        return None
 
 
 def find_llama_server() -> list[str] | None:
@@ -158,6 +188,7 @@ class LLMClient:
         self.stats = LLMStats()
         self.requested: list[str] = []  # ключи всех запросов прогона, по порядку (scripts/verify_llm_cache.py)
         self._server_ok: bool | None = None
+        self._started: tuple[subprocess.Popen, float] | None = None  # сервер `prestart`, ещё не дождались /health
 
     def key(self, prompt_version: str, messages: list[dict[str, str]], schema: dict[str, Any],
             sampling: dict[str, Any] | None = None) -> str:
@@ -183,38 +214,76 @@ class LLMClient:
                 print(f"[llm] сервер {self.url} недоступен — только кеш", file=sys.stderr)
         return self._server_ok
 
-    def _autostart(self) -> bool:
-        """Поднять `llama-server` с моделью манифеста и дождаться `/health`; сервер гасится при выходе (atexit)."""
+    def prestart(self) -> bool:
+        """Поднять `llama-server` заранее, не дожидаясь `/health`: модель грузится, пока прогон занят другим
+        (`StepGrounder.prepare` — векторы шагов). Первый промах кеша потом ждёт готовности (`_autostart`).
+
+        Только когда сервер рядом с эмбеддером точно помещается: `ARCHONITY_LLM_PRESTART` — `on`, `off` или `auto`
+        (по умолчанию: свободной видеопамяти GPU 0 по `nvidia-smi` не меньше `prestart_need_mib`). На 16 ГБ вместе
+        они не помещаются, там сервер по-прежнему поднимается на первом промахе. → запущен ли сервер."""
+        if not self.use_server or self._server_ok is not None or self._started is not None:
+            return False
+        mode = (os.environ.get("ARCHONITY_LLM_PRESTART") or "auto").strip().lower()
+        if mode == "off" or _health(self.url):
+            return False
+        if mode != "on":
+            need, free = prestart_need_mib(), gpu_free_mib()
+            if need is None or free is None or free < need:
+                return False
+        self._started = self._launch()
+        if self._started is not None:
+            print("[llm] сервер грузится заранее, пока M1 считает векторы шагов", file=sys.stderr)
+        return self._started is not None
+
+    def _launch(self) -> tuple[subprocess.Popen, float] | None:
+        """Запустить `llama-server` с моделью манифеста, не дожидаясь готовности; сервер гасится при выходе (atexit).
+        → (процесс, время запуска) или None, если запускать нечего или некуда."""
         u = urllib.parse.urlparse(self.url)
         host = u.hostname or ""
         if host != "localhost" and not ipaddress.ip_address(host).is_loopback:
-            return False  # сервер в частной сети поднимает его хозяин
+            return None  # сервер в частной сети поднимает его хозяин
         manifest = read_manifest()
         if (manifest.get("llm") or {}).get("name") != self.model:
-            return False  # ключи кеша другой модели (ARCHONITY_LLM_MODEL): модель манифеста её не заменяет
+            return None  # ключи кеша другой модели (ARCHONITY_LLM_MODEL): модель манифеста её не заменяет
         model = model_path(manifest)
         if model is None or not model.is_file():
             print(f"[llm] автозапуск: нет модели {model} — python scripts/fetch_models.py", file=sys.stderr)
-            return False
+            return None
         cmd = find_llama_server()
         if cmd is None:
             print("[llm] автозапуск: не найден llama-server (ARCHONITY_LLAMA_SERVER, models/llama.cpp, PATH)",
                   file=sys.stderr)
-            return False
+            return None
         cmd += ["-m", str(model), "--host", host, "--port", str(u.port or 80), *SERVER_ARGS,
                 *shlex.split(os.environ.get("ARCHONITY_LLAMA_ARGS", ""))]
-        timeout = float(os.environ.get("ARCHONITY_LLAMA_START_TIMEOUT") or START_TIMEOUT_S)
         SERVER_LOG.parent.mkdir(parents=True, exist_ok=True)
-        print(f"[llm] автозапуск: {shlex.join(cmd)}\n[llm] жду {self.url}/health до {timeout:.0f} с, лог {SERVER_LOG}",
-              file=sys.stderr)
+        print(f"[llm] автозапуск: {shlex.join(cmd)}\n[llm] лог {SERVER_LOG}", file=sys.stderr)
         t0 = time.time()
         with open(SERVER_LOG, "w", encoding="utf-8") as log:
             try:
                 proc = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT)
             except OSError as e:
                 print(f"[llm] автозапуск: {e}", file=sys.stderr)
-                return False
+                return None
         atexit.register(_stop, proc)
+        return proc, t0
+
+    def _autostart(self) -> bool:
+        """Поднять `llama-server` (или взять запущенный `prestart`) и дождаться `/health`. Сервер `prestart` не
+        поднялся (например, не хватило памяти рядом с эмбеддером) — ещё одна попытка, как без `prestart`: эмбеддер
+        к этому времени выгружен."""
+        if self._started is not None:
+            started, self._started = self._started, None
+            if self._wait(*started):
+                return True
+            print("[llm] сервер, запущенный заранее, не поднялся — запускаю заново", file=sys.stderr)
+        started = self._launch()
+        return started is not None and self._wait(*started)
+
+    def _wait(self, proc: subprocess.Popen, t0: float) -> bool:
+        """Ждать `/health` сервера `proc`, запущенного в `t0`; не дождались — сервер останавливается."""
+        timeout = float(os.environ.get("ARCHONITY_LLAMA_START_TIMEOUT") or START_TIMEOUT_S)
+        print(f"[llm] жду {self.url}/health до {timeout:.0f} с от запуска", file=sys.stderr)
         while time.time() - t0 < timeout:
             if proc.poll() is not None:
                 print(f"[llm] llama-server завершился с кодом {proc.returncode}:\n{_log_tail(SERVER_LOG)}",
