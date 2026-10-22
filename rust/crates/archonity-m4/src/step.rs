@@ -23,7 +23,7 @@ use regex::Regex;
 use serde_json::Value as Json;
 
 use crate::envelope::Envelope;
-use crate::interpreter::{err, Exc, Interpreter, Sink, R};
+use crate::interpreter::{Exc, Interpreter, Sink, R};
 use crate::schema::EntitySchema;
 
 /// Параметры шага: имя -> JSON-значение (без null).
@@ -1074,9 +1074,4 @@ impl StepCore {
 
 fn json_truthy_obj(v: &Json) -> bool {
     crate::interpreter::json_truthy(v)
-}
-
-#[allow(dead_code)]
-fn _unused() -> R<()> {
-    err("")
 }

@@ -104,6 +104,8 @@ KNOWN = {
     "loginId": "то же, что accountId",
     "username": "контракт Spring Security UserDetails#getUsername, а не проекта",
     "StringUtils": "модель библиотечного org.springframework.util.StringUtils (library), не класса проекта",
+    "account": "слово текста шага в VERB_OBJECT_SYN (grounding/text.py): «create … account» ищет и регистрацию; "
+               "подобрано по перефразированному S4.1, как VERB_SYN_EXTRA, выключается --m1-verb-synonyms off",
 }
 
 

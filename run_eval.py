@@ -29,6 +29,7 @@ if hasattr(sys.stderr, "reconfigure"):
 
 from engine import attention, resources  # только стандартная библиотека: рамка Р2 и замер работают, даже если конвейер не импортируется
 from engine.artifacts import ArtifactMismatch  # тоже только стандартная библиотека
+from engine.scenario import load_scenario  # тоже: пустая выдача Р2 читает сценарии сама
 
 if TYPE_CHECKING:
     from engine.pipeline import ArchonityPipeline
@@ -347,11 +348,12 @@ def write_empty_submission(scenarios: list[Path], out: Path) -> None:
     project, ids = "", []
     for sp in scenarios:
         try:
-            sc = json.loads(sp.read_text(encoding="utf-8"))
+            sc = load_scenario(sp)  # те же id, что у обычного пути (BOM, UTF-16, id-число)
         except (OSError, ValueError):
-            sc = {}
-        project = project or sc.get("project", "")
-        ids.append(sc.get("id") or sp.stem)
+            sc = {"id": sp.stem}
+        if not project and isinstance(sc.get("project"), str):
+            project = sc["project"]
+        ids.append(sc["id"])
     out.parent.mkdir(parents=True, exist_ok=True)
     with open(out, "w", encoding="utf-8", newline="\n") as f:
         json.dump({"project": project, "scenarios": {sid: {"edges": []} for sid in sorted(ids)}}, f,
@@ -580,6 +582,8 @@ def main() -> None:
             traceback.print_exc()
             failures.append(attention.failure(None, None, "прогон сценариев", e))
         failures[:0] = pipeline.failures
+        if pipeline.index.db_error is not None:  # Python и Rust тогда исполняют на пустой БД — одинаково, но хуже
+            failures.insert(0, attention.failure(None, None, "дамп БД (M4 на пустой БД)", pipeline.index.db_error))
     empty_fallback = adapter is None and not rust_done
     if empty_fallback:
         write_empty_submission(scenarios, args.out)

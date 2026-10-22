@@ -23,6 +23,12 @@
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Относительные пути сценариев, OUT и ARTIFACTS_DIR — от папки, откуда запустили скрипт, а не от корня репозитория
+abs() { if [[ "$1" == /* ]]; then printf '%s' "$1"; else printf '%s/%s' "$PWD" "$1"; fi; }
+SCENARIOS=()
+for s in "$@"; do SCENARIOS+=("$(abs "$s")"); done
+if [[ -n "${OUT:-}" ]]; then OUT="$(abs "$OUT")"; fi
+if [[ -n "${ARTIFACTS_DIR:-}" ]]; then ARTIFACTS_DIR="$(abs "$ARTIFACTS_DIR")"; fi
 cd "$ROOT"
 export PYTHONUTF8=1
 OUT="${OUT:-output/submission.json}"
@@ -86,8 +92,8 @@ fi
 if [[ -n "${ARTIFACTS_DIR:-}" ]]; then
     ARGS+=(--artifacts-dir "$ARTIFACTS_DIR")
 fi
-if (($#)); then
-    ARGS+=(--scenarios "$@")
+if ((${#SCENARIOS[@]})); then
+    ARGS+=(--scenarios "${SCENARIOS[@]}")
 fi
 echo "== 3/4 прогон: $PY run_eval.py ${ARGS[*]}"
 # Выдача, отчёт M1 и рамка прошлого прогона в той же папке не должны выдать себя за этот, если run_eval.py упадёт
