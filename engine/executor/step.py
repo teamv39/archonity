@@ -24,6 +24,10 @@ from engine.grounding.request import group_sent
 
 _REF = re.compile(r"^(first|second|new)_of_step_(\d+)$")
 _WORDY = re.compile(r"^[A-Za-z][A-Za-z ,.'-]*$")
+# Слово, которым текст шага называет позицию или повтор («the first order», «another», «the second»); «first-class» —
+# не позиция. Сценарии на английском, как у организаторов
+_POSITION = re.compile(r"\b(?:first|second|third|fourth|fifth|last|next|previous|another|other|same|one more|"
+                       r"\d+(?:st|nd|rd|th))\b(?!-)", re.I)
 
 _DEFAULT_SCHEMA = EntitySchema()
 
@@ -182,6 +186,28 @@ class StepExecutor:
                 m = re.search(r'"([^"]+)"', anns.get("PathVariable") or "")
                 name = m.group(1) if m else p["name"]
                 out.append(self.field_value(name, params, ents, user, p.get("type")))
+        return out
+
+    def _saved_kind(self, step: int, kind: str) -> bool:
+        return any(self.schema.is_kind(fqn, kind) for fqn, _ in self.saved.get(step, []))
+
+    def _prefer_created(self, step: int, action: str, refs: dict[str, Any]) -> dict[str, Any]:
+        """Ссылка `first`/`second_of_step_N` без порядкового слова в тексте шага («Pay for the order») и запись этого
+        вида, созданная шагом M < N, пока N её не создавал (список, прочитанный после создания): запись — созданная
+        (`new_of_step_M`, последний такой M). Порядок списка нигде не задан: старые записи пассажира (дамп БД) стоят в
+        нём наравне с новой, а текст шага говорит о той, что сценарий создал сам. Слова позиции («the first order»,
+        «another», «the second») оставляют ссылку как есть. RuntimeRules.ref_unpositioned, annotation_rules.md, R22."""
+        if _POSITION.search(action):
+            return refs
+        out = dict(refs)
+        for kind, ref in refs.items():
+            m = _REF.match(ref or "")
+            if not m or m.group(1) == "new":
+                continue
+            n = int(m.group(2))
+            made = [k for k in self.saved if k < step and self._saved_kind(k, kind)]
+            if made and n > max(made) and not self._saved_kind(n, kind):
+                out[kind] = f"new_of_step_{max(made)}"
         return out
 
     def _explicit_id_refs(self, ents: dict[str, Any], params: dict[str, Any], refs: dict[str, Any]) -> None:
@@ -388,6 +414,8 @@ class StepExecutor:
         self._body_src = dict(getattr(step_req, "body_src", None) or {})
         self._body_groups = list(getattr(step_req, "body_groups", None) or [])
         refs = getattr(step_req, "refs", None) or {}
+        if getattr(self.it.rules, "ref_unpositioned", "off") == "on":
+            refs = self._prefer_created(n, getattr(step_req, "action", None) or "", refs)
         expected = getattr(step_req, "expected_outcome", "success")
         before = len(self.it.world.saved)
         world = self.it.world

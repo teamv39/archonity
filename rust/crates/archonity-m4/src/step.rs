@@ -58,6 +58,18 @@ fn parse_ref(r: &str) -> Option<(&str, i64)> {
     })
 }
 
+/// Слово позиции или повтора в тексте шага («the first order», «another», «the second»); «first-class» — не позиция.
+/// Как `_POSITION` в `engine/executor/step.py` (R22).
+fn has_position_word(action: &str) -> bool {
+    thread_local! {
+        static P: fancy_regex::Regex = fancy_regex::Regex::new(
+            r"(?i)\b(?:first|second|third|fourth|fifth|last|next|previous|another|other|same|one more|\d+(?:st|nd|rd|th))\b(?!-)",
+        )
+        .unwrap();
+    }
+    P.with(|re| re.is_match(action).unwrap_or(false))
+}
+
 /// Всё состояние `StepExecutor`, кроме интерпретатора: методы получают `&mut Interpreter` параметром, чтобы замыкание
 /// аргументов обработчика могло заимствовать одно без другого.
 pub struct StepCore {
@@ -147,7 +159,7 @@ impl StepExecutor {
         core.verb = req.http.get("method").cloned();
         core.body_src = req.body_src.clone();
         core.body_groups = req.body_groups.clone();
-        let refs = req.refs.clone();
+        let refs = if it.flags.ref_unpositioned { core.prefer_created(n, &req.action, &req.refs) } else { req.refs.clone() };
         let expected = req.expected_outcome.clone();
         let before = it.world.as_ref().map(|w| w.saved.len()).unwrap_or(0);
         let snapshot = if it.flags.m4_success_retry { it.world.as_ref().map(|w| w.db.fork()) } else { None };
@@ -638,6 +650,33 @@ impl StepCore {
 
     /// Ссылка `first`/`second_of_step_N` и строковый ID той же сущности в параметрах шага («рейс G9998»): из
     /// результатов шага N берётся сущность с этим ID. Нет такой в результатах — ссылка как была.
+    fn saved_kind(&self, step: i64, kind: &str) -> bool {
+        self.saved.get(&step).is_some_and(|v| v.iter().any(|(fqn, _)| self.schema.is_kind(Some(fqn), kind)))
+    }
+
+    /// R22, как `StepExecutor._prefer_created`: ссылка `first`/`second_of_step_N` без слова позиции в тексте шага, а
+    /// запись этого вида создал шаг M < N, и шаг N её не создавал (список, прочитанный после создания), — ссылка на
+    /// созданную запись `new_of_step_M` (последний такой M).
+    fn prefer_created(&self, step: i64, action: &str, refs: &IndexMap<String, String>) -> IndexMap<String, String> {
+        if has_position_word(action) {
+            return refs.clone();
+        }
+        let mut out = refs.clone();
+        for (kind, r) in refs {
+            let Some((pick, n)) = parse_ref(r) else { continue };
+            if pick == "new" {
+                continue;
+            }
+            let made = self.saved.keys().copied().filter(|&k| k < step && self.saved_kind(k, kind)).max();
+            if let Some(m) = made {
+                if n > m && !self.saved_kind(n, kind) {
+                    out.insert(kind.clone(), format!("new_of_step_{m}"));
+                }
+            }
+        }
+        out
+    }
+
     fn explicit_id_refs(
         &mut self,
         it: &mut Interpreter,

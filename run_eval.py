@@ -199,6 +199,13 @@ def parse_args() -> argparse.Namespace:
         help="M4: группа полей, которую UI шлёт только под общим условием (каталог UI), без поля группы и литерала "
              "условия в параметрах шага — полей в запросе нет, у DTO умолчания (on по умолчанию)",
     )
+    parser.add_argument(
+        "--ref-unpositioned",
+        choices=("on", "off"),
+        default="on",
+        help="M4: ссылка first/second_of_step_N без слова позиции в тексте шага, когда запись этого вида создал шаг "
+             "раньше, чем читался список N, — ссылка на созданную запись (R22); Python и Rust (on по умолчанию)",
+    )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
@@ -331,6 +338,7 @@ def build_pipeline(args: argparse.Namespace, m1_options: dict) -> ArchonityPipel
         ref_explicit_id=args.ref_explicit_id,
         ref_idless_result=args.ref_idless_result,
         ui_optional_groups=args.ui_optional_groups,
+        ref_unpositioned=args.ref_unpositioned,
         build_m4=args.engine == "python",
     )
 
@@ -367,6 +375,7 @@ def rust_rule_args(args: argparse.Namespace) -> list[str]:
         "ref_explicit_id": args.ref_explicit_id,
         "ref_idless_result": args.ref_idless_result,
         "ui_optional_groups": args.ui_optional_groups,
+        "ref_unpositioned": args.ref_unpositioned,
     }
     out: list[str] = []
     for name, value in rules.items():

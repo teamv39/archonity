@@ -43,6 +43,9 @@ class RuntimeRules:
     # Группа полей, которую UI шлёт только под общим условием (каталог UI): шаг не дал ни поля группы, ни литерала
     # условия со значением не по умолчанию — полей в запросе нет, у DTO умолчания полей
     ui_optional_groups: str = "on"
+    # Ссылка first/second_of_step_N без слова позиции в тексте шага, а запись этого вида создал шаг раньше, чем читался
+    # список N: ссылка на созданную запись (R22). Rust — StepCore::prefer_created
+    ref_unpositioned: str = "on"
 
     MODES: ClassVar[dict[str, tuple[str, ...]]] = {
         "constructors": ("caller_only", "all", "off"),
@@ -57,6 +60,7 @@ class RuntimeRules:
         "ref_explicit_id": ("on", "off"),
         "ref_idless_result": ("on", "off"),
         "ui_optional_groups": ("on", "off"),
+        "ref_unpositioned": ("on", "off"),
     }
 
     def __post_init__(self) -> None:
