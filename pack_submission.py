@@ -11,8 +11,8 @@ requirements.txt), манифест моделей и скрипты запус�
 1. Переводы строк в текстовых файлах — Unix LF, как в индексе git.
 2. POSIX-атрибуты: файлы 0o644, скрипты *.sh и gradlew 0o755, каталоги 0o755, create_system = 3 (Unix).
 3. Только перечисленное ниже: без node_modules, __pycache__, rust/target, hackaton/ и моделей. Нет файла из списка — ошибка.
-4. Исходники Rust (rust/**/*.rs, Cargo.toml, Cargo.lock, README) в архиве: надбавку за Rust дают за исходный код, а
-   scripts/run_final.sh собирает бинарники оттуда (`cargo build --release --locked`).
+4. Исходники Rust (rust/**/*.rs, Cargo.toml, Cargo.lock, README, входы тестов *.json) в архиве: надбавку за Rust
+   дают за исходный код, а scripts/run_final.sh собирает бинарники оттуда (`cargo build --release --locked`).
 """
 from __future__ import annotations
 
@@ -64,7 +64,7 @@ CODE_TREES = (
 )
 
 # Rust-движок: исходники и манифесты, без rust/target
-RUST_SUFFIXES = {".rs", ".toml", ".lock", ".md"}
+RUST_SUFFIXES = {".rs", ".toml", ".lock", ".md", ".json"}
 
 TEXT_SUFFIXES = {".py", ".json", ".md", ".txt", ".toml", ".lock", ".sh", ".ps1", ".bat", ".gradle", ".properties",
                  ".java", ".rs", ""}
@@ -116,6 +116,11 @@ def run_md(run_cmd: str) -> str:
 
 Если `archonity-exec` нет или он упал, тот же прогон идёт на Python-исполнителе: выдача та же байт в байт, сбой —
 в рамке и `ATTENTION.txt`. Целиком на Python, без Rust: `{PYTHON_CMD}`.
+
+Тесты Rust, включая паритет с закоммиченными оракулами: IR и `entity_ir.json` = `data/`, выдача S0–S7 = рекорд
+`eval/records/` байт в байт (около 10 с после сборки):
+
+    cd rust && cargo test --release --locked
 
 Новые сценарии на Linux с A100 40 ГБ — одна команда, она докачивает модели по `models/manifest.json` (версии и sha256)
 и поднимает `llama-server` сама:
