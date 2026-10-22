@@ -1,0 +1,65 @@
+{
+  "project": "trainticket",
+  "id": "S7",
+  "title": "After the ticket is picked up: cancellation and rebooking are refused, the consignee is changed, orders filtered by dates",
+  "description": "A passenger with an account signs in, looks for GaoTie/DongChe (high-speed) trains from Shanghai to Suzhou on 1 October 2026, picks the first contact from the contact book and reserves a first-class seat on the first trip in the results with a 3 kg luggage consignment to a consignee, but no meal and no assurance. They reload their orders, pay for the order with the internal account balance and pick up the ticket. Then they find out how much money would come back for this order and try to cancel it — the system does not allow it, because the ticket has already been picked up; they try to move the order to the second high-speed trip in the search results — the system does not allow it for the same reason. They check the luggage consignment of the order and update the consignee's name and phone number. Last, they reload their orders showing only trips with a travel date from September to December 2026, and then only the orders bought today.",
+  "input": "text",
+  "steps": [
+    {
+      "n": 1,
+      "action": "Sign in with a username and a password"
+    },
+    {
+      "n": 2,
+      "action": "Find GaoTie/DongChe (high-speed) trains from Shanghai to Suzhou on 1 October 2026"
+    },
+    {
+      "n": 3,
+      "action": "Go to the contact book and pick the first contact"
+    },
+    {
+      "n": 4,
+      "action": "Reserve a first-class seat on the first trip in the results for the chosen contact, with a 3 kg luggage consignment to a consignee, but no meal and no assurance"
+    },
+    {
+      "n": 5,
+      "action": "Reload my orders"
+    },
+    {
+      "n": 6,
+      "action": "Pay for the order with the internal account balance"
+    },
+    {
+      "n": 7,
+      "action": "Pick up the ticket for this order"
+    },
+    {
+      "n": 8,
+      "action": "Find out how much money would come back for the order whose ticket has been picked up"
+    },
+    {
+      "n": 9,
+      "action": "Try to cancel the order whose ticket has been picked up (the system does not allow it)"
+    },
+    {
+      "n": 10,
+      "action": "Try to move the order with the picked-up ticket to the second high-speed trip in the search results (the system does not allow it)"
+    },
+    {
+      "n": 11,
+      "action": "Check the luggage consignment of this order"
+    },
+    {
+      "n": 12,
+      "action": "Update the consignee's name and phone number in the consignment"
+    },
+    {
+      "n": 13,
+      "action": "Reload my orders, showing only trips with a travel date from September to December 2026"
+    },
+    {
+      "n": 14,
+      "action": "Reload my orders, showing only those bought today"
+    }
+  ]
+}

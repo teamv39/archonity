@@ -1,0 +1,69 @@
+{
+  "project": "trainticket",
+  "id": "S3",
+  "title": "Travelling with a companion on a high-speed train: two travellers, a new contact, a station meal, insurance and a small consignment; paying for both orders",
+  "description": "A passenger with an account signs in, looks for GaoTie/DongChe (high-speed) trains from Shanghai to Suzhou on 1 October 2026, shows the details of the first trip in the results and looks through the food shops at Suzhou station. They go to the contact book, pick the first contact and also save a new contact (a travelling companion with an ID card). They reserve a first-class seat on that trip for the first contact with a meal from a station shop, the first kind of assurance (insurance) and a luggage consignment of just 0.5 kg to a consignee; then they reserve a second-class seat on the same trip for the new contact, with no meal, no assurance and no consignment. They reload their orders, open both new orders and pay for both with the internal account balance. Last, they find out the price of sending a 0.5 kg consignment inside the region and show the list of assurance types.",
+  "input": "text",
+  "steps": [
+    {
+      "n": 1,
+      "action": "Sign in with a username and a password"
+    },
+    {
+      "n": 2,
+      "action": "Find GaoTie/DongChe (high-speed) trains from Shanghai to Suzhou on 1 October 2026"
+    },
+    {
+      "n": 3,
+      "action": "Show the details of the first trip in the results"
+    },
+    {
+      "n": 4,
+      "action": "Look through the food shops at Suzhou station"
+    },
+    {
+      "n": 5,
+      "action": "Go to the contact book and pick the first contact"
+    },
+    {
+      "n": 6,
+      "action": "Save a new contact (a travelling companion with an ID card) in the contact book"
+    },
+    {
+      "n": 7,
+      "action": "Reserve a first-class seat on this trip for the first contact, with a meal from a station shop, the first kind of assurance (insurance) and a 0.5 kg luggage consignment to a consignee"
+    },
+    {
+      "n": 8,
+      "action": "Reserve a second-class seat on the same trip for the newly added contact, with no meal, no assurance and no consignment"
+    },
+    {
+      "n": 9,
+      "action": "Reload my orders"
+    },
+    {
+      "n": 10,
+      "action": "Open the first of the two new orders"
+    },
+    {
+      "n": 11,
+      "action": "Open the second of the two new orders"
+    },
+    {
+      "n": 12,
+      "action": "Pay for the first order with the internal account balance"
+    },
+    {
+      "n": 13,
+      "action": "Pay for the second order with the internal account balance"
+    },
+    {
+      "n": 14,
+      "action": "Find out the price of sending a 0.5 kg consignment inside the region"
+    },
+    {
+      "n": 15,
+      "action": "Show the list of available assurance (insurance) types"
+    }
+  ]
+}
