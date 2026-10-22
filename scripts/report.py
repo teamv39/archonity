@@ -190,6 +190,7 @@ def render(run: Path, args: argparse.Namespace) -> str:
     decisions = load(run / "decisions.json")["scenarios"] if (run / "decisions.json").is_file() else {}
     steps = load(run / "step_requests.json") if (run / "step_requests.json").is_file() else {}
     m1 = load(run / "m1_report.json") if (run / "m1_report.json").is_file() else None
+    usage = load(run / "resources.json") if (run / "resources.json").is_file() else None
     code = CodeIndex(load(args.skeleton), args.targets, args.out.parent)
     labels = load(args.labels)["scenarios"] if args.labels.is_file() else {}
 
@@ -211,6 +212,9 @@ def render(run: Path, args: argparse.Namespace) -> str:
         tiles.append(("IoU (сценарии с эталоном)", f"{sum(r['score'] for r in q) / len(q):.5f}"))
     if acc:
         tiles.append(("M1 на своих сценариях", f"{sum(r['hit'] for r in acc)}/{len(acc)}"))
+    if usage:
+        total = (usage.get("run_final") or {}).get("total_seconds", usage["total_seconds"])
+        tiles.append(("Время прогона, с", f"{total:.0f}" if total >= 10 else f"{total:.1f}"))
     out.append("<div class=tiles>" + "".join(f"<div class=tile><span class=muted>{esc(a)}</span><b>{esc(b)}</b></div>"
                                              for a, b in tiles) + "</div>")
     out.append("<h2>Сводка</h2><table>")
@@ -234,6 +238,8 @@ def render(run: Path, args: argparse.Namespace) -> str:
                    + "".join(f"<br><code>{esc(f.get('scenario'))}.{esc(f.get('step'))} {esc(f['stage'])}: "
                              f"{esc(f['error'])}</code>" for f in fails) + "</td></tr>")
     out.append("</table>")
+    if usage:
+        out.append(resources_section(usage))
 
     # Паритет с другим прогоном
     if args.compare:
@@ -311,6 +317,38 @@ def render(run: Path, args: argparse.Namespace) -> str:
         out.append("</details>")
     out.append("</html>")
     return "\n".join(out)
+
+
+def resources_section(u: dict) -> str:
+    """Ресурсы прогона из resources.json (engine/resources.py): при равном балле организаторы сравнивают их."""
+    rows = [f"<tr><td>{esc(s['stage'])}</td><td class=num>{s['seconds']:.1f}</td></tr>" for s in u["stages"]]
+    rows.append(f"<tr><th>run_eval.py всего</th><th class=num>{u['total_seconds']:.1f}</th></tr>")
+    script = u.get("run_final")
+    if script:
+        rows += [f"<tr><td>run_final.sh: модели (докачка, sha256)</td><td class=num>{script['models_seconds']}</td></tr>",
+                 f"<tr><td>run_final.sh: сборка Rust</td><td class=num>{script['rust_build_seconds']}</td></tr>",
+                 f"<tr><th>run_final.sh всего</th><th class=num>{script['total_seconds']}</th></tr>"]
+    mem, gpu, llm = u["memory"], u["gpu"], u.get("llm")
+    info = []
+    if mem.get("peak_rss_tree_mib") is not None:
+        info.append(f"<tr><th>Пик памяти</th><td>{mem['peak_rss_tree_mib']} МиБ — процесс с дочерними (Rust, llama-server)</td></tr>")
+    else:
+        info.append(f"<tr><th>Пик памяти</th><td>Python {mem.get('peak_rss_self_mib')} МиБ, дочерние процессы "
+                    f"{mem.get('peak_rss_child_mib')} МиБ</td></tr>")
+    if gpu.get("devices"):
+        devs = "<br>".join(f"GPU {d['index']}: пик {d['peak_mib']} из {d['total_mib']} МиБ, до старта {d['baseline_mib']}"
+                           for d in gpu["devices"])
+        info.append(f"<tr><th>Видеопамять</th><td>наши процессы: пик {gpu['peak_ours_mib']} МиБ<br>{devs}</td></tr>")
+    else:
+        info.append("<tr><th>Видеопамять</th><td>не использовалась (нет nvidia-smi)</td></tr>")
+    if llm:
+        info.append(f"<tr><th>LLM</th><td>из кеша {llm['from_cache']}, вызовов сервера {llm['server_calls']} за "
+                    f"{llm['server_seconds']:.1f} с, токенов {llm['prompt_tokens']} + {llm['completion_tokens']}, "
+                    f"подъём сервера {llm['server_start_seconds']:.0f} с</td></tr>")
+    return ("<h2>Ресурсы</h2><p class=muted>Замер прогона (engine/resources.py): время этапов, пик памяти, пик "
+            "видеопамяти по nvidia-smi, вызовы LLM. При равном балле организаторы сравнивают ресурсы.</p>"
+            "<table><tr><th>Этап</th><th>Секунды</th></tr>" + "".join(rows) + "</table><table>" + "".join(info)
+            + "</table>")
 
 
 def edge_table(edges: list, code: CodeIndex) -> str:
