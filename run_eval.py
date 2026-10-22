@@ -172,6 +172,13 @@ def parse_args() -> argparse.Namespace:
         help="M4: шаг ожидает успех, а по значениям M1 отказал — повтор с нормализованными, затем неизвестными "
              "строковыми параметрами (on по умолчанию)",
     )
+    parser.add_argument(
+        "--ref-explicit-id",
+        choices=("on", "off"),
+        default="on",
+        help="M4: ссылка first/second_of_step_N и строковый ID сущности в параметрах шага — из результатов шага N "
+             "сущность с этим ID, а не первая по порядку (on по умолчанию)",
+    )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
@@ -293,6 +300,7 @@ def build_pipeline(args: argparse.Namespace, m1_options: dict) -> ArchonityPipel
         m1_options=m1_options,
         unresolved_receiver_calls=args.m4_unresolved_calls,
         m4_success_retry=args.m4_success_retry,
+        ref_explicit_id=args.ref_explicit_id,
         build_m4=args.engine == "python",
     )
 
@@ -325,6 +333,7 @@ def rust_rule_args(args: argparse.Namespace) -> list[str]:
         "unbound_handlers": args.unbound_handlers,
         "unresolved_receiver_calls": args.m4_unresolved_calls,
         "m4_success_retry": args.m4_success_retry,
+        "ref_explicit_id": args.ref_explicit_id,
     }
     out: list[str] = []
     for name, value in rules.items():

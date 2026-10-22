@@ -72,8 +72,8 @@ python run_eval.py --scenarios "eval/own/scenarios/*.json" --no-eval -o output/o
 
 | Сценарии | sha256 `submission.json` |
 |---|---|
-| X1–X8 (`*.json`) | `7053de3d5cc0946f6dd6fb7a68b97eaa51069596d5c924f7c6efa7545b067edc` |
+| X1–X8 (`*.json`) | `c87427909acec41d7043865221f31dcbe5d36d8472ae4f877b0686aa65d04beb` |
 | X1–X4 (`X[1-4].json`) | `561bc45c60a5ecae208dc4be5d2e3383ad0b74c55194ba7a5adfd705f7c95312` |
-| X5–X8 (`X[5-8].json`) | `f1a12b5ee91a42b5cf9c44b61331dcd1b3220cb321b29c32c584bce0eb99650d` |
+| X5–X8 (`X[5-8].json`) | `9cd5d733b7d27575ab1c0143acad0ea7d8e178d9fa85ff73bf2d7361ff93fc93` |
 
-Выдачи X1–X4 и X5–X8 из кеша совпали с прогонами с сервером LLM.
+Выдачи X1–X4 и X5–X8 из кеша совпали с прогонами с сервером LLM. 22.10 правило «сущность, названная явно» (`--ref-explicit-id`, annotation_rules.md, R21) добавило X6 10 рёбер шага 3; прежние sha256 X1–X8 и X5–X8 (`7053de3d…`, `f1a12b5e…`) даёт `--ref-explicit-id off`.

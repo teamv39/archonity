@@ -34,6 +34,9 @@ class RuntimeRules:
     unresolved_receiver_calls: str = "emit"
     # Шаг ожидает успех, а по значениям M1 отказал: повтор с нормализованными, затем неизвестными строками
     m4_success_retry: str = "on"
+    # Ссылка first/second_of_step_N, а в параметрах шага — строковый ID сущности того же вида: из результатов шага N
+    # берётся сущность с этим ID (шаг называет объект явно), а не первая по порядку
+    ref_explicit_id: str = "on"
 
     MODES: ClassVar[dict[str, tuple[str, ...]]] = {
         "constructors": ("caller_only", "all", "off"),
@@ -45,6 +48,7 @@ class RuntimeRules:
         "unbound_handlers": ("rebind", "keep"),
         "unresolved_receiver_calls": ("emit", "mute"),
         "m4_success_retry": ("on", "off"),
+        "ref_explicit_id": ("on", "off"),
     }
 
     def __post_init__(self) -> None:

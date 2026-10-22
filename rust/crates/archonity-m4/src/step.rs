@@ -585,6 +585,9 @@ impl StepCore {
             let e = self.resolve_ref(it, k, v, 0)?;
             ents.insert(k.clone(), e);
         }
+        if it.flags.ref_explicit_id {
+            self.explicit_id_refs(it, &mut ents, params, refs)?;
+        }
         // Последний слой: параметры запросов шагов, на которые ссылается шаг
         for v in refs.values() {
             if let Some((_, n)) = parse_ref(v) {
@@ -617,6 +620,43 @@ impl StepCore {
             }
         }
         Ok(out)
+    }
+
+    /// Ссылка `first`/`second_of_step_N` и строковый ID той же сущности в параметрах шага («рейс G9998»): из
+    /// результатов шага N берётся сущность с этим ID. Нет такой в результатах — ссылка как была.
+    fn explicit_id_refs(
+        &mut self,
+        it: &mut Interpreter,
+        ents: &mut IndexMap<String, Option<Value>>,
+        params: &Params,
+        refs: &IndexMap<String, String>,
+    ) -> R<()> {
+        for (kind, r) in refs {
+            let Some((pick, n)) = parse_ref(r) else { continue };
+            if pick == "new" {
+                continue;
+            }
+            let want = self
+                .schema
+                .id_fields(kind)
+                .into_iter()
+                .filter(|f| f != "id")
+                .find_map(|f| params.get(&f).and_then(Json::as_str).map(str::to_string));
+            let Some(want) = want else { continue };
+            if let Some(Some(ent)) = ents.get(kind).cloned() {
+                if self.entity_id(it, &ent, kind, 0)?.as_str() == Some(want.as_str()) {
+                    continue;
+                }
+            }
+            let found = find_kind(&payload(self.results.get(&n).unwrap_or(&Value::Null), it.envelope.as_ref()), kind, 0, &self.schema);
+            for e in found {
+                if self.entity_id(it, &e, kind, 0)?.as_str() == Some(want.as_str()) {
+                    ents.insert(kind.clone(), Some(e));
+                    break;
+                }
+            }
+        }
+        Ok(())
     }
 
     fn field_value(
