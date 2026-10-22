@@ -22,6 +22,19 @@ VERB_SYN = {
     **{v: ["update", "modify", "edit"] for v in ("change", "edit", "modify", "update", "set", "rename")},
     **{v: ["delete", "remove", "cancel"] for v in ("cancel", "delete", "remove", "withdraw")},
 }
+# Глаголы сверх VERB_SYN (22.10): частые английские слова текста шага, которых нет первым словом ни в одном шаге S0–S7
+# и X1–X8, поэтому их кандидаты и ключи кеша LLM не меняются (tests/test_verb_synonyms.py). Отобраны по перефразированным
+# S0–S7 (eval/paraphrase): «Find … trains» без `search` не находил поиск рейсов, «Reload my orders» — обновление
+# заказов. Это словарь английского языка, а не проекта; отключение — `run_eval.py --m1-verb-synonyms off`.
+VERB_SYN_EXTRA = {
+    **{v: ["get", "find", "query", "search"]
+       for v in ("find", "retrieve", "fetch", "inspect", "review", "locate", "explore", "examine")},
+    "reload": ["refresh"],
+    **{v: ["create", "add", "new"] for v in ("purchase", "buy", "save")},
+    **{v: ["update", "modify", "edit"] for v in ("alter", "amend", "adjust", "switch", "move")},
+    **{v: ["delete", "remove", "cancel"] for v in ("erase", "discard", "drop")},
+    "sign": ["log", "login"],
+}
 
 def stem(w: str) -> str:
     """Стеммер: окончания множественного числа, -ing, -ed. Синонимов нет: синонимы — работа эмбеддера (ADR-007)."""
@@ -49,10 +62,11 @@ def query_toks(text: str) -> list[str]:
     return ntoks(NEG.sub(" ", text))
 
 
-def expand_query(q: list[str]) -> list[str]:
+def expand_query(q: list[str], extra: bool = True) -> list[str]:
+    """Токены запроса и синонимы его первого слова; `extra` — с `VERB_SYN_EXTRA` (он перекрывает `VERB_SYN`)."""
     if not q:
         return []
-    return q + (VERB_SYN.get(q[0], []) if q else [])
+    return q + ((VERB_SYN_EXTRA.get(q[0]) if extra else None) or VERB_SYN.get(q[0], []))
 
 
 class BM25:
