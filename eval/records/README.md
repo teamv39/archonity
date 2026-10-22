@@ -12,13 +12,3 @@
 | S5 | 544 | 188 | 268 | 51 | 37 |
 | S6 | 413 | 163 | 178 | 36 | 36 |
 | S7 | 392 | 156 | 174 | 31 | 31 |
-
-## Для команды
-
-Любую правку перед посылкой сравнивать с рекордом ребро в ребро ([agent_lessons.md](../../docs/agent_lessons.md), раздел 4):
-
-```bash
-python scripts/compare_submissions.py eval/records/submission_p27_1.00000.json <ваш>/submission.json --show 20
-```
-
-Новый рекорд — новый файл `submission_p<номер посылки>_<балл>.json` и правка этого README, старый файл удаляется (остаётся в истории git). Таблица посылок и путь к 1.0 — [roadmap.md](../../docs/roadmap.md), [reaching_1_0.md](../../docs/researches/reaching_1_0.md).
