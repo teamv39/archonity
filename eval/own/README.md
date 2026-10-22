@@ -72,11 +72,11 @@ python run_eval.py --scenarios "eval/own/scenarios/*.json" --no-eval -o output/o
 
 | Сценарии | sha256 `submission.json` |
 |---|---|
-| X1–X8 (`*.json`) | `c87427909acec41d7043865221f31dcbe5d36d8472ae4f877b0686aa65d04beb` |
+| X1–X8 (`*.json`) | `92c0affe54d29c74cf96741f626a51ff842e361f4060fc74b0988e45afe20b5b` |
 | X1–X4 (`X[1-4].json`) | `561bc45c60a5ecae208dc4be5d2e3383ad0b74c55194ba7a5adfd705f7c95312` |
-| X5–X8 (`X[5-8].json`) | `9cd5d733b7d27575ab1c0143acad0ea7d8e178d9fa85ff73bf2d7361ff93fc93` |
+| X5–X8 (`X[5-8].json`) | `878d7a50c3ef771c58d62b6fda16de435c1ddaa565af3d5bd24591e4fd175c1e` |
 
-Выдачи X1–X4 и X5–X8 из кеша совпали с прогонами с сервером LLM. 22.10 правило «сущность, названная явно» (`--ref-explicit-id`, annotation_rules.md, R21) добавило X6 10 рёбер шага 3; прежние sha256 X1–X8 и X5–X8 (`7053de3d…`, `f1a12b5e…`) даёт `--ref-explicit-id off`.
+Выдачи X1–X4 и X5–X8 из кеша совпали с прогонами с сервером LLM. 22.10 правило «сущность, названная явно» (`--ref-explicit-id`, annotation_rules.md, R21) добавило X6 10 рёбер шага 3; прежние sha256 X1–X8 и X5–X8 (`7053de3d…`, `f1a12b5e…`) даёт `--ref-explicit-id off`. 22.10 правило «получатель багажа без полей группы» (`--consign-absent-group`, annotation_rules.md) убрало из X8.4 «…without food, assurance or consignment» 4 ребра consign-ветки; прежние sha256 X1–X8 и X5–X8 (`c8742790…`, `9cd5d733…`) даёт `--consign-absent-group off`.
 
 ## Проверка M4
 

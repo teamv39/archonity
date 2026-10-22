@@ -281,8 +281,11 @@ class StepExecutor:
             # UI (client_ticket_book.js) шлёт имя, телефон и вес получателя багажа одной группой, только при отмеченном
             # «need consign». Вес 0 в тексте шага — багажа нет, полей группы в запросе нет (null). Имени и телефона в
             # тексте нет: при весе больше 0 они неизвестны. Группу полей каталог UI пока не отдаёт (annotation_rules).
+            # Ни одного поля группы в параметрах шага («no consignment», веса M1 не дал) — флажок не отмечен, тоже null.
             w = params.get("consigneeWeight")
-            if isinstance(w, (int, float)) and not isinstance(w, bool) and w <= 0:
+            absent = getattr(self.it.rules, "consign_absent_group", "on") != "off" and all(
+                params.get(n) is None for n in ("consigneeName", "consigneePhone", "consigneeWeight"))
+            if absent or isinstance(w, (int, float)) and not isinstance(w, bool) and w <= 0:
                 defaults["consigneeName"] = defaults["consigneePhone"] = None
         for f in fields:
             name = f["name"]

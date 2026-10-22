@@ -191,6 +191,13 @@ def parse_args() -> argparse.Namespace:
         help="M4: ссылка на шаг, чей ответ — объект нужного вида без ID (сводка), — сущность, на которую ссылался "
              "сам этот шаг (on по умолчанию)",
     )
+    parser.add_argument(
+        "--consign-absent-group",
+        choices=("on", "off"),
+        default="on",
+        help="M4: ни имени, ни телефона, ни веса получателя багажа в параметрах шага — поля группы null, а не "
+             "неизвестны (on по умолчанию)",
+    )
     parser.add_argument("--no-llm", action="store_true", help="M1 без LLM: первый кандидат")
     parser.add_argument("--no-server", action="store_true", help="M1: ответы LLM только из кеша")
     parser.add_argument("--no-cache", action="store_true", help="M1: пересчитать ответы LLM")
@@ -322,6 +329,7 @@ def build_pipeline(args: argparse.Namespace, m1_options: dict) -> ArchonityPipel
         m4_success_retry=args.m4_success_retry,
         ref_explicit_id=args.ref_explicit_id,
         ref_idless_result=args.ref_idless_result,
+        consign_absent_group=args.consign_absent_group,
         build_m4=args.engine == "python",
     )
 
@@ -356,6 +364,7 @@ def rust_rule_args(args: argparse.Namespace) -> list[str]:
         "m4_success_retry": args.m4_success_retry,
         "ref_explicit_id": args.ref_explicit_id,
         "ref_idless_result": args.ref_idless_result,
+        "consign_absent_group": args.consign_absent_group,
     }
     out: list[str] = []
     for name, value in rules.items():

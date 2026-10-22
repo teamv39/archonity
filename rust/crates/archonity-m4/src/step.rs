@@ -800,12 +800,16 @@ impl StepCore {
             }
         }
         if names.contains("consigneeName") {
-            // Вес 0 в тексте шага — багажа нет, полей группы в запросе нет (null).
-            if let Some(w) = params.get("consigneeWeight").and_then(Json::as_f64) {
-                if w <= 0.0 {
-                    defaults.insert("consigneeName".into(), None);
-                    defaults.insert("consigneePhone".into(), None);
-                }
+            // Вес 0 в тексте шага — багажа нет, полей группы в запросе нет (null). Ни одного поля группы в параметрах
+            // шага («no consignment», веса M1 не дал) — флажок не отмечен, тоже null.
+            let absent = it.flags.consign_absent_group
+                && ["consigneeName", "consigneePhone", "consigneeWeight"]
+                    .iter()
+                    .all(|n| params.get(*n).map_or(true, Json::is_null));
+            let zero = params.get("consigneeWeight").and_then(Json::as_f64).is_some_and(|w| w <= 0.0);
+            if absent || zero {
+                defaults.insert("consigneeName".into(), None);
+                defaults.insert("consigneePhone".into(), None);
             }
         }
         for f in fields.iter() {
