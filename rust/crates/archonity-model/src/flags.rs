@@ -39,6 +39,7 @@ pub struct RuleFlags {
     pub unbound_handlers: UnboundHandlers,
     pub unresolved_receiver_calls: UnresolvedCalls,
     pub m4_success_retry: bool,
+    pub ref_explicit_id: bool,
 }
 
 impl Default for RuleFlags {
@@ -53,6 +54,7 @@ impl Default for RuleFlags {
             unbound_handlers: UnboundHandlers::Rebind,
             unresolved_receiver_calls: UnresolvedCalls::Emit,
             m4_success_retry: true,
+            ref_explicit_id: true,
         }
     }
 }
@@ -82,6 +84,7 @@ impl RuleFlags {
             ("unresolved_receiver_calls", "emit") => self.unresolved_receiver_calls = UnresolvedCalls::Emit,
             ("unresolved_receiver_calls", "mute") => self.unresolved_receiver_calls = UnresolvedCalls::Mute,
             ("m4_success_retry", v) => self.m4_success_retry = on_off(v)?,
+            ("ref_explicit_id", v) => self.ref_explicit_id = on_off(v)?,
             _ => bail!("неизвестный флаг или значение: {name}={value}"),
         }
         Ok(())
@@ -96,7 +99,7 @@ mod tests {
     fn defaults_are_the_record() {
         let f = RuleFlags::default();
         assert_eq!(f.constructors, Constructors::CallerOnly);
-        assert!(f.m4_success_retry && f.jackson_ctor);
+        assert!(f.m4_success_retry && f.jackson_ctor && f.ref_explicit_id);
     }
 
     #[test]
