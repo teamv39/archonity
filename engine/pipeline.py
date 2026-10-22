@@ -178,9 +178,12 @@ class ArchonityPipeline:
     def ground_all(self, scenario_paths: list[str | Path]) -> dict[str, list[dict[str, Any]]]:
         """Режим `--engine rust` (ADR-008): только M1. Шаги каждого сценария до R20 (`StepRequest.to_dict`) —
         вход `archonity-exec`; исполнение, правила и запись выдачи делает он. Шаг со сбоем M1 пропускается (Р2),
-        сценарий со сбоем даёт пустой список шагов, а значит пустой блок в ответе."""
+        сценарий со сбоем даёт пустой список шагов, а значит пустой блок в ответе. Векторы шагов — пачкой до первого
+        сценария, как в `run_all`: иначе эмбеддер грузится на каждый сценарий с новыми текстами, рядом с сервером LLM."""
         raw: dict[str, list[dict[str, Any]]] = {}
-        for sp in sorted(scenario_paths, key=lambda p: str(p)):
+        paths = sorted(scenario_paths, key=lambda p: str(p))
+        self._prepare_m1(paths)
+        for sp in paths:
             sid = Path(sp).stem
             try:
                 s_dict = load_json(sp)

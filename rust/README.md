@@ -30,6 +30,19 @@ pytest tests/test_rust_parse.py                       # байт в байт с 
 
 Формат записи — Jackson `INDENT_OUTPUT`, как у Java-версии (не Python `json.dump`): `"k" : v`, массивы в строку, `Double.toString`. Оракул — закоммиченные `data/ir/*.json` и `data/entity_ir.json`, построенные Java-`archparse`. На 21.10: 42 файла IR и `entity_ir.json` совпадают побайтно, покрытие скелета полное (1196 методов, 8961 call_site).
 
+## Тесты Rust
+
+```
+cd rust && cargo test --release --locked     # около 10 с после сборки
+```
+
+Кроме модульных тестов — два теста паритета (`tests/parity.rs`), им нужен пакет задачи в `hackaton/tt-challenge/`, без него они пропускаются с сообщением:
+
+- `archonity-parse`: `--mode all` по исходникам и скелету = закоммиченные `data/ir/*.json` и `data/entity_ir.json` байт в байт;
+- `archonity-exec`: по шагам M1 S0–S7 (`crates/archonity-exec/tests/data/step_requests_raw.json`) выдача = рекорд `eval/records/submission_p27_1.00000.json` байт в байт, сбоев нет. Шаги M1 поменялись — вход обновляется копией `step_requests_raw.json` из прогона `run_eval.py --engine rust`.
+
+Python для них не нужен: это проверка самого Rust против закоммиченных оракулов.
+
 ## Проверка против Python
 
 Результат Rust равен Python байт в байт: `submission.json` (рекорд `94463c41…`), `decisions.json`, `evidence.json`, `m4_unknowns.json`, `step_requests.json`. Проверки:
