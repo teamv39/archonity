@@ -9,9 +9,10 @@
 #
 # 1. Модели: fetch_models.py докачивает в models/ недостающее и сверяет sha256 с models/manifest.json. llama.cpp —
 #    релизная сборка манифеста, если не задан ARCHONITY_LLAMA_SERVER и llama-server нет в PATH.
-# 2. Движок (ADR-008): ENGINE=rust (по умолчанию) — cargo build --release --locked в rust/, при отсутствии cargo
-#    ставится stable через rustup в ~/.cargo; ENGINE=python — весь конвейер в Python, сборка не нужна. Сбой сборки
-#    Rust не переключает на Python: run_eval.py пишет пустую выдачу с рамкой ATTENTION (Р2).
+# 2. Движок (ADR-008): ENGINE=rust (по умолчанию) — cargo build --release --locked в rust/ версией Rust из
+#    rust/rust-toolchain.toml (нет cargo — ставится через rustup в ~/.cargo); ENGINE=python — весь конвейер в Python,
+#    сборка не нужна. Rust не собрался или бинарник упал — run_eval.py делает тот же прогон на Python-исполнителе
+#    (выдача та же, байт в байт) и пишет рамку ATTENTION (Р2).
 #    При ENGINE=rust run_eval.py получает --parse-sources: IR тел методов (ir/) и entity_ir.json строит
 #    archonity-parse (Rust, ADR-009) по исходникам и скелету в папку артефактов — каждый раз, около секунды, байт в байт
 #    как закоммиченные в data/. Java-archparse в финальном запуске не участвует.
@@ -42,28 +43,40 @@ if ! "$PY" scripts/fetch_models.py ${FETCH[@]+"${FETCH[@]}"}; then
 fi
 
 ENGINE="${ENGINE:-rust}"
+PARSE_SOURCES="${PARSE_SOURCES:-1}"
 if [[ "$ENGINE" == rust ]]; then
-    echo "== 2/4 сборка Rust: cargo build --release --locked"
+    RUST_VERSION="$(sed -n 's/^channel = "\(.*\)"/\1/p' rust/rust-toolchain.toml)"
+    echo "== 2/4 сборка Rust $RUST_VERSION: cargo build --release --locked"
     if ! command -v cargo >/dev/null 2>&1 && [[ -x "$HOME/.cargo/bin/cargo" ]]; then
         export PATH="$HOME/.cargo/bin:$PATH"
     fi
     if ! command -v cargo >/dev/null 2>&1; then
-        echo "cargo не найден: ставлю stable через rustup"
+        echo "cargo не найден: ставлю Rust $RUST_VERSION через rustup"
         if command -v curl >/dev/null 2>&1; then
-            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain stable \
-                || echo "!! rustup не установился" >&2
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
+                | sh -s -- -y --profile minimal --default-toolchain "$RUST_VERSION" || echo "!! rustup не установился" >&2
         else
             echo "!! нет curl для rustup" >&2
         fi
         export PATH="$HOME/.cargo/bin:$PATH"
+    elif command -v rustup >/dev/null 2>&1; then
+        # Версия из rust/rust-toolchain.toml; без rustup (cargo из пакетов ОС) собираем той, что есть
+        rustup toolchain install "$RUST_VERSION" --profile minimal || echo "!! rustup не поставил $RUST_VERSION" >&2
+    fi
+    if ! command -v cc >/dev/null 2>&1 && ! command -v gcc >/dev/null 2>&1 && ! command -v clang >/dev/null 2>&1; then
+        echo "!! нет компилятора C (cc, gcc или clang): он нужен tree-sitter, сборка Rust не пройдёт" >&2
     fi
     if ! (cd rust && cargo build --release --locked); then
-        echo "!! ВНИМАНИЕ: Rust не собрался — выдача будет пустой с рамкой ATTENTION. Свяжитесь с командой Archonity." >&2
+        # Откат на Python делает run_eval.py: бинарника нет — тот же прогон на Python-исполнителе, рамка ATTENTION.
+        # Старые бинарники собраны из другого кода, их не берём; IR и entity_ir.json — готовые из data/.
+        echo "!! ВНИМАНИЕ: Rust не собрался — прогон пойдёт на Python, выдача та же. Свяжитесь с командой Archonity." >&2
+        rm -f rust/target/release/archonity-exec rust/target/release/archonity-parse
+        PARSE_SOURCES=0
     fi
 fi
 
 ARGS=(-o "$OUT" --engine "$ENGINE")
-if [[ "$ENGINE" == rust && "${PARSE_SOURCES:-1}" != 0 ]]; then
+if [[ "$ENGINE" == rust && "$PARSE_SOURCES" != 0 ]]; then
     ARGS+=(--parse-sources)
 fi
 if [[ -n "${ARTIFACTS_DIR:-}" ]]; then

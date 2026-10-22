@@ -12,14 +12,14 @@ scripts/run_final.sh <файлы сценариев>              # без ар�
 `scripts/run_final.sh` делает четыре шага:
 
 1. `scripts/fetch_models.py` докачивает в `models/` недостающие файлы и сверяет sha256 каждого с манифестом. Уже лежащие файлы не перекачиваются. `llama.cpp` качается, если не задан `ARCHONITY_LLAMA_SERVER` и `llama-server` нет в `PATH`.
-2. Сборка Rust-движка ([ADR-008](adr/adr-008_rust_engine_boundary.md)): `cd rust && cargo build --release --locked`, зависимости с crates.io. Нет `cargo` — скрипт ставит stable через `rustup` в `~/.cargo`. `ENGINE=python` пропускает сборку и гонит весь конвейер на Python.
+2. Сборка Rust-движка ([ADR-008](adr/adr-008_rust_engine_boundary.md)): `cd rust && cargo build --release --locked`, зависимости с crates.io. Версия Rust закреплена в `rust/rust-toolchain.toml` (1.99.1): нет `cargo` — скрипт ставит её через `rustup` в `~/.cargo`, есть `rustup` — доставляет её. `cargo` из пакетов ОС без `rustup` собирает своей версией. `ENGINE=python` пропускает сборку и гонит весь конвейер на Python.
 3. `run_eval.py --engine rust --parse-sources --scenarios <файлы> -o output/submission.json`. Сначала `archonity-parse` (Rust, [ADR-009](adr/adr-009_archparse_rust.md)) разбирает исходники и скелет и пересобирает `data/ir/` и `data/entity_ir.json` (около секунды, результат байт в байт как закоммиченный; `PARSE_SOURCES=0` берёт готовые, `ARTIFACTS_DIR` задаёт другую папку артефактов). Java и Gradle не нужны. Перед ним скрипт удаляет выдачу, `m1_report.json` и `ATTENTION.txt` прошлого прогона в той же папке: если `run_eval.py` упадёт, итог не покажет старые. Выдачи нет — код выхода не 0. M1 (заземление шагов) на Python, ответы LLM из кеша. На первом промахе клиент сам поднимает `llama-server`, ждёт `/health` и гасит сервер при выходе. Дальше M4, правило Spring Security, R19, M5 и запись `submission.json`, `evidence.json`, `decisions.json` делает бинарник `archonity-exec`.
 4. Итог: sha256 выдачи, режим M1 из `m1_report.json` и последней — рамка из `ATTENTION.txt`, если он есть.
 
 Выдача строится всегда, код выхода 0 (roadmap, Р2):
 
 - исключение на шаге — шаг без рёбер, остальные шаги идут дальше; исключение в сценарии — пустой блок `{"edges": []}`;
-- Rust не собрался или бинарник упал — переключения на Python нет: `submission.json` с пустыми блоками всех сценариев и рамка `ATTENTION.txt`;
+- Rust не собрался или `archonity-exec` упал — тот же прогон на Python-исполнителе: выдача та же байт в байт (паритет ADR-008), в рамке сбой «движок Rust (откат на Python)». Не собрался Rust — `run_final.sh` удаляет старые бинарники и не пересобирает IR, берутся готовые `data/ir/` и `data/entity_ir.json`;
 - конвейер не собрался — повтор без LLM и эмбеддера, не собрался и так — `submission.json` с пустыми блоками всех сценариев;
 - LLM не ответила — шаг берёт первый кандидат поиска (режим M1 `partial` или `emergency`);
 - эмбеддер не загрузился или отказал (нет `torch`, не хватило видеопамяти, в том числе рядом с сервером `prestart`) — у шагов с новым текстом поиск кандидатов только BM25. Режим M1 при этом `full`, поэтому в рамку идёт отдельная строка: число векторов без модели и причина (`embedding_misses`, `embedding_failure` в `m1_report.json`).
@@ -33,7 +33,7 @@ scripts/run_final.sh <файлы сценариев>              # без ар�
 - Linux x86_64, NVIDIA A100 40 ГБ, драйвер 570+ (CUDA 12.8).
 - Python 3.11+ (кеши и рекорд построены на 3.13) или [`uv`](https://docs.astral.sh/uv/): он сам поставит нужный Python.
 - Около 27 ГБ на диске под `models/` и доступ к Hugging Face и GitHub на время `fetch_models.py`.
-- Rust stable (cargo): ставится скриптом через `rustup`, нужен доступ к crates.io, static.rust-lang.org и sh.rustup.rs. Сборка около минуты (tree-sitter компилирует небольшой C-код грамматики: нужен `cc`/`gcc`).
+- Rust 1.99.1 (`rust/rust-toolchain.toml`): ставится скриптом через `rustup`, нужен доступ к crates.io, static.rust-lang.org и sh.rustup.rs. Сборка около минуты (tree-sitter компилирует небольшой C-код грамматики: нужен `cc`/`gcc`).
 - Прогону S0–S7 из кеша видеокарта и модели не нужны.
 
 ## Версии

@@ -117,7 +117,13 @@ class ArchonityPipeline:
 
         self.m1 = StepGrounder(self.index, self.targets_root, ir_dir=ir_dir, ui_cache=artifacts / "ui_catalog.json",
                                **(cfg.m1_options or {}))
+        self.ir_dir = ir_dir
         self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root) if cfg.build_m4 else None
+
+    def enable_m4(self) -> None:
+        """Откат `--engine rust` на Python: конвейер собран без M4, а `archonity-exec` не отработал."""
+        if self.m4 is None:
+            self.m4 = StepExecutor(self.index, self.rules, self.ir_dir, self.targets_root)
 
     def run_scenario(
         self, scenario_dict: dict[str, Any],

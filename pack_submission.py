@@ -68,7 +68,9 @@ TEXT_SUFFIXES = {".py", ".json", ".md", ".txt", ".toml", ".lock", ".sh", ".ps1",
                  ".java", ".rs", ""}
 EXECUTABLE = {"scripts/run_final.sh", "scripts/start_llm.sh", "archparse/gradlew"}
 
-RUN_CMD = "python run_eval.py -o output/submission.json"
+BUILD_CMD = "cd rust && cargo build --release --locked && cd .."
+RUN_CMD = "python run_eval.py --engine rust --parse-sources -o output/submission.json"
+PYTHON_CMD = "python run_eval.py -o output/submission.json"
 
 
 def code_files() -> list[str]:
@@ -100,15 +102,18 @@ def run_md(run_cmd: str) -> str:
 
     pip install -r requirements.txt        # или: uv sync --locked
 
-Rust-движок (`rust/`, ADR-008): `scripts/run_final.sh` собирает его сам (`cd rust && cargo build --release --locked`,
-нужен доступ к crates.io; нет `cargo` — ставит через `rustup`). Вручную:
+Анализ кода и построение ответа — Rust (`rust/`, ADR-008, ADR-009): Rust 1.99.1 из `rust/rust-toolchain.toml` и
+компилятор C (`cc`/`gcc`) для tree-sitter, зависимости с crates.io. На Python — только M1 (сопоставление шагов
+с обработчиками через локальные модели) и кеш ответов моделей.
 
-    cd rust && cargo build --release --locked && cd ..
-    python run_eval.py --engine rust -o output/submission.json
+`submission.json` этого архива (S0–S7) из кешей `cache/`, без GPU и сервера LLM: сборка Rust, затем прогон.
+`archonity-parse` строит IR тел методов из исходников, `archonity-exec` исполняет шаги и пишет выдачу:
 
-`submission.json` этого архива (S0–S7) из кешей `cache/`, без GPU и сети:
-
+    {BUILD_CMD}
     {run_cmd}
+
+Если `archonity-exec` нет или он упал, тот же прогон идёт на Python-исполнителе: выдача та же байт в байт, сбой —
+в рамке и `ATTENTION.txt`. Целиком на Python, без Rust: `{PYTHON_CMD}`.
 
 Новые сценарии на Linux с A100 40 ГБ — одна команда, она докачивает модели по `models/manifest.json` (версии и sha256)
 и поднимает `llama-server` сама:
@@ -145,7 +150,7 @@ def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None) -> Path:
     """Архив сдачи. run_cmd — команда, которой получен submission.json (в RUN.md архива)."""
     if not SUBMISSION_JSON.is_file():
         raise FileNotFoundError(
-            f"Файл {SUBMISSION_JSON} не найден. Сначала выполните: {RUN_CMD}"
+            f"Файл {SUBMISSION_JSON} не найден. Сначала выполните: {BUILD_CMD} && {RUN_CMD}"
         )
     files = code_files()
     dirs = sorted({"code"} | {f"code/{p}" for f in files for p in PurePosixPath(f).parents if str(p) != "."})
