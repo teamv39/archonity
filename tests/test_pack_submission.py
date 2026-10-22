@@ -51,7 +51,8 @@ def test_pack_submission_creates_valid_archive(tmp_path: Path):
         # 2b. Исходники Rust-движка (надбавка ×1.10 за исходный код), без rust/target
         for f in ("code/rust/Cargo.toml", "code/rust/Cargo.lock", "code/rust/README.md",
                   "code/rust/crates/archonity-exec/tests/parity.rs",
-                  "code/rust/crates/archonity-exec/tests/data/step_requests_raw.json"):
+                  "code/rust/crates/archonity-exec/tests/data/step_requests_raw.json",
+                  "code/eval/records/submission_p27_1.00000.json"):
             assert f in names, f"Нет {f} в архиве"
         assert any(n.startswith("code/rust/crates/archonity-exec/") and n.endswith(".rs") for n in names)
         assert any(n.startswith("code/rust/crates/archonity-m4/") and n.endswith(".rs") for n in names)

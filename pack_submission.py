@@ -45,6 +45,8 @@ CODE_FILES = (
     "scripts/start_llm.ps1",
     "scripts/verify_llm_cache.py",
     "scripts/report.py",
+    "eval/records/README.md",
+    "eval/records/submission_p27_1.00000.json",  # рекорд: оракул теста паритета archonity-exec (cargo test)
     "archparse/README.md",
     "archparse/build.gradle",
     "archparse/settings.gradle",
