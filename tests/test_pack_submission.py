@@ -112,3 +112,10 @@ def test_readme_links_are_in_archive() -> None:
     absent = sorted(p for p in paths if "/" in p and not p.startswith(outside) and "://" not in p
                     and p not in files and not any(f.startswith(p + "/") for f in files))
     assert not absent, f"README называет пути вне архива: {absent}"
+
+
+def test_doc_links_outside_archive_become_text() -> None:
+    files = {"docs/adr/a.md", "docs/annotation_rules.md"}
+    text = "[R7](../annotation_rules.md#r7), [план](../roadmap.md), [пакет](../../hackaton/tt-challenge/README.md), [w](https://x.y/z)"
+    assert ps.unlink_outside(text, "docs/adr/a.md", files) == (
+        "[R7](../annotation_rules.md#r7), план, [пакет](../../hackaton/tt-challenge/README.md), [w](https://x.y/z)")

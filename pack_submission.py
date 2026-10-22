@@ -14,10 +14,15 @@ rust/ — Rust-движок и разбор исходников, ADR-008 и ADR
 3. Только перечисленное ниже: без node_modules, __pycache__, rust/target, hackaton/ и моделей. Нет файла из списка — ошибка.
 4. Исходники Rust (rust/**/*.rs, Cargo.toml, Cargo.lock, README, входы тестов *.json) в архиве: надбавку за Rust
    дают за исходный код, а scripts/run_final.sh собирает бинарники оттуда (`cargo build --release --locked`).
+5. Ссылки доков .md на файлы вне архива (исследования, roadmap) в копии для архива становятся текстом: репозиторий
+   закрыт, у жюри только посылка. В репозитории ссылки остаются. Ссылки в пакет организаторов (hackaton/) остаются:
+   по RUN.md он лежит в code/hackaton/.
 """
 from __future__ import annotations
 
 import argparse
+import posixpath
+import re
 import sys
 from pathlib import Path, PurePosixPath
 import zipfile
@@ -152,6 +157,22 @@ def _add_dir(zf: zipfile.ZipFile, arcname: str) -> None:
     zf.writestr(zinfo, b"")
 
 
+_MD_LINK = re.compile(r"\[([^\]]+)\]\(([^)\s]+)\)")
+
+
+def unlink_outside(text: str, doc: str, files: set[str]) -> str:
+    """Ссылка `[текст](путь)` дока `doc` на файл вне архива — просто `текст` (пункт 5 выше)."""
+    base = posixpath.dirname(doc)
+
+    def keep(target: str) -> bool:
+        if "://" in target or target.startswith("#"):
+            return True
+        t = posixpath.normpath(posixpath.join(base, target.split("#")[0])).rstrip("/")
+        return t.startswith("hackaton/") or t in files or any(f.startswith(t + "/") for f in files)
+
+    return _MD_LINK.sub(lambda m: m.group(0) if keep(m.group(2)) else m.group(1), text)
+
+
 def _read(path: Path) -> bytes:
     data = path.read_bytes()
     if path.suffix in TEXT_SUFFIXES:
@@ -195,8 +216,12 @@ def pack(zip_out: Path = ZIP_OUT, run_cmd: str | None = None, run_dir: Path = OU
             _add_file(z, "report.html", page.encode("utf-8"))
         for d in dirs:
             _add_dir(z, d)
+        shipped = set(files)
         for f in files:
-            _add_file(z, f"code/{f}", _read(ROOT / f), 0o755 if f in EXECUTABLE else 0o644)
+            data = _read(ROOT / f)
+            if f.endswith(".md"):
+                data = unlink_outside(data.decode("utf-8"), f, shipped).encode("utf-8")
+            _add_file(z, f"code/{f}", data, 0o755 if f in EXECUTABLE else 0o644)
 
     file_count = len(zipfile.ZipFile(zip_out).infolist())
     size_kb = zip_out.stat().st_size / 1024
