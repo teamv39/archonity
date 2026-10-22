@@ -6,7 +6,6 @@
 //! исполняются один раз (правило по умолчанию).
 
 use archonity_io::world::fresh_uuid;
-use archonity_model::names::simple_name;
 use archonity_model::pyfmt::{round_digits, round_half_even};
 use archonity_model::values::*;
 use chrono::{Duration, NaiveDate, NaiveDateTime};
@@ -14,7 +13,7 @@ use indexmap::IndexMap;
 use regex::Regex;
 use serde_json::Value as Json;
 
-use crate::interpreter::{err, why, Exc, Frame, Interpreter, R};
+use crate::interpreter::{err, why, Frame, Interpreter, R};
 
 /// Часы системы по контексту скелета: 15.09.2026; время — после прогрева БД.
 pub fn now() -> NaiveDateTime {
@@ -729,9 +728,7 @@ fn py_round(n: Num, nd: i64) -> Num {
                 Num::Int(i)
             } else {
                 let p = 10_i64.pow((-nd).min(18) as u32);
-                let q = (i as f64 / p as f64).round();
                 let r = round_half_even(i as f64 / p as f64);
-                let _ = q;
                 Num::Int(r * p)
             }
         }
@@ -1381,9 +1378,4 @@ fn static_call(it: &mut Interpreter, fr: &mut Frame, fqn: &str, callee: &str, ar
     }
     run_unknown_lambdas(it, args, fr)?;
     Ok(Value::Unknown)
-}
-
-#[allow(dead_code)]
-fn _unused(_: Exc, _: &str) -> String {
-    simple_name(None, false)
 }

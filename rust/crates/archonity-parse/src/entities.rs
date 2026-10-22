@@ -775,23 +775,25 @@ pub fn scan(sk: &Skeleton, docs: &[Doc], enum_docs: &[Doc]) -> Report {
     // Проход 1: сущности, репозитории, конструкторы без аргументов
     for doc in docs {
         for cid in ast::descendants(doc.root()).into_iter().filter(|n| is_class(n.kind())) {
-            let fqn = entity_binary_name(doc, cid);
-            if cid.kind() == "interface_declaration" {
-                if let Some(r) = repository_info(doc, cid) {
-                    repos.insert(format!("{}:{}", doc.module, doc.ftext(cid, "name")), r);
+            ast::guarded(|| format!("{}:{} класс", doc.rel, ast::line(cid)), || {
+                let fqn = entity_binary_name(doc, cid);
+                if cid.kind() == "interface_declaration" {
+                    if let Some(r) = repository_info(doc, cid) {
+                        repos.insert(format!("{}:{}", doc.module, doc.ftext(cid, "name")), r);
+                    }
+                    return; // интерфейс не сущность
                 }
-                continue;
-            }
-            if let Some(kind) = entity_kind(doc, cid) {
-                let ir = describe_entity(doc, cid, &fqn, &kind);
-                entities.insert(fqn.clone(), EntityDecl { ir, cid, doc });
-            }
-            if let Some(ctor) = no_arg_constructor(cid) {
-                no_arg.insert(format!("method:{}:{}#<init>()", doc.module, fqn), statement_count(field(ctor, "body").unwrap()));
-            }
-            if let Some(c) = no_arg_constructor_ir(doc, cid, &fqn, &mut enums) {
-                ctors.push(c);
-            }
+                if let Some(kind) = entity_kind(doc, cid) {
+                    let ir = describe_entity(doc, cid, &fqn, &kind);
+                    entities.insert(fqn.clone(), EntityDecl { ir, cid, doc });
+                }
+                if let Some(ctor) = no_arg_constructor(cid) {
+                    no_arg.insert(format!("method:{}:{}#<init>()", doc.module, fqn), statement_count(field(ctor, "body").unwrap()));
+                }
+                if let Some(c) = no_arg_constructor_ir(doc, cid, &fqn, &mut enums) {
+                    ctors.push(c);
+                }
+            });
         }
     }
 
@@ -846,15 +848,18 @@ pub fn scan(sk: &Skeleton, docs: &[Doc], enum_docs: &[Doc]) -> Report {
                     continue; // вызов во вложенном классе разберётся при его обходе
                 }
                 let Some(repo) = repository_field_of(doc, call).and_then(|f| repo_fields.get(f)) else { continue };
-                let entity = resolve_entity(repo, &entities, &sk.dependencies(&repo.module));
-                let mut rc = describe_call(doc, call, repo, entity);
-                if rc.operation == "READ" {
-                    if let Some(e) = entity {
-                        loaded_collections(doc, call, e, methods_by_module.get(doc.module.as_str()).unwrap_or(&empty), &mut rc);
-                        element_callbacks(doc, call, e, &mut rc);
+                let rc = ast::guarded(|| format!("{}:{} вызов репозитория", doc.rel, ast::line(call)), || {
+                    let entity = resolve_entity(repo, &entities, &sk.dependencies(&repo.module));
+                    let mut rc = describe_call(doc, call, repo, entity);
+                    if rc.operation == "READ" {
+                        if let Some(e) = entity {
+                            loaded_collections(doc, call, e, methods_by_module.get(doc.module.as_str()).unwrap_or(&empty), &mut rc);
+                            element_callbacks(doc, call, e, &mut rc);
+                        }
                     }
-                }
-                calls.push(rc);
+                    rc
+                });
+                calls.extend(rc);
             }
         }
     }
