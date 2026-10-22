@@ -18,6 +18,7 @@ from engine.grounding.grounder import StepGrounder
 from engine.manifest import camel_to_snake
 from engine.projection import project_constructors
 from engine.rules import RuntimeRules
+from engine.scenario import load_scenario
 from engine.spring_security import apply_spring_security
 
 LOGGER = logging.getLogger(__name__)
@@ -186,7 +187,7 @@ class ArchonityPipeline:
         for sp in paths:
             sid = Path(sp).stem
             try:
-                s_dict = load_json(sp)
+                s_dict = load_scenario(sp)
                 sid = s_dict["id"]
                 session = self.m1.begin(s_dict)
                 raw[sid] = []
@@ -217,7 +218,7 @@ class ArchonityPipeline:
         for sp in paths:
             sid = Path(sp).stem
             try:
-                s_dict = load_json(sp)
+                s_dict = load_scenario(sp)
                 sid = s_dict["id"]
                 methods, calls, remote, data = self.run_scenario(s_dict)
                 adapter.add_scenario_edges(
@@ -243,7 +244,7 @@ class ArchonityPipeline:
         scenarios = []
         for sp in paths:
             try:
-                scenarios.append(load_json(sp))
+                scenarios.append(load_scenario(sp))
             except Exception:  # noqa: BLE001
                 continue
         try:

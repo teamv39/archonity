@@ -31,6 +31,7 @@ from engine.grounding.request import StepRequest
 from engine.grounding.retrieval import Ranked, Retriever
 from engine.grounding.ui_catalog import UIRequest, build_catalog, find_ui_dir, match_handlers
 from engine.manifest import entity_kinds
+from engine.scenario import load_scenario
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TT = ROOT / "hackaton" / "tt-challenge"
@@ -206,7 +207,7 @@ class StepGrounder:
 
     def begin(self, sc: dict[str, Any]) -> ScenarioSession:
         steps = sc.get("steps") or []
-        ranked = self.retriever.search(self._queries(sc))
+        ranked = self.retriever.search(self._queries(sc)) if steps else []
         return ScenarioSession(self, sc, {s["n"]: r for s, r in zip(steps, ranked)})
 
     def ground_scenario(self, sc: dict[str, Any]) -> list[StepRequest]:
@@ -432,7 +433,7 @@ def main() -> None:
                      allow_embed_model=a.embed_model, llm=llm, top_k=a.top_k)
     a.out.mkdir(parents=True, exist_ok=True)
     results: dict[str, list[StepRequest]] = {}
-    scenarios = [load_json(p) for p in paths]
+    scenarios = [load_scenario(p) for p in paths]
     g.prepare(scenarios)
     for sc in scenarios:
         reqs = g.ground_scenario(sc)
