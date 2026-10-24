@@ -867,6 +867,625 @@
     "outcome": "success",
     "branch": "findByOrderId пусто: status 0 'No Content by this orderId' (AssuranceServiceImpl.findAssuranceByOrderId)"
    }
+  ],
+  "X9": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 4,
+    "action": "Book a first-class seat on the first trip found for this contact, without food, insurance or luggage",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "params": {
+     "seatType": 2,
+     "assurance": 0,
+     "foodType": 0
+    }
+   },
+   {
+    "n": 5,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)",
+    "outcome": "success"
+   },
+   {
+    "n": 6,
+    "action": "Check the price of the order",
+    "handler": "method:ts-order-service:order.controller.OrderController#getOrderPrice(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 7,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 8,
+    "action": "Ask how much would be refunded if the order were cancelled",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 9,
+    "action": "Cancel the order",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 10,
+    "action": "Book another first-class seat on the same trip for the same contact, without food, insurance or luggage",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "params": {
+     "seatType": 2,
+     "assurance": 0,
+     "foodType": 0
+    }
+   },
+   {
+    "n": 11,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)",
+    "outcome": "success"
+   },
+   {
+    "n": 12,
+    "action": "Pay for the new order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_10"
+    }
+   },
+   {
+    "n": 13,
+    "action": "Collect the ticket for the new order",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_10"
+    }
+   },
+   {
+    "n": 14,
+    "action": "Enter the station with the new order",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_10"
+    }
+   }
+  ],
+  "X10": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Search regular trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing departing on 1 October 2026",
+    "handler": "method:ts-travel2-service:travel2.controller.Travel2Controller#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Open the details of the first trip found",
+    "handler": "method:ts-travel2-service:travel2.controller.Travel2Controller#getTripAllDetailInfo(edu.fudan.common.entity.TripAllDetailInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса",
+    "outcome": "success"
+   },
+   {
+    "n": 4,
+    "action": "Look at the food stores at Suzhou station",
+    "handler": "method:ts-station-food-service:food.controller.StationFoodController#getFoodStoresOfStation(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-food-service:foodsearch.controller.FoodController#getAllFood(java.lang.String,java.lang.String,java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "disputed",
+    "note": "UI получает магазины станций через FoodController#getAllFood; формулировка шага ближе к StationFoodController",
+    "outcome": "success"
+   },
+   {
+    "n": 5,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 6,
+    "action": "Book a second-class seat on the regular train for this contact, with food from a station store and a luggage consignment of 2 kg to a consignee, without insurance",
+    "handler": "method:ts-preserve-other-service:preserveOther.controller.PreserveOtherController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "params": {
+     "seatType": 3,
+     "assurance": 0,
+     "foodType": 2,
+     "consigneeWeight": 2.0
+    }
+   },
+   {
+    "n": 7,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)",
+    "outcome": "success"
+   },
+   {
+    "n": 8,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_6"
+    }
+   },
+   {
+    "n": 9,
+    "action": "Look up the luggage consignment record of the order",
+    "handler": "method:ts-consign-service:consign.controller.ConsignController#findByOrderId(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_6"
+    }
+   },
+   {
+    "n": 10,
+    "action": "Collect the ticket for the order",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_6"
+    }
+   },
+   {
+    "n": 11,
+    "action": "Enter the station with the order",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_6"
+    }
+   },
+   {
+    "n": 12,
+    "action": "Ask how much would be refunded for the used order (the system refuses)",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#calculate(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI не предлагает расчёт возврата у использованного билета; шаг говорит об отказе — запрос ушёл",
+    "outcome": "refused",
+    "branch": "заказ Other-стороны в статусе USED: calculateRefund ищет в order-service, не находит, берёт order-other, статус не NOTPAID/PAID — 'Order Status Cancel Not Permitted' (CancelServiceImpl.java:176-191)",
+    "refs": {
+     "order": "new_of_step_6"
+    }
+   },
+   {
+    "n": 13,
+    "action": "Try to cancel the used order (the system refuses)",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI прячет кнопку у использованного билета, но шаг явно говорит об отказе системы — запрос ушёл (как S7.9)",
+    "outcome": "refused",
+    "branch": "order-other: статус USED не NOTPAID/PAID/CHANGE — 'Order Status Cancel Not Permitted' (CancelServiceImpl.java:134)",
+    "refs": {
+     "order": "new_of_step_6"
+    }
+   },
+   {
+    "n": 14,
+    "action": "Try to rebook the used order onto a first-class seat on the same regular train (the system refuses)",
+    "handler": "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI прячет кнопку у использованного билета, но шаг говорит об отказе (как S7.10)",
+    "outcome": "refused",
+    "branch": "статус заказа не PAID: 'you order not suitable to rebook!' (RebookServiceImpl.java:52-56)",
+    "params": {
+     "seatType": 2
+    },
+    "refs": {
+     "order": "new_of_step_6"
+    }
+   }
+  ],
+  "X11": [
+   {
+    "n": 1,
+    "action": "Log in with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026",
+    "handler": "method:ts-travel-service:travel.controller.TravelController#queryInfo(edu.fudan.common.entity.TripInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Open the contact book and take the first contact",
+    "handler": "method:ts-contacts-service:contacts.controller.ContactsController#findContactsByAccountId(java.lang.String,?HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 4,
+    "action": "Book a first-class seat on the first trip found for this contact, without food, insurance or luggage",
+    "handler": "method:ts-preserve-service:preserve.controller.PreserveController#preserve(edu.fudan.common.entity.OrderTicketsInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "params": {
+     "seatType": 2,
+     "assurance": 0,
+     "foodType": 0
+    }
+   },
+   {
+    "n": 5,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)",
+    "outcome": "success"
+   },
+   {
+    "n": 6,
+    "action": "Try to collect the ticket for the order before paying (the system refuses)",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI показывает кнопку только у оплаченного заказа, но шаг явно говорит об отказе системы — запрос ушёл",
+    "outcome": "refused",
+    "branch": "статус NOTPAID не PAID/CHANGE — 'Order Status Wrong' (ExecuteServiceImpl.java:99-100)",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 7,
+    "action": "Pay for the order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 8,
+    "action": "Try to enter the station with the order before collecting the ticket (the system refuses)",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#executeTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI показывает кнопку входа только после выдачи билета; шаг говорит об отказе — запрос ушёл",
+    "outcome": "refused",
+    "branch": "статус PAID не COLLECTED — 'Order Status Wrong' (ExecuteServiceImpl.java:51-52)",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 9,
+    "action": "Try to pay for the same order once more (the system refuses)",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI не показывает кнопку оплаты у оплаченного заказа; шаг говорит об отказе — запрос ушёл",
+    "outcome": "refused",
+    "branch": "статус PAID не NOTPAID — 'Error. Order status Not allowed to Pay.' (InsidePaymentServiceImpl.java:70-72)",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 10,
+    "action": "Cancel the order (the refund goes back to the internal balance)",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 11,
+    "action": "Try to cancel the cancelled order again (the system refuses)",
+    "handler": "method:ts-cancel-service:cancel.controller.CancelController#cancelTicket(java.lang.String,java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI прячет кнопку у отменённого заказа; шаг говорит об отказе — запрос ушёл",
+    "outcome": "refused",
+    "branch": "статус CANCEL не NOTPAID/PAID/CHANGE — 'Order Status Cancel Not Permitted' (CancelServiceImpl.java:100)",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 12,
+    "action": "Try to collect the ticket for the cancelled order (the system refuses)",
+    "handler": "method:ts-execute-service:execute.controller.ExecuteControlller#collectTicket(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI не показывает кнопку у отменённого заказа; шаг говорит об отказе — запрос ушёл",
+    "outcome": "refused",
+    "branch": "статус CANCEL не PAID/CHANGE — 'Order Status Wrong' (ExecuteServiceImpl.java:100)",
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   },
+   {
+    "n": 13,
+    "action": "Try to rebook the cancelled order onto a second-class seat on the same trip (the system refuses)",
+    "handler": "method:ts-rebook-service:rebook.controller.RebookController#rebook(rebook.entity.RebookInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "UI прячет кнопку у отменённого заказа; шаг говорит об отказе — запрос ушёл",
+    "outcome": "refused",
+    "branch": "статус заказа не PAID: 'you order not suitable to rebook!' (RebookServiceImpl.java:52-56)",
+    "params": {
+     "seatType": 3
+    },
+    "refs": {
+     "order": "new_of_step_4"
+    }
+   }
+  ],
+  "X12": [
+   {
+    "n": 1,
+    "action": "Log in to the admin console with the administrator's username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 2,
+    "action": "Open the list of all users",
+    "handler": "method:ts-admin-user-service:adminuser.controller.AdminUserController#getAllUsers(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success"
+   },
+   {
+    "n": 3,
+    "action": "Open the list of train types",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#getAllTrains(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора ходит через ts-admin-basic-info-service (admin_*.js), как S6 шаги 2, 3, 5",
+    "outcome": "success"
+   },
+   {
+    "n": 4,
+    "action": "Add a new train type TestExpress with 80 second-class and 20 first-class seats and an average speed of 200",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#addTrain(edu.fudan.common.entity.TrainType,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "params": {
+     "name": "TestExpress",
+     "economyClass": 80,
+     "confortClass": 20,
+     "averageSpeed": 200
+    }
+   },
+   {
+    "n": 5,
+    "action": "Delete the train type TestExpress",
+    "handler": "method:ts-admin-basic-info-service:adminbasic.controller.AdminBasicInfoController#deleteTrain(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_train.js): DELETE /adminbasicservice/adminbasic/trains/{id}; id — имя типа",
+    "outcome": "success",
+    "params": {
+     "id": "TestExpress"
+    },
+    "refs": {
+     "trainType": "new_of_step_4"
+    }
+   },
+   {
+    "n": 6,
+    "action": "Open the list of routes",
+    "handler": "method:ts-admin-route-service:adminroute.controller.AdminRouteController#getAllRoutes(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "консоль администратора (admin_*.js, old_index.js); дальше прокси в сервис — это remote, не шаг",
+    "outcome": "success"
+   },
+   {
+    "n": 7,
+    "action": "Add a new order for the passenger fdse_microservice and the contact Contacts_One on the high-speed train D1345 from shanghai to suzhou on 1 October 2026 (all fields of the order form are filled in, the price is 50)",
+    "handler": "method:ts-admin-order-service:adminorder.controller.AdminOrderController#addOrder(edu.fudan.common.entity.Order,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "форма шлёт все поля, в том числе boughtDate (old_index.js:103-116); без boughtDate Order.equals упал бы на getBoughtDate().equals (NPE). Прогрев организаторов так же добавил заказ MRK-aorder (D1345)",
+    "outcome": "success",
+    "branch": "D -> ts-order-service POST /order/admin; findByAccountId + contains(order) не находит дубль: save (OrderServiceImpl.addNewOrder), статус по форме — NOTPAID"
+   },
+   {
+    "n": 8,
+    "action": "Log in as a passenger with username and password",
+    "handler": "method:ts-auth-service:auth.controller.UserController#getToken(auth.dto.BasicAuthDto,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   },
+   {
+    "n": 9,
+    "action": "Refresh the list of orders",
+    "handler": "method:ts-order-service:order.controller.OrderController#queryOrdersForRefresh(order.entity.OrderInfo,org.springframework.http.HttpHeaders)",
+    "alt": [
+     "method:ts-order-other-service:other.controller.OrderOtherController#queryOrdersForRefresh(other.entity.QueryInfo,org.springframework.http.HttpHeaders)"
+    ],
+    "status": "ok",
+    "note": "UI шлёт оба refresh; один шаг — один запрос: сервис по типу поезда заказа (S0 шаг 5: фильтр в эталоне только у order-service)",
+    "outcome": "success"
+   },
+   {
+    "n": 10,
+    "action": "Open the order that the administrator added",
+    "handler": "method:ts-order-service:order.controller.OrderController#getOrderById(java.lang.String,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "no_ui",
+    "note": "в активном UI отдельного запроса нет; обработчик по коду сервиса",
+    "outcome": "success",
+    "refs": {
+     "order": "new_of_step_7"
+    }
+   },
+   {
+    "n": 11,
+    "action": "Pay for this order from the internal account balance",
+    "handler": "method:ts-inside-payment-service:inside_payment.controller.InsidePaymentController#pay(inside_payment.entity.PaymentInfo,org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success",
+    "branch": "tripId D1345 -> order-service, статус NOTPAID, цена 50 меньше баланса 10000: setOrderStatus, payment P (InsidePaymentServiceImpl.java:46-130)",
+    "refs": {
+     "order": "new_of_step_7"
+    }
+   },
+   {
+    "n": 12,
+    "action": "Back in the admin console as the administrator, open the list of all orders in the system",
+    "handler": "method:ts-admin-order-service:adminorder.controller.AdminOrderController#getAllOrders(org.springframework.http.HttpHeaders)",
+    "alt": [],
+    "status": "ok",
+    "note": "",
+    "outcome": "success"
+   }
   ]
  }
 }

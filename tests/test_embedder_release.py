@@ -129,6 +129,29 @@ class TestPrepare:
         for a, b in zip(r1, r2):
             assert {n: r.fused for n, r in a.ranked.items()} == {n: r.fused for n, r in b.ranked.items()}
 
+    def test_server_prestart_only_before_model_load(self, ix, monkeypatch, tmp_path) -> None:
+        """Новые тексты шагов — сервер LLM поднимается до загрузки эмбеддера; векторы в кеше или модель
+        запрещена — эмбеддер не грузится, и сервер заранее не нужен."""
+        scenarios = [load_json(SCENARIOS / "S0.json")]
+        emb, loads = _embedder(monkeypatch, tmp_path)
+        g = _grounder(ix, emb)
+
+        class LLM:
+            at: list[int] = []
+
+            def prestart(self) -> bool:
+                self.at.append(len(loads))
+                return True
+
+        g.llm = LLM()
+        g.prepare(scenarios)
+        assert g.llm.at == [0] and len(loads) == 1  # сервер — до первой загрузки эмбеддера
+        g.prepare(scenarios)
+        assert g.llm.at == [0]
+        g.retriever.embedder, _ = _embedder(monkeypatch, tmp_path / "off", allow_model=False)
+        g.prepare(scenarios)
+        assert g.llm.at == [0]
+
     def test_no_dense_without_embedder_or_steps(self, ix) -> None:
         g = StepGrounder(ix, TARGETS, embedder=None, llm=None)
         g.prepare([load_json(SCENARIOS / "S0.json")])  # без эмбеддера — ничего не делает
@@ -144,6 +167,15 @@ class TestRunAll:
         monkeypatch.setattr(shared_pipeline.m1, "prepare", lambda scs: calls.append(("prepare", [s["id"] for s in scs])) or prepare(scs))
         monkeypatch.setattr(shared_pipeline.m1, "begin", lambda sc: calls.append(("begin", sc["id"])) or begin(sc))
         shared_pipeline.run_all([SCENARIOS / "S1.json", SCENARIOS / "S0.json"], tmp_path / "s.json")
+        assert calls == [("prepare", ["S0", "S1"]), ("begin", "S0"), ("begin", "S1")]
+
+    def test_ground_all_prepares_too(self, shared_pipeline, monkeypatch) -> None:
+        """`--engine rust` (`ground_all`): тот же порядок — векторы всех сценариев до первого `begin`."""
+        calls: list = []
+        prepare, begin = shared_pipeline.m1.prepare, shared_pipeline.m1.begin
+        monkeypatch.setattr(shared_pipeline.m1, "prepare", lambda scs: calls.append(("prepare", [s["id"] for s in scs])) or prepare(scs))
+        monkeypatch.setattr(shared_pipeline.m1, "begin", lambda sc: calls.append(("begin", sc["id"])) or begin(sc))
+        shared_pipeline.ground_all([SCENARIOS / "S1.json", SCENARIOS / "S0.json"])
         assert calls == [("prepare", ["S0", "S1"]), ("begin", "S0"), ("begin", "S1")]
 
     def test_prepare_failure_does_not_stop_run(self, shared_pipeline, monkeypatch, tmp_path) -> None:

@@ -65,7 +65,7 @@ uv run python run_eval.py
 1. Заземление шагов $S_0 \dots S_7$ через M1 (`engine/grounding`): ответы LLM и векторы эмбеддера берутся из `cache/`, сервер LLM не нужен.
 2. Исполнение шагов по IR тел методов (M4, `engine/executor`), правило Spring Security и проекцию конструкторов (M5).
 3. Сохранение `output/submission.json`, `output/evidence.json`, `output/decisions.json`.
-4. Синхронизацию данных с графовым визуализатором (`visualizer/public/data/`).
+4. С флагом `--sync-visualizer` — обновление данных визуализатора (`visualizer/public/data/`, `visualizer/src/data/`).
 5. Автоматический запуск официального валидатора `evaluate_golden.py`.
 
 *Критерии валидации в выводе консоли:*

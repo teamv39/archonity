@@ -712,51 +712,45 @@ impl World {
 
 // --- разбор имён производных запросов Spring Data -------------------------------------------------------------------
 
-const PREFIXES: [&str; 12] = [
-    "findAllBy", "findBy", "getBy", "readBy", "queryBy", "existsBy", "countBy", "deleteAllBy", "deleteBy", "removeBy",
-    "findFirstBy", "findTopBy",
-];
-
 /// `findByAccountIdAndStatus` -> `("find", ["accountId", "status"])`; `None` — не производный запрос.
+///
+/// Глагол, необязательное слово между глаголом и `By` и условия — как `PartTree` Spring Data: `findAllBy`,
+/// `findFirst10By`, `removeRouteById`, `deleteFoodOrderByOrderId`. Слово ленивое: сначала пробуется пустое.
 pub fn derived_props(name: &str) -> Option<(String, Vec<String>)> {
     thread_local! {
+        static DERIVED: Regex =
+            Regex::new(r"^(find|read|get|query|search|stream|count|exists|delete|remove)((?:[A-Z]\w*?)??)By(.+)$").unwrap();
         static ORDER: Regex = Regex::new(r"OrderBy\w+$").unwrap();
         static SUFFIX: Regex = Regex::new(r"(In|IsNull|IsNotNull|Containing|Like)$").unwrap();
     }
-    for p in PREFIXES {
-        if name.starts_with(p) && name.len() > p.len() {
-            let rest = &name[p.len()..];
-            let rest = ORDER.with(|re| re.replace(rest, "").into_owned());
-            // split по `And(?=[A-Z])`
-            let mut parts: Vec<String> = Vec::new();
-            let b: Vec<char> = rest.chars().collect();
-            let mut cur = String::new();
-            let mut i = 0;
-            while i < b.len() {
-                if b[i..].starts_with(&['A', 'n', 'd']) && b.get(i + 3).is_some_and(|c| c.is_ascii_uppercase()) {
-                    parts.push(std::mem::take(&mut cur));
-                    i += 3;
-                } else {
-                    cur.push(b[i]);
-                    i += 1;
-                }
-            }
-            parts.push(cur);
-            let props: Vec<String> = parts
-                .into_iter()
-                .filter(|x| !x.is_empty())
-                .map(|x| {
-                    let mut cs = x.chars();
-                    let first = cs.next().map(|c| c.to_lowercase().collect::<String>()).unwrap_or_default();
-                    first + cs.as_str()
-                })
-                .map(|x| SUFFIX.with(|re| re.replace(&x, "").into_owned()))
-                .collect();
-            let kind = p.replace("By", "").replace("All", "").replace("First", "").replace("Top", "");
-            return Some((kind, props));
+    let (verb, rest) = DERIVED.with(|re| re.captures(name).map(|m| (m[1].to_string(), m[3].to_string())))?;
+    let rest = ORDER.with(|re| re.replace(&rest, "").into_owned());
+    // split по `And(?=[A-Z])`
+    let mut parts: Vec<String> = Vec::new();
+    let b: Vec<char> = rest.chars().collect();
+    let mut cur = String::new();
+    let mut i = 0;
+    while i < b.len() {
+        if b[i..].starts_with(&['A', 'n', 'd']) && b.get(i + 3).is_some_and(|c| c.is_ascii_uppercase()) {
+            parts.push(std::mem::take(&mut cur));
+            i += 3;
+        } else {
+            cur.push(b[i]);
+            i += 1;
         }
     }
-    None
+    parts.push(cur);
+    let props: Vec<String> = parts
+        .into_iter()
+        .filter(|x| !x.is_empty())
+        .map(|x| {
+            let mut cs = x.chars();
+            let first = cs.next().map(|c| c.to_lowercase().collect::<String>()).unwrap_or_default();
+            first + cs.as_str()
+        })
+        .map(|x| SUFFIX.with(|re| re.replace(&x, "").into_owned()))
+        .collect();
+    Some((verb, props))
 }
 
 /// `SELECT * FROM t WHERE a = ?1 AND b in ?2` -> `[("a", 0), ("b", 1)]` (колонки, индексы аргументов); `None` — есть `or`.

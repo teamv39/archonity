@@ -1,0 +1,61 @@
+{
+ "project": "trainticket",
+ "id": "X11",
+ "title": "Actions out of order on a high-speed ticket: the system refuses to collect an unpaid ticket, to enter before collecting, to pay twice, to cancel twice, and to collect or rebook a cancelled order",
+ "description": "A registered passenger logs in, searches for high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026, takes the first contact from the contact book, books a first-class seat on the first trip found, without food, insurance or luggage, and refreshes the list of orders. They try to collect the ticket before paying and the system refuses. They pay from the internal account balance, try to enter the station before collecting the ticket and try to pay for the same order once more; the system refuses both. They cancel the order, then try to cancel it again, to collect the ticket and to rebook the order onto a second-class seat on the same trip; the system refuses all three.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Log in with username and password"
+  },
+  {
+   "n": 2,
+   "action": "Search high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou departing on 1 October 2026"
+  },
+  {
+   "n": 3,
+   "action": "Open the contact book and take the first contact"
+  },
+  {
+   "n": 4,
+   "action": "Book a first-class seat on the first trip found for this contact, without food, insurance or luggage"
+  },
+  {
+   "n": 5,
+   "action": "Refresh the list of orders"
+  },
+  {
+   "n": 6,
+   "action": "Try to collect the ticket for the order before paying (the system refuses)"
+  },
+  {
+   "n": 7,
+   "action": "Pay for the order from the internal account balance"
+  },
+  {
+   "n": 8,
+   "action": "Try to enter the station with the order before collecting the ticket (the system refuses)"
+  },
+  {
+   "n": 9,
+   "action": "Try to pay for the same order once more (the system refuses)"
+  },
+  {
+   "n": 10,
+   "action": "Cancel the order (the refund goes back to the internal balance)"
+  },
+  {
+   "n": 11,
+   "action": "Try to cancel the cancelled order again (the system refuses)"
+  },
+  {
+   "n": 12,
+   "action": "Try to collect the ticket for the cancelled order (the system refuses)"
+  },
+  {
+   "n": 13,
+   "action": "Try to rebook the cancelled order onto a second-class seat on the same trip (the system refuses)"
+  }
+ ]
+}

@@ -22,6 +22,37 @@ VERB_SYN = {
     **{v: ["update", "modify", "edit"] for v in ("change", "edit", "modify", "update", "set", "rename")},
     **{v: ["delete", "remove", "cancel"] for v in ("cancel", "delete", "remove", "withdraw")},
 }
+# Глаголы сверх VERB_SYN (22.10): частые английские слова текста шага, которых нет первым словом ни в одном шаге S0–S7
+# и X1–X8, поэтому их кандидаты и ключи кеша LLM не меняются (tests/test_verb_synonyms.py). Отобраны по перефразированным
+# S0–S7 (eval/paraphrase): «Find … trains» без `search` не находил поиск рейсов, «Reload my orders» — обновление
+# заказов. Это словарь английского языка, а не проекта; отключение — `run_eval.py --m1-verb-synonyms off`.
+# Оговорка (аудит 22.10): `reload -> refresh` и `sign -> log, login` — синонимы английского, но выбраны потому, что так
+# называются обработчики проекта (`queryOrdersForRefresh`, `login`). Это подбор словаря по замеру перефразировок.
+VERB_SYN_EXTRA = {
+    **{v: ["get", "find", "query", "search"]
+       for v in ("find", "retrieve", "fetch", "inspect", "review", "locate", "explore", "examine")},
+    "reload": ["refresh"],
+    **{v: ["create", "add", "new"] for v in ("purchase", "buy", "save")},
+    **{v: ["update", "modify", "edit"] for v in ("alter", "amend", "adjust", "switch", "move")},
+    **{v: ["delete", "remove", "cancel"] for v in ("erase", "discard", "drop")},
+    "sign": ["log", "login"],
+}
+
+# Глагол создания + объект (22.10): «Create a new passenger account» — это регистрация, а BM25 без слова register не
+# находил `registerUser` (перефразированный S4.1: векторы ставят его первым, BM25 — 28-м, в кандидаты не попадал).
+# Синоним самого `account` не годится: «internal account balance» и «registered on the account» в S0–S7 и X1–X8 сменили
+# бы кандидатов. Срабатывает, только если шаг начинается с глагола из набора и дальше есть объект; ни один шаг S0–S7
+# и X1–X8 под это не подходит (tests/test_verb_synonyms.py). Выключается вместе с `VERB_SYN_EXTRA`.
+VERB_OBJECT_SYN = {"account": ({"create", "make", "open", "set"}, ["register"])}
+
+# Фразовый глагол в начале шага (22.10): «Look for ordinary trains …» — поиск, а `look` в `VERB_SYN` разворачивается в get,
+# find, query без `search`, и BM25 не видел слова, которым в UI подписаны кнопки поиска (перефразированные X10.2 и S2.2:
+# верный обработчик на 66-м и 104-м месте BM25, слитый 26-й и 28-й, в кандидаты не попадал). Первые два слова заменяются
+# синонимом, дальше он расширяется как обычный глагол. «Look up» и «Look at» не трогаем: они есть в S0–S7 и X1–X12, а
+# их кандидаты менять нельзя (tests/test_verb_synonyms.py). Это словарь английского, подобранный по перефразировкам, как
+# `VERB_SYN_EXTRA`; выключается вместе с ним (`--m1-verb-synonyms off`).
+PHRASAL_VERBS = {("look", "for"): "search"}
+
 
 def stem(w: str) -> str:
     """Стеммер: окончания множественного числа, -ing, -ed. Синонимов нет: синонимы — работа эмбеддера (ADR-007)."""
@@ -49,10 +80,19 @@ def query_toks(text: str) -> list[str]:
     return ntoks(NEG.sub(" ", text))
 
 
-def expand_query(q: list[str]) -> list[str]:
+def expand_query(q: list[str], extra: bool = True) -> list[str]:
+    """Токены запроса и синонимы его первого слова; `extra` — с `VERB_SYN_EXTRA` (он перекрывает `VERB_SYN`),
+    `VERB_OBJECT_SYN` и `PHRASAL_VERBS` (фраза в начале шага заменяется синонимом до расширения)."""
     if not q:
         return []
-    return q + (VERB_SYN.get(q[0], []) if q else [])
+    if extra and tuple(q[:2]) in PHRASAL_VERBS:
+        q = [PHRASAL_VERBS[tuple(q[:2])], *q[2:]]
+    out = q +((VERB_SYN_EXTRA.get(q[0]) if extra else None) or VERB_SYN.get(q[0], []))
+    if extra:
+        for obj, (verbs, syn) in VERB_OBJECT_SYN.items():
+            if q[0] in verbs and obj in q[1:]:
+                out += syn
+    return out
 
 
 class BM25:

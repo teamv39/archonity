@@ -1,6 +1,7 @@
 """Тесты M1 (engine/grounding): каталог UI, кандидаты, промпты, кеш LLM, фолбэк без моделей."""
 from __future__ import annotations
 
+import itertools
 import json
 from pathlib import Path
 
@@ -9,7 +10,7 @@ import pytest
 from engine.adapters.skeleton import SkeletonIndex, load_json
 from engine.grounding import prompts as P
 from engine.grounding.docs import HandlerCatalog
-from engine.grounding.grounder import StepGrounder, enum_codes
+from engine.grounding.grounder import StepGrounder, _greedy_won, enum_codes
 from engine.grounding.llm import LLMClient
 from engine.grounding.retrieval import Ranked, rrf, twin_groups
 from engine.grounding.ui_catalog import _FileParser, build_catalog, match_handlers
@@ -407,7 +408,7 @@ class TestCpuMode:
 
     def test_defaults_keep_record_prompt(self, ix: SkeletonIndex) -> None:
         llm = _RecordingLLM()
-        g = StepGrounder(ix, TARGETS, embedder=None, llm=llm)
+        g = StepGrounder(ix, TARGETS, embedder=None, llm=llm, early_stop=False)
         g.ground_scenario({"id": "S0", "steps": [load_json(TT / "scenarios" / "S0.json")["steps"][0]]})
         sel = [c for c in llm.calls if c["kind"] == "select"]
         assert len(sel) == 6 and "Handler index" in g.system_select
@@ -418,3 +419,59 @@ class TestCpuMode:
     def test_client_timeout(self, tmp_path: Path) -> None:
         assert LLMClient(use_server=False, cache_dir=tmp_path).timeout == 300
         assert LLMClient(use_server=False, cache_dir=tmp_path, timeout=900).timeout == 900
+
+
+class _ScriptedLLM:
+    """LLM-заглушка голосования: ответ выбора по номеру выборки (0 — жадный), refs у каждого свои."""
+
+    def __init__(self, handlers: list[str | None]) -> None:
+        self.handlers = handlers
+        self.n = 0
+
+    def complete_json(self, kind, prompt_version, messages, schema, max_tokens=600, sampling=None):
+        i = (sampling or {}).get("seed", 0)
+        self.n += 1
+        h = self.handlers[i]
+        resp = None if h is None else {"handler": h, "expected_outcome": "success",
+                                       "refs": [{"kind": "k", "ref": f"first_of_step_{i % 2 + 1}"}]}
+        return resp, f"sha256:{i}"
+
+
+def _voter(handlers: list[str | None], early_stop: bool) -> tuple[StepGrounder, _ScriptedLLM]:
+    """StepGrounder без каталога и моделей: `_vote` нужны только LLM, метки и число выборок."""
+    g = StepGrounder.__new__(StepGrounder)
+    g.llm, g.version, g.votes, g.early_stop = _ScriptedLLM(handlers), "v", len(handlers) - 1, early_stop
+    g.by_label = {"H1": "a", "H2": "b", "H3": "c"}
+    return g, g.llm
+
+
+class TestVoteEarlyStop:
+    """Ранняя остановка голосования: тот же ответ, что у полного голосования, при меньшем числе вызовов."""
+
+    def test_greedy_won(self) -> None:
+        assert _greedy_won(["A", "A", "A"], 3)
+        assert not _greedy_won(["A", "A"], 3)
+        assert _greedy_won(["A", "B", "A", "A"], 2)  # 3 против 1 + 2: равенство за жадным
+        assert not _greedy_won(["A", "B", "B", "A"], 2)
+        assert not _greedy_won([None, "A", "A", "A"], 0)  # без жадного ответа — полное голосование
+        assert _greedy_won(["A", None, None], 0)
+
+    def test_same_answer_as_full_vote(self) -> None:
+        """Все последовательности из 6 ответов (жадный и 5 выборок) по трём меткам, чужой метке и пустому ответу."""
+        alphabet = ["H1", "H2", "H3", "H9", None]
+        saved = 0
+        for seq in itertools.product(alphabet, repeat=6):
+            full, llm_full = _voter(list(seq), early_stop=False)
+            fast, llm_fast = _voter(list(seq), early_stop=True)
+            want = full._vote([], {}, {"cache_keys": {}})
+            got = fast._vote([], {}, gr := {"cache_keys": {}})
+            assert got == want, seq
+            assert llm_fast.n == 6 - gr.get("votes_skipped", 0) == len(gr["cache_keys"]["select_votes"])
+            saved += llm_full.n - llm_fast.n
+        assert saved > 0
+
+    def test_unanimous_vote_stops_after_two_samples(self) -> None:
+        g, llm = _voter(["H1"] * 6, early_stop=True)
+        gr: dict = {"cache_keys": {}}
+        assert g._vote([], {}, gr)[1] == "sha256:0"
+        assert llm.n == 3 and gr["votes_skipped"] == 3 and gr["votes"] == {"H1": 3}

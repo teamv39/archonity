@@ -31,6 +31,7 @@ from engine.grounding.request import StepRequest
 from engine.grounding.retrieval import Ranked, Retriever
 from engine.grounding.ui_catalog import UIRequest, build_catalog, find_ui_dir, match_handlers
 from engine.manifest import entity_kinds
+from engine.scenario import load_scenario
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 TT = ROOT / "hackaton" / "tt-challenge"
@@ -39,6 +40,8 @@ TOP_K = 10
 # Выбор обработчика голосованием — жадный ответ и SELECT_VOTES выборок с параметрами модели по умолчанию
 # для режима без thinking и seed 1..SELECT_VOTES (заданы заранее, под результат не подбираются); побеждает
 # обработчик большинства (`StepGrounder._vote`). При temperature 0 правка текста промпта переставляла пограничные шаги.
+# Выборки идут по порядку seed и останавливаются, когда победу жадного ответа уже не отнять (`_greedy_won`): итог
+# тот же, что у полного голосования, вызовов на S0–S7 — 316 вместо 618.
 SELECT_VOTES = 5
 SAMPLING = {"temperature": 0.7, "top_p": 0.8, "top_k": 20}
 REFUSED = re.compile(r"\b(refuse[sd]?|rejects?|rejected|denie[sd]|fails?)\b", re.I)
@@ -77,6 +80,17 @@ def _majority(xs: list[str]) -> str:
     return max(c, key=lambda x: (c[x], -xs.index(x)))
 
 
+def _greedy_won(handlers: list[str | None], left: int) -> bool:
+    """Победа жадного ответа (`handlers[0]`) в `_majority` уже не зависит от `left` оставшихся выборок. Жадный
+    ответ первый в списке и выигрывает равенство, поэтому хватает, чтобы его голосов было не меньше, чем у любого
+    другого обработчика, даже если тому достанутся все оставшиеся. `None` — ответ без обработчика, не голос."""
+    if handlers[0] is None:
+        return False
+    c = collections.Counter(h for h in handlers if h is not None)
+    g = c.pop(handlers[0])
+    return g >= max(c.values(), default=0) + left
+
+
 @dataclass
 class ScenarioSession:
     """Заземление одного сценария шаг за шагом: история выбранных запросов идёт в промпт следующих шагов."""
@@ -88,24 +102,40 @@ class ScenarioSession:
     requests: list[StepRequest] = field(default_factory=list)
 
     def ground(self, st: dict[str, Any]) -> StepRequest:
+        stats = getattr(self.grounder.llm, "stats", None)
+        before = dataclasses.replace(stats) if stats is not None else None
         req = self.grounder.ground_step(self.scenario, st, self.ranked[st["n"]], self.history)
         h = self.grounder.cat.handlers[req.handler]
         self.history.append(P.history_line(st["n"], req.http["method"], req.http["path"], h, req.expected_outcome))
         self.requests.append(req)
+        if before is not None and (stats.calls, stats.errors) != (before.calls, before.errors):
+            self._progress(st, req, stats, before)
         return req
+
+    def _progress(self, st: dict[str, Any], req: StepRequest, s: Any, before: Any) -> None:
+        """Строка прогресса после шага, которому понадобился сервер LLM: прогон из кеша молчит, живой (минуты на
+        сценарий) показывает, что идёт и сколько уже заняло. `s`, `before` — `LLMStats` после шага и до него."""
+        err = f", ошибок {s.errors - before.errors}" if s.errors > before.errors else ""
+        print(f"[m1] {self.scenario.get('id')} шаг {st['n']} из {len(self.scenario.get('steps') or [])}: "
+              f"вызовов LLM {s.calls - before.calls} за {s.seconds - before.seconds:.0f} с{err} -> "
+              f"{req.http['method']} {req.http['path']}; всего {s.calls} вызовов, {s.seconds / 60:.1f} мин",
+              file=sys.stderr, flush=True)
 
 
 class StepGrounder:
     def __init__(self, ix: SkeletonIndex, targets_root: str | Path, embedder: str | None = DEFAULT_EMBEDDER,
                  allow_embed_model: bool = False, llm: LLMClient | None = None, render: str = "code_ui",
                  top_k: int = TOP_K, votes: int = SELECT_VOTES, index: bool = True, reasoning: bool = True,
-                 ir_dir: str | Path | None = None, ui_cache: str | Path | None = None) -> None:
+                 ir_dir: str | Path | None = None, ui_cache: str | Path | None = None,
+                 early_stop: bool = True, verb_synonyms: bool = True) -> None:
         """Промпт ADR-007: общий шаблон, домен и правила близнецов из профиля проекта, виды refs из манифеста.
 
         Режим CPU (docs/researches/gpu_dependence_and_cpu_fallback_study.md, раздел 7.5): `votes` — выборок
         голосования сверх жадного ответа (0 — только жадный); `index=False` — без индекса обработчиков в системном
         промпте выбора, выбор только из кандидатов (контекст ~3 тыс. токенов вместо ~10); `reasoning=False` — ответ
-        выбора без рассуждения. Умолчания — промпт и ключи кеша рекорда.
+        выбора без рассуждения. Умолчания — промпт и ключи кеша рекорда. `early_stop=False` — все выборки
+        голосования, даже когда исход уже ясен (полное распределение голосов для разбора шагов; выдача та же).
+        `verb_synonyms=False` — BM25 без `VERB_SYN_EXTRA` (`engine/grounding/text.py`), только с исходным `VERB_SYN`.
 
         `ir_dir` — IR тел методов проекта (по нему `answer_guards` видит условия возвратов), `ui_cache` — кеш каталога
         UI; по умолчанию `data/ir` и `data/ui_catalog.json`."""
@@ -120,10 +150,11 @@ class StepGrounder:
             from engine.grounding.embedder import QUERY_TASK, make_embedder
 
             emb = make_embedder(embedder, allow_model=allow_embed_model, task=QUERY_TASK)
-        self.retriever = Retriever(self.cat, render, emb)
+        self.retriever = Retriever(self.cat, render, emb, verb_synonyms=verb_synonyms)
         self.llm = llm
         self.top_k = top_k
         self.votes = votes
+        self.early_stop = early_stop
         self.index = index
         self.reasoning = reasoning
         self.labels = P.handler_labels(self.cat.handlers)
@@ -154,7 +185,7 @@ class StepGrounder:
         handler, why = got
         verb, path = self.cat.handlers[handler].routes[0]
         return dataclasses.replace(req, handler=handler, http={"method": verb, "path": path}, params={},
-                                   ui_source=None, body_src={}, grounding=dict(req.grounding, rebound=why))
+                                   ui_source=None, body_src={}, body_groups=[], grounding=dict(req.grounding, rebound=why))
 
     @staticmethod
     def _queries(sc: dict[str, Any]) -> list[str]:
@@ -164,14 +195,20 @@ class StepGrounder:
         """Векторы шагов всех сценариев прогона одной пачкой, до первого ответа LLM по ним.
 
         Эмбеддер грузится один раз и сразу выгружается (`STEmbedder.release`), `llama server` потом поднимается
-        без него в памяти: на 16 ГБ эмбеддер рядом с сервером не помещается, на A100 это лишние 8 ГБ. `begin` берёт
-        векторы из кеша эмбеддера; тексты и ключи те же, что и без `prepare`. Сбой модели не бросает исключение:
-        эмбеддер отключает dense, поиск идёт по одному BM25."""
-        self.retriever.warm([q for sc in scenarios for q in self._queries(sc)])
+        без него в памяти: на 16 ГБ эмбеддер рядом с сервером не помещается. Если видеопамяти хватает на обе
+        модели (A100), а у шагов новые тексты — значит, будут и промахи кеша LLM, — сервер начинает грузиться до
+        эмбеддера (`LLMClient.prestart`), и загрузки идут одновременно. `begin` берёт векторы из кеша эмбеддера;
+        тексты и ключи те же, что и без `prepare`. Сбой модели не бросает исключение: эмбеддер отключает dense,
+        поиск идёт по одному BM25."""
+        queries = [q for sc in scenarios for q in self._queries(sc)]
+        prestart = getattr(self.llm, "prestart", None)
+        if prestart is not None and self.retriever.warm_loads_model(queries):
+            prestart()
+        self.retriever.warm(queries)
 
     def begin(self, sc: dict[str, Any]) -> ScenarioSession:
         steps = sc.get("steps") or []
-        ranked = self.retriever.search(self._queries(sc))
+        ranked = self.retriever.search(self._queries(sc)) if steps else []
         return ScenarioSession(self, sc, {s["n"]: r for s, r in zip(steps, ranked)})
 
     def ground_scenario(self, sc: dict[str, Any]) -> list[StepRequest]:
@@ -196,16 +233,29 @@ class StepGrounder:
                                  notes=P.followup_notes(ui, self._answers, self._answer_guards),
                                  calls=self.cat.service_calls(h))
 
+    def _handler_of(self, sel: dict[str, Any] | None) -> str | None:
+        """Метка обработчика в ответе выбора; None — ответа нет или метки нет в индексе."""
+        return sel["handler"] if sel is not None and sel.get("handler") in self.by_label else None
+
     def _vote(self, msgs: list[dict[str, str]], schema: dict[str, Any],
               grounding: dict[str, Any]) -> tuple[dict[str, Any] | None, str]:
         """Выбор голосованием: жадный ответ и `self.votes` выборок, обработчик большинства (при равенстве —
         жадного ответа). Ответ целиком (refs, исход) — жадный, если его обработчик победил; иначе самый частый
         среди выборок победителя. Выборки проверяют решение, детали — от жадного вывода: при temperature 0.7 refs
-        шумят (trip -> train для «первого рейса шага 2»)."""
+        шумят (trip -> train для «первого рейса шага 2»).
+
+        `self.early_stop`: выборки идут по порядку seed, и голосование заканчивается, как только жадный ответ
+        выиграл при любых оставшихся (`_greedy_won`). Тогда ответ — жадный, как и у полного голосования; не
+        запрошенные выборки и их ключи кеша не нужны. Жадный ответ проиграл или ещё может проиграть — выборки
+        до конца."""
         got = [self.llm.complete_json("select", self.version, msgs, schema)]
-        got += [self.llm.complete_json("select", self.version, msgs, schema, sampling={**SAMPLING, "seed": i + 1})
-                for i in range(self.votes)]
-        valid = [(sel, key) for sel, key in got if sel is not None and sel.get("handler") in self.by_label]
+        for i in range(self.votes):
+            if self.early_stop and _greedy_won([self._handler_of(sel) for sel, _ in got], self.votes - i):
+                grounding["votes_skipped"] = self.votes - i
+                break
+            got.append(self.llm.complete_json("select", self.version, msgs, schema,
+                                              sampling={**SAMPLING, "seed": i + 1}))
+        valid = [(sel, key) for sel, key in got if self._handler_of(sel) is not None]
         grounding["cache_keys"]["select_votes"] = [key for _, key in got]
         if not valid:
             return None, got[0][1]
@@ -296,6 +346,7 @@ class StepGrounder:
             http={"method": verb, "path": path}, params=params, expected_outcome=outcome, refs=refs,
             ui_source={"file": ui_req.file, "line": ui_req.line} if ui_req is not None else None,
             body_src=dict(ui_req.body_src) if ui_req is not None else {},
+            body_groups=ui_req.body_groups() if ui_req is not None else [],
             grounding=grounding,
         )
 
@@ -384,7 +435,7 @@ def main() -> None:
                      allow_embed_model=a.embed_model, llm=llm, top_k=a.top_k)
     a.out.mkdir(parents=True, exist_ok=True)
     results: dict[str, list[StepRequest]] = {}
-    scenarios = [load_json(p) for p in paths]
+    scenarios = [load_scenario(p) for p in paths]
     g.prepare(scenarios)
     for sc in scenarios:
         reqs = g.ground_scenario(sc)

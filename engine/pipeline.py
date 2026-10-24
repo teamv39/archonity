@@ -18,6 +18,7 @@ from engine.grounding.grounder import StepGrounder
 from engine.manifest import camel_to_snake
 from engine.projection import project_constructors
 from engine.rules import RuntimeRules
+from engine.scenario import load_scenario
 from engine.spring_security import apply_spring_security
 
 LOGGER = logging.getLogger(__name__)
@@ -117,7 +118,13 @@ class ArchonityPipeline:
 
         self.m1 = StepGrounder(self.index, self.targets_root, ir_dir=ir_dir, ui_cache=artifacts / "ui_catalog.json",
                                **(cfg.m1_options or {}))
+        self.ir_dir = ir_dir
         self.m4 = StepExecutor(self.index, self.rules, ir_dir, self.targets_root) if cfg.build_m4 else None
+
+    def enable_m4(self) -> None:
+        """Откат `--engine rust` на Python: конвейер собран без M4, а `archonity-exec` не отработал."""
+        if self.m4 is None:
+            self.m4 = StepExecutor(self.index, self.rules, self.ir_dir, self.targets_root)
 
     def run_scenario(
         self, scenario_dict: dict[str, Any],
@@ -172,12 +179,15 @@ class ArchonityPipeline:
     def ground_all(self, scenario_paths: list[str | Path]) -> dict[str, list[dict[str, Any]]]:
         """Режим `--engine rust` (ADR-008): только M1. Шаги каждого сценария до R20 (`StepRequest.to_dict`) —
         вход `archonity-exec`; исполнение, правила и запись выдачи делает он. Шаг со сбоем M1 пропускается (Р2),
-        сценарий со сбоем даёт пустой список шагов, а значит пустой блок в ответе."""
+        сценарий со сбоем даёт пустой список шагов, а значит пустой блок в ответе. Векторы шагов — пачкой до первого
+        сценария, как в `run_all`: иначе эмбеддер грузится на каждый сценарий с новыми текстами, рядом с сервером LLM."""
         raw: dict[str, list[dict[str, Any]]] = {}
-        for sp in sorted(scenario_paths, key=lambda p: str(p)):
+        paths = sorted(scenario_paths, key=lambda p: str(p))
+        self._prepare_m1(paths)
+        for sp in paths:
             sid = Path(sp).stem
             try:
-                s_dict = load_json(sp)
+                s_dict = load_scenario(sp)
                 sid = s_dict["id"]
                 session = self.m1.begin(s_dict)
                 raw[sid] = []
@@ -208,7 +218,7 @@ class ArchonityPipeline:
         for sp in paths:
             sid = Path(sp).stem
             try:
-                s_dict = load_json(sp)
+                s_dict = load_scenario(sp)
                 sid = s_dict["id"]
                 methods, calls, remote, data = self.run_scenario(s_dict)
                 adapter.add_scenario_edges(
@@ -234,7 +244,7 @@ class ArchonityPipeline:
         scenarios = []
         for sp in paths:
             try:
-                scenarios.append(load_json(sp))
+                scenarios.append(load_scenario(sp))
             except Exception:  # noqa: BLE001
                 continue
         try:

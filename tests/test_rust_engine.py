@@ -11,7 +11,8 @@ import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
 BIN = ROOT / "rust" / "target" / "release" / "archonity-exec"
-pytestmark = pytest.mark.skipif(not BIN.is_file(), reason="нет бинарника archonity-exec")
+pytestmark = pytest.mark.skipif(not BIN.is_file(),
+                                reason="нет rust/target/release/archonity-exec (cd rust && cargo build --release --locked)")
 
 
 def _run(engine: str, out: Path) -> None:

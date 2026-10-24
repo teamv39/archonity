@@ -13,7 +13,8 @@ BIN = ROOT / "rust" / "target" / "release" / "archonity-parse"
 TARGETS = ROOT / "hackaton" / "tt-challenge" / "targets" / "trainticket"
 SKELETON = ROOT / "hackaton" / "tt-challenge" / "skeleton" / "trainticket.json.gz"
 pytestmark = pytest.mark.skipif(not (BIN.is_file() and TARGETS.is_dir() and SKELETON.is_file()),
-                                reason="нет archonity-parse или пакета задачи")
+                                reason="нет rust/target/release/archonity-parse (cd rust && cargo build --release "
+                                       "--locked) или пакета задачи в hackaton/")
 
 
 def _parse(mode: str, out: Path) -> None:

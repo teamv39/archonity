@@ -34,6 +34,18 @@ class RuntimeRules:
     unresolved_receiver_calls: str = "emit"
     # Шаг ожидает успех, а по значениям M1 отказал: повтор с нормализованными, затем неизвестными строками
     m4_success_retry: str = "on"
+    # Ссылка first/second_of_step_N, а в параметрах шага — строковый ID сущности того же вида: из результатов шага N
+    # берётся сущность с этим ID (шаг называет объект явно), а не первая по порядку
+    ref_explicit_id: str = "on"
+    # Ссылка на шаг, чей ответ — объект нужного вида без ID (сводка «доплатите разницу»): сущность — та, на которую
+    # ссылался сам этот шаг
+    ref_idless_result: str = "on"
+    # Группа полей, которую UI шлёт только под общим условием (каталог UI): шаг не дал ни поля группы, ни литерала
+    # условия со значением не по умолчанию — полей в запросе нет, у DTO умолчания полей
+    ui_optional_groups: str = "on"
+    # Ссылка first/second_of_step_N без слова позиции в тексте шага, а запись этого вида создал шаг раньше, чем читался
+    # список N: ссылка на созданную запись (R22). Rust — StepCore::prefer_created
+    ref_unpositioned: str = "on"
 
     MODES: ClassVar[dict[str, tuple[str, ...]]] = {
         "constructors": ("caller_only", "all", "off"),
@@ -45,6 +57,10 @@ class RuntimeRules:
         "unbound_handlers": ("rebind", "keep"),
         "unresolved_receiver_calls": ("emit", "mute"),
         "m4_success_retry": ("on", "off"),
+        "ref_explicit_id": ("on", "off"),
+        "ref_idless_result": ("on", "off"),
+        "ui_optional_groups": ("on", "off"),
+        "ref_unpositioned": ("on", "off"),
     }
 
     def __post_init__(self) -> None:

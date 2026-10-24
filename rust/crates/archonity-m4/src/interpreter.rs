@@ -344,6 +344,8 @@ impl Interpreter {
     pub fn begin_scenario(&mut self, db: archonity_io::DatabaseState) {
         self.world = Some(World::new(db, self.types.clone(), self.index.entities.raw_entities()));
         self.beans = HashMap::new();
+        // Константы enum — как мир и бины: сценарий не видит значений, которые получил прошлый
+        self.enum_cache = HashMap::new();
     }
 
     /// Шаг: вход обработчика. `args` строится уже в sink шага (разбор тела запроса исполняет конструктор DTO).
@@ -542,10 +544,17 @@ impl Interpreter {
             });
             if let Some(ctor) = ctor.cloned() {
                 if self.ir.contains_key(&ctor) {
+                    // Конструктор константы — инициализация класса, а не код плеча: без журнала плеч. Иначе первое
+                    // обращение внутри плеча с неизвестным условием откатывает поля константы, а слияние плеч делает
+                    // их Unknown (`Type.G.name`), и кеш хранит такую константу дальше.
                     self.sink.muted += 1;
+                    let journal = std::mem::take(&mut self.journal);
+                    let journal_start = std::mem::take(&mut self.journal_start);
                     let unit = self.index.unit_of(&ctor);
                     let r = self.run_body(&ctor, &ev, &args, &unit, &why("SKELETON", "enum_init"));
                     self.sink.muted -= 1;
+                    self.journal = journal;
+                    self.journal_start = journal_start;
                     r?;
                 }
             }

@@ -32,10 +32,10 @@ SCENARIO_TITLES_RU: dict[str, str] = {
 }
 
 
-def build_scenarios_data() -> list[dict[str, Any]]:
-    """Сборка структурированных данных сценариев S0–S7 на базе step_requests и decisions."""
-    step_requests_file = OUTPUT_DIR / "step_requests.json"
-    decisions_file = OUTPUT_DIR / "decisions.json"
+def build_scenarios_data(out_dir: Path = OUTPUT_DIR) -> list[dict[str, Any]]:
+    """Сборка структурированных данных сценариев S0–S7 на базе step_requests и decisions прогона в `out_dir`."""
+    step_requests_file = out_dir / "step_requests.json"
+    decisions_file = out_dir / "decisions.json"
 
     if not step_requests_file.is_file() or not decisions_file.is_file():
         raise FileNotFoundError("Сначала выполните run_eval.py для генерации step_requests и decisions!")
@@ -43,7 +43,7 @@ def build_scenarios_data() -> list[dict[str, Any]]:
     step_requests_all: dict[str, list[dict[str, Any]]] = json.loads(step_requests_file.read_text(encoding="utf-8"))
     decisions_all: dict[str, dict[str, Any]] = json.loads(decisions_file.read_text(encoding="utf-8")).get("scenarios", {})
 
-    canonical_file = OUTPUT_DIR / "canonical_graph.json"
+    canonical_file = out_dir / "canonical_graph.json"
     canonical_edges: set[str] = set()
     if canonical_file.is_file():
         cg = json.loads(canonical_file.read_text(encoding="utf-8"))
@@ -171,13 +171,13 @@ def build_scenarios_data() -> list[dict[str, Any]]:
     return scenarios_list
 
 
-def export_all() -> None:
-    """Полный экспорт артефактов в visualizer/public/data и visualizer/src/data."""
+def export_all(out_dir: Path = OUTPUT_DIR) -> None:
+    """Полный экспорт артефактов прогона из `out_dir` в visualizer/public/data и visualizer/src/data."""
     VIS_DATA_DIR.mkdir(parents=True, exist_ok=True)
     VIS_SRC_DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     print("Генерация данных сценариев...")
-    scenarios_list = build_scenarios_data()
+    scenarios_list = build_scenarios_data(out_dir)
 
     # 1. Сохранение public/data/scenarios_data.json
     sc_json_path = VIS_DATA_DIR / "scenarios_data.json"
@@ -187,7 +187,7 @@ def export_all() -> None:
     # 2. Копирование остальных ключевых JSON
     import shutil
     for fname in ["canonical_graph.json", "decisions.json", "evidence.json", "submission.json", "step_requests.json"]:
-        src = OUTPUT_DIR / fname
+        src = out_dir / fname
         if src.is_file():
             dst = VIS_DATA_DIR / fname
             shutil.copy(src, dst)
@@ -214,4 +214,6 @@ export const BENCHMARK_SCENARIOS: RuntimeScenario[] = {json.dumps(scenarios_list
 
 
 if __name__ == "__main__":
-    export_all()
+    import sys
+
+    export_all(Path(sys.argv[1]) if len(sys.argv) > 1 else OUTPUT_DIR)

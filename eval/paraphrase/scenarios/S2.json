@@ -1,0 +1,65 @@
+{
+  "project": "trainticket",
+  "id": "S2",
+  "title": "An ordinary train ticket with a station meal and no insurance; paying, then cancelling with a refund; a second order moved to a cheaper seat class",
+  "description": "A passenger with an account signs in. They look for ordinary trains (train type 'Other', not high-speed) from Shanghai to Nanjing leaving on 1 October 2026 and show the details of the first trip in the results. They look through the food shops at Suzhou station. They go to the contact book and pick the first contact as the traveller. They reserve one first-class seat on that ordinary train for this contact with a meal from a station shop, without assurance (insurance) and without a luggage consignment. They reload their orders, pay for the order with the internal account balance, find out how much money would come back if it were cancelled, and cancel it. Then they reserve one more first-class seat on the same ordinary train for the same contact with the same station meal, reload the orders, pay for the new order, and change this paid ticket to a second-class seat on the same ordinary train: second class is cheaper, so the difference goes back to the internal account balance.",
+  "input": "text",
+  "steps": [
+    {
+      "n": 1,
+      "action": "Sign in with a username and a password"
+    },
+    {
+      "n": 2,
+      "action": "Look for ordinary trains (train type 'Other', not high-speed) from Shanghai to Nanjing leaving on 1 October 2026"
+    },
+    {
+      "n": 3,
+      "action": "Show the details of the first trip in the results"
+    },
+    {
+      "n": 4,
+      "action": "Look through the food shops at Suzhou station"
+    },
+    {
+      "n": 5,
+      "action": "Go to the contact book and pick the first contact"
+    },
+    {
+      "n": 6,
+      "action": "Reserve one first-class seat on this ordinary train for the chosen contact, with a meal from a station shop, without assurance (insurance) and without a luggage consignment"
+    },
+    {
+      "n": 7,
+      "action": "Reload my orders"
+    },
+    {
+      "n": 8,
+      "action": "Pay for the order with the internal account balance"
+    },
+    {
+      "n": 9,
+      "action": "Find out how much money would come back if this order were cancelled"
+    },
+    {
+      "n": 10,
+      "action": "Cancel this order"
+    },
+    {
+      "n": 11,
+      "action": "Reserve one more first-class seat on the same ordinary train for the same contact, with the same station meal"
+    },
+    {
+      "n": 12,
+      "action": "Reload my orders"
+    },
+    {
+      "n": 13,
+      "action": "Pay for the second order with the internal account balance"
+    },
+    {
+      "n": 14,
+      "action": "Change the paid ticket to a second-class seat on the same ordinary train (second class is cheaper, so the difference goes back to the internal balance)"
+    }
+  ]
+}

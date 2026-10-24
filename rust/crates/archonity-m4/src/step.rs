@@ -17,13 +17,13 @@ use archonity_io::decisions::detail;
 use archonity_io::{jx, DecisionLedger, SkeletonIndex};
 use archonity_model::names::simple_name;
 use archonity_model::values::*;
-use archonity_model::{RuleFlags, ScenarioContext, StepEdges, StepRequest};
+use archonity_model::{group_sent, BodyGroup, RuleFlags, ScenarioContext, StepEdges, StepRequest};
 use indexmap::IndexMap;
 use regex::Regex;
 use serde_json::Value as Json;
 
 use crate::envelope::Envelope;
-use crate::interpreter::{err, Exc, Interpreter, Sink, R};
+use crate::interpreter::{Exc, Interpreter, Sink, R};
 use crate::schema::EntitySchema;
 
 /// Параметры шага: имя -> JSON-значение (без null).
@@ -58,6 +58,18 @@ fn parse_ref(r: &str) -> Option<(&str, i64)> {
     })
 }
 
+/// Слово позиции или повтора в тексте шага («the first order», «another», «the second»); «first-class» — не позиция.
+/// Как `_POSITION` в `engine/executor/step.py` (R22).
+fn has_position_word(action: &str) -> bool {
+    thread_local! {
+        static P: fancy_regex::Regex = fancy_regex::Regex::new(
+            r"(?i)\b(?:first|second|third|fourth|fifth|last|next|previous|another|other|same|one more|\d+(?:st|nd|rd|th))\b(?!-)",
+        )
+        .unwrap();
+    }
+    P.with(|re| re.is_match(action).unwrap_or(false))
+}
+
 /// Всё состояние `StepExecutor`, кроме интерпретатора: методы получают `&mut Interpreter` параметром, чтобы замыкание
 /// аргументов обработчика могло заимствовать одно без другого.
 pub struct StepCore {
@@ -74,11 +86,13 @@ pub struct StepCore {
     pub sid: String,
     login_ids: IndexMap<String, Vec<String>>,
     login_blanks: BTreeSet<String>,
-    reach: HashMap<String, BTreeSet<String>>,
+    reach: HashMap<(String, bool), BTreeSet<String>>,
+    remote_of: Option<HashMap<String, BTreeSet<String>>>, // метод -> обработчики его межсервисных вызовов
     dedupe: HashMap<(String, Option<String>), Vec<String>>,
     verb: Option<String>,
     user_name: Option<String>,
     body_src: IndexMap<String, String>,
+    body_groups: Vec<BodyGroup>,
 }
 
 pub struct StepExecutor {
@@ -110,10 +124,12 @@ impl StepExecutor {
                 login_ids,
                 login_blanks,
                 reach: HashMap::new(),
+                remote_of: None,
                 dedupe: HashMap::new(),
                 verb: None,
                 user_name: None,
                 body_src: IndexMap::new(),
+                body_groups: Vec::new(),
             },
         })
     }
@@ -142,7 +158,8 @@ impl StepExecutor {
         core.user_name = ctx.user_name.clone();
         core.verb = req.http.get("method").cloned();
         core.body_src = req.body_src.clone();
-        let refs = req.refs.clone();
+        core.body_groups = req.body_groups.clone();
+        let refs = if it.flags.ref_unpositioned { core.prefer_created(n, &req.action, &req.refs) } else { req.refs.clone() };
         let expected = req.expected_outcome.clone();
         let before = it.world.as_ref().map(|w| w.saved.len()).unwrap_or(0);
         let snapshot = if it.flags.m4_success_retry { it.world.as_ref().map(|w| w.db.fork()) } else { None };
@@ -465,6 +482,18 @@ impl StepCore {
                 }
                 return Ok(Some(Value::Obj(merged)));
             }
+            // Ответ шага без ID — не сущность, а сводка («доплатите разницу»: `new Order()` с одной суммой): сущность —
+            // та, над которой работал шаг n (его собственная ссылка того же вида), если у неё ID известен
+            if it.flags.ref_idless_result {
+                let prev = self.step_refs.get(&n).and_then(|m| m.get(kind)).cloned();
+                if let Some(prev) = prev.filter(|p| !p.is_empty() && p != r && depth < 4) {
+                    if let Some(alt) = self.resolve_ref(it, kind, &prev, depth + 1)? {
+                        if !self.entity_id(it, &alt, kind, 0)?.is_unknown() {
+                            return Ok(Some(alt));
+                        }
+                    }
+                }
+            }
             return Ok(Some(ent));
         }
         let saved_c: Vec<&(String, Shared<Obj>)> = saved_n.iter().filter(|(fqn, _)| self.schema.is_kind(Some(fqn), kind)).collect();
@@ -529,9 +558,6 @@ impl StepCore {
         }
         let mut names: Vec<String> = self.schema.id_fields(kind);
         names.push("id".to_string());
-        if kind == "user" {
-            names = vec!["userId".into(), "accountId".into(), "id".into()];
-        }
         for name in &names {
             let v = o.borrow().fields.get(name).cloned().unwrap_or(Value::Unknown);
             if v.is_unknown() || v.is_null() {
@@ -585,6 +611,9 @@ impl StepCore {
             let e = self.resolve_ref(it, k, v, 0)?;
             ents.insert(k.clone(), e);
         }
+        if it.flags.ref_explicit_id {
+            self.explicit_id_refs(it, &mut ents, params, refs)?;
+        }
         // Последний слой: параметры запросов шагов, на которые ссылается шаг
         for v in refs.values() {
             if let Some((_, n)) = parse_ref(v) {
@@ -617,6 +646,70 @@ impl StepCore {
             }
         }
         Ok(out)
+    }
+
+    /// Ссылка `first`/`second_of_step_N` и строковый ID той же сущности в параметрах шага («рейс G9998»): из
+    /// результатов шага N берётся сущность с этим ID. Нет такой в результатах — ссылка как была.
+    fn saved_kind(&self, step: i64, kind: &str) -> bool {
+        self.saved.get(&step).is_some_and(|v| v.iter().any(|(fqn, _)| self.schema.is_kind(Some(fqn), kind)))
+    }
+
+    /// R22, как `StepExecutor._prefer_created`: ссылка `first`/`second_of_step_N` без слова позиции в тексте шага, а
+    /// запись этого вида создал шаг M < N, и шаг N её не создавал (список, прочитанный после создания), — ссылка на
+    /// созданную запись `new_of_step_M` (последний такой M).
+    fn prefer_created(&self, step: i64, action: &str, refs: &IndexMap<String, String>) -> IndexMap<String, String> {
+        if has_position_word(action) {
+            return refs.clone();
+        }
+        let mut out = refs.clone();
+        for (kind, r) in refs {
+            let Some((pick, n)) = parse_ref(r) else { continue };
+            if pick == "new" {
+                continue;
+            }
+            let made = self.saved.keys().copied().filter(|&k| k < step && self.saved_kind(k, kind)).max();
+            if let Some(m) = made {
+                if n > m && !self.saved_kind(n, kind) {
+                    out.insert(kind.clone(), format!("new_of_step_{m}"));
+                }
+            }
+        }
+        out
+    }
+
+    fn explicit_id_refs(
+        &mut self,
+        it: &mut Interpreter,
+        ents: &mut IndexMap<String, Option<Value>>,
+        params: &Params,
+        refs: &IndexMap<String, String>,
+    ) -> R<()> {
+        for (kind, r) in refs {
+            let Some((pick, n)) = parse_ref(r) else { continue };
+            if pick == "new" {
+                continue;
+            }
+            let want = self
+                .schema
+                .id_fields(kind)
+                .into_iter()
+                .filter(|f| f != "id")
+                .find_map(|f| params.get(&f).and_then(Json::as_str).map(str::to_string));
+            let Some(want) = want else { continue };
+            if let Some(Some(ent)) = ents.get(kind).cloned() {
+                if self.entity_id(it, &ent, kind, 0)?.as_str() == Some(want.as_str()) {
+                    continue;
+                }
+            }
+            let found = find_kind(&payload(self.results.get(&n).unwrap_or(&Value::Null), it.envelope.as_ref()), kind, 0, &self.schema);
+            for e in found {
+                if self.entity_id(it, &e, kind, 0)?.as_str() == Some(want.as_str()) {
+                    ents.insert(kind.clone(), Some(e));
+                    break;
+                }
+            }
+        }
+        Ok(())
     }
 
     fn field_value(
@@ -745,17 +838,22 @@ impl StepCore {
                 }
             }
         }
-        if names.contains("consigneeName") {
-            // Вес 0 в тексте шага — багажа нет, полей группы в запросе нет (null).
-            if let Some(w) = params.get("consigneeWeight").and_then(Json::as_f64) {
-                if w <= 0.0 {
-                    defaults.insert("consigneeName".into(), None);
-                    defaults.insert("consigneePhone".into(), None);
+        let mut unsent: BTreeSet<String> = BTreeSet::new();
+        if it.flags.ui_optional_groups {
+            // Группа полей, которую UI шлёт только под общим условием (каталог UI): шаг не дал ни поля группы, ни
+            // литерала её условия со значением не по умолчанию — полей в запросе нет, у DTO умолчания полей
+            for g in &self.body_groups {
+                if !group_sent(g, params) {
+                    unsent.extend(g.fields.iter().filter(|n| names.contains(n.as_str()) && !params.contains_key(n.as_str())).cloned());
                 }
             }
         }
         for f in fields.iter() {
             let name = jx::str_(f, "name").unwrap_or("").to_string();
+            if unsent.contains(&name) {
+                obj.borrow_mut().fields.insert(name, crate::interpreter::default_value_pub(f));
+                continue;
+            }
             let u = if own_ids.contains(&name) { None } else { user };
             let mut v = self.field_value(it, &name, params, ents, u, jx::str_(f, "type"))?;
             if v.is_unknown() && name == "id" {
@@ -792,50 +890,65 @@ impl StepCore {
         Ok(it.jackson_fill(Value::Obj(obj), module.as_deref()))
     }
 
-    /// Методы проекта, достижимые из обработчика по рёбрам calls скелета (с реализациями интерфейсов).
-    fn reachable(&mut self, handler: &str) -> BTreeSet<String> {
-        if let Some(r) = self.reach.get(handler) {
+    /// Методы проекта, достижимые из обработчика по рёбрам calls скелета (с реализациями интерфейсов);
+    /// `remote` — ещё и через межсервисные вызовы (remote_call скелета) в обработчики других сервисов.
+    fn reachable(&mut self, handler: &str, remote: Option<&Interpreter>) -> BTreeSet<String> {
+        let key = (handler.to_string(), remote.is_some());
+        if let Some(r) = self.reach.get(&key) {
             return r.clone();
         }
+        if let (Some(it), None) = (remote, &self.remote_of) {
+            let mut of: HashMap<String, BTreeSet<String>> = HashMap::new();
+            for (cs, hs) in &it.cs_remote {
+                if let Some(m) = self.index.n.get(cs).and_then(|n| jx::str_(n, "method")).filter(|m| !m.is_empty()) {
+                    of.entry(m.to_string()).or_default().extend(hs.iter().cloned());
+                }
+            }
+            self.remote_of = Some(of);
+        }
+        let remote_of = if remote.is_some() { self.remote_of.as_ref() } else { None };
         let mut seen: BTreeSet<String> = BTreeSet::from([handler.to_string()]);
         let mut frontier = vec![handler.to_string()];
         for _ in 0..4 {
             let mut next = Vec::new();
             for m in &frontier {
-                if let Some(ts) = self.index.calls.get(m) {
-                    for t in ts {
-                        let mut xs = vec![t.clone()];
-                        if let Some(o) = self.index.over.get(t) {
-                            xs.extend(o.iter().cloned());
-                        }
-                        for x in xs {
-                            if seen.insert(x.clone()) {
-                                next.push(x);
-                            }
+                let mut targets: Vec<String> = self.index.calls.get(m).map(|ts| ts.iter().cloned().collect()).unwrap_or_default();
+                if let Some(hs) = remote_of.and_then(|of| of.get(m)) {
+                    targets.extend(hs.iter().cloned());
+                }
+                for t in &targets {
+                    let mut xs = vec![t.clone()];
+                    if let Some(o) = self.index.over.get(t) {
+                        xs.extend(o.iter().cloned());
+                    }
+                    for x in xs {
+                        if seen.insert(x.clone()) {
+                            next.push(x);
                         }
                     }
                 }
             }
             frontier = next;
         }
-        self.reach.insert(handler.to_string(), seen.clone());
+        self.reach.insert(key, seen.clone());
         seen
     }
 
     /// Обработчик входа: из него достижим метод с вызовом `AuthenticationManager.authenticate`.
     fn is_login(&mut self, handler: &str) -> bool {
-        let r = self.reachable(handler);
+        let r = self.reachable(handler, None);
         self.login_ids.keys().any(|k| r.contains(k))
     }
 
-    /// Поля DTO, по которым метод, достижимый из обработчика, ищет дубликат.
+    /// Поля DTO, по которым метод, достижимый из обработчика, ищет дубликат. Достижимость — и через межсервисный
+    /// вызов: консоль администратора пересылает тело запроса сервису, который ищет дубликат.
     fn dedupe_fields(&mut self, it: &Interpreter, handler: &str, ftype: Option<&str>) -> Vec<String> {
         let key = (handler.to_string(), ftype.map(str::to_string));
         if let Some(d) = self.dedupe.get(&key) {
             return d.clone();
         }
         let mut out: Vec<String> = Vec::new();
-        let reach = self.reachable(handler);
+        let reach = self.reachable(handler, Some(it));
         for m in &reach {
             let saves: Vec<i64> = self
                 .index
@@ -961,9 +1074,4 @@ impl StepCore {
 
 fn json_truthy_obj(v: &Json) -> bool {
     crate::interpreter::json_truthy(v)
-}
-
-#[allow(dead_code)]
-fn _unused() -> R<()> {
-    err("")
 }

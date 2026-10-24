@@ -184,6 +184,53 @@ class TestAutostart:
         assert server_env["procs"] == []
 
 
+class TestPrestart:
+    """Сервер заранее (`LLMClient.prestart`): только когда сервер и эмбеддер вместе помещаются в видеопамять."""
+
+    @pytest.fixture
+    def sized(self, server_env: dict, monkeypatch: pytest.MonkeyPatch) -> dict:
+        manifest = {"llm": {"name": "m", "files": {"m.gguf": {"size": 18 * 2**30}}},
+                    "embedder": {"name": "e", "files": {"a": {"size": 8 * 2**30}}}}
+        (server_env["models"] / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+        monkeypatch.delenv("ARCHONITY_LLM_PRESTART", raising=False)
+        return server_env
+
+    def test_need_fits_a100_not_16gb(self) -> None:
+        assert 16_384 < L.prestart_need_mib(MANIFEST) < 39_000
+        assert L.prestart_need_mib({"llm": {"files": {"x": {}}}}) is None and L.prestart_need_mib({}) is None
+
+    @pytest.mark.parametrize("free, started", [(None, False), (16_000, False), (40_000, True)])
+    def test_auto_by_free_vram(self, sized: dict, monkeypatch: pytest.MonkeyPatch, free, started: bool) -> None:
+        monkeypatch.setattr(L, "gpu_free_mib", lambda: free)
+        sized["health"] = [False]
+        c = L.LLMClient(model="m")
+        assert c.prestart() is started and len(sized["procs"]) == int(started)
+        sized["health"] = [False, False]
+        assert c.server_available() and len(sized["procs"]) == 1  # ждёт сервер prestart, второй не поднимает
+
+    def test_off_cache_only_and_running_server(self, sized: dict, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(L, "gpu_free_mib", lambda: 40_000)
+        monkeypatch.setenv("ARCHONITY_LLM_PRESTART", "off")
+        assert not L.LLMClient(model="m").prestart()
+        monkeypatch.setenv("ARCHONITY_LLM_PRESTART", "on")
+        assert not L.LLMClient(model="m", use_server=False).prestart()
+        sized["health"] = [True]
+        assert not L.LLMClient(model="m").prestart()
+        assert sized["procs"] == []
+
+    def test_dead_prestart_server_is_started_again(self, sized: dict, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("ARCHONITY_LLM_PRESTART", "on")
+        sized["rc_after"], sized["health"] = 0, [False] * 3
+        c = L.LLMClient(model="m")
+        assert c.prestart()
+        sized["rc_after"] = None  # первый сервер упал при загрузке (рядом с эмбеддером), второй поднимается
+        assert c.server_available() and len(sized["procs"]) == 2
+
+    def test_gpu_free_without_nvidia_smi(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setattr(L.shutil, "which", lambda name: None)
+        assert L.gpu_free_mib() is None
+
+
 class TestFindLlamaServer:
     def test_unified_cli_gets_server_subcommand(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
         (tmp_path / "llama").write_bytes(b"")

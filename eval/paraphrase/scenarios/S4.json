@@ -1,0 +1,65 @@
+{
+  "project": "trainticket",
+  "id": "S4",
+  "title": "A brand-new passenger with no money on the account: a reservation with an on-board meal and insurance, external payment, cancelling the paid order with a refund",
+  "description": "A new passenger creates an account (username, password, gender, ID document, e-mail) and signs in with it. The contact book is still empty, so they add one contact (themselves). They look for GaoTie/DongChe (high-speed) trains from Shanghai to Suzhou on 1 October 2026, show the details of the first trip in the results and see which meals are served on board. They reserve a first-class seat on that trip for the new contact with an on-board meal and the first kind of assurance (insurance), but no consignment. They reload their orders, open the order that was just created and see how much it costs. They pay for it: a new account has nothing on its internal balance, so the payment goes through the external payment channel. Then they find out how much money would come back if the paid order were cancelled, cancel it (the money returns to the internal balance), and reload their orders showing only those with the 'Cancel' status.",
+  "input": "text",
+  "steps": [
+    {
+      "n": 1,
+      "action": "Create a new passenger account (username, password, gender, ID document, e-mail)"
+    },
+    {
+      "n": 2,
+      "action": "Sign in with the username and password of the new account"
+    },
+    {
+      "n": 3,
+      "action": "The contact book is empty: add the passenger themselves as a contact"
+    },
+    {
+      "n": 4,
+      "action": "Find GaoTie/DongChe (high-speed) trains from Shanghai to Suzhou on 1 October 2026"
+    },
+    {
+      "n": 5,
+      "action": "Show the details of the first trip in the results"
+    },
+    {
+      "n": 6,
+      "action": "See which meals are served on board this trip"
+    },
+    {
+      "n": 7,
+      "action": "Reserve a first-class seat on this trip for the new contact, with an on-board meal and the first kind of assurance (insurance), but no luggage consignment"
+    },
+    {
+      "n": 8,
+      "action": "Reload my orders"
+    },
+    {
+      "n": 9,
+      "action": "Open the order that was just created"
+    },
+    {
+      "n": 10,
+      "action": "See how much the order costs"
+    },
+    {
+      "n": 11,
+      "action": "Pay for the order: a new account has no money on the internal balance, so the payment goes through the external payment channel"
+    },
+    {
+      "n": 12,
+      "action": "Find out how much money would come back if the paid order were cancelled"
+    },
+    {
+      "n": 13,
+      "action": "Cancel the paid order (the money is returned to the internal balance)"
+    },
+    {
+      "n": 14,
+      "action": "Reload my orders, showing only those with the 'Cancel' status"
+    }
+  ]
+}

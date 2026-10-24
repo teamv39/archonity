@@ -1,21 +1,30 @@
 import json
+import os
 import subprocess
 import sys
 import zipfile
 from pathlib import Path
 
-from pack_submission import pack, ZIP_OUT, SUBMISSION_JSON, EVIDENCE_JSON
+import pytest
+
+import pack_submission as ps
+from pack_submission import pack
 
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def test_pack_submission_creates_valid_archive():
-    # Убеждаемся, что исходные файлы есть
-    assert SUBMISSION_JSON.is_file(), "submission.json должен существовать"
-    assert EVIDENCE_JSON.is_file(), "evidence.json должен существовать"
+def test_pack_submission_creates_valid_archive(tmp_path: Path):
+    # Свой прогон из кеша во временную папку: тест не зависит от output/ и не трогает его
+    run_dir = tmp_path / "run"
+    res = subprocess.run([sys.executable, str(ROOT / "run_eval.py"), "--require-cache", "--no-eval",
+                          "-o", str(run_dir / "submission.json")], cwd=ROOT, capture_output=True, text=True,
+                         env={**os.environ, "PYTHONUTF8": "1"})
+    if res.returncode == 2:
+        pytest.skip("нет кеша LLM")
+    assert res.returncode == 0, res.stderr[-2000:]
+    submission = run_dir / "submission.json"
 
-    out_zip = pack()
-    assert out_zip == ZIP_OUT
+    out_zip = pack(tmp_path / "submission.zip", run_dir=run_dir)
     assert out_zip.is_file()
 
     with zipfile.ZipFile(out_zip, "r") as zf:
@@ -24,6 +33,7 @@ def test_pack_submission_creates_valid_archive():
         # 1. Корневые обязательные файлы
         assert "submission.json" in names
         assert "evidence.json" in names
+        assert "report.html" in names
 
         # 2. Исходный код пайплайна
         assert "code/" in names
@@ -37,10 +47,15 @@ def test_pack_submission_creates_valid_archive():
         # 2a. Команда запуска, зависимости, модели, данные прогона (docs/run_on_a100.md)
         for f in ("RUN.md", "code/requirements.txt", "code/uv.lock", "code/pyproject.toml", "code/models/manifest.json",
                   "code/facts/configs_topology.json", "code/data/entity_ir.json", "code/scripts/fetch_models.py",
-                  "code/archparse/src/main/java/com/v39a/Main.java"):
+                  "code/docs/run_on_a100.md"):
             assert f in names, f"Нет {f} в архиве"
+        # Java-оракул разбора в посылку не входит: data/ строит archonity-parse
+        assert not any(n.startswith("code/archparse") for n in names)
         # 2b. Исходники Rust-движка (надбавка ×1.10 за исходный код), без rust/target
-        for f in ("code/rust/Cargo.toml", "code/rust/Cargo.lock", "code/rust/README.md"):
+        for f in ("code/rust/Cargo.toml", "code/rust/Cargo.lock", "code/rust/README.md",
+                  "code/rust/crates/archonity-exec/tests/parity.rs",
+                  "code/rust/crates/archonity-exec/tests/data/step_requests_raw.json",
+                  "code/eval/records/submission_p27_1.00000.json"):
             assert f in names, f"Нет {f} в архиве"
         assert any(n.startswith("code/rust/crates/archonity-exec/") and n.endswith(".rs") for n in names)
         assert any(n.startswith("code/rust/crates/archonity-m4/") and n.endswith(".rs") for n in names)
@@ -71,10 +86,36 @@ def test_pack_submission_creates_valid_archive():
     gold_file = ROOT / "hackaton" / "tt-challenge" / "gold" / "S0.json"
     if eval_script.is_file() and gold_file.is_file():
         res = subprocess.run(
-            [sys.executable, str(eval_script), str(gold_file), str(SUBMISSION_JSON), "--json"],
+            [sys.executable, str(eval_script), str(gold_file), str(submission), "--json"],
             capture_output=True,
             text=True,
             check=True,
         )
         eval_res = json.loads(res.stdout)
         assert eval_res.get("score") == 1.0, f"S0 score должен быть 1.0, получен {eval_res.get('score')}"
+
+
+def test_readme_links_are_in_archive() -> None:
+    """Каждая ссылка README на файл репозитория ведёт в архив: репозиторий закрыт, у жюри есть только посылка."""
+    import re
+
+    files = set(ps.code_files())
+    links = {m.split("#")[0] for m in re.findall(r"\]\(([^)\s]+)\)", (ps.ROOT / "README.md").read_text(encoding="utf-8"))}
+    links = {l for l in links if l and "://" not in l}
+    missing = sorted(l for l in links if l.rstrip("/") not in files and not any(f.startswith(l) for f in files))
+    assert not missing, f"README ссылается на файлы вне архива: {missing}"
+    # Пути в коде README (`engine/`, `docs/adr/`): только то, что есть в архиве. Вне архива — выходы прогона и пакет
+    # организаторов
+    outside = ("output", "hackaton/", "rust/target", "cache/llm/<")
+    paths = {p.rstrip("/") for p in re.findall(r"`([^`\s]+/[^`\s]*)`", (ps.ROOT / "README.md").read_text(encoding="utf-8"))}
+    # `adr/`, `llm/` — папки внутри названной рядом (`docs/`, `cache/`), их не проверяем
+    absent = sorted(p for p in paths if "/" in p and not p.startswith(outside) and "://" not in p
+                    and p not in files and not any(f.startswith(p + "/") for f in files))
+    assert not absent, f"README называет пути вне архива: {absent}"
+
+
+def test_doc_links_outside_archive_become_text() -> None:
+    files = {"docs/adr/a.md", "docs/annotation_rules.md"}
+    text = "[R7](../annotation_rules.md#r7), [план](../roadmap.md), [пакет](../../hackaton/tt-challenge/README.md), [w](https://x.y/z)"
+    assert ps.unlink_outside(text, "docs/adr/a.md", files) == (
+        "[R7](../annotation_rules.md#r7), план, [пакет](../../hackaton/tt-challenge/README.md), [w](https://x.y/z)")

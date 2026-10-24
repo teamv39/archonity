@@ -1,0 +1,65 @@
+{
+ "project": "trainticket",
+ "id": "X9",
+ "title": "A new order that is found only after reloading the order list: its price, payment, refund quote and cancellation; then a second reservation, payment, ticket pick-up and station entrance",
+ "description": "A registered passenger signs in, looks for high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou for 1 October 2026 and goes to the contacts to pick the first one. They reserve a first-class seat on the first trip found for this contact with no food, insurance or luggage and reload the orders, which also contain older orders of the passenger. For the new order they see the price, pay with the money on the internal account, find out how much would come back and cancel it. Then they reserve one more first-class seat on the same trip for the same contact, reload the orders again, pay for the new order, pick up the ticket and go through the station entrance.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Sign in with my username and password"
+  },
+  {
+   "n": 2,
+   "action": "Find high-speed (GaoTie/DongChe) trains from Shanghai to Suzhou for 1 October 2026"
+  },
+  {
+   "n": 3,
+   "action": "Go to my contacts and pick the first one"
+  },
+  {
+   "n": 4,
+   "action": "Reserve a first-class seat on the first trip found for this contact, with no food, insurance or luggage"
+  },
+  {
+   "n": 5,
+   "action": "Reload my orders"
+  },
+  {
+   "n": 6,
+   "action": "See how much the order costs"
+  },
+  {
+   "n": 7,
+   "action": "Pay for the order using the money on the internal account"
+  },
+  {
+   "n": 8,
+   "action": "Find out how much money I would get back if the order were cancelled"
+  },
+  {
+   "n": 9,
+   "action": "Cancel the order"
+  },
+  {
+   "n": 10,
+   "action": "Reserve one more first-class seat on the same trip for the same contact, with no food, insurance or luggage"
+  },
+  {
+   "n": 11,
+   "action": "Reload my orders"
+  },
+  {
+   "n": 12,
+   "action": "Pay for the new order using the money on the internal account"
+  },
+  {
+   "n": 13,
+   "action": "Pick up the ticket for the new order"
+  },
+  {
+   "n": 14,
+   "action": "Go through the station entrance with the new order"
+  }
+ ]
+}

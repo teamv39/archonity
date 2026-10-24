@@ -1,52 +1,41 @@
-# rust/
+# rust/ — движок Archonity на Rust
 
-Перенос engine на Rust ([ADR-008](../docs/adr/adr-008_rust_engine_boundary.md)). Python-движок остаётся отдельным запасным вариантом (`run_eval.py --engine python`), переключения на него при сбое Rust нет.
+На Rust написаны разбор исходников и всё, что строит ответ: исполнение шагов, правила фреймворка, проекция на рёбра и запись `submission.json`. На Python остаётся только M1: сопоставление текста шага с обработчиком через локальные модели.
 
+## Сборка и запуск
+
+Версия Rust закреплена в `rust-toolchain.toml` (1.99.1), `rustup` ставит её сам. Для tree-sitter нужен компилятор C (`cc` или `gcc`).
+
+```bash
+cd rust && cargo build --release --locked && cd ..
+python run_eval.py --engine rust --parse-sources -o output/submission.json
 ```
-cd rust && cargo build --release --locked
-python run_eval.py --engine rust -o output/submission.json
-```
 
-Граница: M1 (поиск, эмбеддер, LLM, кеш) остаётся на Python и пишет `step_requests_raw.json`. Всё дальше делает `archonity-exec`: R20, M4, правило Spring Security, R19, M5, запись `submission.json`, `evidence.json`, `decisions.json`, `step_requests.json`, `m4_unknowns.json`. Сбои шагов и сценариев (Р2) бинарник пишет в `exec_failures.json`, рамку и `ATTENTION.txt` собирает `run_eval.py`.
+`scripts/run_final.sh` делает то же самое одной командой.
 
-| crate | Что |
+## Состав
+
+| Крейт | Что делает |
 |---|---|
-| `archonity-model` | значения M4 (`Value`), `StepRequest`, рёбра шага, флаги правил, форматирование чисел как в Python |
-| `archonity-io` | скелет, дамп БД, `entity_ir.json`, мир БД, журнал решений, `submission.json`, `evidence.json` |
-| `archonity-m4` | интерпретатор IR, библиотека JDK/Spring, шаг сценария (`StepExecutor`) |
-| `archonity-exec` | бинарник `archonity-exec`: сценарии, R20, Spring Security, R19, M5 |
-| `archonity-parse` | бинарник `archonity-parse`: разбор исходников (tree-sitter-java) в `data/ir/<module>.json` и `data/entity_ir.json`; перенос `archparse` ([ADR-009](../docs/adr/adr-009_archparse_rust.md)) |
+| `archonity-parse` | бинарник: разбирает исходники Java (tree-sitter) в IR тел методов `data/ir/<module>.json` и факты JPA `data/entity_ir.json` |
+| `archonity-exec` | бинарник: читает шаги от M1 (`step_requests_raw.json`) и строит ответ — исполнение, правило Spring Security, проекция, `submission.json` и `evidence.json` |
+| `archonity-m4` | интерпретатор IR: тела методов, библиотека JDK и Spring, переходы в другие сервисы, мир БД сценария |
+| `archonity-io` | чтение скелета, дампа БД и `entity_ir.json`, журнал решений, запись выдачи |
+| `archonity-model` | общие типы: значения, `StepRequest`, рёбра, флаги правил |
 
-Зависимости идут в одну сторону: `model` <- `io` <- `m4` <- `exec`. `archonity-parse` автономен (читает скелет сам) и пишет файлы, которые читает `archonity-io`.
+Зависимости идут в одну сторону: `model` ← `io` ← `m4` ← `exec`. `archonity-parse` от них не зависит: он сам читает скелет и пишет файлы, которые потом читает `archonity-io`.
 
-## Разбор исходников (archonity-parse)
+## Тесты
 
-```
-target/release/archonity-parse --mode all --targets-dir <targets> --skeleton <skeleton.json.gz> -o <папка артефактов>
-# --mode bodies: -o папка IR; --mode entities: -o файл; по умолчанию bodies, data/ir
-python run_eval.py --engine rust --parse-sources     # то же перед прогоном; scripts/run_final.sh включает по умолчанию
-pytest tests/test_rust_parse.py                       # байт в байт с data/ir и data/entity_ir.json
+```bash
+cd rust && cargo test --release --locked
 ```
 
-Формат записи — Jackson `INDENT_OUTPUT`, как у Java-версии (не Python `json.dump`): `"k" : v`, массивы в строку, `Double.toString`. Оракул — закоммиченные `data/ir/*.json` и `data/entity_ir.json`, построенные Java-`archparse`. На 21.10: 42 файла IR и `entity_ir.json` совпадают побайтно, покрытие скелета полное (1196 методов, 8961 call_site).
+Кроме модульных тестов есть два теста паритета. Им нужен пакет задачи в `hackaton/tt-challenge/`, без него они пропускаются с сообщением.
 
-## Проверка против Python
+- `archonity-parse` по исходникам и скелету даёт `data/ir/` и `data/entity_ir.json` байт в байт.
+- `archonity-exec` по шагам M1 для S0–S7 даёт рекорд `eval/records/submission_p27_1.00000.json` (балл 1.0, sha256 `94463c41…`) байт в байт.
 
-Результат Rust равен Python байт в байт: `submission.json` (рекорд `94463c41…`), `decisions.json`, `evidence.json`, `m4_unknowns.json`, `step_requests.json`. Проверки:
+## Rust и Python
 
-```
-pytest tests/test_rust_engine.py                                   # оба движка на S0–S7, сравнение файлов
-python scripts/rust_oracles.py steps  <папка> [сценарии...]        # step_requests_raw.json, raw_steps.json (+ trace при ARCHONITY_TRACE)
-python scripts/rust_oracles.py sweep  <папка>                      # sweep_steps.json: 262 обработчика как одношаговые сценарии
-python scripts/rust_oracles.py slices <папка>                      # slices.json: скелет, дамп БД, entity_ir
-target/release/replay_steps <скелет> <entity_ir> <ir> <исходники> <raw_steps.json> <выход>
-python scripts/rust_compare.py <raw_steps.json> <выход>            # рёбра и журнал решений по шагам
-```
-
-`replay_steps` гонит `StepExecutor` по шагам оракула (после R20), `rust_compare.py` показывает расхождения по рёбрам и записям журнала. На 21.10: S0–S7, X1–X8 и 262 обработчика — расхождений 0.
-
-## Известные приближения
-
-- Идентичность примитивов (`ident`) в журнале плеч сравнивает значения, а не адреса, как Python.
-- `timestamp()` у naive datetime считается как UTC.
-- `canonical_graph.json` и `visualizer/` при `--engine rust` не обновляются (открытый вопрос ADR-008).
+Python-движок с той же логикой остаётся запасным путём: если `archonity-exec` не собрался или упал, `run_eval.py` повторяет прогон на Python и пишет предупреждение в `ATTENTION.txt`. Выдачи совпадают байт в байт: на S0–S7, на своих и перефразированных сценариях и на всех 262 обработчиках проекта, каждый из которых прогнан как сценарий из одного шага.

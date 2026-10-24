@@ -306,3 +306,25 @@
 
   Не закрыто: сверка идёт по ID, а не по телам. IR того же скелета с другими телами методов (ID те же) не заметен; для этого archparse должен писать в IR и `entity_ir.json` коммит скелета, чего он не делает. M1 на проекте без сущностей JPA падает на сборке промпта (`prompts.example_kinds` берёт `top[0]` от пустого списка видов), так что полный прогон на таком проекте ещё не проверен.
 - `facts/configs_topology.json` — факты о конфигурации Train Ticket, собранные вручную; нужны только `canonical_graph.json` и `evidence.json`, не выдаче.
+
+## 13. Аудит 22.10: подгонки, которые не видели прошлые разделы и сторож
+
+Повод — правило «получатель багажа» (PR #149): имена полей проекта в M4 проходили сторож литералов ([ui_optional_groups.md](ui_optional_groups.md)). Прочитаны исходники Rust (`rust/crates/*/src`, путь жюри по умолчанию), находки проверены абляцией на Python-движке и в `archparse`. Ветка `feature/150-overfit-audit`.
+
+| # | Что | Где | Итог |
+|---|---|---|---|
+| 1 | Сторож Java был слепым: `[^"\\n]` в raw-строке исключает букву `n`, литерал с ней (`"Response"`, `"edu.fudan.common"`) не находился | `tests/test_no_project_literals.py` | исправлено, самопроверка `test_java_guard_catches_literals`; маркеров в `archparse` нет (540 литералов) |
+| 2 | Сторож имён из #149 не собирал классы: у типа в скелете `fqn`, а не `name` | там же | исправлено; имена классов и полей проверяются и в `archparse` |
+| 3 | Путь отказа по `return new Response<>(0, …)`: имя класса и код статуса Train Ticket в разборе (раздел 12 упоминал только лог error/warn) | `archonity-parse/src/expect.rs`, `archparse/…/ResultExpectation.java` | удалено в обоих; `entity_ir.json`: у 2 из 273 вызовов ROWS → UNKNOWN (`FoodServiceImpl:181`, `TrainFoodServiceImpl:54`); Rust = Java байт в байт. M4 читает ожидание только как `EMPTY` (`hydrate`), ROWS и UNKNOWN для него равны — выдача не меняется ни на каком сценарии |
+| 4 | `kind == "user"` → `userId, accountId, id`: вид и порядок ID-полей руками поверх манифеста | `step.rs`, `step.py` | удалено; манифест даёт `userId` сам |
+| 5 | Вендорные JS по имени: `amazeui`, `iscroll`, `cropper`, `aliyun` — библиотеки UI Train Ticket | `envelope.rs`, `ui_catalog.py` | удалено; каталог UI (82 запроса) и обёртка ответа прежние, в `data/ui_catalog.json` сменился только отпечаток |
+| 6 | Из контекста разбирались `travel_date`, `system_date`, `balance`, но не читались | `db.rs`, `db.py` | удалено; остался `user_name` |
+| 7 | `VERB_SYN_EXTRA`: `reload → refresh`, `sign → log, login` выбраны под имена обработчиков проекта | `engine/grounding/text.py` | оставлено, помечено в коде как подбор по замеру перефразировок |
+
+Проверка после правок: S0–S7 — sha256 рекорда `94463c41…`, X1–X8 `92c0affe…`, перефразировки 0.994, `handler_sweep` (262 обработчика) = `dev`, Rust = Python.
+
+Осталось с обоснованием:
+
+- Внешний ключ коллекции — первая колонка `*_id` таблицы коллекции (`world.rs`, `load_collection`), `@JoinColumn` разбор не читает. Соглашение Hibernate о DDL, на всех 6 таблицах Train Ticket совпадает с `@JoinColumn`.
+- Хост URL межсервисного вызова сравнивается с именем модуля (`select_handlers`); не совпал — все кандидаты скелета, без потери рёбер.
+- `accountId`, `userId`, `loginId` (раздел 12) — в `KNOWN` сторожа.

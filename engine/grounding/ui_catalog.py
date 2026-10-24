@@ -25,14 +25,14 @@ import tree_sitter as ts
 import tree_sitter_javascript as tsj
 
 from engine.adapters.skeleton import SkeletonIndex, path_segs
+from engine.grounding.request import canon_value
 
 logger = logging.getLogger(__name__)
 
-VENDOR = re.compile(
-    r"(\.min\.|^(vue|angular|jquery|bootstrap|echarts|amazeui|iscroll|cropper|aliyun|react|lodash|moment|d3|three|npm)\b"
-    r"|^vue-upload)",
-    re.I,
-)
+# Сторонние библиотеки в папке UI: сборки `.min.` и общеизвестные фреймворки по имени файла (`vue-upload…` — тоже
+# `^vue`). До 22.10 список включал библиотеки из UI Train Ticket (amazeui, iscroll, cropper, aliyun); на каталог и
+# обёртку ответа они не влияли
+VENDOR = re.compile(r"(\.min\.|^(vue|angular|jquery|bootstrap|echarts|react|lodash|moment|d3|three|npm)\b)", re.I)
 SKIP_DIR = {"node_modules", "target", "build", "dist", ".git", "bower_components"}
 
 FUNC_TYPES = {"function_declaration", "function_expression", "function", "arrow_function", "method_definition",
@@ -78,6 +78,19 @@ class UIRequest:
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+    def body_groups(self) -> list[dict[str, Any]]:
+        """Поля только под условием (`body_opt`), сгруппированные по общему условию, и литералы, которые UI ставит,
+        только когда это условие верно (`body_cond`): `foodType = 2` внутри «еда выбрана»."""
+        by_guard: dict[tuple[str, ...], list[str]] = {}
+        for o in self.body_opt:
+            by_guard.setdefault(tuple(o["guards"]), []).append(o["field"])
+        out = []
+        for guards, fields in by_guard.items():
+            on = [[c["field"], v] for c in self.body_cond
+                  if all(g in c["guards"] for g in guards) and (v := canon_value(c["value"])) is not None]
+            out.append({"fields": fields, "on": on})
+        return out
 
 
 # ---------------------------------------------------------------- узлы AST
@@ -568,6 +581,9 @@ class _FileParser:
         assigns, scope = self._scope_assignments(name, expr)
         for _, v in assigns:
             if v is not None and v.type == "call_expression" and _callee(v) == "JSON.stringify" and name not in seen:
+                return self.body_sources(v, ctx, seen | {name})
+            if v is not None and v.type == "identifier" and name not in seen:
+                # Тело — то же, что у другого запроса: `var rebookPayInfoData = data` (доплата шлёт тело перебронирования)
                 return self.body_sources(v, ctx, seen | {name})
             if v is not None and v.type == "object":
                 out.update(self.body_sources(v, ctx, seen))

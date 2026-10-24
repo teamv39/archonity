@@ -164,6 +164,8 @@ class Interpreter:
     def begin_scenario(self, db: Any) -> None:
         self.world = World(db, self.types, self.index.entities, self.enum_value)
         self.beans = {}
+        # Константы enum — как мир и бины: сценарий не видит значений, которые получил прошлый
+        self._enum_cache = {}
 
     def run_handler(self, handler: str, args: list[Any] | Callable[[], list[Any]], expected: str,
                     step: int | None) -> tuple[Sink, Any]:
@@ -280,11 +282,17 @@ class Interpreter:
                          if self.N[m].get("name") == "<init>" and len(self.N[m].get("params_as_written") or []) == len(args)),
                         None)
             if ctor and ctor in self.ir:
+                # Конструктор константы — инициализация класса, а не код плеча: без журнала плеч. Иначе первое
+                # обращение внутри плеча с неизвестным условием откатывает поля константы, а слияние плеч делает
+                # их UNKNOWN (`Type.G.name`), и кеш хранит такую константу дальше.
                 self.sink.muted += 1
+                journal, journal_start = self.journal, self.journal_start
+                self.journal, self.journal_start = [], []
                 try:
                     self._run_body(ctor, ev, list(args), self.index.unit_of(ctor), ("SKELETON", "enum_init"))
                 finally:
                     self.sink.muted -= 1
+                    self.journal, self.journal_start = journal, journal_start
         return ev
 
     # --- вызов метода ---------------------------------------------------------

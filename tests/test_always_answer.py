@@ -79,7 +79,17 @@ def test_attention_lines_end_with_contacts_and_cut_long_list(tmp_path: Path) -> 
 
 def test_no_attention_on_clean_full_run() -> None:
     assert not attention.needed([], {"mode": "full", "steps": 3, "steps_by_retrieval": 0})
+    assert not attention.needed([], {"mode": "full", "steps": 3, "steps_by_retrieval": 0, "embedding_misses": 0})
     assert attention.needed([], None)
+
+
+def test_attention_on_embedder_failure(tmp_path: Path) -> None:
+    """Эмбеддер отказал (например, не хватило видеопамяти рядом с сервером LLM): режим full, но поиск только BM25."""
+    report = {"mode": "full", "steps": 3, "steps_by_retrieval": 0, "embedding_misses": 2,
+              "embedding_failure": "OutOfMemoryError: CUDA out of memory"}
+    assert attention.needed([], report)
+    text = "\n".join(attention.lines([], report, tmp_path / "submission.json"))
+    assert "только BM25" in text and "OutOfMemoryError" in text
 
 
 def test_broken_pipeline_writes_empty_submission_and_frame_last(tmp_path: Path) -> None:
@@ -103,6 +113,29 @@ def test_broken_pipeline_writes_empty_submission_and_frame_last(tmp_path: Path) 
         assert "аварийный submission.json" in "\n".join(tail[-12:])
 
 
+def test_rust_failure_falls_back_to_python(tmp_path: Path) -> None:
+    """`archonity-exec` нет: выдача та же, что у `--engine python`, сбой Rust в рамке, отчёт M1 без двойного счёта."""
+    def run(out: Path, *extra: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, str(ROOT / "run_eval.py"), "--scenarios", str(SCENARIOS / "S0.json"),
+             "--require-cache", "--no-eval", "-o", str(out), *extra],
+            capture_output=True, text=True, encoding="utf-8", cwd=ROOT, timeout=300)
+
+    py, rs = tmp_path / "py" / "submission.json", tmp_path / "rs" / "submission.json"
+    res_py = run(py, "--engine", "python")
+    if res_py.returncode == 2:
+        pytest.skip("нет кеша LLM")
+    res = run(rs, "--engine", "rust", "--rust-bin", str(tmp_path / "missing-exec"))
+
+    assert res.returncode == 0, res.stderr[-2000:]
+    assert rs.read_bytes() == py.read_bytes()
+    assert "откат на Python" in (rs.parent / attention.FILE_NAME).read_text(encoding="utf-8")
+    report_py = json.loads((py.parent / "m1_report.json").read_text(encoding="utf-8"))
+    report_rs = json.loads((rs.parent / "m1_report.json").read_text(encoding="utf-8"))
+    assert report_rs["llm"] == report_py["llm"]
+    assert [f["stage"] for f in report_rs["failures"]] == ["движок Rust (откат на Python)"]
+
+
 @pytest.mark.skipif(not GOLD.is_file(), reason="нет эталона S0")
 def test_evaluate_skips_scenarios_outside_gold(tmp_path: Path, capsys) -> None:
     sys.path.insert(0, str(ROOT))
@@ -114,3 +147,42 @@ def test_evaluate_skips_scenarios_outside_gold(tmp_path: Path, capsys) -> None:
     printed = capsys.readouterr()
     assert "Локальная оценка пропущена: сценариев X1" in printed.out
     assert "Ошибка" not in printed.out + printed.err
+
+
+def test_empty_submission_reads_any_scenario_form(tmp_path: Path) -> None:
+    """Последний рубеж Р2 не падает на форме файла и берёт id, как обычный путь (load_scenario)."""
+    from run_eval import write_empty_submission
+
+    (tmp_path / "L.json").write_text("[1, 2]", encoding="utf-8")
+    (tmp_path / "b.json").write_bytes(b"\xef\xbb\xbf" + json.dumps({"id": "B", "project": "p"}).encode())
+    (tmp_path / "n.json").write_text(json.dumps({"id": 7}), encoding="utf-8")
+    out = tmp_path / "out" / "submission.json"
+    write_empty_submission([tmp_path / n for n in ("L.json", "b.json", "n.json", "gone.json")], out)
+
+    sub = json.loads(out.read_text(encoding="utf-8"))
+    assert sub == {"project": "p", "scenarios": {s: {"edges": []} for s in ("7", "B", "L", "gone")}}
+
+
+def test_db_dump_problem_is_reported(tmp_path: Path) -> None:
+    """Нет дампа БД рядом со скелетом или он обрезан: мир БД пуст, причина — в `db_error` (рамка ATTENTION)."""
+    from engine.adapters.skeleton import DB_DUMP_NAME, SkeletonIndex
+
+    sk = tmp_path / "pkg" / "skeleton" / "s.json"
+    sk.parent.mkdir(parents=True)
+    sk.write_text(json.dumps({"project": "p", "nodes": {}, "edges": []}), encoding="utf-8")
+    assert isinstance(SkeletonIndex(sk).db_error, FileNotFoundError)
+
+    dump = tmp_path / "pkg" / "context" / DB_DUMP_NAME
+    dump.parent.mkdir()
+    dump.write_bytes(b"\x1f\x8b\x08\x00\x00\x00\x00\x00")  # заголовок gzip без данных
+    idx = SkeletonIndex(sk)
+    assert idx.db_error is not None
+
+
+def test_run_final_resolves_paths_from_caller_dir(tmp_path: Path) -> None:
+    """run_final.sh переходит в корень репозитория: относительные пути сценариев считаются от папки запуска."""
+    fn = next(ln for ln in (ROOT / "scripts" / "run_final.sh").read_text(encoding="utf-8").splitlines()
+              if ln.startswith("abs()"))
+    res = subprocess.run(["bash", "-c", f"{fn}\nabs S8.json; echo; abs /x/S9.json"], capture_output=True, text=True,
+                         cwd=tmp_path, check=True)
+    assert res.stdout.split() == [f"{tmp_path.resolve()}/S8.json", "/x/S9.json"]

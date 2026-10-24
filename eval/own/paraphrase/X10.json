@@ -1,0 +1,65 @@
+{
+ "project": "trainticket",
+ "id": "X10",
+ "title": "An ordinary-train journey: reservation with station food and luggage, payment, ticket pick-up and station entrance; then the system refuses the refund quote, the cancellation and the change of the used ticket",
+ "description": "A registered passenger signs in and looks for ordinary trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing for 1 October 2026, then shows the details of the first trip in the results. They look through the food shops at Suzhou station and go to their contacts to pick the first one. They reserve a second-class seat on the ordinary train for this contact with food from a station shop and a 2 kg luggage consignment for a consignee, without insurance. They reload the orders, pay with the money on the internal account, look up the luggage record of the order, pick up the ticket and go through the station entrance. Then they find out how much would be refunded for the used order, try to cancel it and try to move it to a first-class seat on the same train; the system refuses all three because the ticket has already been used.",
+ "input": "text",
+ "steps": [
+  {
+   "n": 1,
+   "action": "Sign in with my username and password"
+  },
+  {
+   "n": 2,
+   "action": "Look for ordinary trains (the 'Other' train type, not high-speed) from Shanghai to Nanjing for 1 October 2026"
+  },
+  {
+   "n": 3,
+   "action": "Show the details of the first trip in the results"
+  },
+  {
+   "n": 4,
+   "action": "Look through the food shops at Suzhou station"
+  },
+  {
+   "n": 5,
+   "action": "Go to my contacts and pick the first one"
+  },
+  {
+   "n": 6,
+   "action": "Reserve a second-class seat on the ordinary train for this contact, with food from a station shop and a 2 kg luggage consignment for a consignee, without insurance"
+  },
+  {
+   "n": 7,
+   "action": "Reload my orders"
+  },
+  {
+   "n": 8,
+   "action": "Pay for the order using the money on the internal account"
+  },
+  {
+   "n": 9,
+   "action": "Look up the luggage record of the order"
+  },
+  {
+   "n": 10,
+   "action": "Pick up the ticket for the order"
+  },
+  {
+   "n": 11,
+   "action": "Go through the station entrance with the order"
+  },
+  {
+   "n": 12,
+   "action": "Find out how much would be refunded for the used order (the system refuses)"
+  },
+  {
+   "n": 13,
+   "action": "Try to cancel the used order (the system refuses)"
+  },
+  {
+   "n": 14,
+   "action": "Try to move the used order to a first-class seat on the same ordinary train (the system refuses)"
+  }
+ ]
+}

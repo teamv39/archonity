@@ -17,12 +17,17 @@ from pathlib import Path
 from typing import Any
 
 from engine.executor.envelope import Envelope
-from engine.executor.interpreter import Interpreter, Sink
+from engine.executor.interpreter import Interpreter, Sink, default_value
 from engine.executor.schema import EntitySchema, simple_name
 from engine.executor.values import UNKNOWN, EnumV, ListV, Obj, OptionalV, Wrapper
+from engine.grounding.request import group_sent
 
 _REF = re.compile(r"^(first|second|new)_of_step_(\d+)$")
 _WORDY = re.compile(r"^[A-Za-z][A-Za-z ,.'-]*$")
+# Слово, которым текст шага называет позицию или повтор («the first order», «another», «the second»); «first-class» —
+# не позиция. Сценарии на английском, как у организаторов
+_POSITION = re.compile(r"\b(?:first|second|third|fourth|fifth|last|next|previous|another|other|same|one more|"
+                       r"\d+(?:st|nd|rd|th))\b(?!-)", re.I)
 
 _DEFAULT_SCHEMA = EntitySchema()
 
@@ -35,6 +40,7 @@ class StepExecutor:
         self.schema = EntitySchema(index)
         self.it = Interpreter(index, rules, Path(ir_dir), Path(targets_root) if targets_root else None)
         self._body_src: dict[str, str] = {}
+        self._body_groups: list[dict[str, Any]] = []
         self.results: dict[int, Any] = {}
         self.current_user: str | None = None
         self.written: dict[str, Any] = {}
@@ -46,7 +52,8 @@ class StepExecutor:
         self.sid = "S?"
         self._login_ids = _login_principal_ids(index.N)
         self._login_blanks = _context_login_blanks(getattr(index, "sk", {}).get("context"))
-        self._reach: dict[str, set[str]] = {}
+        self._reach: dict[tuple[str, bool], set[str]] = {}
+        self._remote_of: dict[str, set[str]] | None = None  # метод -> обработчики его межсервисных вызовов
         self._dedupe: dict[tuple[str, str | None], tuple[str, ...]] = {}
 
     def begin_scenario(self, sid: str) -> None:
@@ -88,6 +95,14 @@ class StepExecutor:
                 merged = Obj(ent.type, dict(row_ent.fields), open=True)
                 merged.fields.update({k: v for k, v in ent.fields.items() if v is not UNKNOWN and v is not None})
                 return merged
+            # Ответ шага без ID — не сущность, а сводка («доплатите разницу»: `new Order()` с одной суммой): сущность —
+            # та, над которой работал шаг n (его собственная ссылка того же вида), если у неё ID известен
+            if getattr(self.it.rules, "ref_idless_result", "on") != "off":  # RuntimeRules.ref_idless_result
+                prev = self.step_refs.get(n, {}).get(kind)
+                if prev and prev != ref and depth < 4:
+                    alt = self.resolve_ref(kind, prev, state, depth + 1)
+                    if alt is not None and self.entity_id(alt, kind) is not UNKNOWN:
+                        return alt
             return ent
         saved_c = [(fqn, o) for fqn, o in self.saved.get(n, []) if self.schema.is_kind(fqn, kind)]
         top = max((self.schema.kind_rank(fqn, kind) for fqn, _ in saved_c), default=0)
@@ -121,8 +136,6 @@ class StepExecutor:
         if not isinstance(ent, Obj) or depth > 2:
             return UNKNOWN
         names = list(self.schema.id_fields(kind)) + ["id"]
-        if kind == "user":
-            names = ["userId", "accountId", "id"]
         for name in names:
             v = ent.fields.get(name, UNKNOWN)
             if v is UNKNOWN or v is None:
@@ -154,6 +167,8 @@ class StepExecutor:
 
     def handler_args(self, handler: str, params: dict[str, Any], refs: dict[str, Any], state: Any) -> list[Any]:
         ents: dict[str, Any] = {k: self.resolve_ref(k, v, state) for k, v in (refs or {}).items()}
+        if getattr(self.it.rules, "ref_explicit_id", "on") != "off":
+            self._explicit_id_refs(ents, params, refs or {})
         # Последний слой: параметры запросов шагов, на которые ссылается шаг (UI переносит дату и станции поиска)
         for v in (refs or {}).values():
             m = _REF.match(v or "")
@@ -172,6 +187,45 @@ class StepExecutor:
                 name = m.group(1) if m else p["name"]
                 out.append(self.field_value(name, params, ents, user, p.get("type")))
         return out
+
+    def _saved_kind(self, step: int, kind: str) -> bool:
+        return any(self.schema.is_kind(fqn, kind) for fqn, _ in self.saved.get(step, []))
+
+    def _prefer_created(self, step: int, action: str, refs: dict[str, Any]) -> dict[str, Any]:
+        """Ссылка `first`/`second_of_step_N` без порядкового слова в тексте шага («Pay for the order») и запись этого
+        вида, созданная шагом M < N, пока N её не создавал (список, прочитанный после создания): запись — созданная
+        (`new_of_step_M`, последний такой M). Порядок списка нигде не задан: старые записи пассажира (дамп БД) стоят в
+        нём наравне с новой, а текст шага говорит о той, что сценарий создал сам. Слова позиции («the first order»,
+        «another», «the second») оставляют ссылку как есть. RuntimeRules.ref_unpositioned, annotation_rules.md, R22."""
+        if _POSITION.search(action):
+            return refs
+        out = dict(refs)
+        for kind, ref in refs.items():
+            m = _REF.match(ref or "")
+            if not m or m.group(1) == "new":
+                continue
+            n = int(m.group(2))
+            made = [k for k in self.saved if k < step and self._saved_kind(k, kind)]
+            if made and n > max(made) and not self._saved_kind(n, kind):
+                out[kind] = f"new_of_step_{max(made)}"
+        return out
+
+    def _explicit_id_refs(self, ents: dict[str, Any], params: dict[str, Any], refs: dict[str, Any]) -> None:
+        """Ссылка `first`/`second_of_step_N` и строковый ID той же сущности в параметрах шага («рейс G9998»): из
+        результатов шага N берётся сущность с этим ID. Иначе поля тела, которых нет в параметрах (маршрут, станции),
+        пришли бы от первой сущности списка, а ID — от названной. Нет такой в результатах — ссылка как была."""
+        for kind, ref in refs.items():
+            m = _REF.match(ref or "")
+            if not m or m.group(1) == "new":
+                continue
+            want = next((params[f] for f in self.schema.id_fields(kind) if f != "id" and isinstance(params.get(f), str)),
+                        None)
+            if want is None or (ents.get(kind) is not None and self.entity_id(ents[kind], kind) == want):
+                continue
+            found = _find_kind(_payload(self.results.get(int(m.group(2))), self.it.envelope), kind, schema=self.schema)
+            hit = next((e for e in found if self.entity_id(e, kind) == want), None)
+            if hit is not None:
+                ents[kind] = hit
 
     def field_value(self, name: str, params: dict[str, Any], ents: dict[str, Any], user: Any,
                     ftype: str | None = None) -> Any:
@@ -249,15 +303,19 @@ class StepExecutor:
                     defaults[name] = ""
                 elif _norm(name) == "username" and getattr(self, "_user_name", None):
                     defaults[name] = self._user_name
-        if "consigneeName" in names:
-            # UI (client_ticket_book.js) шлёт имя, телефон и вес получателя багажа одной группой, только при отмеченном
-            # «need consign». Вес 0 в тексте шага — багажа нет, полей группы в запросе нет (null). Имени и телефона в
-            # тексте нет: при весе больше 0 они неизвестны. Группу полей каталог UI пока не отдаёт (annotation_rules).
-            w = params.get("consigneeWeight")
-            if isinstance(w, (int, float)) and not isinstance(w, bool) and w <= 0:
-                defaults["consigneeName"] = defaults["consigneePhone"] = None
+        unsent: set[str] = set()
+        if getattr(self.it.rules, "ui_optional_groups", "on") != "off":
+            # Группа полей, которую UI шлёт только под общим условием (каталог UI: флажок, заполненный раздел формы).
+            # Шаг не дал ни поля группы, ни литерала её условия со значением не по умолчанию — условие ложно, полей
+            # в запросе нет, Jackson оставит умолчание поля (annotation_rules.md, «Поля под условием UI»)
+            for g in self._body_groups:
+                if not group_sent(g, params):
+                    unsent |= {n for n in g.get("fields") or () if n in names and n not in params}
         for f in fields:
             name = f["name"]
+            if name in unsent:
+                obj.fields[name] = default_value(f)
+                continue
             v = self.field_value(name, params, ents, None if name in own_ids else user, f.get("type"))
             if v is UNKNOWN and name == "id":
                 # DTO того же вида, что сущность ссылки (Consign и запись багажа): id — ID этой сущности
@@ -277,21 +335,32 @@ class StepExecutor:
                 obj.fields[name] = v
         return self.it.jackson_fill(obj, module)
 
-    def _reachable(self, handler: str, depth: int = 4) -> set[str]:
-        """Методы проекта, достижимые из обработчика по рёбрам calls скелета (с реализациями интерфейсов)."""
-        if handler not in self._reach:
+    def _reachable(self, handler: str, depth: int = 4, remote: bool = False) -> set[str]:
+        """Методы проекта, достижимые из обработчика по рёбрам calls скелета (с реализациями интерфейсов);
+        `remote` — ещё и через межсервисные вызовы (remote_call скелета) в обработчики других сервисов."""
+        key = (handler, remote)
+        if key not in self._reach:
+            if remote and self._remote_of is None:
+                self._remote_of = {}
+                for cs, hs in self.it.cs_remote.items():
+                    m = self.index.N.get(cs, {}).get("method")
+                    if m:
+                        self._remote_of.setdefault(m, set()).update(hs)
             seen, frontier = {handler}, [handler]
             for _ in range(depth):
                 nxt = []
                 for m in frontier:
-                    for t in self.index.calls.get(m, ()):
+                    targets = list(self.index.calls.get(m, ()))
+                    if remote:
+                        targets += sorted(self._remote_of.get(m, ()))
+                    for t in targets:
                         for x in (t, *self.index.over.get(t, ())):
                             if x not in seen:
                                 seen.add(x)
                                 nxt.append(x)
                 frontier = nxt
-            self._reach[handler] = seen
-        return self._reach[handler]
+            self._reach[key] = seen
+        return self._reach[key]
 
     def _is_login(self, handler: str) -> bool:
         """Обработчик входа: из него достижим метод с вызовом AuthenticationManager.authenticate."""
@@ -299,11 +368,15 @@ class StepExecutor:
 
     def _dedupe_fields(self, handler: str, ftype: str | None) -> tuple[str, ...]:
         """Поля DTO, по которым метод, достижимый из обработчика, ищет дубликат: геттеры параметра этого типа в
-        аргументах чтения репозитория, после которого тот же метод сохраняет сущность (факты archparse)."""
+        аргументах чтения репозитория, после которого тот же метод сохраняет сущность (факты archparse).
+
+        Достижимость — и через межсервисный вызов: консоль администратора пересылает тело запроса сервису, который
+        ищет дубликат (`AdminUserServiceImpl.addUser` -> `POST /users/register` -> `UserServiceImpl.saveUser`).
+        Тип сравнивается по простому имени: тело уходит JSON, DTO двух сервисов — разные классы с одним именем."""
         key = (handler, ftype)
         if key not in self._dedupe:
             out: list[str] = []
-            for m in sorted(self._reachable(handler)):
+            for m in sorted(self._reachable(handler, remote=True)):
                 saves = [c.line for c in self.index.entities.calls_by_method.get(m, ()) if c.operation == "SAVE"]
                 body = self.it.ir.get(m)
                 if not saves or not body:
@@ -339,7 +412,10 @@ class StepExecutor:
         self._user_name = getattr(state, "user_name", None)
         self._verb = (getattr(step_req, "http", None) or {}).get("method")
         self._body_src = dict(getattr(step_req, "body_src", None) or {})
+        self._body_groups = list(getattr(step_req, "body_groups", None) or [])
         refs = getattr(step_req, "refs", None) or {}
+        if getattr(self.it.rules, "ref_unpositioned", "off") == "on":
+            refs = self._prefer_created(n, getattr(step_req, "action", None) or "", refs)
         expected = getattr(step_req, "expected_outcome", "success")
         before = len(self.it.world.saved)
         world = self.it.world
